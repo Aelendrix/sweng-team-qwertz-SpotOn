@@ -10,8 +10,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.project.MainActivity">
 
-    <TextView
+    <Button
+        android:text="@string/takeAPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="164dp"
+        android:id="@+id/goToPic"
+        android:onClick="send"/>
 </RelativeLayout>
