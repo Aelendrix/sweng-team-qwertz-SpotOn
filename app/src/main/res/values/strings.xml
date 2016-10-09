@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Project</string>
+    <string name="app_name">SpotOn</string>
+    <string name="action_settings">Settings</string>
+    <string name="options_menu">Options Menu</string>
+    <string name="about_menu">About</string>
+    <string name="my_stories">My Stories</string>
+    <string name="camera">Camera</string>
+    <string name="stories_around">Stories around me</string>
 </resources>
