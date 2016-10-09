@@ -22,6 +22,7 @@
         android:onClick="dispatchTakePictureIntent"/>
 
     <ImageView
+        android:contentDescription="@string/pictureTaken"
         android:layout_width="350dp"
         android:layout_height="300dp"
         android:id="@+id/image_view"
