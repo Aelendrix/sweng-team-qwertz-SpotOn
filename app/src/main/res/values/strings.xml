@@ -6,4 +6,5 @@
     <string name="my_stories">My Stories</string>
     <string name="camera">Camera</string>
     <string name="stories_around">Stories around me</string>
+    <string name="next_activity">Next</string>
 </resources>
