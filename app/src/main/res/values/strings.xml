@@ -10,5 +10,4 @@
     <string name="takeAPic">Take A Pic</string>
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
-
 </resources>
