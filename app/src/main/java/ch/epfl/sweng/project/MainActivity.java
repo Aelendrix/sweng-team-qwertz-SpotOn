@@ -42,7 +42,7 @@ public final class MainActivity extends AppCompatActivity {
         */
     }
 
-    public void send(View v){
+    public void goToPictureActivity(View view){
         Intent pictureIntent = new Intent(this, PictureActivity.class);
         startActivity(pictureIntent);
     }

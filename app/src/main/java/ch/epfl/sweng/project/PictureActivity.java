@@ -19,13 +19,13 @@ import android.widget.Toast;
 public class PictureActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 10;
-    private ImageView pic;
+    private ImageView mPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
-        pic = (ImageView) findViewById(R.id.image_view);
+        mPic = (ImageView) findViewById(R.id.image_view);
 
     }
 
@@ -33,7 +33,7 @@ public class PictureActivity extends AppCompatActivity {
      * Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
-    public void dispatchTakePictureIntent(View v){
+    public void dispatchTakePictureIntent(View view){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -81,7 +81,7 @@ public class PictureActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            pic.setImageBitmap(imageBitmap);
+            mPic.setImageBitmap(imageBitmap);
         }
     }
 

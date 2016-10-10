@@ -38,6 +38,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="164dp"
         android:id="@+id/goToPic"
-        android:onClick="send"/>
+        android:onClick="goToPictureActivity"/>
 
 </android.support.design.widget.CoordinatorLayout>
