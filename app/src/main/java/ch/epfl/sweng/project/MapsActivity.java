@@ -22,6 +22,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mPhoneLocation;
 
     private static final LatLng DEFAULT_LOCATION = new LatLng(50,10);
+    //fake Data
     //esplanade epfl (under one roof)
     private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
     //moutons Unil
