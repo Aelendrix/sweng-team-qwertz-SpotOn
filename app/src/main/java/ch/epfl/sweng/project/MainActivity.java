@@ -62,4 +62,8 @@ public final class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public void goToMapsActivity(View view){
+        Intent mapIntent = new Intent(this, MapsActivity.class);
+        startActivity(mapIntent);
+    }
 }
