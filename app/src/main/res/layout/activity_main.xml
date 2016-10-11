@@ -15,7 +15,6 @@
             android:id="@+id/goToMapButton"
             app:layout_anchor="@+id/viewpager"
             android:layout_weight="1"
-            android:elevation="0dp"
             android:onClick="goToMapsActivity" />
 
         <android.support.v7.widget.Toolbar

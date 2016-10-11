@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager mLocationManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) throws SecurityException {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -71,12 +71,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Register the listener with the Location Manager to receive location updates
         final int TIME_BETWEEN_LOCALISATION = 60 * 1000; //1 Minutes
         final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
+        }
+        /*Catch exception because location acces always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     //function called when the locationListener see a location change
-    private void refreshLocation()
-    {
+    private void refreshLocation() {
         try {
             if (mLocationManager != null) {
                 //check if gps is enable
