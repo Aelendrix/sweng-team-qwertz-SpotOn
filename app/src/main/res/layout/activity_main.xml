@@ -9,6 +9,17 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:text="@string/queryDatabase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/queryDatabaseBUtton"
+            android:layout_weight="1"
+            app:layout_anchor="@+id/viewpager"
+            app:layout_anchorGravity="top|start"
+            android:layout_gravity="top|start"
+            android:onClick="goToQueryDatabaseActivity" />
+
+        <Button
             android:text="@string/button_to_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,12 +36,6 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
@@ -48,15 +53,5 @@
         android:layout_marginTop="164dp"
         android:id="@+id/goToPic"
         android:onClick="goToPictureActivity"/>
-
-    <Button
-        android:text="@string/queryDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/queryDatabaseBUtton"
-        android:layout_weight="1"
-        app:layout_anchor="@+id/viewpager"
-        app:layout_anchorGravity="top|start"
-        android:layout_gravity="top|start" />
 
 </android.support.design.widget.CoordinatorLayout>

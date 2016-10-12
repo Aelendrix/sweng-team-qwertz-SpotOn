@@ -113,4 +113,10 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void goToQueryDatabaseActivity(View view){
+        //launche the Database Query activity
+        Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
+        startActivity(databaseQueryIntent);
+    }
 }
