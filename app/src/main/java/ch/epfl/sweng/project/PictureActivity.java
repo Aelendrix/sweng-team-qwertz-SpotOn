@@ -1,16 +1,26 @@
 package ch.epfl.sweng.project;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Activity that will allow the user to access the camera and take a picture to integrate
@@ -18,8 +28,16 @@ import android.widget.Toast;
  */
 public class PictureActivity extends AppCompatActivity {
 
+    //objet representing the phone localisation
+    Location mPhoneLocation;
+
     private static final int REQUEST_IMAGE_CAPTURE = 10;
+    //latitude and longitude, not always assigned
+    private static double mLatitude;
+    private static double mLongitude;
+
     private ImageView mPic;
+    private LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +45,61 @@ public class PictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_picture);
         mPic = (ImageView) findViewById(R.id.image_view);
 
+        // Acquire a reference to the system Location Manager
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Call refreshLocation when a new location is found by the network location provider.
+                Log.d("location","location Changed");
+                refreshLocation();
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        final int TIME_BETWEEN_LOCALISATION = 60 * 1000; //1 Minutes
+        final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
+        }
+        /*Catch exception because location acces always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //function called when the locationListener see a location change
+    private void refreshLocation() {
+        try {
+            if (mLocationManager != null) {
+                //check if gps is enable
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    //get the location according of the gps
+                    mPhoneLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (mPhoneLocation != null) {
+                        mLatitude = mPhoneLocation.getLatitude();
+                        mLongitude = mPhoneLocation.getLongitude();
+                        //TODO: How to handle if the gps is slow or not working and we take a photo now?
+                    }
+                }
+            }
+
+        }
+        /*Catch exception because location acces always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
