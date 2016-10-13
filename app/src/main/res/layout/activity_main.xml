@@ -51,6 +51,6 @@
         android:layout_toStartOf="@+id/nextButton"
         android:layout_marginRight="20dp"
         android:layout_marginEnd="20dp"
-        android:id="@+id/button2"
+        android:id="@+id/goToMapButton"
         android:onClick="goToMapsActivity"/>
 </RelativeLayout>
