@@ -8,6 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <Button
+            android:text="@string/button_to_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/goToMapButton"
+            app:layout_anchor="@+id/viewpager"
+            android:layout_weight="1"
+            android:onClick="goToMapsActivity" />
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -29,4 +38,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+
+    <Button
+        android:text="@string/takeAPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="164dp"
+        android:id="@+id/goToPic"
+        android:onClick="goToPictureActivity"/>
+
 </android.support.design.widget.CoordinatorLayout>
