@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by Alexis Dewaele on 07/10/2016.
+ * This class adapts the various fragments to wiewpagers
  */
 
 public class ViewPagerAdapter extends FragmentPagerAdapter{
@@ -20,7 +21,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(int position) throws IllegalArgumentException {
         return mFragmentList.get(position);
     }
 

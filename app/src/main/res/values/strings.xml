@@ -6,9 +6,13 @@
     <string name="my_stories">My Stories</string>
     <string name="camera">Camera</string>
     <string name="stories_around">Stories around me</string>
+    <string name="next_activity">Next</string>
     <string name="captureButton">Capture</string>
     <string name="takeAPic">Take A Pic</string>
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="rotate">Rotate</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="button_to_map">Go To Map</string>
+    <string name="gps_not_permitted">The app is unable to work without this permission</string>
 </resources>
