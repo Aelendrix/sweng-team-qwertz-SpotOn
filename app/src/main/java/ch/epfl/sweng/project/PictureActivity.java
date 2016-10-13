@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,6 +25,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.sql.Timestamp;
+
+import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
+import ch.epfl.sweng.project.backgroudapplication.PhotoFile;
+import ch.epfl.sweng.project.backgroudapplication.PhotoList;
+
+import static java.lang.Long.max;
 
 /**
  * Activity that will allow the user to access the camera and take a picture to integrate
@@ -43,6 +52,8 @@ public class PictureActivity extends AppCompatActivity {
     private ImageView mPic;
     private LocationManager mLocationManager;
 
+    public static PhotoList mSavedPhotos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +63,8 @@ public class PictureActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mPic = (ImageView) findViewById(R.id.image_view);
+
+        mSavedPhotos = new PhotoList();
 
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -132,6 +145,32 @@ public class PictureActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, permissionRequested, REQUEST_IMAGE_CAPTURE);
         }
     }
+
+    /**
+     * Saves the last picture that has been took in a PhotoList
+     * @param view
+     */
+
+    public void savePicture(View view){
+        EditText secondsToKeep = (EditText) findViewById(R.id.askHowMuchTime);
+        long millisecondsToKeep = Long.parseLong(secondsToKeep.getText().toString()) * 1000;
+        
+        PhotoFile photo = new PhotoFile( mPic.getDrawable(),new Timestamp(System.currentTimeMillis()), millisecondsToKeep);
+        mSavedPhotos.addPhoto(photo);
+        Intent service = new Intent(this, PassedTimestampFileDeletionService.class);
+        startService(service);
+    }
+
+    /**
+     * Launch the activity which show the pictures that have been saved
+     * @param view
+     */
+    public void goToSeePicturesActivity(View view){
+        Intent intent = new Intent(this, SeePicturesActivity.class);
+        startActivity(intent);
+    }
+
+
 
     /**
      * Method called if the user never gave the permission. It checks the user's answer

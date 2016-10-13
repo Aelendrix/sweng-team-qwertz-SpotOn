@@ -6,6 +6,8 @@ import android.content.Intent;
 import java.sql.Timestamp;
 import java.util.List;
 
+import ch.epfl.sweng.project.PictureActivity;
+
 
 /**
  * Created by Bruno on 11/10/2016.
@@ -29,19 +31,18 @@ public class PassedTimestampFileDeletionService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent){
-        PhotoList photoFiles = new PhotoList();
-        int photoListSize = photoFiles.size();
-
-        while(photoListSize > 0){
-            mTimestamp = new Timestamp(System.currentTimeMillis());
-            List<PhotoFile> photos = photoFiles.getPhotos();
-            for(int i = 0; i < photoListSize; ++i){
+        /*
+        While there are photos in the list, we check for each one if its
+        delete timestamp is not already passed. If so, we delete it.
+         */
+        while(PictureActivity.mSavedPhotos.size() > 0){
+            mTimestamp.setTime(System.currentTimeMillis());
+            List<PhotoFile> photos = PictureActivity.mSavedPhotos.getPhotos();
+            for(int i = 0; i < PictureActivity.mSavedPhotos.size(); ++i){
                 if(photos.get(i).getDeletionTime() < mTimestamp.getTime()){
-                    photoFiles.deletePhoto(i);
+                    PictureActivity.mSavedPhotos.deletePhoto(i);
                 }
             }
-            photoFiles = new PhotoList();
-            photoListSize = photoFiles.size();
         }
     }
 
