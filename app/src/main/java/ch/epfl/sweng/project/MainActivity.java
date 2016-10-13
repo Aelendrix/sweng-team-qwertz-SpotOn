@@ -8,16 +8,12 @@ package ch.epfl.sweng.project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
-
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
 
 // Add this to the header of your file:
 import com.facebook.FacebookSdk;
@@ -32,12 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     private LoginButton loginButton;
 
+    private CallbackManager callbackManager;
+
+
     public static int add(final int a, final int b) {
         return a + b;
     }
-
-
-    private CallbackManager callbackManager;
 
 
     @Override
@@ -52,47 +48,24 @@ public class MainActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
 
-        // Useless in our case but will be useful for next activity launched
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        // App code
-                        TextView mainText = (TextView) findViewById(R.id.mainTextView);
-                        mainText.setText("success yesss");
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        // App code
-                    }
-                });
-
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
-                TextView mainText = (TextView) findViewById(R.id.mainTextView);
-                mainText.setText("success");
-
+                // Once the user is connected
                 goToMainMenu();
             }
 
             @Override
             public void onCancel() {
-                // App code
+                // TODO: Add code
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // App code
+                // TODO: Add code
             }
         });
 
@@ -107,11 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void goToMainMenu() {
+        // start a new activity
         Intent intent = new Intent(this, MainMenu.class);
-        String username = "mlb";
-        intent.putExtra(EXTRA_MESSAGE, username);
         startActivity(intent);
 
     }
-
 }

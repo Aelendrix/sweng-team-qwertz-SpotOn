@@ -28,7 +28,7 @@ Lastly, most popular nearby posts would be displayed on a map in-app.
 
 ### bonus features
 
-11. User can post a limited amount of picture (in fonction of karma and picture opened)
+11. User can post a limited amount of picture (in function of karma and picture opened)
 12. User can report offensive picture triggering him
 13. User can comments picture
 14. User can apply filters to his photos

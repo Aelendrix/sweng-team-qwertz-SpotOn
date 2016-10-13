@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">SpotOn</string>
     <string name="mainLoginTextView">Please sign into access our awesome app</string>
-    <string name="mainLoginButton">Sign in</string>
-    <string name="mainLogoutButton">Sign out</string>
     <string name="facebook_app_id">348409365495965</string>
-    <!--<string name="default_web_client_id">468206593589-cjekgdcppde04tj1n0dv5i09mq922b96.apps.googleusercontent.com</string>-->
 </resources>
