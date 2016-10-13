@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "571464024212",
+    "firebase_url": "https://spotonauthentication.firebaseio.com",
+    "project_id": "spotonauthentication",
+    "storage_bucket": "spotonauthentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571464024212:android:3d283d7b9bf3b490",
+        "android_client_info": {
+          "package_name": "ch.epfl.sweng.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571464024212-olgkfp38rks1gg8gpt99i0u1v1eg797c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN-OVHSKCkaEEr0hBmFCy07A27A-53T18"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

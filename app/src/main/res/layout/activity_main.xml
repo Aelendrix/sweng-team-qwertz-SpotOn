@@ -13,5 +13,47 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:id="@+id/mainLoginTextView"
+        android:text="@string/mainLoginTextView"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/holo_orange_dark"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="62dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/mainEmailEditText"
+        android:hint="Email address"
+        android:layout_below="@+id/mainLoginTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/mainPasswordEditText"
+        android:hint="Password"
+        android:layout_marginTop="48dp"
+        android:layout_alignTop="@+id/mainEmailEditText"
+        android:layout_alignLeft="@+id/mainEmailEditText"
+        android:layout_alignStart="@+id/mainEmailEditText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainLoginButton"
+        android:text="@string/mainLoginButton"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/mainPasswordEditText"
+        android:layout_centerHorizontal="true"
+        android:onClick="signIn"/>
+
 </RelativeLayout>
