@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -68,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: Add code
             }
         });
+
+        // Test if a user is already logged on when creating the MainActivity
+        if(AccessToken.getCurrentAccessToken()!= null){
+            goToMainMenu();
+        }
 
     }
 
