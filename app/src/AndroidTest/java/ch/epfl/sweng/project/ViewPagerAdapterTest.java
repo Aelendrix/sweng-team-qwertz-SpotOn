@@ -1,6 +1,7 @@
 package ch.epfl.sweng.project;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Test;
 
@@ -8,12 +9,12 @@ import org.junit.Test;
  * Created by Alexis Dewaele on 13/10/2016.
  */
 
-public class ViewPagerAdapterTest {
+public class ViewPagerAdapterTest extends AppCompatActivity {
 
     @Test
     public void getItem_Valid_Fragments_ReturnsGoodValues() {
-        /*
-        ViewPagerAdapter adapter = new ViewPagerAdapter();
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new Fragment(), "Frag 1");
         adapter.addFragment(new Fragment(), "Frag 2");
         adapter.addFragment(new Fragment(), "Frag 3");
@@ -22,6 +23,6 @@ public class ViewPagerAdapterTest {
         assert(adapter.getPageTitle(0) == "Frag 1");
         assert(adapter.getPageTitle(1) == "Frag 2");
         assert(adapter.getPageTitle(2) == "Frag 3");
-        */
+
     }
 }

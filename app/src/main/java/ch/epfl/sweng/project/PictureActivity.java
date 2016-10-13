@@ -12,7 +12,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ public class PictureActivity extends AppCompatActivity {
 
     //objet representing the phone localisation
     Location mPhoneLocation;
+    private Toolbar mToolbar;
 
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     //latitude and longitude, not always assigned
@@ -43,6 +47,10 @@ public class PictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mPic = (ImageView) findViewById(R.id.image_view);
 
         // Acquire a reference to the system Location Manager
@@ -75,6 +83,16 @@ public class PictureActivity extends AppCompatActivity {
         catch(SecurityException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+        This method uses the options menu when this activity is launched
+         */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options, menu);
+        return true;
     }
 
     //function called when the locationListener see a location change

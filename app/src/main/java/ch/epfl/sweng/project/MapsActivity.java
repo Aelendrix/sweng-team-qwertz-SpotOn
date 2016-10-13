@@ -156,14 +156,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .snippet("nice place"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
     }
-
-    /*
-        This method uses the options menu when this activity is launched
-         */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
-        return true;
-    }
 }
