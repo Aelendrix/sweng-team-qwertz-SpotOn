@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -12,8 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-//import android.support.design.widget.TabLayout;
-
 
 /**
  * Your app's main activity.
@@ -21,12 +20,16 @@ import android.widget.Toast;
 public final class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_FINE_LOCALISATION = 9;
-
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -48,7 +51,9 @@ public final class MainActivity extends AppCompatActivity {
         startActivity(pictureIntent);
     }
 
-
+    /*
+        This method uses the options menu when this activity is launched
+         */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
