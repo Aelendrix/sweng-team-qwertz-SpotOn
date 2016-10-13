@@ -1,24 +1,25 @@
 package ch.epfl.sweng.project;
 
 /**
- * Created by quentin on 13.10.16.
+ * This class is a Dummy key/value pair data type for demonstration purpose in database query.
+ * broken as of now
  */
 
 public class DummyDataType_KeyVal {
-    private String key;
-    private String value;
+    private String cle;
+    private String val;
     public DummyDataType_KeyVal(){
-        key="";
-        value="";
+        cle="";
+        val="";
     }
     public DummyDataType_KeyVal(String k, String v){
-        this.key=new String(k);
-        this.value=new String(v);
+        this.cle=new String(k);
+        this.val=new String(v);
     }
     public String getKey(){
-        return key;
+        return cle;
     }
     public String getValue(){
-        return value;
+        return val;
     }
 }
