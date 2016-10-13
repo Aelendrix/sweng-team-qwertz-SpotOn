@@ -6,6 +6,7 @@
     <string name="my_stories">My Stories</string>
     <string name="camera">Camera</string>
     <string name="stories_around">Stories around me</string>
+    <string name="next_activity">Next</string>
     <string name="captureButton">Capture</string>
     <string name="takeAPic">Take A Pic</string>
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>

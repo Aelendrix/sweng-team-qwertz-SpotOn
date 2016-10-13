@@ -2,18 +2,16 @@ package ch.epfl.sweng.project;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.widget.Toast;
-
-//import android.support.design.widget.TabLayout;
 
 
 /**
@@ -21,31 +19,19 @@ import android.widget.Toast;
  */
 public final class MainActivity extends AppCompatActivity {
 
-    /*
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    */
-    //gps permission tag
     private final int REQUEST_FINE_LOCALISATION = 9;
-
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-/*
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        */
     }
 
     @Override
@@ -66,19 +52,19 @@ public final class MainActivity extends AppCompatActivity {
         startActivity(pictureIntent);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MyStoriesFragment(), "My Stories");
-        adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new StoriesAroundMeFragment(), "Stories around me");
-        viewPager.setAdapter(adapter);
-    }
-
+    /*
+        This method uses the options menu when this activity is launched
+         */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
+    }
+
+    public void goToTabActivity(View view) {
+        Intent intent = new Intent(this, TabActivity.class);
+        startActivity(intent);
     }
 
     public void goToMapsActivity(View view){
