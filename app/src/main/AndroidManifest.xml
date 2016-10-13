@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
+
         <service android:name=".backgroudapplication.PassedTimestampFileDeletionService"/>
 =======
         <activity android:name=".PictureActivity" />
@@ -49,7 +49,6 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"/>
->>>>>>> refs/remotes/origin/master
     </application>
 
 </manifest>
