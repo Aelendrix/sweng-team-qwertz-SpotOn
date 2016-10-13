@@ -70,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 60 * 1000; //1 Minutes
+        final int TIME_BETWEEN_LOCALISATION = 1000; //1 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
@@ -101,11 +101,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .position(mPhoneLatLng)
                                         .title("My position")
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
                             } else {
                                 mLocationMarker.setPosition(mPhoneLatLng);
                             }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
-
                         }
                     }
                 }
