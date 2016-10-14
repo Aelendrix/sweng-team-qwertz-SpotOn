@@ -3,9 +3,37 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:text="database query "
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/dummytextView" />
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="37dp"
+            android:id="@+id/keyTextField"
+            android:hint="@string/queryTextFieldHint" />
+
+        <Button
+            android:text="@string/queryDatabase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/keyTextField"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="23dp"
+            android:id="@+id/launchQueryDBButton"
+            android:onClick="queryDB" />
+
+        <TextView
+            android:text="@string/blankQueryResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/QueryResultView" />
+    </RelativeLayout>
 </LinearLayout>

@@ -13,6 +13,7 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -30,7 +31,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PictureActivity" />
+
+
+        <service android:name=".backgroudapplication.PassedTimestampFileDeletionService" />
+
+        <activity android:name=".TabActivity" />
+
+        <activity android:name=".PictureActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>
+
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -53,6 +64,13 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        >>>>>>> refs/remotes/origin/master
+        <activity
+            android:name=".SeePicturesActivity"
+            android:label="@string/title_activity_see_pictures"
+            android:theme="@style/AppTheme"></activity>
+
     </application>
 
 </manifest>

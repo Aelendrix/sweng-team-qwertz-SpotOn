@@ -6,7 +6,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     Location mPhoneLocation;
+
 
     private static final LatLng DEFAULT_LOCATION = new LatLng(50,10);
     //fake Data
@@ -47,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -70,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 60 * 1000; //1 Minutes
+        final int TIME_BETWEEN_LOCALISATION = 1000; //1 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
@@ -101,11 +107,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .position(mPhoneLatLng)
                                         .title("My position")
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
                             } else {
                                 mLocationMarker.setPosition(mPhoneLatLng);
                             }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
-
                         }
                     }
                 }
