@@ -26,6 +26,9 @@ import java.util.HashMap;
 
 public class DatabaseQueryActivity extends AppCompatActivity {
 
+    // The path to the root of the stored key/value pairs in the daabase
+    private final String PATH_TO_KEYVAL_ROOT = "keyVal";
+
     // Firebase instance variables
     private DatabaseReference myDBref;
 
@@ -33,21 +36,36 @@ public class DatabaseQueryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database_query);
-        myDBref = FirebaseDatabase.getInstance().getReference("keyVal");
+        myDBref = FirebaseDatabase.getInstance().getReference(PATH_TO_KEYVAL_ROOT);
         //populateDB(); // to fill the database with java object (broken now)
     }
 
+    /**
+     *  Reads the content of the EditText keyTextField and returns it
+     * @return the content of the EditText keyTextField
+     */
+    public String readQueryKeyword(){
+        EditText keyTextField = (EditText) findViewById(R.id.keyTextField);
+        return keyTextField.getText().toString();
+    }
+
+    /**
+     * Sets the textField that is supposed to display the result of the query to result
+     * @param result : the string that the textField should display
+     */
     public void setQueryResultTextField(String result){
         TextView valueDisplay = (TextView) findViewById((R.id.QueryResultView));
         valueDisplay.setText(result);
     }
 
+    /**
+     *  queries the database for the keyword/text that is inside keyTextField
+     */
     public void queryDB(View v) {
         //retrieve query keyword
-        EditText keyTextField = (EditText) findViewById(R.id.keyTextField);
-        final String queryKey = keyTextField.getText().toString();
+        final String queryKey = readQueryKeyword();
 
-        System.out.println("querying "+queryKey);
+        // create a new Query object, and add a listener to it. The onDataChange method will be executed once
         myDBref.orderByChild("cle").equalTo(queryKey).addListenerForSingleValueEvent(
                 new ValueEventListener() {
             @Override
@@ -72,36 +90,12 @@ public class DatabaseQueryActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                // in case we get a database error
             }
         });
-
-        //old code using Query class
-        /*Query query = myDBref.orderByChild("cle").equalTo(queryKey);
-        query.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String queryResult = ((HashMap<String, String>)dataSnapshot.getValue()).get("val");
-                setQueryResultTextField(queryResult);
-            }
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                this.onChildChanged(dataSnapshot, s);
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
     }
 
-    // to fill the database with java objects (broken for now)
+    // Will be used in the future to write Java objects on the database
     /*private void populateDB(){
         HashMap<String, DummyDataType_KeyVal> dummyData = new HashMap<>();
         dummyData.put("1", new DummyDataType_KeyVal("Hello","World"));
