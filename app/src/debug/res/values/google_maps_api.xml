@@ -1,0 +1,9 @@
+<resources>
+    <!--
+    Before you run your application, you need a Google Maps API key.
+    Api Key is created and linked to the account: swengqwertz@gmail.com
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyAW8MVNDCtkRRoQ86cBhkD0Q6hTKVX9OGo
+    </string>
+</resources>
