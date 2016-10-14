@@ -13,6 +13,10 @@
     <string name="title_activity_maps">Map</string>
     <string name="button_to_map">Go To Map</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
+    <!-- Strings related to the queryDatabase activity, which is temporary. To be removed when queryDatabase activity is removed -->
     <string name="queryDatabase">Query Database</string>
     <string name="title_activity_DBquery">Query Database</string>
+    <string name="launchQueryButton">Search database</string>
+    <string name="queryTextFieldHint">Enter a key to lookup</string>
+    <string name="blankQueryResult">...</string>
 </resources>
