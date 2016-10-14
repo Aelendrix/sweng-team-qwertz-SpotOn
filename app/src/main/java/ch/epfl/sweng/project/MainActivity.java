@@ -25,9 +25,7 @@ import com.facebook.appevents.AppEventsLogger;
  */
 public class MainActivity extends AppCompatActivity {
 
-    public final static String EXTRA_MESSAGE = "ch.epfl.sweng.project.MESSAGE";
-
-    private LoginButton loginButton;
+    private LoginButton mainLoginButton;
 
     private CallbackManager callbackManager;
 
@@ -49,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
 
-        LoginButton loginButton = (LoginButton) findViewById(R.id.mainLoginButton);
+        LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void goToMainMenu() {
+    private void goToMainMenu() {
         // start a new activity
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
