@@ -147,14 +147,21 @@ public class PictureActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves the last picture that has been took in a PhotoList
+     * Saves the last picture that has been took in a PhotoList and lauch a service that
+     * deletes to old photos
      * @param view
      */
 
     public void savePicture(View view){
         EditText secondsToKeep = (EditText) findViewById(R.id.askHowMuchTime);
-        long millisecondsToKeep = Long.parseLong(secondsToKeep.getText().toString()) * 1000;
-        
+
+        //Control if there is an input, else put some default value
+        long millisecondsToKeep = 5000;
+        String secondsToKeepString = secondsToKeep.getText().toString();
+        if(! secondsToKeepString.equals("")) {
+            millisecondsToKeep = Long.parseLong(secondsToKeepString) * 1000;
+        }
+        //create a new PhotoFile and add it to the list, and then start the deleting service
         PhotoFile photo = new PhotoFile( mPic.getDrawable(),new Timestamp(System.currentTimeMillis()), millisecondsToKeep);
         mSavedPhotos.addPhoto(photo);
         Intent service = new Intent(this, PassedTimestampFileDeletionService.class);
