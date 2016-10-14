@@ -40,8 +40,6 @@ repositories {
     mavenCentral()
 }
 dependencies {
-
-
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -52,7 +50,23 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.google.android.gms:play-services-maps:9.6.1'
     androidTestCompile 'junit:junit:4.12'
+
+    // for firebase
+    compile 'com.google.firebase:firebase-core:9.6.1'
+    compile 'com.google.firebase:firebase-database:9.6.1'
+    compile 'com.google.firebase:firebase-auth:9.6.1'
+    compile 'com.google.firebase:firebase-storage:9.6.1'
 }
+
+// for firebase
+apply plugin: 'com.google.gms.google-services'
+
+
+
+
+
+
+
 
 // Do not change the below code unless you're sure you know what you're doing
 // Also make sure Jenkins config is synced with this one.

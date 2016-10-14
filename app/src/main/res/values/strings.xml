@@ -20,5 +20,11 @@
     <string name="savePicButton">Save Picture</string>
     <string name="seePictures">See Saved Pictures</string>
     <string name="title_activity_see_pictures">SeePicturesActivity</string>
+    <!-- Strings related to the queryDatabase activity, which is temporary. To be removed when queryDatabase activity is removed -->
+    <string name="queryDatabase">Query Database</string>
+    <string name="title_activity_DBquery">Query Database</string>
+    <string name="launchQueryButton">Search database</string>
+    <string name="queryTextFieldHint">Enter a key to lookup</string>
+    <string name="blankQueryResult">...</string>
 </resources>
 

@@ -18,31 +18,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
-    <Button
-        android:text="@string/next_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="14dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/nextButton"
-        android:onClick="goToTabActivity"/>
-
-    <Button
-        android:text="@string/button_to_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/nextButton"
-        android:layout_toLeftOf="@+id/nextButton"
-        android:layout_toStartOf="@+id/nextButton"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="20dp"
-        android:id="@+id/goToMapButton"
-        android:onClick="goToMapsActivity"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,6 +50,40 @@
         android:onClick="goToPictureActivity"
         android:layout_below="@+id/mainLoginButton"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/queryDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/goToMapButton"
+        android:layout_alignLeft="@+id/mainLoginTextView"
+        android:layout_alignStart="@+id/mainLoginTextView"
+        android:id="@+id/queryDatabaseButton"
+        android:onClick="goToQueryDatabaseActivity"
+        android:layout_toStartOf="@+id/goToPic"
+        android:layout_toLeftOf="@+id/goToPic" />
+
+    <Button
+        android:text="@string/button_to_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/goToMapButton"
+        android:onClick="goToMapsActivity"
+        android:layout_alignBaseline="@+id/nextButton"
+        android:layout_alignBottom="@+id/nextButton"
+        android:layout_toRightOf="@+id/queryDatabaseButton"
+        android:layout_toEndOf="@+id/queryDatabaseButton" />
+
+    <Button
+        android:text="@string/next_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:id="@+id/nextButton"
+        android:onClick="goToTabActivity"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/goToMapButton"
+        android:layout_toEndOf="@+id/goToMapButton" />
 
 
 </RelativeLayout>
