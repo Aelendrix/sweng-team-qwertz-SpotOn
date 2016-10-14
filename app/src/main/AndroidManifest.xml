@@ -31,10 +31,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TabActivity"></activity>
+
+
+        <service android:name=".backgroudapplication.PassedTimestampFileDeletionService" />
+
+        <activity android:name=".TabActivity" />
+
         <activity android:name=".PictureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
+
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -50,7 +56,12 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"/>
+            android:label="@string/title_activity_maps" />
+        >>>>>>> refs/remotes/origin/master
+        <activity
+            android:name=".SeePicturesActivity"
+            android:label="@string/title_activity_see_pictures"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
