@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_tab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.project.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+
+    <Button
+        android:text="@string/next_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/nextButton"
+        android:onClick="goToTabActivity"/>
+
+    <Button
+        android:text="@string/button_to_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/nextButton"
+        android:layout_toLeftOf="@+id/nextButton"
+        android:layout_toStartOf="@+id/nextButton"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:id="@+id/goToMapButton"
+        android:onClick="goToMapsActivity"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,22 +56,25 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="62dp" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="80dp"
-        android:id="@+id/mainTextView" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/mainLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/mainLoginTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="94dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/takeAPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="99dp"
+        android:id="@+id/goToPic"
+        android:onClick="goToPictureActivity"
+        android:layout_below="@+id/mainLoginButton"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>
