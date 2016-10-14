@@ -8,3 +8,6 @@
 /.idea/gradle.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/*
+!/.idea/SwEng.xml
+!/.idea/codeStyleSettings.xml
