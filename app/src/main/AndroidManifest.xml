@@ -13,6 +13,7 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -31,10 +32,15 @@
             </intent-filter>
         </activity>
 
+
         <service android:name=".backgroudapplication.PassedTimestampFileDeletionService" />
 
         <activity android:name=".TabActivity" />
-        <activity android:name=".PictureActivity" />
+
+        <activity android:name=".PictureActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>
+
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

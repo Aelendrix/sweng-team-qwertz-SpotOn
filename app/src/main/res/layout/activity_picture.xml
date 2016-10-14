@@ -28,6 +28,16 @@
         android:layout_gravity="center_horizontal"
         android:onClick="dispatchTakePictureIntent"/>
 
+    <Button
+        android:text="@string/rotate"
+        android:layout_width="147dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="rotatePicture"
+        android:id="@+id/rotateButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
     <ImageView
         android:contentDescription="@string/pictureTaken"
         android:layout_width="350dp"
@@ -57,5 +67,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/seePictures"
         android:onClick="goToSeePicturesActivity"/>
+
 
 </LinearLayout>
