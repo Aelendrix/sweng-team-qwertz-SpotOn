@@ -1,4 +1,20 @@
+/** Use of code that can be found here:
+ * https://developers.facebook.com/docs/facebook-login/android/
+ *
+ */
+
 package ch.epfl.sweng.project;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
+// Add this to the header of your file:
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,18 +35,56 @@ import android.widget.Toast;
  */
 public final class MainActivity extends AppCompatActivity {
 
+    private LoginButton mainLoginButton;
+
+    private CallbackManager callbackManager;
+
     private final int REQUEST_FINE_LOCALISATION = 9;
     private Toolbar mToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize the SDK before executing any other operations,
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
         setContentView(R.layout.activity_main);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        callbackManager = CallbackManager.Factory.create();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
+
+        mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            // Process depending on the result of the authentication
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // Once the user is connected
+                goToMainMenu();
+            }
+
+            @Override
+            public void onCancel() {
+                // TODO: Add code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // TODO: Add code
+            }
+        });
+
+        // Test if a user is already logged on when creating the MainActivity
+        if(AccessToken.getCurrentAccessToken()!= null) {
+            goToMainMenu();
+        }
+
+        //useless ?
+        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(mToolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -39,11 +93,26 @@ public final class MainActivity extends AppCompatActivity {
         super.onStart();
         //check every time the MainActivity is started if we have the permission: ACCESS_FINE_LOCATION
         // and throw the user input in onRequestPermissionsResult
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d("MainActivity","No Permission");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCALISATION);
         }
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private void goToMainMenu() {
+        // start a new activity
+        Intent intent = new Intent(this, MainMenu.class);
+        startActivity(intent);
     }
 
     public void goToPictureActivity(View view){
