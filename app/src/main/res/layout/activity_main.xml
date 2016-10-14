@@ -18,7 +18,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
-
     <Button
         android:text="@string/next_activity"
         android:layout_width="wrap_content"
@@ -33,16 +32,6 @@
         android:onClick="goToTabActivity"/>
 
     <Button
-        android:text="@string/takeAPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="164dp"
-        android:id="@+id/goToPic"
-        android:onClick="goToPictureActivity"/>
-
-    <Button
         android:text="@string/button_to_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,4 +42,39 @@
         android:layout_marginEnd="20dp"
         android:id="@+id/goToMapButton"
         android:onClick="goToMapsActivity"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainLoginTextView"
+        android:text="@string/mainLoginTextView"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/holo_orange_dark"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="62dp" />
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/mainLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/mainLoginTextView"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/takeAPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="99dp"
+        android:id="@+id/goToPic"
+        android:onClick="goToPictureActivity"
+        android:layout_below="@+id/mainLoginButton"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>
