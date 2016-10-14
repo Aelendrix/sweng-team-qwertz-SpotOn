@@ -23,7 +23,7 @@ import com.facebook.appevents.AppEventsLogger;
 /**
  * Your app's main activity.
  */
-public class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity {
 
     private LoginButton mainLoginButton;
 
