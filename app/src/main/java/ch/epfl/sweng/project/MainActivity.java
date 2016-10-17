@@ -40,7 +40,6 @@ public final class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
 
     private final int REQUEST_FINE_LOCALISATION = 9;
-    private Toolbar mToolbar;
 
 
     @Override
@@ -62,7 +61,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected
-                goToMainMenu();
+                goToTabActivity();
             }
 
             @Override
@@ -78,13 +77,13 @@ public final class MainActivity extends AppCompatActivity {
 
         // Test if a user is already logged on when creating the MainActivity
         if(AccessToken.getCurrentAccessToken()!= null) {
-            goToMainMenu();
+            goToTabActivity();
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        //useless ?
-        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(mToolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
     }
 
@@ -109,12 +108,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
 
-    private void goToMainMenu() {
-        // start a new activity
-        Intent intent = new Intent(this, MainMenu.class);
-        startActivity(intent);
-    }
-
     public void goToPictureActivity(View view){
         //launch the PictureActivity
         Intent pictureIntent = new Intent(this, PictureActivity.class);
@@ -131,7 +124,7 @@ public final class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void goToTabActivity(View view) {
+    public void goToTabActivity() {
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
