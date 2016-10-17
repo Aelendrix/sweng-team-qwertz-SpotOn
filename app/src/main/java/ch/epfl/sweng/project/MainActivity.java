@@ -29,6 +29,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
+
 
 /**
  * Your app's main activity.
@@ -46,6 +48,9 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
+        startService(deleteFileService);
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
