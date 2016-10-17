@@ -1,13 +1,19 @@
 package ch.epfl.sweng.project;
 
 
+import android.graphics.Bitmap;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.sql.Timestamp;
+
+import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 public class PhotoObject {
 
     private String name;
     private Timestamp createdDate;
-    private Timestamp timeStamp;
+    private Timestamp expireDate;
     private double latitude;
     private double longitude;
     private int pictureId;
@@ -16,19 +22,43 @@ public class PhotoObject {
     private String fullImgLink;
     private String thumbImgLink;
 
-    Image thumbnailImg;
+    Bitmap thumbnailImg;
     boolean hasThumbImage;
-    Image fullSizeImg;
-    boolean hasFullSizedImage;
+    Bitmap fullSizeImg;
+    boolean hasFullSizeImage;
 
-    public sendToDatabase() {
-        //send fullSizeImage to fileServer
-        fullSizeImg = null;
-        hasFullSIzeImage = false;
+    public PhotoObject(){
+        //constructor needed for firebase object upload
     }
 
-    public Image getFullSizeImage() {
-        if (hasFullSizedImage) {
+    public PhotoObject(String name,Timestamp createdDate, Timestamp expireDate,
+                       double latitude, double longitude, int pictureId, int radius,
+                       int user, String fullImgLink, String thumbImgLink){
+        this.name = name;
+        this.createdDate = createdDate;
+        this.expireDate = expireDate;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pictureId = pictureId;
+        this.radius = radius;
+        this.user = user;
+        this.fullImgLink=fullImgLink;
+        this.thumbImgLink=thumbImgLink;
+    }
+
+    public boolean sendToDatabase() {
+        //send fullSizeImage to fileServer
+        fullSizeImg = null;
+        hasFullSizeImage = false;
+        //return false if an error occured
+        return true;
+    }
+
+    //ALL THE GETTER FUNCTIONS
+
+    //TODO: do we constrain here if you location is out of the range of the picture?
+    public Bitmap getFullSizeImage() {
+        if (hasFullSizeImage) {
             return fullSizeImg;
         }else{
         //fetch full size image from file server
@@ -37,17 +67,44 @@ public class PhotoObject {
         }
     }
 
-
-    public PhotoObject(){
-    //constructor needed for firebase object upload
+    public String getPhotoName(){
+        return name;
+    }
+    public Timestamp getCreatedDate(){
+      return createdDate;
+    }
+    public Timestamp getExpireDate(){
+        return expireDate;
+    }
+    public double getLatitude(){
+        return latitude;
+    }
+    public double getLongitude(){
+        return longitude;
+    }
+    public int getPictureId(){
+        return pictureId;
+    }
+    public int getRadius(){
+     return radius;
+    }
+    public int getAuthorId(){
+        return user;
+    }
+    public String getFullImgLink(){
+        return fullImgLink;
+    }
+    public String getThumbImgLink(){
+        return thumbImgLink;
     }
 
-    public PhotoObject(String name){
+    //HELPER FUNCTION
 
+    //return true if the coordinates in parameters are in the scope of the picture
+    public boolean isInPictureCircle(double paramLat, double paramLng){
+        return computeDistanceBetween(
+                new LatLng(latitude, longitude),
+                new LatLng( paramLat,paramLng )
+        ) <= radius;
     }
-
-
-    //GETTER
-
-
 }
