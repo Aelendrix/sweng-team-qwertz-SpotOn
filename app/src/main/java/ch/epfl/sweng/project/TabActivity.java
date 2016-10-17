@@ -21,26 +21,26 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
-    // The path to the root of the stored key/value pairs in the daabase
-    private final String PATH_TO_KEYVAL_ROOT = "pictureMetadata";
-
-    // Firebase instance variables
-    private DatabaseReference myDBref;
+    // The path to the root of the stored pictures Data in the database
+    private final String PATH_TO_PICTURE_DATA = "pictureMetadata";
     //DB
-    private LocalDatabase mDB = new LocalDatabase();
+    private LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
+    private final int TIME_BETWEEN_EXEC = 60*1000; //1 minutes
     private Timer mTimer;
+    //task that will be run every x Time.
     private TimerTask mTimerTask = new TimerTask() {
 
         @Override
         public void run() {
-           refreshDB(mDB);
+            //refresh the local database every minutes
+            //TODO: when the fragments are linked to this activity, move localisation service here and filter our localDB
+            mDB.refresh();
+            refreshMapMarkers();
         }
     };
-    //refresh the local database every minutes
-    public void refreshDB(LocalDatabase DB){
-
-
+    //will refresh the mapactivity fragments in function of the localDatabase
+    private void refreshMapMarkers(){
     }
 
     @Override
@@ -84,8 +84,18 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
     @Override
     protected void onStart() {
         super.onStart();
-        //start a looped runnable code every minutes
-
+        //start a looped runnable code every X minutes
+        if(mTimer==null){
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(mTimerTask, 0, TIME_BETWEEN_EXEC);
+        }
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        //stop the timer
+        mTimer.cancel();
+        mTimer = null;
     }
 
     public void onFragmentInteraction(Uri uri) {
