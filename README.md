@@ -26,15 +26,17 @@ Lastly, most popular nearby posts would be displayed on a map in-app.
 9. Instead of pins, a "color gradient" indicates the amount of photos accessible at a given location -10H
 10. User can apply text message to his photos (snapchat-like) -8H
 
+
 ### bonus features
 
-11. User can post a limited amount of picture (in fonction of karma and picture opened) -5H
+11. User can post a limited amount of picture (in function of karma and picture opened) -5H
 12. User can report offensive pictures -4H
 13. User can comments picture -20H
 14. User can apply filters to his photos -30H
 15. User can share videos too -30H
 16. Application can compute an itinerary to a Spot -20H
 17. friends in-app 10H
+
 
 
 

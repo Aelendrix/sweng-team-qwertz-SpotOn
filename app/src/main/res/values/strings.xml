@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SpotOn</string>
+    <string name="mainLoginTextView">Please sign into access our awesome app</string>
+    <string name="facebook_app_id">348409365495965</string>
     <string name="action_settings">Settings</string>
     <string name="options_menu">Options Menu</string>
     <string name="about_menu">About</string>
@@ -18,4 +20,11 @@
     <string name="savePicButton">Save Picture</string>
     <string name="seePictures">See Saved Pictures</string>
     <string name="title_activity_see_pictures">SeePicturesActivity</string>
+    <!-- Strings related to the queryDatabase activity, which is temporary. To be removed when queryDatabase activity is removed -->
+    <string name="queryDatabase">Query Database</string>
+    <string name="title_activity_DBquery">Query Database</string>
+    <string name="launchQueryButton">Search database</string>
+    <string name="queryTextFieldHint">Enter a key to lookup</string>
+    <string name="blankQueryResult">...</string>
 </resources>
+
