@@ -9,11 +9,39 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class TabActivity extends AppCompatActivity implements MyStoriesFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener, StoriesAroundMeFragment.OnFragmentInteractionListener {
 
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+
+    // The path to the root of the stored key/value pairs in the daabase
+    private final String PATH_TO_KEYVAL_ROOT = "pictureMetadata";
+
+    // Firebase instance variables
+    private DatabaseReference myDBref;
+    //DB
+    private LocalDatabase mDB = new LocalDatabase();
+    //TimerTask
+    private Timer mTimer;
+    private TimerTask mTimerTask = new TimerTask() {
+
+        @Override
+        public void run() {
+           refreshDB(mDB);
+        }
+    };
+    //refresh the local database every minutes
+    public void refreshDB(LocalDatabase DB){
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +78,13 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
             }
         });
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //start a looped runnable code every minutes
 
     }
 
