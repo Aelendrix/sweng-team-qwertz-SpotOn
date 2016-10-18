@@ -40,14 +40,21 @@ public class PhotoObject {
         // default constructor needed for firebase object upload
     }
 
-    public PhotoObject(String name,Timestamp createdDate, double latitude, double longitude, int radius, int userID){
+    public PhotoObject(Bitmap fullSizePic, String name,Timestamp createdDate, double latitude, double longitude, int radius, int userID){
+        this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
+        this.hasFullSizeImage=true;
+
         this.name = name;
         this.createdDate = createdDate;
-        expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
+        this.expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         this.latitude = latitude;
         this.longitude = longitude;
         this.radius = radius;
         this.userID = userID;
+        this.thumbnail = createThumbnail(fullSizeImage);
+
+        this.hasFullSizeImageLink=false;
+        this.hasPictureId=false;
     }
 
     public boolean sendToDatabase() {
