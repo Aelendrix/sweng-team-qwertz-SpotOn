@@ -48,21 +48,21 @@ public class PhotoObjectStoredInDatabase {
 
 // PUBLIC METHODS OFFERED BY THIS CLASS
 
-    public PhotoObject convertToPhotoObject(){
+/*    public PhotoObject convertToPhotoObject(){
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(this.thumbnailAsString);
         return new PhotoObject(thumbnail, this.authorID, this.pictureId, this.photoName, this.createdDate,
                 this.expireDate, this.latitude, this.longitude, this.radius, this.DBreference.getDatabase());
-    }
+    }*/
 
 
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
 
-    private Bitmap convertStringToBitmapImage(String s){
+/*    private Bitmap convertStringToBitmapImage(String s){
         byte[] stringByteArray = Base64.decode(s, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(stringByteArray, 0, stringByteArray.length);
-    }
+    }*/
 
 
 // GETTERS REQUIRED (PUBLIC) BY FIREBASE

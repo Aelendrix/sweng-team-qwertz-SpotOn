@@ -113,8 +113,11 @@ public class PhotoObject {
 //FUNCTIONS PROVIDED BY THIS CLASS
 
     public void sendToDatabase(){
+        System.out.println("called send fonction");
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
+        System.out.println("converted to database object - pictureID="+DBobject.getPictureId());
         DBreference.child(this.pictureId).setValue(DBobject);
+        System.out.println("sent");
     }
 
     //return true if the coordinates in parameters are in the scope of the picture
