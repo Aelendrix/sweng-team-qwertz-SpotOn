@@ -2,10 +2,12 @@ package ch.epfl.sweng.project;
 
 
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
@@ -13,45 +15,44 @@ public class PhotoObject {
 
     // in ms
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; //24H
+    private final int THUMBNAIL_SIZE = 128; // in pixels
 
     private String name;
     private Timestamp createdDate;
     private Timestamp expireDate;
     private double latitude;
     private double longitude;
-    private int pictureId;
     private int radius;
-    private int user;
-    private String fullImgLink;
-    private String thumbImgLink;
+    private int userID;
 
-    Bitmap thumbnailImg;
-    boolean hasThumbImage;
-    Bitmap fullSizeImg;
+    Bitmap fullSizeImage;
     boolean hasFullSizeImage;
+    Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
+
+    // the following 3 are set according to the database answers when uploading
+    private int pictureId;
+    private String fullSizeImageLink;
+    private boolean hasFullSizeImageLink;
+
 
     public PhotoObject(){
-        //constructor needed for firebase object upload
+        // default constructor needed for firebase object upload
     }
 
-    public PhotoObject(String name,Timestamp createdDate,
-                       double latitude, double longitude, int pictureId, int radius,
-                       int user, String fullImgLink, String thumbImgLink){
+    public PhotoObject(String name,Timestamp createdDate, double latitude, double longitude, int radius, int userID){
         this.name = name;
         this.createdDate = createdDate;
         expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         this.latitude = latitude;
         this.longitude = longitude;
-        this.pictureId = pictureId;
         this.radius = radius;
-        this.user = user;
-        this.fullImgLink=fullImgLink;
-        this.thumbImgLink=thumbImgLink;
+        this.userID = userID;
     }
 
     public boolean sendToDatabase() {
-        //send fullSizeImage to fileServer
-        fullSizeImg = null;
+        // TODO : send fullSizeImage to fileServer
+        // TODO : set pictureID, fullSizeImageLink, thumbnailLink
+        fullSizeImage = null;
         hasFullSizeImage = false;
         //return false if an error occured
         return true;
@@ -62,12 +63,16 @@ public class PhotoObject {
     //TODO: do we constrain here if you location is out of the range of the picture?
     public Bitmap getFullSizeImage() {
         if (hasFullSizeImage) {
-            return fullSizeImg;
+            return fullSizeImage.copy(fullSizeImage.getConfig(), true);
         }else{
-        //fetch full size image from file server
-        hasFullSizeImage = true;
-        return fullSizeImg;
+            // TODO : get fullSizeImage from file server
+            hasFullSizeImage = true;
+            return this.getFullSizeImage();
         }
+    }
+
+    public Bitmap getThumbnail(){
+        return thumbnail.copy(thumbnail.getConfig(), true);
     }
 
     public String getPhotoName(){
@@ -92,16 +97,21 @@ public class PhotoObject {
      return radius;
     }
     public int getAuthorId(){
-        return user;
+        return userID;
     }
-    public String getFullImgLink(){
-        return fullImgLink;
-    }
-    public String getThumbImgLink(){
-        return thumbImgLink;
+    public String getFullSizeImageLink(){
+        if(hasFullSizeImageLink){
+            return fullSizeImageLink;
+        }else{
+            throw new NoSuchElementException();
+        }
     }
 
     //HELPER FUNCTION
+
+    private Bitmap createThumbnail(Bitmap fullSizeImage){
+        return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+    }
 
     //return true if the coordinates in parameters are in the scope of the picture
     public boolean isInPictureCircle(double paramLat, double paramLng){
