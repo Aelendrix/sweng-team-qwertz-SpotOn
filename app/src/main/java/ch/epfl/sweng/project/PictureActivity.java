@@ -58,8 +58,8 @@ public class PictureActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     //latitude and longitude, not always assigned
-    private static double mLatitude = 0.0;
-    private static double mLongitude = 0.0;
+    private static double mLatitude;
+    private static double mLongitude;
 
     private ImageView mPic;
     private LocationManager mLocationManager;
@@ -110,16 +110,6 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    /*
-        This method uses the options menu when this activity is launched
-         */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
-        return true;
-    }
-
     //function called when the locationListener see a location change
     private void refreshLocation() {
         try {
@@ -143,6 +133,16 @@ public class PictureActivity extends AppCompatActivity {
         catch(SecurityException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+        This method uses the options menu when this activity is launched
+         */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options, menu);
+        return true;
     }
 
     /**
