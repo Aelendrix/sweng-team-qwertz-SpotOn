@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
@@ -16,6 +18,7 @@ public class PhotoObject {
     // in ms
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; //24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
+    private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
 
     private String name;
     private Timestamp createdDate;
@@ -23,14 +26,14 @@ public class PhotoObject {
     private double latitude;
     private double longitude;
     private int radius;
-    private int userID;
+    private String userID;
     Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
 
     Bitmap fullSizeImage;
     boolean hasFullSizeImage;
 
     // the following 3 are set according to the database answers when uploading
-    private int pictureId;
+    private String pictureId;
     private boolean hasPictureId;
     private String fullSizeImageLink;
     private boolean hasFullSizeImageLink;
@@ -40,7 +43,7 @@ public class PhotoObject {
         // default constructor needed for firebase object upload
     }
 
-    public PhotoObject(Bitmap fullSizePic, String name,Timestamp createdDate, double latitude, double longitude, int radius, int userID){
+    public PhotoObject(Bitmap fullSizePic, String name,Timestamp createdDate, double latitude, double longitude, int radius, String userID){
         this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         this.hasFullSizeImage=true;
 
@@ -57,13 +60,16 @@ public class PhotoObject {
         this.hasPictureId=false;
     }
 
-    public boolean sendToDatabase() {
+    public void sendToDatabase(FirebaseDatabase database) {
         // TODO : send fullSizeImage to fileServer
-        // TODO : set pictureID, fullSizeImageLink, thumbnailLink
+        // TODO : set fullSizeImageLink
         fullSizeImage = null;
         hasFullSizeImage = false;
-        //return false if an error occured
-        return true;
+
+        DatabaseReference databaseRef = database.getReference();
+        // push() creates a new child node (in which we'll put our new PhotoObject), getKey() return its "name" so that we can use setValue() on it
+        this.pictureId = databaseRef.push().getKey();
+        databaseRef.child(this.pictureId).setValue(this);
     }
 
     //ALL THE GETTER FUNCTIONS
@@ -98,7 +104,7 @@ public class PhotoObject {
     public int getRadius(){
      return radius;
     }
-    public int getAuthorId(){
+    public String getAuthorId(){
         return userID;
     }
     public Bitmap getThumbnail(){
@@ -117,7 +123,7 @@ public class PhotoObject {
     public boolean hasPictureId(){
         return hasPictureId;
     }
-    public int getPictureId() {
+    public String getPictureId() {
         if (hasPictureId){
             return pictureId;
         }else{
