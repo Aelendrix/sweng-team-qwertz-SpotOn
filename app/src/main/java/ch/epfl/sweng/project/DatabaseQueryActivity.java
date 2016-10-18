@@ -73,6 +73,7 @@ public class DatabaseQueryActivity extends AppCompatActivity {
                 System.out.println("datasnapshot : "+dataSnapshot.getValue());
                 if(dataSnapshot.exists()){
                     int nbOfResults=0;
+                    assert(dataSnapshot.getChildrenCount()==1);
                     for(DataSnapshot child : dataSnapshot.getChildren()){
                         System.out.println("child : "+child.getValue());
                         HashMap<String, String> resultAsMap = ((HashMap<String, String>) child.getValue());

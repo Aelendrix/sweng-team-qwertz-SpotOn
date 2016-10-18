@@ -159,4 +159,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .snippet("nice place"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
     }
+
+    public void displayDBMarkers()
+    {
+
+    }
 }
