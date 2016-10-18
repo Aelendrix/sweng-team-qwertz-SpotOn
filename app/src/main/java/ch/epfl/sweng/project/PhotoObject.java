@@ -11,6 +11,9 @@ import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 public class PhotoObject {
 
+    // in ms
+    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; //24H
+
     private String name;
     private Timestamp createdDate;
     private Timestamp expireDate;
@@ -31,12 +34,12 @@ public class PhotoObject {
         //constructor needed for firebase object upload
     }
 
-    public PhotoObject(String name,Timestamp createdDate, Timestamp expireDate,
+    public PhotoObject(String name,Timestamp createdDate,
                        double latitude, double longitude, int pictureId, int radius,
                        int user, String fullImgLink, String thumbImgLink){
         this.name = name;
         this.createdDate = createdDate;
-        this.expireDate = expireDate;
+        expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         this.latitude = latitude;
         this.longitude = longitude;
         this.pictureId = pictureId;
@@ -71,10 +74,10 @@ public class PhotoObject {
         return name;
     }
     public Timestamp getCreatedDate(){
-      return createdDate;
+      return new Timestamp(createdDate.getTime());
     }
     public Timestamp getExpireDate(){
-        return expireDate;
+        return new Timestamp(expireDate.getTime());
     }
     public double getLatitude(){
         return latitude;
