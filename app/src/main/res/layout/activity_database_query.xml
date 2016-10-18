@@ -35,5 +35,36 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:id="@+id/QueryResultView" />
+
+        <Button
+            android:text="send\nObject3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/pushTestElemButton2"
+            android:layout_toRightOf="@+id/launchQueryDBButton"
+            android:layout_toEndOf="@+id/launchQueryDBButton"
+            android:id="@+id/pushTestElemButton3"
+            android:onClick="sendTestObject3" />
+
+        <Button
+            android:text="Send\nObject1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/launchQueryDBButton"
+            android:layout_toStartOf="@+id/launchQueryDBButton"
+            android:layout_marginBottom="29dp"
+            android:id="@+id/pushTestElemButton1"
+            android:onClick="sendTestObject1" />
+
+        <Button
+            android:text="Send\nObject2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pushTestElemButton2"
+            android:layout_alignBaseline="@+id/pushTestElemButton1"
+            android:layout_alignBottom="@+id/pushTestElemButton1"
+            android:layout_centerHorizontal="true"
+            android:onClick="sendTestObject2" />
     </RelativeLayout>
 </LinearLayout>

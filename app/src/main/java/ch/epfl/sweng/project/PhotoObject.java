@@ -3,76 +3,73 @@ package ch.epfl.sweng.project;
 
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.util.Base64;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
-import java.util.NoSuchElementException;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 public class PhotoObject {
 
-    // in ms
-    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; //24H
+    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
     private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
 
-    private String name;
+    private DatabaseReference DBreference;
+
+    private Bitmap fullSizeImage;
+    private boolean hasFullSizeImage;
+    private Bitmap thumbnail;
+    private String pictureId;
+    private String authorID;
+    private String photoName;
     private Timestamp createdDate;
     private Timestamp expireDate;
     private double latitude;
     private double longitude;
     private int radius;
-    private String userID;
-    Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
 
-    Bitmap fullSizeImage;
-    boolean hasFullSizeImage;
-
-    // the following 3 are set according to the database answers when uploading
-    private String pictureId;
-    private boolean hasPictureId;
-    private String fullSizeImageLink;
-    private boolean hasFullSizeImageLink;
-
-
-    public PhotoObject(){
-        // default constructor needed for firebase object upload
-    }
-
-    public PhotoObject(Bitmap fullSizePic, String name,Timestamp createdDate, double latitude, double longitude, int radius, String userID){
+    // TODO : comment : constructor for when we take a photo
+    public PhotoObject(Bitmap fullSizePic, String authorID, String photoName, Timestamp createdDate,
+                       double latitude, double longitude, int radius, FirebaseDatabase DB){
+        this.DBreference = DB.getReference(PATH_TO_MEDIA_DIRECTORY);
         this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         this.hasFullSizeImage=true;
-
-        this.name = name;
+        this.thumbnail = createThumbnail(fullSizeImage);
+        this.pictureId = DBreference.push().getKey();   //available even offline
+        this.photoName = photoName;
         this.createdDate = createdDate;
         this.expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         this.latitude = latitude;
         this.longitude = longitude;
         this.radius = radius;
-        this.userID = userID;
+        this.authorID = authorID;
+    }
+
+    // TODO : comment - constructor used by PhotoOBjectStoredInDatabase
+    public PhotoObject(Bitmap thumbnail, String authorID, String pictureId, String photoName, Timestamp createdDate,
+                       Timestamp expireDate, double latitude, double longitude, int radius, FirebaseDatabase DB){
+        this.DBreference = DB.getReference(PATH_TO_MEDIA_DIRECTORY);
+        this.fullSizeImage = null;
+        this.hasFullSizeImage=false;
         this.thumbnail = createThumbnail(fullSizeImage);
-
-        this.hasFullSizeImageLink=false;
-        this.hasPictureId=false;
+        this.pictureId = pictureId;
+        this.photoName = photoName;
+        this.createdDate = createdDate;
+        this.expireDate = expireDate;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.radius = radius;
+        this.authorID = authorID;
     }
 
-    public void sendToDatabase(FirebaseDatabase database) {
-        // TODO : send fullSizeImage to fileServer
-        // TODO : set fullSizeImageLink
-        fullSizeImage = null;
-        hasFullSizeImage = false;
 
-        DatabaseReference databaseRef = database.getReference();
-        // push() creates a new child node (in which we'll put our new PhotoObject), getKey() return its "name" so that we can use setValue() on it
-        this.pictureId = databaseRef.push().getKey();
-        databaseRef.child(this.pictureId).setValue(this);
-    }
-
-    //ALL THE GETTER FUNCTIONS
+//ALL THE GETTER FUNCTIONS
 
     //TODO: do we constrain here if you location is out of the range of the picture?
     public Bitmap getFullSizeImage() {
@@ -84,13 +81,11 @@ public class PhotoObject {
             return this.getFullSizeImage();
         }
     }
-
-
     public String getPhotoName(){
-        return name;
+        return photoName;
     }
     public Timestamp getCreatedDate(){
-      return new Timestamp(createdDate.getTime());
+        return new Timestamp(createdDate.getTime());
     }
     public Timestamp getExpireDate(){
         return new Timestamp(expireDate.getTime());
@@ -102,39 +97,24 @@ public class PhotoObject {
         return longitude;
     }
     public int getRadius(){
-     return radius;
+        return radius;
     }
     public String getAuthorId(){
-        return userID;
+        return authorID;
     }
     public Bitmap getThumbnail(){
-        return thumbnail.copy(thumbnail.getConfig(), true);
-    }
-    public boolean hasFullSizeImageLink(){
-        return hasFullSizeImageLink;
-    }
-    public String getFullSizeImageLink(){
-        if(hasFullSizeImageLink){
-            return fullSizeImageLink;
-        }else{
-            throw new NoSuchElementException("This object doesn't have a fullSizeImageLink (it has probably not been uploaded in the database yet");
-        }
-    }
-    public boolean hasPictureId(){
-        return hasPictureId;
+        return this.thumbnail.copy(this.thumbnail.getConfig(), true);
     }
     public String getPictureId() {
-        if (hasPictureId){
-            return pictureId;
-        }else{
-            throw new NoSuchElementException("This object doesn't have a pictureID (it has probably not been uploaded in the database yet");
-        }
+        return pictureId;
     }
 
-    //HELPER FUNCTION
 
-    private Bitmap createThumbnail(Bitmap fullSizeImage){
-        return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+//FUNCTIONS PROVIDED BY THIS CLASS
+
+    public void sendToDatabase(){
+        PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
+        DBreference.child(this.pictureId).setValue(DBobject);
     }
 
     //return true if the coordinates in parameters are in the scope of the picture
@@ -144,4 +124,28 @@ public class PhotoObject {
                 new LatLng( paramLat,paramLng )
         ) <= radius;
     }
+
+
+
+// PRIVATE HELPERS USED IN THE CLASS ONLY
+
+    private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
+        // TODO obtain link for fullSizeImage in fileserver
+        String linkToFullSizeImage = "PLACEHOLDER";
+        String thumbnailAsString = encodeBitmapAsString(this.thumbnail);
+        return new PhotoObjectStoredInDatabase(this.DBreference, thumbnailAsString, this.pictureId, this.authorID, this.photoName,
+                this.createdDate, this.expireDate, this.latitude, this.longitude, this.radius);
+    }
+
+    private String encodeBitmapAsString(Bitmap img){
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+        //TODO img.recycle();
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
+
+    private Bitmap createThumbnail(Bitmap fullSizeImage){
+        return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+    }
+
 }
