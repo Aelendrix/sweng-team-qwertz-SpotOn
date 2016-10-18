@@ -24,13 +24,14 @@ public class PhotoObject {
     private double longitude;
     private int radius;
     private int userID;
+    Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
 
     Bitmap fullSizeImage;
     boolean hasFullSizeImage;
-    Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
 
     // the following 3 are set according to the database answers when uploading
     private int pictureId;
+    private boolean hasPictureId;
     private String fullSizeImageLink;
     private boolean hasFullSizeImageLink;
 
@@ -71,9 +72,6 @@ public class PhotoObject {
         }
     }
 
-    public Bitmap getThumbnail(){
-        return thumbnail.copy(thumbnail.getConfig(), true);
-    }
 
     public String getPhotoName(){
         return name;
@@ -90,20 +88,33 @@ public class PhotoObject {
     public double getLongitude(){
         return longitude;
     }
-    public int getPictureId(){
-        return pictureId;
-    }
     public int getRadius(){
      return radius;
     }
     public int getAuthorId(){
         return userID;
     }
+    public Bitmap getThumbnail(){
+        return thumbnail.copy(thumbnail.getConfig(), true);
+    }
+    public boolean hasFullSizeImageLink(){
+        return hasFullSizeImageLink;
+    }
     public String getFullSizeImageLink(){
         if(hasFullSizeImageLink){
             return fullSizeImageLink;
         }else{
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("This object doesn't have a fullSizeImageLink (it has probably not been uploaded in the database yet");
+        }
+    }
+    public boolean hasPictureId(){
+        return hasPictureId;
+    }
+    public int getPictureId() {
+        if (hasPictureId){
+            return pictureId;
+        }else{
+            throw new NoSuchElementException("This object doesn't have a pictureID (it has probably not been uploaded in the database yet");
         }
     }
 
