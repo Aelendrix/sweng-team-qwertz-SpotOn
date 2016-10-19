@@ -1,5 +1,8 @@
 package ch.epfl.sweng.project;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 /** This activity allows the user to type in a key, and look it up on a firebase database
@@ -27,16 +31,17 @@ import java.util.HashMap;
 public class DatabaseQueryActivity extends AppCompatActivity {
 
     // The path to the root of the stored key/value pairs in the daabase
-    private final String PATH_TO_KEYVAL_ROOT = "keyVal";
+    private final String PATH_TO_KEYVAL_DIRECTORY = "keyVal";
+    private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
 
     // Firebase instance variables
-    private DatabaseReference myDBref;
+    private FirebaseDatabase myDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database_query);
-        myDBref = FirebaseDatabase.getInstance().getReference(PATH_TO_KEYVAL_ROOT);
+        myDB = FirebaseDatabase.getInstance();
         //populateDB(); // to fill the database with java object (broken now)
     }
 
@@ -66,19 +71,16 @@ public class DatabaseQueryActivity extends AppCompatActivity {
         final String queryKey = readQueryKeyword();
 
         // create a new Query object, and add a listener to it. The onDataChange method will be executed once
-        myDBref.orderByChild("cle").equalTo(queryKey).addListenerForSingleValueEvent(
+        myDB.getReference(PATH_TO_KEYVAL_DIRECTORY).orderByChild("cle").equalTo(queryKey).addListenerForSingleValueEvent(
                 new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("datasnapshot : "+dataSnapshot.getValue());
                 if(dataSnapshot.exists()){
                     int nbOfResults=0;
                     assert(dataSnapshot.getChildrenCount()==1);
                     for(DataSnapshot child : dataSnapshot.getChildren()){
-                        System.out.println("child : "+child.getValue());
                         HashMap<String, String> resultAsMap = ((HashMap<String, String>) child.getValue());
                         String queryResult = resultAsMap.get("val");
-                        System.out.println(resultAsMap+" "+queryResult);
                         setQueryResultTextField(queryResult);
                         nbOfResults+=1;
                     }
@@ -94,6 +96,22 @@ public class DatabaseQueryActivity extends AppCompatActivity {
                 // in case we get a database error
             }
         });
+    }
+
+    public void sendTestObject(int ressourceImage){
+        DatabaseReference mediaDirectory = this.myDB.getReference(PATH_TO_MEDIA_DIRECTORY);
+        Bitmap fullSizeImage = BitmapFactory.decodeResource(this.getResources(), ressourceImage);
+        String newPictureId = mediaDirectory.push().getKey();
+        PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "testPhoto", "testAuthor", new Timestamp(100), 0, 0, 1);
+        testOBject.sendToDatabase(mediaDirectory);
+    }
+
+    public void sendTestObject1(View v){ this.sendTestObject(R.drawable.img1);  }
+    public void sendTestObject2(View v){
+        this.sendTestObject(R.drawable.img2);
+    }
+    public void sendTestObject3(View v){
+        this.sendTestObject(R.drawable.img3);
     }
 
     // Will be used in the future to write Java objects on the database

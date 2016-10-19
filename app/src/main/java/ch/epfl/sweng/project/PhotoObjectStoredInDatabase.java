@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.sql.Timestamp;
 
@@ -16,7 +17,6 @@ import ch.epfl.sweng.project.PhotoObject;
 
 public class PhotoObjectStoredInDatabase {
 
-    private DatabaseReference DBreference;
     private String thumbnailAsString;
     private String pictureId;
     private String authorID;
@@ -31,9 +31,8 @@ public class PhotoObjectStoredInDatabase {
         // default constructor required to upload object to firebase
     }
 
-    public PhotoObjectStoredInDatabase(DatabaseReference DBreference, String thumbnailAsString, String pictureId, String authorID, String photoName,
+    public PhotoObjectStoredInDatabase(String thumbnailAsString, String pictureId, String authorID, String photoName,
                                        Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius){
-        this.DBreference=DBreference;
         this.thumbnailAsString=thumbnailAsString;
         this.pictureId=pictureId;
         this.authorID=authorID;
@@ -55,6 +54,16 @@ public class PhotoObjectStoredInDatabase {
                 this.expireDate, this.latitude, this.longitude, this.radius, this.DBreference.getDatabase());
     }*/
 
+    public String toString(){
+        String result="";
+        result+="   ---   pictureID="+pictureId;
+        result+="   ---   authorID="+authorID;
+        result+="   ---   photoName="+photoName;
+        result+="   ---   createdDate="+createdDate+"   ---   expireDate="+expireDate+"   ---   pos=("+latitude+", "+longitude+")   ---   radius="+radius;
+        result+="   ---   thumbnailStringSize ="+thumbnailAsString.length();
+        return result;
+    }
+
 
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
@@ -67,22 +76,11 @@ public class PhotoObjectStoredInDatabase {
 
 // GETTERS REQUIRED (PUBLIC) BY FIREBASE
 
-    public DatabaseReference getDBreference(){
-        return this.DBreference;
-    }
-    public String getThumbnailAsString() {
-        return this.thumbnailAsString;
-    }
-    public String getPictureId(){
-        return this.pictureId;
-    }
-    public String getAuthorID() {
-        return this.authorID;
-    }
-    public String getPhotoName() {
-        return this.photoName;
-    }
-    public Timestamp getCcreatedDate() {
+    public String getThumbnailAsString() { return this.thumbnailAsString;}
+    public String getPictureId(){ return this.pictureId;}
+    public String getAuthorID(){ return this.authorID;}
+    public String getPhotoName(){ return this.photoName;}
+    public Timestamp getCreatedDate() {
         return this.createdDate;
     }
     public Timestamp getExpireDate() {
