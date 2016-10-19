@@ -12,16 +12,16 @@ import java.sql.Timestamp;
  */
 public class PhotoObjectStoredInDatabase {
 
-    private String fullSizePhotoLink;
-    private String thumbnailAsString;
-    private String pictureId;
-    private String authorID;
-    private String photoName;
-    private Timestamp createdDate;
-    private Timestamp expireDate;
-    private double latitude;
-    private double longitude;
-    private int radius;
+    private String mFullSizePhotoLink;
+    private String mThumbnailAsString;
+    private String mPictureId;
+    private String mAuthorID;
+    private String mPhotoName;
+    private Timestamp mCreatedDate;
+    private Timestamp mExpireDate;
+    private double mLatitude;
+    private double mLongitude;
+    private int mRadius;
 
     public PhotoObjectStoredInDatabase(){
         // default constructor required to upload object to firebase
@@ -30,16 +30,16 @@ public class PhotoObjectStoredInDatabase {
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
                                        Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius){
-        this.fullSizePhotoLink=fullSizePhotoLink;
-        this.thumbnailAsString=thumbnailAsString;
-        this.pictureId=pictureId;
-        this.authorID=authorID;
-        this.photoName=photoName;
-        this.createdDate=createdDate;
-        this.expireDate=expireDate;
-        this.latitude=latitude;
-        this.longitude=longitude;
-        this.radius=radius;
+        mFullSizePhotoLink=fullSizePhotoLink;
+        mThumbnailAsString=thumbnailAsString;
+        mPictureId=pictureId;
+        mAuthorID=authorID;
+        mPhotoName=photoName;
+        mCreatedDate=createdDate;
+        mExpireDate=expireDate;
+        mLatitude=latitude;
+        mLongitude=longitude;
+        mRadius=radius;
     }
 
 
@@ -48,20 +48,20 @@ public class PhotoObjectStoredInDatabase {
     // converts the object into a PhotoObject, by converting the thumbnail into a Bitmap
     public PhotoObject convertToPhotoObject(){
         //TODO CONVERT THUMBNAIL
-        Bitmap thumbnail = convertStringToBitmapImage(this.thumbnailAsString);
-        return new PhotoObject(this.fullSizePhotoLink, thumbnail, this.pictureId, this.authorID, this.photoName, this.createdDate,
-                this.expireDate, this.latitude, this.longitude, this.radius);
+        Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
+        return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
+                mExpireDate, mLatitude, mLongitude, mRadius);
     }
 
     // rather meant to be used for debug
     public String toString(){
         String result="PhotoOBject";
-        result+="   ---   pictureID="+pictureId;
-        result+="   ---   fullSizePhotoLink="+fullSizePhotoLink;
-        result+="   ---   authorID="+authorID;
-        result+="   ---   photoName="+photoName;
-        result+="   ---   createdDate="+createdDate+"   ---   expireDate="+expireDate+"   ---   pos=("+latitude+", "+longitude+")   ---   radius="+radius;
-        result+="   ---   thumbnailAsString lentgh="+thumbnailAsString.length();
+        result+="   ---   pictureID="+mPictureId;
+        result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
+        result+="   ---   authorID="+mAuthorID;
+        result+="   ---   photoName="+mPhotoName;
+        result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")   ---   radius="+mRadius;
+        result+="   ---   thumbnailAsString lentgh="+mThumbnailAsString.length();
         return result;
     }
 
@@ -77,15 +77,15 @@ public class PhotoObjectStoredInDatabase {
 
 // GETTERS REQUIRED (PUBLIC) BY FIREBASE
 
-    public String getFullSizePhotoLink(){ return this.fullSizePhotoLink;}
-    public String getThumbnailAsString(){ return this.thumbnailAsString;}
-    public String getPictureId(){ return this.pictureId;}
-    public String getAuthorID(){ return this.authorID;}
-    public String getPhotoName(){ return this.photoName;}
-    public Timestamp getCreatedDate() { return this.createdDate; }
-    public Timestamp getExpireDate() { return expireDate; }
-    public double getLatitude(){return this.latitude;}
-    public double getLongitude(){return this.longitude;}
-    public int getRadius(){ return this.radius;}
+    public String getFullSizePhotoLink(){ return mFullSizePhotoLink;}
+    public String getThumbnailAsString(){ return mThumbnailAsString;}
+    public String getPictureId(){ return mPictureId;}
+    public String getAuthorID(){ return mAuthorID;}
+    public String getPhotoName(){ return mPhotoName;}
+    public Timestamp getCreatedDate() { return mCreatedDate; }
+    public Timestamp getExpireDate() { return mExpireDate; }
+    public double getLatitude(){return mLatitude;}
+    public double getLongitude(){return mLongitude;}
+    public int getRadius(){ return mRadius;}
 
 }

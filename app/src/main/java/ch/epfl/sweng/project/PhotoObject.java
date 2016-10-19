@@ -23,52 +23,52 @@ public class PhotoObject {
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
 
-    private Bitmap fullSizeImage;
-    private String fullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
-    private boolean hasFullSizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
-    private Bitmap thumbnail;
-    private String pictureId;
-    private String authorID;
-    private String photoName;
-    private Timestamp createdDate;
-    private Timestamp expireDate;
-    private double latitude;
-    private double longitude;
-    private int radius;
+    private Bitmap mFullSizeImage;
+    private String mFullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
+    private boolean mHasFullSizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
+    private Bitmap mThumbnail;
+    private String mPictureId;
+    private String mAuthorID;
+    private String mPhotoName;
+    private Timestamp mCreatedDate;
+    private Timestamp mExpireDate;
+    private double mLatitude;
+    private double mLongitude;
+    private int mRadius;
 
     /** This constructor will be used when the used takes a photo with his device, and create the object from locally obtained informations
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
-        this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
-        this.hasFullSizeImage=true;
-        this.fullSizeImageLink = null;  // there is no need for a link
-        this.thumbnail = createThumbnail(fullSizeImage);
-        this.pictureId = pictureId;   //available even offline
-        this.photoName = photoName;
-        this.createdDate = createdDate;
-        this.expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.radius = radius;
-        this.authorID = authorID;
+        mFullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
+        mHasFullSizeImage=true;
+        mFullSizeImageLink = null;  // there is no need for a link
+        mThumbnail = createThumbnail(mFullSizeImage);
+        mPictureId = pictureId;   //available even offline
+        mPhotoName = photoName;
+        mCreatedDate = createdDate;
+        mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mRadius = radius;
+        mAuthorID = authorID;
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, Timestamp createdDate,
                        Timestamp expireDate, double latitude, double longitude, int radius){
-        this.fullSizeImage = null;
-        this.hasFullSizeImage=false;
-        this.fullSizeImageLink=fullSizeImageLink;
-        this.thumbnail = thumbnail;
-        this.pictureId = pictureId;
-        this.photoName = photoName;
-        this.createdDate = createdDate;
-        this.expireDate = expireDate;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.radius = radius;
-        this.authorID = authorID;
+        mFullSizeImage = null;
+        mHasFullSizeImage=false;
+        mFullSizeImageLink=fullSizeImageLink;
+        mThumbnail = thumbnail;
+        mPictureId = pictureId;
+        mPhotoName = photoName;
+        mCreatedDate = createdDate;
+        mExpireDate = expireDate;
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mRadius = radius;
+        mAuthorID = authorID;
     }
 
 
@@ -79,15 +79,15 @@ public class PhotoObject {
     public void sendToDatabase(DatabaseReference DBref){
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
         System.out.println(DBobject);
-        DBref.child(this.pictureId).setValue(DBobject);
+        DBref.child(mPictureId).setValue(DBobject);
     }
 
     //return true if the coordinates in parameters are in the scope of the picture
     public boolean isInPictureCircle(double paramLat, double paramLng){
         return computeDistanceBetween(
-                new LatLng(latitude, longitude),
+                new LatLng(mLatitude, mLongitude),
                 new LatLng( paramLat,paramLng )
-        ) <= radius;
+        ) <= mRadius;
     }
 
 
@@ -95,10 +95,10 @@ public class PhotoObject {
 
     // This getter functions as a cache, it gets the fullSizeImage only when needed, and stores it for later
     public Bitmap getFullSizeImage() {
-        if (hasFullSizeImage) {
-            return fullSizeImage.copy(fullSizeImage.getConfig(), true);
+        if (mHasFullSizeImage) {
+            return mFullSizeImage.copy(mFullSizeImage.getConfig(), true);
         }else{
-            if(this.fullSizeImageLink==null){
+            if(mFullSizeImageLink==null){
                 throw new AssertionError("if there is no image stored, is should have a link to retrieve it");
             }
             // TODO : get fullSizeImage from file server                                                                <--------
@@ -108,31 +108,31 @@ public class PhotoObject {
         }
     }
     public String getPhotoName(){
-        return photoName;
+        return mPhotoName;
     }
     public Timestamp getCreatedDate(){
-        return new Timestamp(createdDate.getTime());
+        return new Timestamp(mCreatedDate.getTime());
     }
     public Timestamp getExpireDate(){
-        return new Timestamp(expireDate.getTime());
+        return new Timestamp(mExpireDate.getTime());
     }
     public double getLatitude(){
-        return latitude;
+        return mLatitude;
     }
     public double getLongitude(){
-        return longitude;
+        return mLongitude;
     }
     public int getRadius(){
-        return radius;
+        return mRadius;
     }
     public String getAuthorId(){
-        return authorID;
+        return mAuthorID;
     }
     public Bitmap getThumbnail(){
-        return this.thumbnail.copy(this.thumbnail.getConfig(), true);
+        return mThumbnail.copy(mThumbnail.getConfig(), true);
     }
     public String getPictureId() {
-        return pictureId;
+        return mPictureId;
     }
 
 
@@ -142,9 +142,9 @@ public class PhotoObject {
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
         // TODO obtain link for fullSizeImage in fileserver                                                                 <------
         String linkToFullSizeImage = "/default.jpg";
-        String thumbnailAsString = encodeBitmapAsString(this.thumbnail);
-        return new PhotoObjectStoredInDatabase(linkToFullSizeImage, thumbnailAsString, this.pictureId, this.authorID, this.photoName,
-                this.createdDate, this.expireDate, this.latitude, this.longitude, this.radius);
+        String thumbnailAsString = encodeBitmapAsString(mThumbnail);
+        return new PhotoObjectStoredInDatabase(linkToFullSizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
     }
 
     private String encodeBitmapAsString(Bitmap img){
