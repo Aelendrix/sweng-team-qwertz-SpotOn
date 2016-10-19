@@ -46,7 +46,7 @@ public class PhotoObjectStoredInDatabase {
     public PhotoObject convertToPhotoObject(){
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(this.thumbnailAsString);
-        return new PhotoObject(thumbnail, this.pictureId, this.authorID, this.photoName, this.createdDate,
+        return new PhotoObject(this.fullSizePhotoLink, thumbnail, this.pictureId, this.authorID, this.photoName, this.createdDate,
                 this.expireDate, this.latitude, this.longitude, this.radius);
     }
 
