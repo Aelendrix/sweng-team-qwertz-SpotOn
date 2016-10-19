@@ -65,7 +65,6 @@ public class PhotoObject {
 
 //ALL THE GETTER FUNCTIONS
 
-    //TODO: do we constrain here if you location is out of the range of the picture?
     public Bitmap getFullSizeImage() {
         if (hasFullSizeImage) {
             return fullSizeImage.copy(fullSizeImage.getConfig(), true);
@@ -129,7 +128,7 @@ public class PhotoObject {
         // TODO obtain link for fullSizeImage in fileserver                                                                 <------
         String linkToFullSizeImage = "PLACEHOLDER";
         String thumbnailAsString = encodeBitmapAsString(this.thumbnail);
-        return new PhotoObjectStoredInDatabase(thumbnailAsString, this.pictureId, this.authorID, this.photoName,
+        return new PhotoObjectStoredInDatabase(linkToFullSizeImage, thumbnailAsString, this.pictureId, this.authorID, this.photoName,
                 this.createdDate, this.expireDate, this.latitude, this.longitude, this.radius);
     }
 
