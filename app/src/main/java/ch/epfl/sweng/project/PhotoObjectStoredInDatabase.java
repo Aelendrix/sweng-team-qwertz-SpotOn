@@ -82,20 +82,10 @@ public class PhotoObjectStoredInDatabase {
     public String getPictureId(){ return this.pictureId;}
     public String getAuthorID(){ return this.authorID;}
     public String getPhotoName(){ return this.photoName;}
-    public Timestamp getCreatedDate() {
-        return this.createdDate;
-    }
-    public Timestamp getExpireDate() {
-        return expireDate;
-    }
-    public double getLatitude(){
-        return this.latitude;
-    }
-    public double getLongitude(){
-        return this.longitude;
-    }
-    public int getRadius() {
-        return this.radius;
-    }
+    public Timestamp getCreatedDate() { return this.createdDate; }
+    public Timestamp getExpireDate() { return expireDate; }
+    public double getLatitude(){return this.latitude;}
+    public double getLongitude(){return this.longitude;}
+    public int getRadius(){ return this.radius;}
 
 }
