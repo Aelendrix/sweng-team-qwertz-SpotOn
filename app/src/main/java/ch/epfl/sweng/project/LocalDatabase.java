@@ -49,11 +49,11 @@ public class LocalDatabase {
 
     public void addPhotoObject(PhotoObject photo)
     {
-        photoDataMap.append(photo.getPictureId(),photo);
+        //photoDataMap.append(photo.getPictureId(),photo);
     }
 
     public void deletePhotoObject(PhotoObject photo)
     {
-        photoDataMap.delete(photo.getPictureId());
+        //photoDataMap.delete(photo.getPictureId());
     }
 }
