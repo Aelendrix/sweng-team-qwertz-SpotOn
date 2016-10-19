@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 /**
+ *  @author Quentin
  *  This class represents a picture and all associated informations : name, thumbnail, pictureID, author, timestamps, position, radius
  *  It is mean to be used locally, as opposed to the PhotoObjectStoredInDatabase which is used to be stored in the database
  */

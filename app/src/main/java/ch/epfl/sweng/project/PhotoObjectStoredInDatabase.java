@@ -6,9 +6,11 @@ import android.util.Base64;
 import java.sql.Timestamp;
 
 /**
- * Created by quentin on 18.10.16.
+ *  @author Quentin
+ *  This class represents a photoObject in a form that allows it to be sent to a database.
+ *  It is necessary since we can't send raw bitmaps (we convert thumbnail to a string) into the database
+ *  It provides a method to convert it to a PhotoOBject, which is the only method that should be used
  */
-
 public class PhotoObjectStoredInDatabase {
 
     private String fullSizePhotoLink;
@@ -26,6 +28,8 @@ public class PhotoObjectStoredInDatabase {
         // default constructor required to upload object to firebase
     }
 
+    /** Constructor meant to be called by the conversion function in the PhotoObject calss
+     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
                                        Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius){
         this.fullSizePhotoLink=fullSizePhotoLink;
@@ -43,6 +47,7 @@ public class PhotoObjectStoredInDatabase {
 
 // PUBLIC METHODS OFFERED BY THIS CLASS
 
+    // converts the object into a PhotoObject, by converting the thumbnail into a Bitmap
     public PhotoObject convertToPhotoObject(){
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(this.thumbnailAsString);
@@ -50,6 +55,7 @@ public class PhotoObjectStoredInDatabase {
                 this.expireDate, this.latitude, this.longitude, this.radius);
     }
 
+    // rather meant to be used for debug
     public String toString(){
         String result="PhotoOBject";
         result+="   ---   pictureID="+pictureId;
@@ -64,6 +70,7 @@ public class PhotoObjectStoredInDatabase {
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
 
+    // converte a bitmap to a String
     private Bitmap convertStringToBitmapImage(String s){
         byte[] stringByteArray = Base64.decode(s, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(stringByteArray, 0, stringByteArray.length);
