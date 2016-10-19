@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -31,8 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MainMenu"></activity>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity android:name="com.facebook.FacebookActivity"
@@ -84,11 +83,11 @@
         <activity
             android:name=".SeePicturesActivity"
             android:label="@string/title_activity_see_pictures"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
 
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+
 
 
 </manifest>
