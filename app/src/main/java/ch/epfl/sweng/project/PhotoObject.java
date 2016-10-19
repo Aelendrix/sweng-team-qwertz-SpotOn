@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 /**
- *  @author Quentin
  *  This class represents a picture and all associated informations : name, thumbnail, pictureID, author, timestamps, position, radius
  *  It is mean to be used locally, as opposed to the PhotoObjectStoredInDatabase which is used to be stored in the database
  */
@@ -25,8 +24,8 @@ public class PhotoObject {
     private final int THUMBNAIL_SIZE = 128; // in pixels
 
     private Bitmap fullSizeImage;
-    private String fullSizeImageLink;
-    private boolean hasFullSizeImage;   // false -> no Image, but has link, true -> has image, can't access link (don't need it => no getter)
+    private String fullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
+    private boolean hasFullSizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
     private Bitmap thumbnail;
     private String pictureId;
     private String authorID;
@@ -38,8 +37,7 @@ public class PhotoObject {
     private int radius;
 
     /** This constructor will be used when the used takes a photo with his device, and create the object from locally obtained informations
-     *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored.
-     */
+     *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
         this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
@@ -56,8 +54,7 @@ public class PhotoObject {
         this.authorID = authorID;
     }
 
-    /** This constructor is called to convert an object retrieved from the database into a PhotoObject.
-     */
+    /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, Timestamp createdDate,
                        Timestamp expireDate, double latitude, double longitude, int radius){
         this.fullSizeImage = null;

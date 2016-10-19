@@ -6,7 +6,6 @@ import android.util.Base64;
 import java.sql.Timestamp;
 
 /**
- *  @author Quentin
  *  This class represents a photoObject in a form that allows it to be sent to a database.
  *  It is necessary since we can't send raw bitmaps (we convert thumbnail to a string) into the database
  *  It provides a method to convert it to a PhotoOBject, which is the only method that should be used
@@ -28,8 +27,7 @@ public class PhotoObjectStoredInDatabase {
         // default constructor required to upload object to firebase
     }
 
-    /** Constructor meant to be called by the conversion function in the PhotoObject calss
-     */
+    /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
                                        Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius){
         this.fullSizePhotoLink=fullSizePhotoLink;
