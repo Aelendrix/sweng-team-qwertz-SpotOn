@@ -1,11 +1,17 @@
 package ch.epfl.sweng.project;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -15,33 +21,37 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TabActivity extends AppCompatActivity implements MyStoriesFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener, StoriesAroundMeFragment.OnFragmentInteractionListener {
+public class TabActivity extends AppCompatActivity implements MyStoriesFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener {
 
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
     // The path to the root of the stored pictures Data in the database
-    private final String PATH_TO_PICTURE_DATA = "pictureMetadata";
+    private final String PATH_TO_PICTURE_DATA = "MediaDirectory";
     //DB
     private LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60*1000; //1 minutes
     private Timer mTimer;
+    //Location objects
+    private LocationManager mLocationManager;
+    private Location mLocation;
     //task that will be run every x Time.
     private TimerTask mTimerTask = new TimerTask() {
 
         @Override
         public void run() {
             //refresh the local database every minutes
-            //TODO: when the fragments are linked to this activity, move localisation service here and filter our localDB
-            mDB.refresh();
-            refreshMapMarkers();
+            //TODO: when the fragments are linked to this activity, move localisation service in this class and filter our localDB
+            if(mLocation!=null) {
+                mDB.refresh(mLocation);
+                refreshMapMarkers(mDB);
+            }
         }
     };
-    //will refresh the mapactivity fragments in function of the localDatabase
-    private void refreshMapMarkers(){
-    }
+    //fragments
+    MapsActivity mFragmentMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +88,43 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
             }
         });
 
+        // Acquire a reference to the system Location Manager
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                Log.d("location","location Changed");
+                //TODO: nico trouver l'objet représentant MapsActivity et PictureActivity et refresh leur location
+                refreshLocation();
+                if(mLocation!=null){
+                    mFragmentMap = (MapsActivity) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
+                    if(mFragmentMap==null) {
+                        //fragmentMap.refreshMapLocation(mLocation);
+                    }
+                    //pictureFragment part
+                }
+            }
 
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        final int TIME_BETWEEN_LOCALISATION = 5*1000; //5 Seconds
+        final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
+        }
+        /*Catch exception because location acces always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -102,14 +148,6 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
 
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MyStoriesFragment(), "My Stories");
-        adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new StoriesAroundMeFragment(), "Stories around me");
-        viewPager.setAdapter(adapter);
-    }
-
     /*
     This method uses the options menu when this activity is launched
      */
@@ -118,5 +156,40 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
+    }
+
+
+    //will refresh the mapactivity fragments in function of the localDatabase
+    private void refreshMapMarkers(LocalDatabase DB){
+        if(mFragmentMap!=null){
+            mFragmentMap.displayDBMarkers(DB);
+        }
+    }
+
+    //refresh the current location
+    private void refreshLocation(){
+        try {
+            if (mLocationManager != null) {
+                //check if gps is enable
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    //get the location according of the gps
+                    mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }
+            }
+        }
+        /*Catch exception because location access always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new MyStoriesFragment(), "My Stories");
+        adapter.addFragment(new CameraFragment(), "Camera");
+        adapter.addFragment(new MapsActivity(), "Maps");
+        viewPager.setAdapter(adapter);
     }
 }

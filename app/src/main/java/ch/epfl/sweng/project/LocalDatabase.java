@@ -1,5 +1,6 @@
 package ch.epfl.sweng.project;
 
+import android.location.Location;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -9,11 +10,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class LocalDatabase {
 
     private String dataPath;
-    private SparseArray<PhotoObject> photoDataMap = new SparseArray<>();
+    private Map<String,PhotoObject> photoDataMap = new HashMap<>();
     // Firebase instance variables
     private DatabaseReference myDBref;
 
@@ -24,16 +28,19 @@ public class LocalDatabase {
     }
     //refresh the db from the server
     //later will take lat and lng as parameter to filter the data retrieved
-    public void refresh(){
+    public void refresh(Location phoneLocation){
         //create a single event listener which return a list of object PhotoObject and loop over it
         //to add in our DB
+        //TODO: nico filter the photo object retrieved in function of Time and location
         ValueEventListener dataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
-                    PhotoObject photo = photoSnapshot.getValue(PhotoObject.class);
-                    addPhotoObject(photo);
+                    PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
+                    PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
+                    addPhotoObject(photoObject);
                 }
+                Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
 
             }
 
@@ -49,11 +56,17 @@ public class LocalDatabase {
 
     public void addPhotoObject(PhotoObject photo)
     {
-        //photoDataMap.append(photo.getPictureId(),photo);
+        if(!photoDataMap.containsKey(photo.getPictureId()))
+        photoDataMap.put(photo.getPictureId(),photo);
     }
 
     public void deletePhotoObject(PhotoObject photo)
     {
-        //photoDataMap.delete(photo.getPictureId());
+        photoDataMap.remove(photo.getPictureId());
+    }
+
+    public Map<String,PhotoObject> getMap()
+    {
+        return photoDataMap;
     }
 }

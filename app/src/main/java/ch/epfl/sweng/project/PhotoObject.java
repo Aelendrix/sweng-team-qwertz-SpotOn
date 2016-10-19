@@ -55,16 +55,16 @@ public class PhotoObject {
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
-    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, Timestamp createdDate,
-                       Timestamp expireDate, double latitude, double longitude, int radius){
+    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
+                       long expireDate, double latitude, double longitude, int radius){
         mFullSizeImage = null;
         mHasFullSizeImage=false;
         mFullSizeImageLink=fullSizeImageLink;
         mThumbnail = thumbnail;
         mPictureId = pictureId;
         mPhotoName = photoName;
-        mCreatedDate = createdDate;
-        mExpireDate = expireDate;
+        mCreatedDate = new Timestamp(createdDate);
+        mExpireDate = new Timestamp(expireDate);
         mLatitude = latitude;
         mLongitude = longitude;
         mRadius = radius;
@@ -83,10 +83,10 @@ public class PhotoObject {
     }
 
     //return true if the coordinates in parameters are in the scope of the picture
-    public boolean isInPictureCircle(double paramLat, double paramLng){
+    public boolean isInPictureCircle(LatLng position){
         return computeDistanceBetween(
                 new LatLng(mLatitude, mLongitude),
-                new LatLng( paramLat,paramLng )
+                position
         ) <= mRadius;
     }
 
@@ -101,7 +101,7 @@ public class PhotoObject {
             if(mFullSizeImageLink==null){
                 throw new AssertionError("if there is no image stored, is should have a link to retrieve it");
             }
-            // TODO : get fullSizeImage from file server                                                                <--------
+            // TODO :nico get fullSizeImage from file server                                                                <--------
             //hasFullSizeImage = true;
             //return this.getFullSizeImage();
             throw new NoSuchElementException("The code to retrieve the full size image doesn't exist yet");

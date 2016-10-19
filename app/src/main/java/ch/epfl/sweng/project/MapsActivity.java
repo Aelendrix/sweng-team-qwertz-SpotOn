@@ -5,11 +5,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,12 +24,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+import java.util.List;
 
-    Location mPhoneLocation;
+public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
-    private static final LatLng DEFAULT_LOCATION = new LatLng(50,10);
+    private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
+    /*
     //fake Data
     //esplanade epfl (under one roof)
     private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
@@ -35,72 +41,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
     //Flon
     private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
+    */
 
+    private LatLng mPhoneLatLng;
     private Marker mLocationMarker;
-
-    //useful later for marker triggering and pattern matching
-    //private Marker mSpot1Marker;
-    //private Marker mSpot2Marker;
-    //private Marker mSpot3Marker;
-    //private Marker mSpot4Marker;
+    private List<Marker> listMarker= new ArrayList<>();
+    private List<PhotoObject> listPhoto;
 
     private GoogleMap mMap;
-    private LocationManager mLocationManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        // Inflate the layout for this fragment
+        View mView =  inflater.inflate(R.layout.activity_maps, container, false);
+        SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
+        return mView;
 
-        // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                Log.d("location","location Changed");
-                refreshLocation();
-            }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 1000; //1 Second
-        final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
-        try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
-        }
-        /*Catch exception because location acces always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
-            e.printStackTrace();
-        }
     }
 
-    //function called when the locationListener see a location change
-    private void refreshLocation() {
-        try {
-            if (mLocationManager != null) {
-                //check if gps is enable
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    //get the location according of the gps
-                    mPhoneLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (mPhoneLocation != null) {
-                        //now apply the location to the map
-                        if (mMap != null) {
-                            LatLng mPhoneLatLng = new LatLng(mPhoneLocation.getLatitude(), mPhoneLocation.getLongitude());
+    //function called when the locationListener (in tabActivity) see a location change
+    public void refreshMapLocation(Location phoneLocation) {
+
+        if (phoneLocation != null) {
+            //now apply the location to the map
+            if (mMap != null) {
+                            mPhoneLatLng = new LatLng(phoneLocation.getLatitude(), phoneLocation.getLongitude());
                             //change the localisation cursor, if null, create one instead
                             if (mLocationMarker == null) {
                                 mLocationMarker = mMap.addMarker(new MarkerOptions()
@@ -113,15 +81,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         }
                     }
-                }
-            }
-        }
-        /*Catch exception because location acces always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
-            e.printStackTrace();
-        }
     }
      /*Manipulates the map once available.
      * Create the fake markers and mark my position
@@ -131,37 +90,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         // Set a preference for minimum and maximum zoom.
         mMap.setMinZoomPreference(5.0f);
-
-        /*add the fake objects on our map
-        *TODO: need to change this part when the DB will be implemented
-        *strings are hardcoded because theses fake data will be stored in a DB and not in the strings.xml
-        *for the demo, a simple position to test is (46.5,6.6)
-        */
-        //mSpot1Marker =
-        mMap.addMarker(new MarkerOptions()
-                .position(FAKE_SPOT_1)
-                .title("Under one roof")
-                .snippet("rip esplanade"));
-        //mSpot2Marker
-        mMap.addMarker(new MarkerOptions()
-                .position(FAKE_SPOT_2)
-                .title("Moutons")
-                .snippet("xD sheep"));
-        //mSpot3Marker =
-        mMap.addMarker(new MarkerOptions()
-                .position(FAKE_SPOT_3)
-                .title("Centre Sportif")
-                .snippet("i love sport"));
-        //mSpot4Marker =
-        mMap.addMarker(new MarkerOptions()
-                .position(FAKE_SPOT_4)
-                .title("Flon")
-                .snippet("nice place"));
+        //default location in the Geneva Lake
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
     }
 
-    public void displayDBMarkers()
+    //use our local database to display our markers
+    public void displayDBMarkers(LocalDatabase DB)
     {
-
+        listPhoto = new ArrayList<>(DB.getMap().values());
+        if(mMap!=null) {
+            //empty the map of the markers
+            for(Marker marker:listMarker) {
+            marker.remove();
+            }
+            listMarker = new ArrayList<>();
+            //add the new markers on the map
+            for (PhotoObject photo : listPhoto) {
+                boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
+                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
+                Marker photoMarker;
+                //add a red marker if the photo can be seen
+                if(canActivateIt) {
+                    photoMarker = mMap.addMarker(new MarkerOptions()
+                            .position(photoPosition)
+                            .title(photo.getPhotoName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                }
+                //add a yellow marker if it can't be activated to see the picture
+                else{
+                    photoMarker = mMap.addMarker(new MarkerOptions()
+                            .position(photoPosition)
+                            .title(photo.getPhotoName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                }
+                //add the picture Id of the photo as custom object of the marker
+                //useful to retrieve the picture
+                photoMarker.setTag(photo.getPictureId());
+                //add the marker in the list
+                listMarker.add(photoMarker);
+            }
+        }
     }
 }
