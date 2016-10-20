@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 public class DatabaseQueryActivity extends AppCompatActivity {
 
-    // The path to the root of the stored key/value pairs in the daabase
+    // The path to the root of the stored key/value pairs in the database
     private final String PATH_TO_KEYVAL_DIRECTORY = "keyVal";
     private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
 

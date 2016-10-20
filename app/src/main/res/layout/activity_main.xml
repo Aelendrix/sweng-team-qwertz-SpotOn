@@ -69,21 +69,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/goToMapButton"
         android:onClick="goToMapsActivity"
-        android:layout_alignBaseline="@+id/nextButton"
-        android:layout_alignBottom="@+id/nextButton"
-        android:layout_toRightOf="@+id/queryDatabaseButton"
-        android:layout_toEndOf="@+id/queryDatabaseButton" />
-
-    <Button
-        android:text="@string/next_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:id="@+id/nextButton"
-        android:onClick="goToTabActivity"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/goToMapButton"
-        android:layout_toEndOf="@+id/goToMapButton" />
+        android:layout_alignRight="@+id/mainLoginTextView"
+        android:layout_alignEnd="@+id/mainLoginTextView"
+        android:layout_marginBottom="27dp" />
 
 
 </RelativeLayout>
