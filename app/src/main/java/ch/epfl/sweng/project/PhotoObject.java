@@ -158,4 +158,9 @@ public class PhotoObject {
         return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     }
 
+    @Override
+    public String toString()
+    {
+        return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
+    }
 }

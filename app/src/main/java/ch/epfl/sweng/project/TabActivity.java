@@ -26,13 +26,13 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-
+    private MapsActivity mMapFragment = new MapsActivity();
     // The path to the root of the stored pictures Data in the database
     private final String PATH_TO_PICTURE_DATA = "MediaDirectory";
     //DB
     private LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
-    private final int TIME_BETWEEN_EXEC = 60*1000; //1 minutes
+    private final int TIME_BETWEEN_EXEC = 10*1000; //1 minutes
     private Timer mTimer;
     //Location objects
     private LocationManager mLocationManager;
@@ -43,15 +43,12 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         @Override
         public void run() {
             //refresh the local database every minutes
-            //TODO: when the fragments are linked to this activity, move localisation service in this class and filter our localDB
             if(mLocation!=null) {
                 mDB.refresh(mLocation);
                 refreshMapMarkers(mDB);
             }
         }
     };
-    //fragments
-    MapsActivity mFragmentMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +92,10 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 Log.d("location","location Changed");
-                //TODO: nico trouver l'objet représentant MapsActivity et PictureActivity et refresh leur location
                 refreshLocation();
                 if(mLocation!=null){
-                    mFragmentMap = (MapsActivity) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
-                    if(mFragmentMap==null) {
-                        //fragmentMap.refreshMapLocation(mLocation);
+                    if(mMapFragment!=null) {
+                        mMapFragment.refreshMapLocation(mLocation);
                     }
                     //pictureFragment part
                 }
@@ -114,7 +109,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         };
 
         // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 5*1000; //5 Seconds
+        final int TIME_BETWEEN_LOCALISATION = 1*1000; //1 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
@@ -161,8 +156,8 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
 
     //will refresh the mapactivity fragments in function of the localDatabase
     private void refreshMapMarkers(LocalDatabase DB){
-        if(mFragmentMap!=null){
-            mFragmentMap.displayDBMarkers(DB);
+        if(mMapFragment!=null){
+            mMapFragment.displayDBMarkers(DB);
         }
     }
 
@@ -174,6 +169,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     //get the location according of the gps
                     mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Log.d("location","new location set");
                 }
             }
         }
@@ -189,7 +185,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MyStoriesFragment(), "My Stories");
         adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new MapsActivity(), "Maps");
+        adapter.addFragment(mMapFragment, "Maps");
         viewPager.setAdapter(adapter);
     }
 }

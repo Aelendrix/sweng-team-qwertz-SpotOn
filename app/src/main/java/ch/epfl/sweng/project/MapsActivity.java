@@ -5,6 +5,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
@@ -62,6 +64,15 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Fragment f = this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
+        if (f != null) {
+            getFragmentManager().beginTransaction().remove(f).commit();
+        }
+    }
+
     //function called when the locationListener (in tabActivity) see a location change
     public void refreshMapLocation(Location phoneLocation) {
 
@@ -97,38 +108,45 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     //use our local database to display our markers
     public void displayDBMarkers(LocalDatabase DB)
     {
-        listPhoto = new ArrayList<>(DB.getMap().values());
-        if(mMap!=null) {
-            //empty the map of the markers
-            for(Marker marker:listMarker) {
-            marker.remove();
-            }
-            listMarker = new ArrayList<>();
-            //add the new markers on the map
-            for (PhotoObject photo : listPhoto) {
-                boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
-                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                Marker photoMarker;
-                //add a red marker if the photo can be seen
-                if(canActivateIt) {
-                    photoMarker = mMap.addMarker(new MarkerOptions()
-                            .position(photoPosition)
-                            .title(photo.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        final LocalDatabase mDB = DB;
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listPhoto = new ArrayList<>(mDB.getMap().values());
+                if(mMap!=null && mPhoneLatLng!=null) {
+                    //empty the map of the markers
+                    for(Marker marker:listMarker) {
+                    marker.remove();
+                    }
+                    listMarker = new ArrayList<>();
+                    //add the new markers on the map
+                    for (PhotoObject photo : listPhoto) {
+                        boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
+                        LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
+                        Marker photoMarker;
+                        //add a red marker if the photo can be seen
+                        if(canActivateIt) {
+                            photoMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(photoPosition)
+                                    .title(photo.getPhotoName())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        }
+                        //add a yellow marker if it can't be activated to see the picture
+                        else{
+                            photoMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(photoPosition)
+                                    .title(photo.getPhotoName())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        }
+                        //add the picture Id of the photo as custom object of the marker
+                        //useful to retrieve the picture
+                        photoMarker.setTag(photo.getPictureId());
+                        //add the marker in the list
+                        listMarker.add(photoMarker);
+                    }
                 }
-                //add a yellow marker if it can't be activated to see the picture
-                else{
-                    photoMarker = mMap.addMarker(new MarkerOptions()
-                            .position(photoPosition)
-                            .title(photo.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                }
-                //add the picture Id of the photo as custom object of the marker
-                //useful to retrieve the picture
-                photoMarker.setTag(photo.getPictureId());
-                //add the marker in the list
-                listMarker.add(photoMarker);
             }
-        }
+        });
     }
 }

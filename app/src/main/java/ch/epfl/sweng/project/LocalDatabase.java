@@ -27,7 +27,6 @@ public class LocalDatabase {
 
     }
     //refresh the db from the server
-    //later will take lat and lng as parameter to filter the data retrieved
     public void refresh(Location phoneLocation){
         //create a single event listener which return a list of object PhotoObject and loop over it
         //to add in our DB
@@ -38,6 +37,7 @@ public class LocalDatabase {
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
                     PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
                     PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
+                    Log.d("LocalDB",photoObject.toString());
                     addPhotoObject(photoObject);
                 }
                 Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
@@ -56,8 +56,9 @@ public class LocalDatabase {
 
     public void addPhotoObject(PhotoObject photo)
     {
-        if(!photoDataMap.containsKey(photo.getPictureId()))
-        photoDataMap.put(photo.getPictureId(),photo);
+        if(!photoDataMap.containsKey(photo.getPictureId())) {
+            photoDataMap.put(photo.getPictureId(), photo);
+        }
     }
 
     public void deletePhotoObject(PhotoObject photo)
