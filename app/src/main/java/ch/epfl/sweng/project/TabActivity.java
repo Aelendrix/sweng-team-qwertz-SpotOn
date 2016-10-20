@@ -12,9 +12,9 @@ import android.view.View;
 
 public class TabActivity extends AppCompatActivity {
 
-    private SeePicturesActivity picturesFragment = new SeePicturesActivity();
-    private PictureActivity cameraFragment = new PictureActivity();
-    private MapsActivity mapFragment = new MapsActivity();
+    private SeePicturesActivity mPicturesFragment = new SeePicturesActivity();
+    private PictureActivity mCameraFragment = new PictureActivity();
+    private MapsActivity mMapFragment = new MapsActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +53,19 @@ public class TabActivity extends AppCompatActivity {
     }
 
     public void dispatchTakePictureIntent(View view) {
-        cameraFragment.dispatchTakePictureIntent(view);
+        mCameraFragment.dispatchTakePictureIntent(view);
     }
 
     public void rotatePicture(View view) {
-        cameraFragment.rotatePicture(view);
+        mCameraFragment.rotatePicture(view);
     }
 
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(picturesFragment, "My Stories");
-        adapter.addFragment(cameraFragment, "Camera");
-        adapter.addFragment(mapFragment, "Stories around me");
+        adapter.addFragment(mPicturesFragment, "My Stories");
+        adapter.addFragment(mCameraFragment, "Camera");
+        adapter.addFragment(mMapFragment, "Stories around me");
         viewPager.setAdapter(adapter);
     }
 
