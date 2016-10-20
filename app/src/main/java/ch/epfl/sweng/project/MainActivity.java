@@ -6,9 +6,13 @@
 package ch.epfl.sweng.project;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -19,6 +23,7 @@ import com.facebook.appevents.AppEventsLogger;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +35,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  * Your app's main activity.
@@ -37,10 +45,10 @@ import android.widget.Toast;
 public final class MainActivity extends AppCompatActivity {
 
     private LoginButton mainLoginButton;
-
     private CallbackManager callbackManager;
+    private AccessTokenTracker accessTokenTracker;
 
-
+    private String userFirstName = "";
 
     private final int REQUEST_FINE_LOCALISATION = 9;
     private Toolbar mToolbar;
@@ -54,7 +62,15 @@ public final class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
+                updateWithToken(newAccessToken);
+            }
+        };
+
         setContentView(R.layout.activity_main);
+
 
         //Used for the Facebook authentication
         callbackManager = CallbackManager.Factory.create();
@@ -66,16 +82,9 @@ public final class MainActivity extends AppCompatActivity {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // Once the user is connected
-                //goToMainMenu();
+                // Once the user is connected update token
 
-                // Display a welcome message when user authenticates
-                Context context = getApplicationContext();
-                CharSequence text = "Hello !";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                updateWithToken(AccessToken.getCurrentAccessToken());
 
             }
 
@@ -84,7 +93,7 @@ public final class MainActivity extends AppCompatActivity {
                 // Display a welcome message when user authenticates
                 Context context = getApplicationContext();
                 String toastMessage = "The authentication has been cancelled";
-                int duration = Toast.LENGTH_LONG;
+                int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, toastMessage, duration);
                 toast.show();
@@ -97,10 +106,6 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Test if a user is already logged on when creating the MainActivity
-        if(AccessToken.getCurrentAccessToken()!= null) {
-            goToMainMenu();
-        }
 
         //useless ?
         //mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -108,6 +113,45 @@ public final class MainActivity extends AppCompatActivity {
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
+
+
+    private void updateWithToken(AccessToken currentAccessToken) {
+
+        if (currentAccessToken != null) {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    // when a user is logged in
+
+                    // Display a welcome message when user authenticates
+                    Context context = getApplicationContext();
+                    CharSequence text = "Hello !";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
+                    goToMainMenu();
+                }
+            }, 1000);
+        } else {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    // When there is no user logged
+                    Context context = getApplicationContext();
+                    String toastMessage = "Please log in";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, toastMessage, duration);
+                    toast.show();
+                }
+            }, 1000);
+        }
+    }
+
 
     @Override
     protected void onStart() {
