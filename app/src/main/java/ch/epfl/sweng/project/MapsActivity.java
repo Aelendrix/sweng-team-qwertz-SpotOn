@@ -38,7 +38,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
     /*
->>>>>>> master
+
     //fake Data
     //esplanade epfl (under one roof)
     private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
@@ -48,7 +48,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
     //Flon
     private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
-<<<<<<< HEAD
+
     /*Array of photo objects that are taken by the user
       TODO: delete the array when we will be able to query pictures from the DB
      */

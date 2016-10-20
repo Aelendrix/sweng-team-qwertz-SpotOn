@@ -50,7 +50,7 @@ public class PhotoObjectStoredInDatabase {
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mExpireDate, mLatitude, mLongitude);
+                mExpireDate, mLatitude, mLongitude, mRadius);
     }
 
     // rather meant to be used for debug
