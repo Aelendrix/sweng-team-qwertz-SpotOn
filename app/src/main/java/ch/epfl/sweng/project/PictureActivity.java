@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.sql.Timestamp;
 
 
 /**
@@ -202,11 +202,15 @@ public class PictureActivity extends Fragment {
             //Store image
             storeImage(mImageBitmap);
 
+            //TEST sendToFileServer
+            PhotoObject photo = new PhotoObject(mImageBitmap, "1", "blabla", "test", new Timestamp(0), 0.0, 0.0, 0);
+            photo.sendToFileServer();
 
             //Get the coordinates where the picture was taken and display them as toast message
             refreshLocation();
             String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
             Toast.makeText(getContext(), displayLocation, Toast.LENGTH_LONG).show();
+
         }
     }
 

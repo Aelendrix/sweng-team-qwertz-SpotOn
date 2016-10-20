@@ -32,7 +32,7 @@ public class PhotoObject {
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
     private final String DEFAULT_MEDIA_PATH = "MediaPath"; // used for Database Reference
-    private final String STORAGE_REFERENCE_URL = "gs://spoton-ec9ed.appspot.com";
+    private final String STORAGE_REFERENCE_URL = "gs://spoton-ec9ed.appspot.com/images";
 
     private Bitmap mFullSizeImage;
     private String mFullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
@@ -105,6 +105,7 @@ public class PhotoObject {
 
     // Send the full size image to the file server to be stored
     public void sendToFileServer() {
+        Log.d("sendToFileServer", "PictureID: "+mPictureId);
         // Create a storage reference from our app
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_REFERENCE_URL);
 
@@ -137,7 +138,7 @@ public class PhotoObject {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
                 mFullSizeImageLink = taskSnapshot.getDownloadUrl().toString();
-                Log.i("FileUploadedURL", "URL: " + mFullSizeImageLink);
+                Log.d("FileUploadedURL", "URL: " + mFullSizeImageLink);
             }
         });
     }
@@ -155,7 +156,7 @@ public class PhotoObject {
             public void onSuccess(byte[] bytes) {
                 // Data for "images/island.jpg" is returns, use this as needed
                 mFullSizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                Log.i("DownloadFromFileServer", "Downloaded full size image from FileServer");
+                Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -181,7 +182,7 @@ public class PhotoObject {
             else {
                 // Download full size image from file server
                 getFromFileServer();
-                
+
                 return this.getFullSizeImage();
             }
         }
@@ -213,7 +214,7 @@ public class PhotoObject {
     public String getPictureId() {
         return mPictureId;
     }
-
+    public String getFullSizeImageLink() { return mFullSizeImageLink; }
 
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
