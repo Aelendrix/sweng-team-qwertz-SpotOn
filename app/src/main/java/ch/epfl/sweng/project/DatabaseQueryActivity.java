@@ -103,7 +103,7 @@ public class DatabaseQueryActivity extends AppCompatActivity {
         Bitmap fullSizeImage = BitmapFactory.decodeResource(this.getResources(), ressourceImage);
         String newPictureId = mediaDirectory.push().getKey();
         java.util.Date date= new java.util.Date();
-        PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "testPhoto", "testAuthor", new Timestamp(date.getTime()), 0, 0);
+        PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "testPhoto", "testAuthor", new Timestamp(date.getTime()), 0, 0, 100);
         testOBject.sendToDatabase(mediaDirectory);
     }
 
