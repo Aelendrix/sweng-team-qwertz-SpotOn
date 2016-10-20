@@ -1,6 +1,7 @@
 package ch.epfl.sweng.project;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,16 +17,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     Location mPhoneLocation;
 
 
-    private static final LatLng DEFAULT_LOCATION = new LatLng(50,10);
+    private static final LatLng DEFAULT_LOCATION = new LatLng(46, 6.5);
     //fake Data
     //esplanade epfl (under one roof)
     private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
@@ -35,6 +39,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
     //Flon
     private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
+    /*Array of photo objects that are taken by the user
+      TODO: delete the array when we will be able to query pictures from the DB
+     */
+    public static ArrayList<PhotoObject> mAllMyPics = new ArrayList<PhotoObject>();
 
     private Marker mLocationMarker;
 
@@ -157,6 +165,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .position(FAKE_SPOT_4)
                 .title("Flon")
                 .snippet("nice place"));
+        displayPictureMarkers(mAllMyPics);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
+    }
+
+    public void displayDBMarkers()
+    {
+
+    }
+
+    /**
+     * Display a circle around each marker on the map representing the radius
+     * where the picture is visible
+     * @param picture the photoObject on which the circle will be set
+     */
+    public void displayCircleForPicture(PhotoObject picture){
+        if (picture != null) {
+            mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(picture.getLongitude(), picture.getLatitude()))
+                    .radius(picture.getRadius())
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
+        }
+    }
+
+    /**
+     * Display a marker on the map at the location where the picture was taken
+     * and displays the bitmap image when clicking the marker
+     * @param photos the list of photos we represent on the map
+     */
+    public void displayPictureMarkers(ArrayList<PhotoObject> photos){
+        if(!photos.isEmpty()) {
+            for (int i = 0; i < photos.size(); i++) {
+                PhotoObject obj = photos.get(i);
+                LatLng picSpot = new LatLng(obj.getLatitude(), obj.getLongitude());
+                mMap.addMarker(new MarkerOptions()
+                        .position(picSpot)
+                        .title(obj.getPhotoName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                mMap.setInfoWindowAdapter(new PhotoOnMarker(this, obj.getFullSizeImage()));
+                displayCircleForPicture(obj);
+            }
+        }
     }
 }

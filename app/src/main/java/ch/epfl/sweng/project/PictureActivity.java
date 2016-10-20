@@ -56,7 +56,9 @@ public class PictureActivity extends AppCompatActivity {
     Location mPhoneLocation;
     private Toolbar mToolbar;
 
+    //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
+
     //latitude and longitude, not always assigned
     private static double mLatitude;
     private static double mLongitude;
@@ -242,6 +244,25 @@ public class PictureActivity extends AppCompatActivity {
     }
 
     /**
+     * Create a PhotoObject object from the picture taken
+     * @param imageBitmap picture taken
+     * @return a PhotoObject instance
+     */
+    private PhotoObject createPhotoObject(Bitmap imageBitmap){
+        //Get the creation date for the timestamp
+        Timestamp created = new Timestamp(new Date().getTime());
+        //Name the picture
+        String preciseDate = new SimpleDateFormat("ddMMyyyy__HHmmss").format(new Date());
+        String imageName = "PIC_"+ preciseDate + ".jpeg";
+        //Get the location where the picture was taken
+        refreshLocation();
+        //TODO: UserID '53' to change
+        PhotoObject picObject = new PhotoObject(imageBitmap, imageName, created, mLongitude, mLatitude, 53);
+        MapsActivity.mAllMyPics.add(picObject);
+        return picObject;
+    }
+
+    /**
      * Method that will put the captured photo in an image view
      * in the app if the user agreed so
      * @param requestCode the request code to access the camera
@@ -255,30 +276,28 @@ public class PictureActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap mImageBitmap = (Bitmap) extras.get("data");
             mPic.setImageBitmap(mImageBitmap);
+            //Create a PhotoObject instance of the picture
+            PhotoObject picObject = createPhotoObject(mImageBitmap);
             //Store image
-            storeImage(mImageBitmap);
-            //Get the coordinates where the picture was taken and display them as toast message
-            refreshLocation();
-            String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
-            Toast.makeText(this, displayLocation, Toast.LENGTH_LONG).show();
+            storeImage(picObject);
         }
     }
 
     /**
      * Method that will store the image in the Pictures file in the internal storage
      *
-     * @param picture the bitmap picture to store in Pictures file
+     * @param photo a PhotoObject to get its full size picture to store in Pictures file
      */
-    private void storeImage(Bitmap picture){
+    private void storeImage(PhotoObject photo){
         if(isStoragePermissionGranted() == true) {
-            File pictureFile = getOutputMediaFile();
+            File pictureFile = getOutputMediaFile(photo);
             if (pictureFile == null) {
                 Log.d("Store Image", "Error creating media file, check storage permissions: ");
                 return;
             }
             try {
                 FileOutputStream pictureOutputFile = new FileOutputStream(pictureFile);
-                picture.compress(Bitmap.CompressFormat.PNG, 100, pictureOutputFile);
+                photo.getFullSizeImage().compress(Bitmap.CompressFormat.PNG, 100, pictureOutputFile);
                 pictureOutputFile.close();
                 Log.d("Storage Permission", "accessed");
 
@@ -303,7 +322,7 @@ public class PictureActivity extends AppCompatActivity {
      * Create a file where the pictures will be stored in the Pictures directory
      * @return the file where pictures will be stored
      */
-    private File getOutputMediaFile(){
+    private File getOutputMediaFile(PhotoObject photo){
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
         Log.v("getOutputMediaFile", "accessed this one");
@@ -314,10 +333,8 @@ public class PictureActivity extends AppCompatActivity {
                 return null;
             }
         }
-        //Name the picture
-        String timestamp = new SimpleDateFormat("ddMMyyyy__HHmmss").format(new Date());
-        String imageName = "PIC_"+ timestamp + ".jpeg";
-        File pictureFile = new File(pictureDirectory.getPath() + File.separator + imageName);
+
+        File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         return pictureFile;
     }
 }
