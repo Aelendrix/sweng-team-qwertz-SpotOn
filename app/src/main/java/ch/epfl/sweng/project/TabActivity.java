@@ -124,6 +124,23 @@ public class TabActivity extends AppCompatActivity {
         mCameraFragment.dispatchTakePictureIntent(view);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //start a looped runnable code every X minutes
+        if(mTimer==null){
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(mTimerTask, 0, TIME_BETWEEN_EXEC);
+        }
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        //stop the timer
+        mTimer.cancel();
+        mTimer = null;
+    }
+
     public void rotatePicture(View view) {
         mCameraFragment.rotatePicture(view);
     }

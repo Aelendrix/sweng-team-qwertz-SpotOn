@@ -183,10 +183,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public void displayCircleForPicture(PhotoObject picture){
         if (picture != null) {
-            mMap.addCircle(new CircleOptions()
-                    .center(new LatLng(picture.getLatitude(), picture.getLongitude()))
-                    .radius(picture.getRadius())
-                    .strokeColor(Color.RED));
+            if(mMap!=null) {
+                mMap.addCircle(new CircleOptions()
+                        .center(new LatLng(picture.getLatitude(), picture.getLongitude()))
+                        .radius(picture.getRadius())
+                        .strokeColor(Color.RED));
+            }
         }
     }
 
@@ -201,11 +203,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 PhotoObject obj = photos.get(i);
                 LatLng picSpot = new LatLng(obj.getLatitude(), obj.getLongitude());
                 displayCircleForPicture(obj);
-                mMap.addMarker(new MarkerOptions()
-                        .position(picSpot)
-                        .title(obj.getPhotoName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), obj.getFullSizeImage()));
+                if(mMap!=null) {
+                    mMap.addMarker(new MarkerOptions()
+                            .position(picSpot)
+                            .title(obj.getPhotoName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), obj.getFullSizeImage()));
+                }
             }
         }
     }
