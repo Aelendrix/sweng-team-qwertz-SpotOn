@@ -21,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,21 +28,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-
-import java.sql.Timestamp;
 
 import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
-import ch.epfl.sweng.project.backgroudapplication.PhotoFile;
-import ch.epfl.sweng.project.backgroudapplication.PhotoList;
-
 
 
 /**
@@ -64,7 +51,6 @@ public class PictureActivity extends AppCompatActivity {
     private ImageView mPic;
     private LocationManager mLocationManager;
 
-    public static PhotoList mSavedPhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +62,6 @@ public class PictureActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mPic = (ImageView) findViewById(R.id.image_view);
 
-        mSavedPhotos = new PhotoList();
 
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -85,15 +70,18 @@ public class PictureActivity extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Call refreshLocation when a new location is found by the network location provider.
-                Log.d("location","location Changed");
+                Log.d("location", "location Changed");
                 refreshLocation();
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
-            public void onProviderEnabled(String provider) {}
+            public void onProviderEnabled(String provider) {
+            }
 
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+            }
         };
 
         // Register the listener with the Location Manager to receive location updates
@@ -104,8 +92,7 @@ public class PictureActivity extends AppCompatActivity {
         }
         /*Catch exception because location acces always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
+        */ catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -139,8 +126,7 @@ public class PictureActivity extends AppCompatActivity {
         }
         /*Catch exception because location acces always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
+        */ catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -149,8 +135,8 @@ public class PictureActivity extends AppCompatActivity {
      * Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
-    public void dispatchTakePictureIntent(View view){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    public void dispatchTakePictureIntent(View view) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
             String[] permissionRequested = {Manifest.permission.CAMERA};
@@ -158,74 +144,53 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    public void rotatePicture(View view){
+    public void rotatePicture(View view) {
         mPic.setRotation(mPic.getRotation() + 90);
     }
 
-    public  boolean isStoragePermissionGranted() {
+    public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v("Storage","Permission is granted");
+                Log.v("Storage", "Permission is granted");
                 return true;
             } else {
 
-                Log.v("Storage","Permission is revoked");
+                Log.v("Storage", "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("Storage","Permission is granted");
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("Storage", "Permission is granted");
             return true;
         }
     }
 
-    /**
-     * Saves the last picture that has been took in a PhotoList and lauch a service that
-     * deletes to old photos
-     * @param view
-     */
-
-    public void savePicture(View view){
-        EditText secondsToKeep = (EditText) findViewById(R.id.askHowMuchTime);
-
-        //Control if there is an input, else put some default value
-        long millisecondsToKeep = 5000;
-        String secondsToKeepString = secondsToKeep.getText().toString();
-        if(! secondsToKeepString.equals("")) {
-            millisecondsToKeep = Long.parseLong(secondsToKeepString) * 1000;
-        }
-        //create a new PhotoFile and add it to the list, and then start the deleting service
-        PhotoFile photo = new PhotoFile( mPic.getDrawable(),new Timestamp(System.currentTimeMillis()), millisecondsToKeep);
-        mSavedPhotos.addPhoto(photo);
-        Intent service = new Intent(this, PassedTimestampFileDeletionService.class);
-        startService(service);
-    }
 
     /**
      * Launch the activity which show the pictures that have been saved
+     *
      * @param view
      */
-    public void goToSeePicturesActivity(View view){
+    public void goToSeePicturesActivity(View view) {
         Intent intent = new Intent(this, SeePicturesActivity.class);
         startActivity(intent);
     }
 
 
-
     /**
      * Method called if the user never gave the permission. It checks the user's answer
      * and if positive, the app invokes the camera
-     * @param requestCode the request code to access the camera
-     * @param permissions the permissions we asked to the user
+     *
+     * @param requestCode  the request code to access the camera
+     * @param permissions  the permissions we asked to the user
      * @param grantResults the result of the permissions
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQUEST_IMAGE_CAPTURE){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 invokeCamera();
             } else {
                 Toast.makeText(this, getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
@@ -236,7 +201,7 @@ public class PictureActivity extends AppCompatActivity {
     /**
      * Method that invokes the camera
      */
-    public void invokeCamera(){
+    public void invokeCamera() {
         Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
@@ -244,9 +209,10 @@ public class PictureActivity extends AppCompatActivity {
     /**
      * Method that will put the captured photo in an image view
      * in the app if the user agreed so
+     *
      * @param requestCode the request code to access the camera
-     * @param resultCode the result of whether the user kept the photo or canceled it
-     * @param data contains the image
+     * @param resultCode  the result of whether the user kept the photo or canceled it
+     * @param data        contains the image
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -257,6 +223,8 @@ public class PictureActivity extends AppCompatActivity {
             mPic.setImageBitmap(mImageBitmap);
             //Store image
             storeImage(mImageBitmap);
+
+
             //Get the coordinates where the picture was taken and display them as toast message
             refreshLocation();
             String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
@@ -269,8 +237,8 @@ public class PictureActivity extends AppCompatActivity {
      *
      * @param picture the bitmap picture to store in Pictures file
      */
-    private void storeImage(Bitmap picture){
-        if(isStoragePermissionGranted() == true) {
+    private void storeImage(Bitmap picture) {
+        if (isStoragePermissionGranted() == true) {
             File pictureFile = getOutputMediaFile();
             if (pictureFile == null) {
                 Log.d("Store Image", "Error creating media file, check storage permissions: ");
@@ -299,24 +267,26 @@ public class PictureActivity extends AppCompatActivity {
             Log.d("Storage Permission", "not granted");
         }
     }
+
     /**
      * Create a file where the pictures will be stored in the Pictures directory
+     *
      * @return the file where pictures will be stored
      */
-    private File getOutputMediaFile(){
+    private File getOutputMediaFile() {
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
         Log.v("getOutputMediaFile", "accessed this one");
 
         //Create storage directory if it does not exist
-        if(!pictureDirectory.exists()){
-            if(! pictureDirectory.mkdirs()){
+        if (!pictureDirectory.exists()) {
+            if (!pictureDirectory.mkdirs()) {
                 return null;
             }
         }
         //Name the picture
-        String timestamp = new SimpleDateFormat("ddMMyyyy__HHmmss").format(new Date());
-        String imageName = "PIC_"+ timestamp + ".jpeg";
+        long timestamp = System.currentTimeMillis();
+        String imageName = "PIC_" + timestamp + ".jpeg";
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + imageName);
         return pictureFile;
     }
