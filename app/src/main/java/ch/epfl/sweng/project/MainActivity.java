@@ -6,6 +6,7 @@
 package ch.epfl.sweng.project;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -17,7 +18,9 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -37,8 +40,6 @@ import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionSer
  */
 public final class MainActivity extends AppCompatActivity {
 
-    private LoginButton mainLoginButton;
-
     private CallbackManager callbackManager;
 
     private final int REQUEST_FINE_LOCALISATION = 9;
@@ -55,42 +56,93 @@ public final class MainActivity extends AppCompatActivity {
         Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
         startService(deleteFileService);
 
+
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
+                updateWithToken(newAccessToken);
+            }
+        };
+
         setContentView(R.layout.activity_main);
 
+
+        //Used for the Facebook authentication
         callbackManager = CallbackManager.Factory.create();
 
+        // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
         mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // Once the user is connected
-                goToTabActivity();
+                // Once the user is connected update token
+                updateWithToken(AccessToken.getCurrentAccessToken());
             }
 
             @Override
             public void onCancel() {
-                // TODO: Add code
+                // Display a welcome message when user authenticates
+                Context context = getApplicationContext();
+                String toastMessage = "The authentication has been cancelled";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, toastMessage, duration);
+                toast.show();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // TODO: Add code
+                //Log the exception raised by Facebook
+                Log.e("FacebookException", exception.getMessage());
             }
         });
 
-        // Test if a user is already logged on when creating the MainActivity
-        if(AccessToken.getCurrentAccessToken()!= null) {
-            goToTabActivity();
-        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
     }
+
+
+    private void updateWithToken(AccessToken currentAccessToken) {
+
+        if (currentAccessToken != null) {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    // when a user is logged in
+
+                    // Display a welcome message when user authenticates
+                    Context context = getApplicationContext();
+                    CharSequence text = "Hello !";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
+                    goToTabActivity();
+                }
+            }, 1000);
+        } else {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    // When there is no user logged
+                    Context context = getApplicationContext();
+                    String toastMessage = "Please log in";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, toastMessage, duration);
+                    toast.show();
+                }
+            }, 1000);
+        }
+    }
+
 
     @Override
     protected void onStart() {
@@ -142,7 +194,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void goToQueryDatabaseActivity(View view){
-        //launche the Database Query activity
+        //launch the Database Query activity
         Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
         startActivity(databaseQueryIntent);
     }

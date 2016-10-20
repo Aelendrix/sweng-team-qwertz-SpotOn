@@ -123,6 +123,7 @@ public class PictureActivity extends Fragment {
      * Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
+
     public void dispatchTakePictureIntent(View view){
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
@@ -143,6 +144,7 @@ public class PictureActivity extends Fragment {
                 Log.v("Storage", "Permission is granted");
                 return true;
             } else {
+
                 Log.v("Storage","Permission is revoked");
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;

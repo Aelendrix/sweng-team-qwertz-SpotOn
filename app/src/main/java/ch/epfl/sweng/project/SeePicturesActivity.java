@@ -17,10 +17,8 @@ public class SeePicturesActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_see_pictures, container, false);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
 
+        View view = inflater.inflate(R.layout.activity_see_pictures, container, false);
 
         //displays the files available
         String textToDisplay = "There are no files saved";
@@ -38,6 +36,7 @@ public class SeePicturesActivity extends Fragment {
                 }
             }
         }
+
         TextView textView = (TextView) view.findViewById(R.id.ListOfFiles);
         textView.setText(textToDisplay);
 
