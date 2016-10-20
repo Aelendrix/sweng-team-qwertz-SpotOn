@@ -15,16 +15,13 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -33,8 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
-import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
 
 
 /**
@@ -60,11 +55,7 @@ public class PictureActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.activity_picture, container, false);
-        /*setContentView(R.layout.activity_picture);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
         mPic = (ImageView) view.findViewById(R.id.image_view);
 
 
@@ -95,7 +86,7 @@ public class PictureActivity extends Fragment {
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
         }
-        /*Catch exception because location acces always need to have the localisation permission
+        /*Catch exception because location access always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
         */ catch (SecurityException e) {
             e.printStackTrace();
@@ -103,16 +94,6 @@ public class PictureActivity extends Fragment {
 
         return view;
     }
-
-    /*
-        This method uses the options menu when this activity is launched
-         */
-  /*  @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
-        return true;
-    }*/
 
     //function called when the locationListener see a location change
     private void refreshLocation() {
@@ -131,7 +112,7 @@ public class PictureActivity extends Fragment {
             }
 
         }
-        /*Catch exception because location acces always need to have the localisation permission
+        /*Catch exception because location access always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
         */ catch (SecurityException e) {
             e.printStackTrace();
@@ -170,18 +151,6 @@ public class PictureActivity extends Fragment {
             Log.v("Storage", "Permission is granted");
             return true;
         }
-    }
-
-
-
-    /**
-     * Launch the activity which show the pictures that have been saved
-     *
-     * @param view
-     */
-    public void goToSeePicturesActivity(View view){
-        Intent intent = new Intent(getActivity(), SeePicturesActivity.class);
-        startActivity(intent);
     }
 
 
