@@ -63,7 +63,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
     }
-
+    /*
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -72,7 +72,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             getFragmentManager().beginTransaction().remove(f).commit();
         }
     }
-
+    */
     //function called when the locationListener (in tabActivity) see a location change
     public void refreshMapLocation(Location phoneLocation) {
 

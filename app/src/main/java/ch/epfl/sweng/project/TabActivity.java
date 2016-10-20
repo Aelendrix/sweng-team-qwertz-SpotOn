@@ -30,9 +30,9 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
     // The path to the root of the stored pictures Data in the database
     private final String PATH_TO_PICTURE_DATA = "MediaDirectory";
     //DB
-    private LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
+    private final LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
-    private final int TIME_BETWEEN_EXEC = 10*1000; //1 minutes
+    private final int TIME_BETWEEN_EXEC = 5*1000; //5 seconds
     private Timer mTimer;
     //Location objects
     private LocationManager mLocationManager;
@@ -43,10 +43,8 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         @Override
         public void run() {
             //refresh the local database every minutes
-            if(mLocation!=null) {
-                mDB.refresh(mLocation);
-                refreshMapMarkers(mDB);
-            }
+                refreshDB();
+
         }
     };
 
@@ -93,12 +91,9 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
                 // Called when a new location is found by the network location provider.
                 Log.d("location","location Changed");
                 refreshLocation();
-                if(mLocation!=null){
-                    if(mMapFragment!=null) {
-                        mMapFragment.refreshMapLocation(mLocation);
-                    }
                     //pictureFragment part
-                }
+
+
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -155,13 +150,16 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
 
 
     //will refresh the mapactivity fragments in function of the localDatabase
-    private void refreshMapMarkers(LocalDatabase DB){
+    private void refreshDB(){
+        if(mLocation!=null) {
+            mDB.refresh(mLocation);
+        }
         if(mMapFragment!=null){
-            mMapFragment.displayDBMarkers(DB);
+            mMapFragment.displayDBMarkers(mDB);
         }
     }
 
-    //refresh the current location
+    //refresh the current location and update this location to the mapfragment and picturefragment
     private void refreshLocation(){
         try {
             if (mLocationManager != null) {
@@ -170,6 +168,11 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
                     //get the location according of the gps
                     mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     Log.d("location","new location set");
+                    if(mLocation!=null){
+                        if(mMapFragment!=null) {
+                            mMapFragment.refreshMapLocation(mLocation);
+                        }
+                    }
                 }
             }
         }
