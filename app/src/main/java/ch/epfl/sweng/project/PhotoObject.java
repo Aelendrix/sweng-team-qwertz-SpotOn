@@ -47,7 +47,7 @@ public class PhotoObject {
     private double mLongitude;
     private int mRadius;
 
-    /** This constructor will be used when the used takes a photo with his device, and create the object from locally obtained information
+    /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
@@ -109,10 +109,10 @@ public class PhotoObject {
         // Create a storage reference from our app
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_REFERENCE_URL);
 
-        // Create a reference to "mountains.jpg"
+        // Create a reference to "PictureID.jpg"
         StorageReference pictureRef = storageRef.child(mPictureId + ".jpg");
 
-        // Create a reference to 'images/mountains.jpg'
+        // Create a reference to 'images/"PictureID".jpg'
         StorageReference pictureImagesRef = storageRef.child("images/" + mPictureId +  ".jpg");
 
         // While the file names are the same, the references point to different files
@@ -154,7 +154,7 @@ public class PhotoObject {
         gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
-                // Data for "images/island.jpg" is returns, use this as needed
+                // Data for "images/PictureID.jpg" is returns, use this as needed
                 mFullSizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
             }

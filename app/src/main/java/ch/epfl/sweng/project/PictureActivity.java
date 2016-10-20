@@ -202,10 +202,6 @@ public class PictureActivity extends Fragment {
             //Store image
             storeImage(mImageBitmap);
 
-            //TEST sendToFileServer
-            PhotoObject photo = new PhotoObject(mImageBitmap, "1", "blabla", "test", new Timestamp(0), 0.0, 0.0, 0);
-            photo.sendToFileServer();
-
             //Get the coordinates where the picture was taken and display them as toast message
             refreshLocation();
             String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
@@ -220,6 +216,10 @@ public class PictureActivity extends Fragment {
      * @param picture the bitmap picture to store in Pictures file
      */
     private void storeImage(Bitmap picture) {
+        //TEST sendToFileServer
+        PhotoObject photo = new PhotoObject(picture, "1", "blabla", "test", new Timestamp(0), 0.0, 0.0, 0);
+        photo.sendToFileServer();
+
         if (isStoragePermissionGranted() == true) {
             File pictureFile = getOutputMediaFile();
             if (pictureFile == null) {
