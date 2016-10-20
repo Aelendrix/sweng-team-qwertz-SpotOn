@@ -61,14 +61,14 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   authorID="+mAuthorID;
         result+="   ---   photoName="+mPhotoName;
         result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")   ---   radius="+mRadius;
-        result+="   ---   thumbnailAsString lentgh="+mThumbnailAsString.length();
+        result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
         return result;
     }
 
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
 
-    // converte a bitmap to a String
+    // convert a bitmap to a String
     private Bitmap convertStringToBitmapImage(String s){
         byte[] stringByteArray = Base64.decode(s, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(stringByteArray, 0, stringByteArray.length);
