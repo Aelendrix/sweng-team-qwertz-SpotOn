@@ -2,147 +2,189 @@ package ch.epfl.sweng.project;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.support.annotation.NonNull;
+import android.util.Base64;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
+/**
+ *  This class represents a picture and all associated informations : name, thumbnail, pictureID, author, timestamps, position, radius
+ *  It is mean to be used locally, as opposed to the PhotoObjectStoredInDatabase which is used to be stored in the database
+ */
 public class PhotoObject {
 
-    // in ms
-    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; //24H
+    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
 
-    private String name;
-    private Timestamp createdDate;
-    private Timestamp expireDate;
-    private double latitude;
-    private double longitude;
-    private int radius;
-    private int userID;
-    private int likes;
-    Bitmap thumbnail;    // thumbnail will be stored in database, so it will always exist -> no need for associated boolean variable
+    private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
+    private final long FIVE_MEGABYTES = 5*1024*1024;
 
-    Bitmap fullSizeImage;
-    boolean hasFullSizeImage;
+    private Bitmap mFullSizeImage;
+    private String mFullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
+    private boolean mHasFullSizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
+    private Bitmap mThumbnail;
+    private String mPictureId;
+    private String mAuthorID;
+    private String mPhotoName;
+    private Timestamp mCreatedDate;
+    private Timestamp mExpireDate;
+    private double mLatitude;
+    private double mLongitude;
+    private int mRadius;
 
-    // the following 3 are set according to the database answers when uploading
-    private int pictureId;
-    private boolean hasPictureId;
-    private String fullSizeImageLink;
-    private boolean hasFullSizeImageLink;
-
-
-    public PhotoObject(){
-        // default constructor needed for firebase object upload
+    /** This constructor will be used when the used takes a photo with his device, and create the object from locally obtained informations
+     *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
+    public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
+                       Timestamp createdDate, double latitude, double longitude){
+        mFullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
+        mHasFullSizeImage=true;
+        mFullSizeImageLink = null;  // there is no need for a link
+        mThumbnail = createThumbnail(mFullSizeImage);
+        mPictureId = pictureId;   //available even offline
+        mPhotoName = photoName;
+        mCreatedDate = createdDate;
+        mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mRadius = 100;
+        mAuthorID = authorID;
     }
 
-    public PhotoObject(Bitmap fullSizePic, String name, Timestamp createdDate, double longitude, double latitude, int userID){
-        this.fullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
-        this.hasFullSizeImage=true;
-
-        this.name = name;
-        this.createdDate = createdDate;
-        this.expireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
-        this.latitude = latitude;
-        this.longitude = longitude;
-        radius = 500;
-        likes = 0;
-        this.userID = userID;
-        this.thumbnail = createThumbnail(fullSizeImage);
-
-        this.hasFullSizeImageLink=false;
-        this.hasPictureId=false;
+    /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
+    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
+                       long expireDate, double latitude, double longitude){
+        mFullSizeImage = null;
+        mHasFullSizeImage=false;
+        mFullSizeImageLink=fullSizeImageLink;
+        mThumbnail = thumbnail;
+        mPictureId = pictureId;
+        mPhotoName = photoName;
+        mCreatedDate = new Timestamp(createdDate);
+        mExpireDate = new Timestamp(expireDate);
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mRadius = 100;
+        mAuthorID = authorID;
     }
 
-    public boolean sendToDatabase() {
-        // TODO : send fullSizeImage to fileServer
-        // TODO : set pictureID, fullSizeImageLink, thumbnailLink
-        fullSizeImage = null;
-        hasFullSizeImage = false;
-        //return false if an error occured
-        return true;
+
+//FUNCTIONS PROVIDED BY THIS CLASS
+
+    // Stores the object into the databse (with intermediary steps : storing fullSIzeImage in the fileServer, converting the object into a PhotoObjectStoredInDatabase)
+    // It is the responsability of the sender to use the correct DBref, accordingly with the pictureId chosen, since the object will be used in a child named after the pictureId
+    public void sendToDatabase(DatabaseReference DBref){
+        PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
+        System.out.println(DBobject);
+        DBref.child(mPictureId).setValue(DBobject);
     }
 
-    //ALL THE GETTER FUNCTIONS
+    //return true if the coordinates in parameters are in the scope of the picture
+    public boolean isInPictureCircle(LatLng position){
+        return computeDistanceBetween(
+                new LatLng(mLatitude, mLongitude),
+                position
+        ) <= mRadius;
+    }
 
-    //TODO: do we constrain here if you location is out of the range of the picture?
+
+//ALL THE GETTER FUNCTIONS
+
+    // This getter functions as a cache, it gets the fullSizeImage only when needed, and stores it for later
     public Bitmap getFullSizeImage() {
-        if (hasFullSizeImage) {
-            return fullSizeImage.copy(fullSizeImage.getConfig(), true);
+        if (mHasFullSizeImage) {
+            return mFullSizeImage.copy(mFullSizeImage.getConfig(), true);
         }else{
-            // TODO : get fullSizeImage from file server
-            hasFullSizeImage = true;
+            if(mFullSizeImageLink==null){
+                throw new AssertionError("if there is no image stored, is should have a link to retrieve it");
+            }
+            StorageReference fullsizeImageReference = FirebaseStorage.getInstance().getReferenceFromUrl(DEFAULT_PICTURE_PATH+mFullSizeImageLink);
+            fullsizeImageReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    mFullSizeImage=image;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    System.out.println("ERROR - couldn't retrieve image from file server");
+                }
+            });
+            System.out.println("did fetching from fileserver succeed ? "+mFullSizeImage==null);
+            mHasFullSizeImage = true;
             return this.getFullSizeImage();
+            //throw new NoSuchElementException("The code to retrieve the full size image doesn't exist yet");
+
         }
     }
-
-
     public String getPhotoName(){
-        return name;
+        return mPhotoName;
     }
     public Timestamp getCreatedDate(){
-      return new Timestamp(createdDate.getTime());
+        return new Timestamp(mCreatedDate.getTime());
     }
     public Timestamp getExpireDate(){
-        return new Timestamp(expireDate.getTime());
+        return new Timestamp(mExpireDate.getTime());
     }
     public double getLatitude(){
-        return latitude;
+        return mLatitude;
     }
     public double getLongitude(){
-        return longitude;
+        return mLongitude;
     }
     public int getRadius(){
-     return radius;
+        return mRadius;
     }
-    public int getAuthorId(){
-        return userID;
+    public String getAuthorId(){
+        return mAuthorID;
     }
     public Bitmap getThumbnail(){
-        return thumbnail.copy(thumbnail.getConfig(), true);
+        return mThumbnail.copy(mThumbnail.getConfig(), true);
     }
-    public boolean hasFullSizeImageLink(){
-        return hasFullSizeImageLink;
-    }
-    public String getFullSizeImageLink(){
-        if(hasFullSizeImageLink){
-            return fullSizeImageLink;
-        }else{
-            throw new NoSuchElementException("This object doesn't have a fullSizeImageLink (it has probably not been uploaded in the database yet");
-        }
-    }
-    public boolean hasPictureId(){
-        return hasPictureId;
-    }
-    public int getPictureId() {
-        if (hasPictureId){
-            return pictureId;
-        }else{
-            throw new NoSuchElementException("This object doesn't have a pictureID (it has probably not been uploaded in the database yet");
-        }
+    public String getPictureId() {
+        return mPictureId;
     }
 
-    //HELPER FUNCTION
+
+
+// PRIVATE HELPERS USED IN THE CLASS ONLY
+
+    private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
+        // TODO obtain link for fullSizeImage in fileserver                                                                 <------
+        String linkToFullSizeImage = "/default.jpg";
+        String thumbnailAsString = encodeBitmapAsString(mThumbnail);
+        return new PhotoObjectStoredInDatabase(linkToFullSizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
+    }
+
+    private String encodeBitmapAsString(Bitmap img){
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+        //TODO img.recycle() ??;
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
 
     private Bitmap createThumbnail(Bitmap fullSizeImage){
         return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     }
 
-    //return true if the coordinates in parameters are in the scope of the picture
-    public boolean isInPictureCircle(double paramLat, double paramLng){
-        return computeDistanceBetween(
-                new LatLng(latitude, longitude),
-                new LatLng( paramLat,paramLng )
-        ) <= radius;
-    }
-
-    //increment radius size depending on likes of the photo(+ 5 meters/like)
-    public void augmentRadiusSize(){
-        radius += likes * 5;
+    @Override
+    public String toString()
+    {
+        return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
     }
 }
+

@@ -41,49 +41,5 @@
         android:layout_below="@+id/mainLoginTextView"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="@string/takeAPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="99dp"
-        android:id="@+id/goToPic"
-        android:onClick="goToPictureActivity"
-        android:layout_below="@+id/mainLoginButton"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="@string/queryDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/goToMapButton"
-        android:layout_alignLeft="@+id/mainLoginTextView"
-        android:layout_alignStart="@+id/mainLoginTextView"
-        android:id="@+id/queryDatabaseButton"
-        android:onClick="goToQueryDatabaseActivity"
-        android:layout_toStartOf="@+id/goToPic"
-        android:layout_toLeftOf="@+id/goToPic" />
-
-    <Button
-        android:text="@string/button_to_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/goToMapButton"
-        android:onClick="goToMapsActivity"
-        android:layout_alignBaseline="@+id/nextButton"
-        android:layout_alignBottom="@+id/nextButton"
-        android:layout_toRightOf="@+id/queryDatabaseButton"
-        android:layout_toEndOf="@+id/queryDatabaseButton" />
-
-    <Button
-        android:text="@string/next_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:id="@+id/nextButton"
-        android:onClick="goToTabActivity"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/goToMapButton"
-        android:layout_toEndOf="@+id/goToMapButton" />
-
 
 </RelativeLayout>
