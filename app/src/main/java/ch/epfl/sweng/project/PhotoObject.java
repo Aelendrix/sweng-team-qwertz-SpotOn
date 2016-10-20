@@ -12,10 +12,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
@@ -33,6 +35,9 @@ public class PhotoObject {
     private final int THUMBNAIL_SIZE = 128; // in pixels
     private final String DEFAULT_MEDIA_PATH = "MediaPath"; // used for Database Reference
     private final String STORAGE_REFERENCE_URL = "gs://spoton-ec9ed.appspot.com/images";
+
+    private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
+    private final long FIVE_MEGABYTES = 5*1024*1024;
 
     private Bitmap mFullSizeImage;
     private String mFullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
@@ -66,16 +71,16 @@ public class PhotoObject {
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
-    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, Timestamp createdDate,
-                       Timestamp expireDate, double latitude, double longitude, int radius){
+    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
+                       long expireDate, double latitude, double longitude, int radius){
         mFullSizeImage = null;
         mHasFullSizeImage=false;
         mFullSizeImageLink=fullSizeImageLink;
         mThumbnail = thumbnail;
         mPictureId = pictureId;
         mPhotoName = photoName;
-        mCreatedDate = createdDate;
-        mExpireDate = expireDate;
+        mCreatedDate = new Timestamp(createdDate);
+        mExpireDate = new Timestamp(expireDate);
         mLatitude = latitude;
         mLongitude = longitude;
         mRadius = radius;
@@ -95,10 +100,10 @@ public class PhotoObject {
     }
 
     //return true if the coordinates in parameters are in the scope of the picture
-    public boolean isInPictureCircle(double paramLat, double paramLng){
+    public boolean isInPictureCircle(LatLng position){
         return computeDistanceBetween(
                 new LatLng(mLatitude, mLongitude),
-                new LatLng( paramLat,paramLng )
+                position
         ) <= mRadius;
     }
 
@@ -185,6 +190,26 @@ public class PhotoObject {
 
                 return this.getFullSizeImage();
             }
+/*
+            StorageReference fullsizeImageReference = FirebaseStorage.getInstance().getReferenceFromUrl(DEFAULT_PICTURE_PATH+mFullSizeImageLink);
+            fullsizeImageReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    mFullSizeImage=image;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    System.out.println("ERROR - couldn't retrieve image from file server");
+                }
+            });
+            System.out.println("did fetching from fileserver succeed ? "+mFullSizeImage==null);
+            mHasFullSizeImage = true;
+            return this.getFullSizeImage();
+            //throw new NoSuchElementException("The code to retrieve the full size image doesn't exist yet");
+
+*/
         }
     }
     public String getPhotoName(){
@@ -238,4 +263,10 @@ public class PhotoObject {
         return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     }
 
+    @Override
+    public String toString()
+    {
+        return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
+    }
 }
+
