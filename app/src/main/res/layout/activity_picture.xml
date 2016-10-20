@@ -36,21 +36,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="seconds to keep the photo?"
-        android:id="@+id/askHowMuchTime" />
-
-    <Button
-        android:text="@string/savePicButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/savePicButton"
-        android:layout_gravity="center_horizontal"
-        android:onClick="savePicture"/>
-
     <Button
         android:text="@string/seePictures"
         android:layout_width="match_parent"

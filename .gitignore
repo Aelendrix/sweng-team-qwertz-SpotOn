@@ -11,3 +11,4 @@
 /.idea/*
 !/.idea/SwEng.xml
 !/.idea/codeStyleSettings.xml
+app/app.iml
