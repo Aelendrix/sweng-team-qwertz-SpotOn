@@ -1,8 +1,6 @@
 package ch.epfl.sweng.project;
 
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -60,8 +60,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
         return mView;
-
-
     }
     /*
     @Override
@@ -70,9 +68,25 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         Fragment f = this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
         if (f != null) {
             getFragmentManager().beginTransaction().remove(f).commit();
+            public void onProviderDisabled(String provider) {}
+        };
+
+
+        // Register the listener with the Location Manager to receive location updates
+        final int TIME_BETWEEN_LOCALISATION = 1000; //1 Second
+        final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
         }
-    }
-    */
+        */
+        /*Catch exception because location acces always need to have the localisation permission
+        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
+        */
+        /*
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+        */
     //function called when the locationListener (in tabActivity) see a location change
     public void refreshMapLocation(Location phoneLocation) {
 
