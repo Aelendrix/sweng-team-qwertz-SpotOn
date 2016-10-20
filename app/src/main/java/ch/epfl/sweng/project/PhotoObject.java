@@ -28,6 +28,7 @@ public class PhotoObject {
 
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
+
     private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
     private final long FIVE_MEGABYTES = 5*1024*1024;
 
@@ -186,3 +187,4 @@ public class PhotoObject {
         return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
     }
 }
+

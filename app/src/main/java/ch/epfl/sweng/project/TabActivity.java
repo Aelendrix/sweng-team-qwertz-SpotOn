@@ -18,6 +18,7 @@ import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -155,6 +156,11 @@ public class TabActivity extends AppCompatActivity {
         }
     }
 
+    //refresh the local markers
+    public void changeLocalMarkers(ArrayList<PhotoObject> photoList)
+    {
+        mMapFragment.displayPictureMarkers(photoList);
+    }
     //refresh the current location and update this location to the mapfragment and picturefragment
     private void refreshLocation(){
         try {
@@ -165,9 +171,9 @@ public class TabActivity extends AppCompatActivity {
                     mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     Log.d("location","new location set");
                     if(mLocation!=null){
-                        if(mMapFragment!=null) {
                             mMapFragment.refreshMapLocation(mLocation);
-                        }
+                            mCameraFragment.refreshLocation(mLocation);
+
                     }
                 }
             }

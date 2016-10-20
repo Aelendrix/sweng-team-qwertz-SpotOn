@@ -29,7 +29,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 
 /**
@@ -42,13 +45,16 @@ public class PictureActivity extends Fragment {
     Location mPhoneLocation;
     private Toolbar mToolbar;
 
+    //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
+
     //latitude and longitude, not always assigned
-    private static double mLatitude = 0.0;
-    private static double mLongitude = 0.0;
+    private static double mLatitude;
+    private static double mLongitude;
 
     private ImageView mPic;
     private LocationManager mLocationManager;
+    private ArrayList<PhotoObject> mAllPictures = new ArrayList<PhotoObject>();
 
 
     @Override
@@ -57,66 +63,13 @@ public class PictureActivity extends Fragment {
         View view = inflater.inflate(R.layout.activity_picture, container, false);
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
-
-
-        // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Call refreshLocation when a new location is found by the network location provider.
-                Log.d("location", "location Changed");
-                refreshLocation();
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
-
-        // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 60 * 1000; //1 Minutes
-        final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
-        try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
-        }
-        /*Catch exception because location access always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */ catch (SecurityException e) {
-            e.printStackTrace();
-        }
-
         return view;
     }
 
     //function called when the locationListener see a location change
-    private void refreshLocation() {
-        try {
-            if (mLocationManager != null) {
-                //check if gps is enable
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    //get the location according of the gps
-                    mPhoneLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (mPhoneLocation != null) {
+    public void refreshLocation(Location mPhoneLocation) {
                         mLatitude = mPhoneLocation.getLatitude();
                         mLongitude = mPhoneLocation.getLongitude();
-                        //TODO: How to handle if the gps is slow or not working and we take a photo now?
-                    }
-                }
-            }
-
-        }
-        /*Catch exception because location access always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */ catch (SecurityException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -185,6 +138,26 @@ public class PictureActivity extends Fragment {
     }
 
     /**
+     * Create a PhotoObject object from the picture taken
+     * @param imageBitmap picture taken
+     * @return a PhotoObject instance
+     */
+    private PhotoObject createPhotoObject(Bitmap imageBitmap){
+        //Get the creation date for the timestamp
+        java.util.Date date= new java.util.Date();
+        Timestamp created = new Timestamp(date.getTime());
+        //Name the picture
+        long timestamp = System.currentTimeMillis();
+        String imageName = "PIC_" + timestamp + ".jpeg";
+        //TODO: Change Username and ID
+        PhotoObject picObject = new PhotoObject(imageBitmap, "Olivier", "53", imageName, created, mLatitude, mLongitude, 100);
+        mAllPictures.add(picObject);
+        TabActivity tab= (TabActivity) getActivity();
+        tab.changeLocalMarkers(mAllPictures);
+        return picObject;
+    }
+
+    /**
      * Method that will put the captured photo in an image view
      * in the app if the user agreed so
      *
@@ -199,32 +172,28 @@ public class PictureActivity extends Fragment {
             Bundle extras = data.getExtras();
             Bitmap mImageBitmap = (Bitmap) extras.get("data");
             mPic.setImageBitmap(mImageBitmap);
+            //Create a PhotoObject instance of the picture
+            PhotoObject picObject = createPhotoObject(mImageBitmap);
             //Store image
-            storeImage(mImageBitmap);
-
-
-            //Get the coordinates where the picture was taken and display them as toast message
-            refreshLocation();
-            String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
-            Toast.makeText(getContext(), displayLocation, Toast.LENGTH_LONG).show();
+            storeImage(picObject);
         }
     }
 
     /**
      * Method that will store the image in the Pictures file in the internal storage
      *
-     * @param picture the bitmap picture to store in Pictures file
+     * @param photo a PhotoObject to get its full size picture to store in Pictures file
      */
-    private void storeImage(Bitmap picture) {
-        if (isStoragePermissionGranted() == true) {
-            File pictureFile = getOutputMediaFile();
+    private void storeImage(PhotoObject photo){
+        if(isStoragePermissionGranted() == true) {
+            File pictureFile = getOutputMediaFile(photo);
             if (pictureFile == null) {
                 Log.d("Store Image", "Error creating media file, check storage permissions: ");
                 return;
             }
             try {
                 FileOutputStream pictureOutputFile = new FileOutputStream(pictureFile);
-                picture.compress(Bitmap.CompressFormat.PNG, 100, pictureOutputFile);
+                photo.getFullSizeImage().compress(Bitmap.CompressFormat.PNG, 100, pictureOutputFile);
                 pictureOutputFile.close();
                 Log.d("Storage Permission", "accessed");
 
@@ -251,7 +220,7 @@ public class PictureActivity extends Fragment {
      *
      * @return the file where pictures will be stored
      */
-    private File getOutputMediaFile() {
+    private File getOutputMediaFile(PhotoObject photo){
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
         Log.v("getOutputMediaFile", "accessed this one");
@@ -262,10 +231,7 @@ public class PictureActivity extends Fragment {
                 return null;
             }
         }
-        //Name the picture
-        long timestamp = System.currentTimeMillis();
-        String imageName = "PIC_" + timestamp + ".jpeg";
-        File pictureFile = new File(pictureDirectory.getPath() + File.separator + imageName);
+        File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         return pictureFile;
     }
 }
