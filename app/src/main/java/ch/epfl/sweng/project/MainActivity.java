@@ -48,12 +48,12 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
-        startService(deleteFileService);
-
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
+        startService(deleteFileService);
 
         AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -76,9 +76,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected update token
-
                 updateWithToken(AccessToken.getCurrentAccessToken());
-
             }
 
             @Override
