@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -30,7 +31,14 @@ public class LocalDatabase {
     public void refresh(Location phoneLocation){
         //create a single event listener which return a list of object PhotoObject and loop over it
         //to add in our DB
-        //TODO: nico filter the photo object retrieved in function of Time and location
+        final Location pLocation = phoneLocation;
+        final double maxRadius =0.1;// in degree
+        final double longitude = pLocation.getLongitude();
+        final double latitude = pLocation.getLatitude();
+        //Query photoSortedByLongitude = myDBref.orderByChild("longitude").startAt(longitude-maxRadius).endAt(longitude+maxRadius);
+        //get photo still alive
+        java.util.Date date= new java.util.Date();
+        Query photoSortedByTime = myDBref.orderByChild("expireDate").startAt(date.getTime());
         ValueEventListener dataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -38,7 +46,14 @@ public class LocalDatabase {
                     PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
                     PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
                     Log.d("LocalDB",photoObject.toString());
-                    addPhotoObject(photoObject);
+                    //filter the photo in function of the location
+                    double photoLat = photoObject.getLatitude();
+                    double photoLng = photoObject.getLongitude();
+                    if(photoLat-maxRadius<latitude && latitude < photoLat+maxRadius) {
+                        if(photoLng-maxRadius<longitude && longitude < photoLng+maxRadius) {
+                            addPhotoObject(photoObject);
+                        }
+                    }
                 }
                 Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
 
@@ -51,7 +66,7 @@ public class LocalDatabase {
                 // ...
             }
         };
-        myDBref.addListenerForSingleValueEvent(dataListener);
+        photoSortedByTime.addListenerForSingleValueEvent(dataListener);
     }
 
     public void addPhotoObject(PhotoObject photo)

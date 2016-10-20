@@ -37,7 +37,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private LoginButton mainLoginButton;
 
-    private CallbackManager callbackManager;
+    private CallbackManager mCallbackManager;
 
     private final int REQUEST_FINE_LOCALISATION = 9;
     private Toolbar mToolbar;
@@ -53,11 +53,11 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        callbackManager = CallbackManager.Factory.create();
+        mCallbackManager = CallbackManager.Factory.create();
 
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
-        mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -105,7 +105,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
