@@ -17,6 +17,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ public final class MainActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
 
+
+
     private final int REQUEST_FINE_LOCALISATION = 9;
     private Toolbar mToolbar;
 
@@ -53,8 +56,10 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        //Used for the Facebook authentication
         callbackManager = CallbackManager.Factory.create();
 
+        // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
         mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -62,17 +67,33 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected
-                goToMainMenu();
+                //goToMainMenu();
+
+                // Display a welcome message when user authenticates
+                Context context = getApplicationContext();
+                CharSequence text = "Hello !";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+
             }
 
             @Override
             public void onCancel() {
-                // TODO: Add code
+                // Display a welcome message when user authenticates
+                Context context = getApplicationContext();
+                String toastMessage = "The authentication has been cancelled";
+                int duration = Toast.LENGTH_LONG;
+
+                Toast toast = Toast.makeText(context, toastMessage, duration);
+                toast.show();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // TODO: Add code
+                //Log the exception raised by Facebook
+                Log.e("FacebookException", exception.getMessage());
             }
         });
 
