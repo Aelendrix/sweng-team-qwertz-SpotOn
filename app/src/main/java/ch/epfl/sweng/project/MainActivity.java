@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public final class MainActivity extends AppCompatActivity {
 
         Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
         startService(deleteFileService);
+
 
         AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -96,6 +98,11 @@ public final class MainActivity extends AppCompatActivity {
                 Log.e("FacebookException", exception.getMessage());
             }
         });
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -116,7 +123,7 @@ public final class MainActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
 
-                    goToMainMenu();
+                    goToTabActivity();
                 }
             }, 1000);
         } else {
@@ -158,12 +165,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
 
-    private void goToMainMenu() {
-        // start a new activity
-        Intent intent = new Intent(this, MainMenu.class);
-        startActivity(intent);
-    }
-
     public void goToPictureActivity(View view){
         //launch the PictureActivity
         Intent pictureIntent = new Intent(this, PictureActivity.class);
@@ -180,7 +181,7 @@ public final class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void goToTabActivity(View view) {
+    public void goToTabActivity() {
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
