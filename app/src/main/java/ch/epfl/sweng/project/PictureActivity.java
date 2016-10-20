@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -150,7 +151,7 @@ public class PictureActivity extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
         //TODO: Change Username and ID
-        PhotoObject picObject = new PhotoObject(imageBitmap, "Olivier", "53", imageName, created, mLatitude, mLongitude, 100);
+        PhotoObject picObject = new PhotoObject(imageBitmap, "53", "Olivier", imageName, created, mLatitude, mLongitude, 100);
         mAllPictures.add(picObject);
         TabActivity tab= (TabActivity) getActivity();
         tab.changeLocalMarkers(mAllPictures);
@@ -172,10 +173,11 @@ public class PictureActivity extends Fragment {
             Bundle extras = data.getExtras();
             Bitmap mImageBitmap = (Bitmap) extras.get("data");
             mPic.setImageBitmap(mImageBitmap);
+
             //Create a PhotoObject instance of the picture
             PhotoObject picObject = createPhotoObject(mImageBitmap);
-            //Store image
             storeImage(picObject);
+
         }
     }
 
@@ -184,9 +186,14 @@ public class PictureActivity extends Fragment {
      *
      * @param photo a PhotoObject to get its full size picture to store in Pictures file
      */
+
     private void storeImage(PhotoObject photo){
+        //TEST sendToFileServer
+        photo.sendToFileServer();
+
         if(isStoragePermissionGranted() == true) {
             File pictureFile = getOutputMediaFile(photo);
+
             if (pictureFile == null) {
                 Log.d("Store Image", "Error creating media file, check storage permissions: ");
                 return;

@@ -59,13 +59,6 @@ public final class MainActivity extends AppCompatActivity {
         startService(deleteFileService);
 
 
-        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                updateWithToken(newAccessToken);
-            }
-        };
-
         setContentView(R.layout.activity_main);
 
         mCallbackManager = CallbackManager.Factory.create();
@@ -77,8 +70,8 @@ public final class MainActivity extends AppCompatActivity {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // Once the user is connected update token
-                updateWithToken(AccessToken.getCurrentAccessToken());
+                // Once the user is connected
+                goToTabActivity();
             }
 
             @Override
@@ -99,48 +92,15 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Test if a user is already logged on when creating the MainActivity
+        if(AccessToken.getCurrentAccessToken()!= null) {
+            goToTabActivity();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-
-    private void updateWithToken(AccessToken currentAccessToken) {
-
-        if (currentAccessToken != null) {
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    // when a user is logged in
-
-                    // Display a welcome message when user authenticates
-                    Context context = getApplicationContext();
-                    CharSequence text = "Hello !";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-
-                    goToTabActivity();
-                }
-            }, 1000);
-        } else {
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    // When there is no user logged
-                    Context context = getApplicationContext();
-                    String toastMessage = "Please log in";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, toastMessage, duration);
-                    toast.show();
-                }
-            }, 1000);
-        }
     }
 
 

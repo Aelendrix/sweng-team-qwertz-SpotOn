@@ -6,13 +6,18 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.support.annotation.NonNull;
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
@@ -21,13 +26,15 @@ import java.util.NoSuchElementException;
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 /**
- *  This class represents a picture and all associated informations : name, thumbnail, pictureID, author, timestamps, position, radius
+ *  This class represents a picture and all associated information : name, thumbnail, pictureID, author, timestamps, position, radius
  *  It is mean to be used locally, as opposed to the PhotoObjectStoredInDatabase which is used to be stored in the database
  */
 public class PhotoObject {
 
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
+    private final String DEFAULT_MEDIA_PATH = "MediaPath"; // used for Database Reference
+    private final String STORAGE_REFERENCE_URL = "gs://spoton-ec9ed.appspot.com/images";
 
     private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
     private final long FIVE_MEGABYTES = 5*1024*1024;
@@ -45,7 +52,7 @@ public class PhotoObject {
     private double mLongitude;
     private int mRadius;
 
-    /** This constructor will be used when the used takes a photo with his device, and create the object from locally obtained informations
+    /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
@@ -83,9 +90,10 @@ public class PhotoObject {
 
 //FUNCTIONS PROVIDED BY THIS CLASS
 
-    // Stores the object into the databse (with intermediary steps : storing fullSIzeImage in the fileServer, converting the object into a PhotoObjectStoredInDatabase)
-    // It is the responsability of the sender to use the correct DBref, accordingly with the pictureId chosen, since the object will be used in a child named after the pictureId
-    public void sendToDatabase(DatabaseReference DBref){
+    // Stores the object into the database (with intermediary steps : storing fullSIzeImage in the fileServer, converting the object into a PhotoObjectStoredInDatabase)
+    // It is the responsibility of the sender to use the correct DBref, accordingly with the pictureId chosen, since the object will be used in a child named after the pictureId
+    public void sendToDatabase(){
+        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DEFAULT_MEDIA_PATH);
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
         System.out.println(DBobject);
         DBref.child(mPictureId).setValue(DBobject);
@@ -100,6 +108,72 @@ public class PhotoObject {
     }
 
 
+    // Send the full size image to the file server to be stored
+    public void sendToFileServer() {
+        Log.d("sendToFileServer", "PictureID: "+mPictureId);
+        // Create a storage reference from our app
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_REFERENCE_URL);
+
+        // Create a reference to "PictureID.jpg"
+        StorageReference pictureRef = storageRef.child(mPictureId + ".jpg");
+
+        // Create a reference to 'images/"PictureID".jpg'
+        StorageReference pictureImagesRef = storageRef.child("images/" + mPictureId +  ".jpg");
+
+        // While the file names are the same, the references point to different files
+        pictureRef.getName().equals(pictureImagesRef.getName());    // true
+        pictureRef.getPath().equals(pictureImagesRef.getPath());    // false
+
+        // Convert the bitmap image to byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        mFullSizeImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        // upload the file
+        UploadTask uploadTask = pictureRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e("UploadFileToFileServer", "Exception raised by sendToFileServer()");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                // get the download link of the file
+                mFullSizeImageLink = taskSnapshot.getDownloadUrl().toString();
+                Log.d("FileUploadedURL", "URL: " + mFullSizeImageLink);
+            }
+        });
+    }
+
+    private void getFromFileServer(){
+        // Create a storage reference from our app
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_REFERENCE_URL);
+
+        // Create a reference to a file from a Google Cloud Storage URI
+        StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullSizeImageLink);
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Data for "images/PictureID.jpg" is returns, use this as needed
+                mFullSizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e("DownloadFromFileServer", "Exception raised by getFromFileServer()");
+            }
+        });
+    }
+
+
+
 //ALL THE GETTER FUNCTIONS
 
     // This getter functions as a cache, it gets the fullSizeImage only when needed, and stores it for later
@@ -108,8 +182,15 @@ public class PhotoObject {
             return mFullSizeImage.copy(mFullSizeImage.getConfig(), true);
         }else{
             if(mFullSizeImageLink==null){
-                throw new AssertionError("if there is no image stored, is should have a link to retrieve it");
+                throw new AssertionError("if there is no image stored, object should have a link to retrieve it");
             }
+            else {
+                // Download full size image from file server
+                getFromFileServer();
+
+                return this.getFullSizeImage();
+            }
+/*
             StorageReference fullsizeImageReference = FirebaseStorage.getInstance().getReferenceFromUrl(DEFAULT_PICTURE_PATH+mFullSizeImageLink);
             fullsizeImageReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
@@ -128,6 +209,7 @@ public class PhotoObject {
             return this.getFullSizeImage();
             //throw new NoSuchElementException("The code to retrieve the full size image doesn't exist yet");
 
+*/
         }
     }
     public String getPhotoName(){
@@ -157,7 +239,7 @@ public class PhotoObject {
     public String getPictureId() {
         return mPictureId;
     }
-
+    public String getFullSizeImageLink() { return mFullSizeImageLink; }
 
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
