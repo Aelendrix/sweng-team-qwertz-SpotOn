@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -32,8 +33,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainMenu"></activity>
-
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -46,16 +45,6 @@
         <service android:name=".backgroudapplication.PassedTimestampFileDeletionService" />
 
         <activity android:name=".TabActivity" />
-
-        <activity android:name=".PictureActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
-        </activity>
-
-
-
-
-
-
 
 
         <!--
@@ -70,9 +59,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"/>
+
 
         <activity
             android:name=".DatabaseQueryActivity"
@@ -83,14 +70,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".SeePicturesActivity"
-            android:label="@string/title_activity_see_pictures"
-            android:theme="@style/AppTheme"></activity>
 
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+
 
 
 </manifest>

@@ -7,6 +7,8 @@ import org.junit.Test;
 
 /**
  * Created by Alexis Dewaele on 13/10/2016.
+ *
+ * JUnit test that tests if the ViewPagerAdapter class is correctly implemented
  */
 
 public class ViewPagerAdapterTest extends AppCompatActivity {

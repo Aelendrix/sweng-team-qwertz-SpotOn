@@ -17,8 +17,8 @@ public class PhotoObjectStoredInDatabase {
     private String mPictureId;
     private String mAuthorID;
     private String mPhotoName;
-    private Timestamp mCreatedDate;
-    private Timestamp mExpireDate;
+    private long mCreatedDate;
+    private long mExpireDate;
     private double mLatitude;
     private double mLongitude;
     private int mRadius;
@@ -35,8 +35,8 @@ public class PhotoObjectStoredInDatabase {
         mPictureId=pictureId;
         mAuthorID=authorID;
         mPhotoName=photoName;
-        mCreatedDate=createdDate;
-        mExpireDate=expireDate;
+        mCreatedDate=createdDate.getTime();
+        mExpireDate=expireDate.getTime();
         mLatitude=latitude;
         mLongitude=longitude;
         mRadius=radius;
@@ -61,14 +61,14 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   authorID="+mAuthorID;
         result+="   ---   photoName="+mPhotoName;
         result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")   ---   radius="+mRadius;
-        result+="   ---   thumbnailAsString lentgh="+mThumbnailAsString.length();
+        result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
         return result;
     }
 
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
 
-    // converte a bitmap to a String
+    // convert a bitmap to a String
     private Bitmap convertStringToBitmapImage(String s){
         byte[] stringByteArray = Base64.decode(s, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(stringByteArray, 0, stringByteArray.length);
@@ -82,10 +82,23 @@ public class PhotoObjectStoredInDatabase {
     public String getPictureId(){ return mPictureId;}
     public String getAuthorID(){ return mAuthorID;}
     public String getPhotoName(){ return mPhotoName;}
-    public Timestamp getCreatedDate() { return mCreatedDate; }
-    public Timestamp getExpireDate() { return mExpireDate; }
+    public long getCreatedDate() { return mCreatedDate; }
+    public long getExpireDate() { return mExpireDate; }
     public double getLatitude(){return mLatitude;}
     public double getLongitude(){return mLongitude;}
     public int getRadius(){ return mRadius;}
+
+    // SETTER REQUIRED (PUBLIC) BY FIREBASE
+
+    public void setFullSizePhotoLink(String fullSizePhotoLink){ mFullSizePhotoLink=fullSizePhotoLink;}
+    public void setThumbnailAsString(String thumbnailAsString){mThumbnailAsString=thumbnailAsString;}
+    public void setPictureId(String pictureId){mPictureId=pictureId;}
+    public void setAuthorID(String authorID){mAuthorID=authorID;}
+    public void setPhotoName(String photoName){mPhotoName=photoName;}
+    public void setCreatedDate(long createdDate) { mCreatedDate=createdDate; }
+    public void setExpireDate(long expireDate) {mExpireDate=expireDate;}
+    public void setLatitude(double latitude){mLatitude=latitude;}
+    public void setLongitude(double longitude){mLongitude=longitude;}
+    public void setRadius(int radius){mRadius=radius;}
 
 }

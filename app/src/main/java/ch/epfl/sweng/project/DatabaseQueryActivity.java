@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 public class DatabaseQueryActivity extends AppCompatActivity {
 
-    // The path to the root of the stored key/value pairs in the daabase
+    // The path to the root of the stored key/value pairs in the database
     private final String PATH_TO_KEYVAL_DIRECTORY = "keyVal";
     private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
 
@@ -102,8 +102,10 @@ public class DatabaseQueryActivity extends AppCompatActivity {
         DatabaseReference mediaDirectory = this.myDB.getReference(PATH_TO_MEDIA_DIRECTORY);
         Bitmap fullSizeImage = BitmapFactory.decodeResource(this.getResources(), ressourceImage);
         String newPictureId = mediaDirectory.push().getKey();
-        PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "testPhoto", "testAuthor", new Timestamp(100), 0, 0, 20);
-        testOBject.sendToDatabase(mediaDirectory);
+
+        java.util.Date date= new java.util.Date();
+        PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "testPhoto", "testAuthor", new Timestamp(date.getTime()), 0, 0, 100);
+        testOBject.sendToDatabase();
     }
 
     public void sendTestObject1(View v){ this.sendTestObject(R.drawable.img1);  }

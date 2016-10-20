@@ -6,6 +6,7 @@
 package ch.epfl.sweng.project;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -17,10 +18,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import android.Manifest;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -44,17 +48,17 @@ public final class MainActivity extends AppCompatActivity {
 
     private LoginButton mainLoginButton;
 
-    private CallbackManager callbackManager;
+    private CallbackManager mCallbackManager;
 
     private final long TIME_BETWEEN_TWO_ALARM = 60000;//one minute for now
 
     private final int REQUEST_FINE_LOCALISATION = 9;
-    private Toolbar mToolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
         startService(deleteFileService);
@@ -67,46 +71,58 @@ public final class MainActivity extends AppCompatActivity {
         PendingIntent serverDataDeletionPendingIntent = PendingIntent.getBroadcast(this, 0, serverDataDeletionIntent, 0);
         serverDataDeletionAlarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), TIME_BETWEEN_TWO_ALARM, serverDataDeletionPendingIntent);
 
+
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+
+
+
         setContentView(R.layout.activity_main);
 
-        callbackManager = CallbackManager.Factory.create();
+        mCallbackManager = CallbackManager.Factory.create();
 
+        // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
-        mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected
-                goToMainMenu();
+                goToTabActivity();
             }
 
             @Override
             public void onCancel() {
-                // TODO: Add code
+                // Display a welcome message when user authenticates
+                Context context = getApplicationContext();
+                String toastMessage = "The authentication has been cancelled";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, toastMessage, duration);
+                toast.show();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // TODO: Add code
+                //Log the exception raised by Facebook
+                Log.e("FacebookException", exception.getMessage());
             }
         });
 
         // Test if a user is already logged on when creating the MainActivity
         if(AccessToken.getCurrentAccessToken()!= null) {
-            goToMainMenu();
+            goToTabActivity();
         }
 
-        //useless ?
-        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(mToolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 
     @Override
     protected void onStart() {
@@ -125,15 +141,9 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    private void goToMainMenu() {
-        // start a new activity
-        Intent intent = new Intent(this, MainMenu.class);
-        startActivity(intent);
-    }
 
     public void goToPictureActivity(View view){
         //launch the PictureActivity
@@ -151,7 +161,7 @@ public final class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void goToTabActivity(View view) {
+    public void goToTabActivity() {
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
@@ -164,7 +174,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void goToQueryDatabaseActivity(View view){
-        //launche the Database Query activity
+        //launch the Database Query activity
         Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
         startActivity(databaseQueryIntent);
     }

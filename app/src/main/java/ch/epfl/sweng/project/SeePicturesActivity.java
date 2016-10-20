@@ -1,22 +1,24 @@
 package ch.epfl.sweng.project;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class SeePicturesActivity extends AppCompatActivity {
+public class SeePicturesActivity extends Fragment {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_see_pictures);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        View view = inflater.inflate(R.layout.activity_see_pictures, container, false);
 
         //displays the files available
         String textToDisplay = "There are no files saved";
@@ -34,8 +36,11 @@ public class SeePicturesActivity extends AppCompatActivity {
                 }
             }
         }
-        TextView textView = (TextView) findViewById(R.id.ListOfFiles);
+
+        TextView textView = (TextView) view.findViewById(R.id.ListOfFiles);
         textView.setText(textToDisplay);
+
+        return view;
 
     }
 
