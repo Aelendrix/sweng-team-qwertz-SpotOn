@@ -10,9 +10,6 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -26,7 +23,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -35,23 +31,15 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 /**
  * Your app's main activity.
  */
 public final class MainActivity extends AppCompatActivity {
 
-    private LoginButton mainLoginButton;
     private CallbackManager callbackManager;
-    private AccessTokenTracker accessTokenTracker;
-
-    private String userFirstName = "";
 
     private final int REQUEST_FINE_LOCALISATION = 9;
-    private Toolbar mToolbar;
 
 
     @Override
@@ -62,7 +50,7 @@ public final class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        accessTokenTracker = new AccessTokenTracker() {
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
                 updateWithToken(newAccessToken);
@@ -105,13 +93,6 @@ public final class MainActivity extends AppCompatActivity {
                 Log.e("FacebookException", exception.getMessage());
             }
         });
-
-
-        //useless ?
-        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(mToolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
 
@@ -209,7 +190,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void goToQueryDatabaseActivity(View view){
-        //launche the Database Query activity
+        //launch the Database Query activity
         Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
         startActivity(databaseQueryIntent);
     }
