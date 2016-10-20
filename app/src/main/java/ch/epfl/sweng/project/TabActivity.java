@@ -1,60 +1,20 @@
 package ch.epfl.sweng.project;
 
-import android.*;
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
-import ch.epfl.sweng.project.backgroudapplication.PhotoFile;
-import ch.epfl.sweng.project.backgroudapplication.PhotoList;
-
-import com.google.firebase.database.DatabaseReference;
-
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class TabActivity extends AppCompatActivity implements MyStoriesFragment.OnFragmentInteractionListener, CameraFragment.OnCameraSelectedListener, StoriesAroundMeFragment.OnFragmentInteractionListener {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 10;
+  /*  private static final int REQUEST_IMAGE_CAPTURE = 10;
     Location mPhoneLocation;
     //latitude and longitude, not always assigned
     private static double mLatitude = 0.0;
@@ -87,6 +47,10 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
     //will refresh the mapactivity fragments in function of the localDatabase
     private void refreshMapMarkers(){
     }
+*/
+    private SeePicturesActivity picturesFragment = new SeePicturesActivity();
+    private PictureActivity cameraFragment = new PictureActivity();
+    private MapsActivity mapFragment = new MapsActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +88,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         });
 
 
-
+/*
         mPic = (ImageView) findViewById(R.id.image_view);
 
         mSavedPhotos = new PhotoList();
@@ -152,20 +116,35 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
-        }
+        }*/
         /*Catch exception because location acces always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
         */
-        catch(SecurityException e) {
+        /*catch(SecurityException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
+    public void dispatchTakePictureIntent(View view) {
+        cameraFragment.dispatchTakePictureIntent(view);
+    }
+
+    public void rotatePicture(View view) {
+        cameraFragment.rotatePicture(view);
+    }
+
+    public void savePicture(View view) {
+        cameraFragment.savePicture(view);
+    }
+
+    public void goToSeePicturesActivity(View view) {
+        cameraFragment.goToSeePicturesActivity(view);
+    }
     public void onCameraSelected(Uri uri){
         Intent intent = new Intent(this, PictureActivity.class);
         startActivity(intent);
     }
-
+/*
     //function called when the locationListener see a location change
     private void refreshLocation() {
         try {
@@ -182,11 +161,11 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
                 }
             }
 
-        }
+        }*/
         /*Catch exception because location acces always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
         */
-        catch(SecurityException e) {
+        /*catch(SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -227,13 +206,13 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
             return true;
         }
     }
-
+*/
     /**
      * Saves the last picture that has been took in a PhotoList and lauch a service that
      * deletes to old photos
      * @param view
      */
-
+/*
     public void savePicture(View view){
         EditText secondsToKeep = (EditText) findViewById(R.id.askHowMuchTime);
 
@@ -249,15 +228,15 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         Intent service = new Intent(this, PassedTimestampFileDeletionService.class);
         startService(service);
     }
-
+*/
     /**
      * Launch the activity which show the pictures that have been saved
      * @param view
      */
-    public void goToSeePicturesActivity(View view){
+   /* public void goToSeePicturesActivity(View view){
         Intent intent = new Intent(this, SeePicturesActivity.class);
         startActivity(intent);
-    }
+    }*/
 
 
 
@@ -268,7 +247,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
      * @param permissions the permissions we asked to the user
      * @param grantResults the result of the permissions
      */
-    @Override
+   /* @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == REQUEST_IMAGE_CAPTURE){
@@ -278,7 +257,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
                 Toast.makeText(this, getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
             }
         }
-    }
+    }*/
 
     /**
      * Method that will put the captured photo in an image view
@@ -287,7 +266,7 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
      * @param resultCode the result of whether the user kept the photo or canceled it
      * @param data contains the image
      */
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             //Display image on the activity
@@ -301,14 +280,14 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
             String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
             Toast.makeText(this, displayLocation, Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     /**
      * Method that will store the image in the Pictures file in the internal storage
      *
      * @param picture the bitmap picture to store in Pictures file
      */
-    private void storeImage(Bitmap picture){
+  /*  private void storeImage(Bitmap picture){
         if(isStoragePermissionGranted() == true) {
             File pictureFile = getOutputMediaFile();
             if (pictureFile == null) {
@@ -337,12 +316,12 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         } else {
             Log.d("Storage Permission", "not granted");
         }
-    }
+    }*/
     /**
      * Create a file where the pictures will be stored in the Pictures directory
      * @return the file where pictures will be stored
      */
-    private File getOutputMediaFile(){
+   /* private File getOutputMediaFile(){
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
         Log.v("getOutputMediaFile", "accessed this one");
@@ -376,16 +355,16 @@ public class TabActivity extends AppCompatActivity implements MyStoriesFragment.
         mTimer.cancel();
         mTimer = null;
     }
-
+*/
     public void onFragmentInteraction(Uri uri) {
 
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MyStoriesFragment(), "My Stories");
-        adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new MapsActivity(), "Stories around me");
+        adapter.addFragment(picturesFragment, "My Stories");
+        adapter.addFragment(cameraFragment, "Camera");
+        adapter.addFragment(mapFragment, "Stories around me");
         viewPager.setAdapter(adapter);
     }
 

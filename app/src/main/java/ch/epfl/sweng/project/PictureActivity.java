@@ -13,14 +13,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -50,7 +53,7 @@ import ch.epfl.sweng.project.backgroudapplication.PhotoList;
  * Activity that will allow the user to access the camera and take a picture to integrate
  * it in the app
  */
-public class PictureActivity extends AppCompatActivity {
+public class PictureActivity extends Fragment {
 
     //objet representing the phone localisation
     Location mPhoneLocation;
@@ -67,19 +70,20 @@ public class PictureActivity extends AppCompatActivity {
     public static PhotoList mSavedPhotos;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_picture);
+        View view = inflater.inflate(R.layout.activity_picture, container, false);
+        /*setContentView(R.layout.activity_picture);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mPic = (ImageView) findViewById(R.id.image_view);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+        mPic = (ImageView) view.findViewById(R.id.image_view);
 
         mSavedPhotos = new PhotoList();
 
         // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
@@ -108,17 +112,19 @@ public class PictureActivity extends AppCompatActivity {
         catch(SecurityException e) {
             e.printStackTrace();
         }
+
+        return view;
     }
 
     /*
         This method uses the options menu when this activity is launched
          */
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
-    }
+    }*/
 
     //function called when the locationListener see a location change
     private void refreshLocation() {
@@ -150,11 +156,11 @@ public class PictureActivity extends AppCompatActivity {
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
     public void dispatchTakePictureIntent(View view){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
             String[] permissionRequested = {Manifest.permission.CAMERA};
-            ActivityCompat.requestPermissions(this, permissionRequested, REQUEST_IMAGE_CAPTURE);
+            ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
         }
     }
 
@@ -164,14 +170,14 @@ public class PictureActivity extends AppCompatActivity {
 
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v("Storage","Permission is granted");
                 return true;
             } else {
 
                 Log.v("Storage","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         }
@@ -188,7 +194,7 @@ public class PictureActivity extends AppCompatActivity {
      */
 
     public void savePicture(View view){
-        EditText secondsToKeep = (EditText) findViewById(R.id.askHowMuchTime);
+        EditText secondsToKeep = (EditText) getActivity().findViewById(R.id.askHowMuchTime);
 
         //Control if there is an input, else put some default value
         long millisecondsToKeep = 5000;
@@ -199,8 +205,8 @@ public class PictureActivity extends AppCompatActivity {
         //create a new PhotoFile and add it to the list, and then start the deleting service
         PhotoFile photo = new PhotoFile( mPic.getDrawable(),new Timestamp(System.currentTimeMillis()), millisecondsToKeep);
         mSavedPhotos.addPhoto(photo);
-        Intent service = new Intent(this, PassedTimestampFileDeletionService.class);
-        startService(service);
+        Intent service = new Intent(getActivity(), PassedTimestampFileDeletionService.class);
+        getActivity().startService(service);
     }
 
     /**
@@ -208,7 +214,7 @@ public class PictureActivity extends AppCompatActivity {
      * @param view
      */
     public void goToSeePicturesActivity(View view){
-        Intent intent = new Intent(this, SeePicturesActivity.class);
+        Intent intent = new Intent(getActivity(), SeePicturesActivity.class);
         startActivity(intent);
     }
 
@@ -228,7 +234,7 @@ public class PictureActivity extends AppCompatActivity {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 invokeCamera();
             } else {
-                Toast.makeText(this, getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -249,8 +255,8 @@ public class PictureActivity extends AppCompatActivity {
      * @param data contains the image
      */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             //Display image on the activity
             Bundle extras = data.getExtras();
             Bitmap mImageBitmap = (Bitmap) extras.get("data");
@@ -260,7 +266,7 @@ public class PictureActivity extends AppCompatActivity {
             //Get the coordinates where the picture was taken and display them as toast message
             refreshLocation();
             String displayLocation = "Longitude is " + mLongitude + " and latitude is " + mLatitude;
-            Toast.makeText(this, displayLocation, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), displayLocation, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -283,7 +289,7 @@ public class PictureActivity extends AppCompatActivity {
                 Log.d("Storage Permission", "accessed");
 
                 //Allow the Pictures file to load directly after the image is stored
-                MediaScannerConnection.scanFile(this, new String[]{pictureFile.toString()}, null,
+                MediaScannerConnection.scanFile(getContext(), new String[]{pictureFile.toString()}, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             public void onScanCompleted(String path, Uri uri) {
                                 Log.i("ExternalStorage", "Scanned " + path + ":");
