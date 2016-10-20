@@ -40,7 +40,9 @@ import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionSer
  */
 public final class MainActivity extends AppCompatActivity {
 
-    private CallbackManager callbackManager;
+    private LoginButton mainLoginButton;
+
+    private CallbackManager mCallbackManager;
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
@@ -66,14 +68,12 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
-        //Used for the Facebook authentication
-        callbackManager = CallbackManager.Factory.create();
+        mCallbackManager = CallbackManager.Factory.create();
 
         // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
 
-        mainLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -161,7 +161,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
