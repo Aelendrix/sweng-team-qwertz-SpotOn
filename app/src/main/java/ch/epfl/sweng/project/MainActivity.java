@@ -18,6 +18,10 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import android.Manifest;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -32,6 +36,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
 
 
@@ -43,6 +49,8 @@ public final class MainActivity extends AppCompatActivity {
     private LoginButton mainLoginButton;
 
     private CallbackManager mCallbackManager;
+
+    private final long TIME_BETWEEN_TWO_ALARM = 60000;//one minute for now
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
@@ -57,6 +65,14 @@ public final class MainActivity extends AppCompatActivity {
 
         Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
         startService(deleteFileService);
+
+        /*Create an alarm which will go off for sending queries to the Firebase server
+         * to check the expiration time of the files.
+         */
+        AlarmManager serverDataDeletionAlarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent serverDataDeletionIntent = new Intent(this, ServerDeleteExpiredPhotoReceiver.class);
+        PendingIntent serverDataDeletionPendingIntent = PendingIntent.getBroadcast(this, 0, serverDataDeletionIntent, 0);
+        serverDataDeletionAlarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), TIME_BETWEEN_TWO_ALARM, serverDataDeletionPendingIntent);
 
 
         setContentView(R.layout.activity_main);
