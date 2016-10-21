@@ -40,6 +40,8 @@
             android:theme="@style/com_facebook_activity_theme"
             android:label="@string/app_name" />
 
+
+        <receiver android:name=".ServerDeleteExpiredPhotoReceiver" />
         <service android:name=".backgroudapplication.PassedTimestampFileDeletionService" />
 
         <activity android:name=".TabActivity" />
