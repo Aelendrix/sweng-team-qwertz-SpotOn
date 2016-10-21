@@ -47,7 +47,7 @@ public class TabActivity extends AppCompatActivity {
         @Override
         public void run() {
             //refresh the local database every minutes
-                refreshDB();
+            refreshDB();
 
         }
     };
@@ -130,13 +130,15 @@ public class TabActivity extends AppCompatActivity {
         //start a looped runnable code every X minutes
         if(mTimer==null){
             mTimer = new Timer();
-            mTimer.scheduleAtFixedRate(mTimerTask, 0, TIME_BETWEEN_EXEC);
+            mTimer.scheduleAtFixedRate(new InternalClockTask(), 1000, TIME_BETWEEN_EXEC);
         }
     }
     @Override
     protected void onStop(){
         super.onStop();
         //stop the timer
+        mTimerTask.cancel();
+        mTimer.purge();
         mTimer.cancel();
         mTimer = null;
     }
@@ -200,6 +202,13 @@ public class TabActivity extends AppCompatActivity {
         */
         catch(SecurityException e) {
             e.printStackTrace();
+        }
+    }
+    public class InternalClockTask extends TimerTask  {
+        public void run() {
+            //refresh the local database every minutes
+            refreshDB();
+
         }
     }
 }
