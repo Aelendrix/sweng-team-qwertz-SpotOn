@@ -41,16 +41,6 @@ public class TabActivity extends AppCompatActivity {
     //Location objects
     private LocationManager mLocationManager;
     private Location mLocation;
-    //task that will be run every x Time.
-    private TimerTask mTimerTask = new TimerTask() {
-
-        @Override
-        public void run() {
-            //refresh the local database every minutes
-            refreshDB();
-
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +114,9 @@ public class TabActivity extends AppCompatActivity {
         mCameraFragment.dispatchTakePictureIntent(view);
     }
 
+    /**
+     * Override method starting the repeating task every TIME_BETWEEN_EXEC seconds
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -133,11 +126,13 @@ public class TabActivity extends AppCompatActivity {
             mTimer.scheduleAtFixedRate(new InternalClockTask(), 1000, TIME_BETWEEN_EXEC);
         }
     }
+    /**
+     * Override method stopping the reapeting task
+     */
     @Override
     protected void onStop(){
         super.onStop();
         //stop the timer
-        mTimerTask.cancel();
         mTimer.purge();
         mTimer.cancel();
         mTimer = null;
@@ -154,7 +149,7 @@ public class TabActivity extends AppCompatActivity {
         adapter.addFragment(mMapFragment, "Stories around me");
         viewPager.setAdapter(adapter);
     }
-    /*
+    /**
     This method uses the options menu when this activity is launched
      */
     @Override
@@ -165,7 +160,10 @@ public class TabActivity extends AppCompatActivity {
     }
 
 
-    //will refresh the mapactivity fragments in function of the localDatabase
+    /**
+     * private class refreshing the local database using the firebase server
+     * it'll update the mapFragment and display the photoObject on the map as markers
+     */
     private void refreshDB(){
         if(mLocation!=null) {
             mDB.refresh(mLocation);
@@ -180,7 +178,10 @@ public class TabActivity extends AppCompatActivity {
     {
         mMapFragment.displayPictureMarkers(photoList);
     }
-    //refresh the current location and update this location to the mapfragment and picturefragment
+    /**
+     * Private classe refreshing the current location
+     * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
+     */
     private void refreshLocation(){
         try {
             if (mLocationManager != null) {
@@ -190,21 +191,29 @@ public class TabActivity extends AppCompatActivity {
                     mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     Log.d("location","new location set");
                     if(mLocation!=null){
+                        if(mMapFragment!=null) {
                             mMapFragment.refreshMapLocation(mLocation);
+                        }
+                        if(mCameraFragment!=null) {
                             mCameraFragment.refreshLocation(mLocation);
-
+                        }
                     }
                 }
             }
         }
-        /*Catch exception because location access always need to have the localisation permission
+        /**
+         * Catch exception because location access always need to have the localisation permission
         * In our app if the permission is rejected, we can't access this activity anyway (ATM)
         */
         catch(SecurityException e) {
             e.printStackTrace();
         }
     }
-    public class InternalClockTask extends TimerTask  {
+    /**
+     * private class representing a task which will be run every x minutes
+     *
+     */
+    private class InternalClockTask extends TimerTask  {
         public void run() {
             //refresh the local database every minutes
             refreshDB();

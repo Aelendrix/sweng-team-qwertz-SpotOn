@@ -1,20 +1,11 @@
 package ch.epfl.sweng.project;
 
 
-import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +26,7 @@ import java.util.List;
 
 public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
-
+    //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
     /*
 
@@ -48,12 +39,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
     //Flon
     private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
-
-    /*Array of photo objects that are taken by the user
-      TODO: delete the array when we will be able to query pictures from the DB
      */
+    //local location variable
     private LatLng mPhoneLatLng;
+    //marker representing our location on the map
     private Marker mLocationMarker;
+    //list of photoObject and their marker shown on map
     private List<Marker> listMarker= new ArrayList<>();
     private List<PhotoObject> listPhoto;
 
@@ -77,24 +68,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             getFragmentManager().beginTransaction().remove(f).commit();
             public void onProviderDisabled(String provider) {}
         };
-
-
-        // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 1000; //1 Second
-        final int MIN_DISTANCE_CHANGE_UPDATE = 10; // 1 Meter
-        try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
-        }
-        */
-        /*Catch exception because location acces always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        /*
-        catch(SecurityException e) {
-            e.printStackTrace();
-        }
-        */
-    //function called when the locationListener (in tabActivity) see a location change
+    */
+    /**
+     * function used to refresh the local location variable
+     * and apply it to our special marker on the map
+     *  @param phoneLocation the location of the user using the GPS
+     */
     public void refreshMapLocation(Location phoneLocation) {
 
         if (phoneLocation != null) {
@@ -122,19 +101,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         // Set a preference for minimum and maximum zoom.
         mMap.setMinZoomPreference(5.0f);
-
-        /*add the fake objects on our map
-        *TODO: need to change this part when the DB will be implemented
-        *strings are hardcoded because theses fake data will be stored in a DB and not in the strings.xml
-        *for the demo, a simple position to test is (46.5,6.6)
-        */
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
     }
 
-    //use our local database to display our markers
+    /**
+     * use our local database to display our markers on the map
+     * @param DB the local database
+     */
     public void displayDBMarkers(LocalDatabase DB)
     {
         final LocalDatabase mDB = DB;
+        //this task need to be executed by the main thread (for some reason)
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
