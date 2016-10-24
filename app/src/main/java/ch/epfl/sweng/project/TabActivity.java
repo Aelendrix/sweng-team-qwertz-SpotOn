@@ -25,9 +25,7 @@ import java.util.TimerTask;
 
 public class TabActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
+
     private SeePicturesActivity mPicturesFragment = new SeePicturesActivity();
     private PictureActivity mCameraFragment = new PictureActivity();
     private MapsActivity mMapFragment = new MapsActivity();
