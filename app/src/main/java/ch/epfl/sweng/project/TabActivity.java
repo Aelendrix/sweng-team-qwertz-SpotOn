@@ -30,9 +30,6 @@ public class TabActivity extends AppCompatActivity {
     private PictureActivity mCameraFragment = new PictureActivity();
     private MapsActivity mMapFragment = new MapsActivity();
     // The path to the root of the stored pictures Data in the database
-    private final String PATH_TO_PICTURE_DATA = "MediaDirectory";
-    //DB
-    private final LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 5*1000; //5 seconds
     private Timer mTimer;
@@ -96,7 +93,7 @@ public class TabActivity extends AppCompatActivity {
 
         // Register the listener with the Location Manager to receive location updates
         final int TIME_BETWEEN_LOCALISATION = 1*1000; //1 Second
-        final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
+        final int MIN_DISTANCE_CHANGE_UPDATE = 1; // 1 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
         }
@@ -162,15 +159,17 @@ public class TabActivity extends AppCompatActivity {
      * private class refreshing the local database using the firebase server
      * it'll update the mapFragment and display the photoObject on the map as markers
      */
-    private void refreshDB(){
-        if(mLocation!=null) {
-            mDB.refresh(mLocation);
+    private void refreshDB() {
+        if (mLocation != null) {
+            LocalDatabase.refresh(mLocation);
         }
-        if(mMapFragment!=null){
-            mMapFragment.displayDBMarkers(mDB);
+        if (mMapFragment != null) {
+            mMapFragment.displayDBMarkers();
+        }
+        if (mPicturesFragment != null) {
+            mPicturesFragment.refreshGrid();
         }
     }
-
     //refresh the local markers
     public void changeLocalMarkers(ArrayList<PhotoObject> photoList)
     {

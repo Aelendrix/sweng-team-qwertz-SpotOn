@@ -125,17 +125,15 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     /**
      * use our local database to display our markers on the map
-     * @param DB the local database
      */
-    public void displayDBMarkers(LocalDatabase DB)
+    public void displayDBMarkers()
     {
-        final LocalDatabase mDB = DB;
         //this task need to be executed by the main thread (for some reason)
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
-                listPhoto = new ArrayList<>(mDB.getMap().values());
+                listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
                 if(mMap!=null && mPhoneLatLng!=null) {
                     //empty the map of the markers
                     for(Marker marker:listMarker) {
