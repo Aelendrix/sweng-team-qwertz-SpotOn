@@ -71,18 +71,10 @@ public class SeePicturesActivity extends Fragment {
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
-            Log.d("WTF"," YOLO "+LocalDatabase.getMap().size());
-            //need an handler to prevent a thread error
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
                     //create a new adapter and refresh the gridView
                     ImageAdapter adapter = new ImageAdapter(mView.getContext());
                     mGridView.invalidateViews();
                     mGridView.setAdapter(adapter);
-                }
-            });
 
         }
 

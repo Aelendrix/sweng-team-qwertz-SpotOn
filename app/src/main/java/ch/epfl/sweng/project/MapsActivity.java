@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -91,26 +94,27 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     /**
      * function used to refresh the local location variable
      * and apply it to our special marker on the map
-     *  @param phoneLocation the location of the user using the GPS
+     *  @param phoneLatLng the location of the user using the GPS
      */
-    public void refreshMapLocation(Location phoneLocation) {
+    public void refreshMapLocation(LatLng phoneLatLng) {
 
-        if (phoneLocation != null) {
+        if (phoneLatLng != null) {
             //now apply the location to the map
+            mPhoneLatLng = new LatLng(phoneLatLng.latitude,phoneLatLng.longitude);
+
             if (mMap != null) {
-                            mPhoneLatLng = new LatLng(phoneLocation.getLatitude(), phoneLocation.getLongitude());
-                            //change the localisation cursor, if null, create one instead
-                            if (mLocationMarker == null) {
-                                mLocationMarker = mMap.addMarker(new MarkerOptions()
+                //change the localisation cursor, if null, create one instead
+                if (mLocationMarker == null) {
+                    mLocationMarker = mMap.addMarker(new MarkerOptions()
                                         .position(mPhoneLatLng)
                                         .title("My position")
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
-                            } else {
-                                mLocationMarker.setPosition(mPhoneLatLng);
-                            }
-                        }
-                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
+                } else {
+                    mLocationMarker.setPosition(mPhoneLatLng);
+                }
+            }
+        }
     }
      /*Manipulates the map once available.
      * Create the fake markers and mark my position
@@ -121,6 +125,22 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         // Set a preference for minimum and maximum zoom.
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
+        displayDBMarkers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mPhoneLatLng == null && LocalDatabase.getLocation() != null){
+            mPhoneLatLng = new LatLng(LocalDatabase.getLocation().getLatitude(),LocalDatabase.getLocation().getLongitude());
+        }
+        if (mMap == null) {
+            ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment)).getMapAsync(this);
+        }
     }
 
     /**
@@ -128,46 +148,40 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public void displayDBMarkers()
     {
-        //this task need to be executed by the main thread (for some reason)
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
-                if(mMap!=null && mPhoneLatLng!=null) {
-                    //empty the map of the markers
-                    for(Marker marker:listMarker) {
-                    marker.remove();
-                    }
-                    listMarker = new ArrayList<>();
-                    //add the new markers on the map
-                    for (PhotoObject photo : listPhoto) {
-                        boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
-                        LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                        Marker photoMarker;
-                        //add a red marker if the photo can be seen
-                        if(canActivateIt) {
-                            photoMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(photoPosition)
-                                    .title(photo.getPhotoName())
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                        }
-                        //add a yellow marker if it can't be activated to see the picture
-                        else{
-                            photoMarker = mMap.addMarker(new MarkerOptions()
-                                    .position(photoPosition)
-                                    .title(photo.getPhotoName())
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                        }
-                        //add the picture Id of the photo as custom object of the marker
-                        //useful to retrieve the picture
-                        photoMarker.setTag(photo.getPictureId());
-                        //add the marker in the list
-                        listMarker.add(photoMarker);
-                    }
-                }
+        listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
+        if(mMap!=null && mPhoneLatLng!=null) {
+            //empty the map of the markers
+            for(Marker marker:listMarker) {
+            marker.remove();
             }
-        });
+            refreshMapLocation(mPhoneLatLng);
+            listMarker = new ArrayList<>();
+            //add the new markers on the map
+            for (PhotoObject photo : listPhoto) {
+                boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
+                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
+                Marker photoMarker;
+                //add a red marker if the photo can be seen
+                if(canActivateIt) {
+                    photoMarker = mMap.addMarker(new MarkerOptions()
+                            .position(photoPosition)
+                            .title(photo.getPhotoName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                }
+                //add a yellow marker if it can't be activated to see the picture
+                else{
+                    photoMarker = mMap.addMarker(new MarkerOptions()
+                            .position(photoPosition)
+                            .title(photo.getPhotoName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                }
+                //add the picture Id of the photo as custom object of the marker
+                //useful to retrieve the picture
+                photoMarker.setTag(photo.getPictureId());
+                //add the marker in the list
+                listMarker.add(photoMarker);
+            }
+        }
     }
 
     /**

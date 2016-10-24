@@ -24,7 +24,7 @@ public class LocalDatabase {
     private final static Map<String,PhotoObject> photoDataMap = new HashMap<>();
     // Firebase instance variables
     private final static DatabaseReference myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
-
+    private static Location mLocation;
 
     //refresh the db from the server
     public static void refresh(Location phoneLocation){
@@ -92,5 +92,13 @@ public class LocalDatabase {
         }
         return listThumbnail;
 
+    }
+
+    public static void setLocation(Location location) {
+        mLocation = location;
+    }
+
+    public static Location getLocation() {
+        return mLocation;
     }
 }
