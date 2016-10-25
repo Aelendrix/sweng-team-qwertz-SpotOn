@@ -39,6 +39,7 @@ public class TabActivity extends AppCompatActivity {
     private Runnable loopedRefresh = new Runnable() {
         @Override
         public void run() {
+            Log.d("Loop","refresh the database");
             refreshDB();
             // Repeat this the same runnable code block again
             mHandler.postDelayed(loopedRefresh, TIME_BETWEEN_EXEC);
@@ -126,8 +127,8 @@ public class TabActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //start a looped runnable code every X minutes
-        mHandler.post(loopedRefresh);
+        //start a looped runnable code
+        mHandler.postDelayed(loopedRefresh,3*1000);
 
     }
     /**

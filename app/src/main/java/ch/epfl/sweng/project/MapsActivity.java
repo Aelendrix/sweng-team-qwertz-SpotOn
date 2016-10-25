@@ -64,7 +64,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
         return mView;*/
-
         if(mView != null) {
             ViewGroup parent = (ViewGroup) mView.getParent();
             if (parent != null) {
