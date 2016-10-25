@@ -27,12 +27,14 @@ public class LocalDatabase {
     private static Location mLocation;
 
     //refresh the db from the server
-    public static void refresh(Location phoneLocation){
+    public static void refresh(Location phoneLocation,TabActivity tab){
         //create a single event listener which return a list of object PhotoObject and loop over it
         //to add in our DB
         final double maxRadius =0.1;// in degree
         final double longitude = phoneLocation.getLongitude();
         final double latitude = phoneLocation.getLatitude();
+        final TabActivity tabActivity = tab;
+        mLocation = phoneLocation;
         //Query photoSortedByLongitude = myDBref.orderByChild("longitude").startAt(longitude-maxRadius).endAt(longitude+maxRadius);
         //get photo still alive
         java.util.Date date= new java.util.Date();
@@ -54,7 +56,8 @@ public class LocalDatabase {
                     }
                 }
                 Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
-
+                //refresh the child of tabActivity
+                tabActivity.endRefreshDB();
             }
 
             @Override

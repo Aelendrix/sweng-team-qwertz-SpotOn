@@ -33,8 +33,9 @@ public class TabActivity extends AppCompatActivity {
     private MapsActivity mMapFragment = new MapsActivity();
     // The path to the root of the stored pictures Data in the database
     //TimerTask
-    private final int TIME_BETWEEN_EXEC = 5*1000; //5 seconds
+    private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds
     Handler mHandler = new Handler();
+    //
     private Runnable loopedRefresh = new Runnable() {
         @Override
         public void run() {
@@ -102,7 +103,7 @@ public class TabActivity extends AppCompatActivity {
         };
 
         // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 1*1000; //1 Second
+        final int TIME_BETWEEN_LOCALISATION = 2*1000; //2 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
@@ -167,8 +168,16 @@ public class TabActivity extends AppCompatActivity {
      */
     private void refreshDB() {
         if (mLocation != null) {
-            LocalDatabase.refresh(mLocation);
+            LocalDatabase.refresh(mLocation,this);
         }
+
+    }
+
+    /**
+     * public class following the call of refreshDB,
+     * refreshing the map and the grid when the datas from firebase are downloaded
+     */
+    public void endRefreshDB(){
         if (mMapFragment != null) {
             mMapFragment.displayDBMarkers();
         }
