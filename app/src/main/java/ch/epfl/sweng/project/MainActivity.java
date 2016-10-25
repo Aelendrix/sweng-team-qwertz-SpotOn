@@ -141,12 +141,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
 
-    public void goToPictureActivity(View view){
-        //launch the PictureActivity
-        Intent pictureIntent = new Intent(this, PictureActivity.class);
-        startActivity(pictureIntent);
-    }
-
     /*
         This method uses the options menu when this activity is launched
          */

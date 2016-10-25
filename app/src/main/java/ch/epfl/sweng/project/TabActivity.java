@@ -1,13 +1,12 @@
 package ch.epfl.sweng.project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class TabActivity extends AppCompatActivity {
 
@@ -160,6 +163,30 @@ public class TabActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.log_out:
+                disconnectFacebook();
+                return true;
+            case R.id.action_about:
+                Intent intent = new Intent(this, AboutPage.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void disconnectFacebook() {
+        Profile profile = Profile.getCurrentProfile();
+        if(profile != null){
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 
