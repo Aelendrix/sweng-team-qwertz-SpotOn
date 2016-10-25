@@ -33,7 +33,7 @@ public class PhotoObject {
 
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
-    private final String DEFAULT_MEDIA_PATH = "MediaPath"; // used for Database Reference
+    private final String DEFAULT_MEDIA_PATH = "MediaDirectory"; // used for Database Reference
     private final String STORAGE_REFERENCE_URL = "gs://spoton-ec9ed.appspot.com/images";
 
     private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
@@ -143,6 +143,7 @@ public class PhotoObject {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
                 mFullSizeImageLink = taskSnapshot.getDownloadUrl().toString();
+                sendToDatabase();
                 Log.d("FileUploadedURL", "URL: " + mFullSizeImageLink);
             }
         });
