@@ -57,6 +57,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private View mView;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setRetainInstance(true);
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /*super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
@@ -64,6 +69,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
         return mView;*/
+
         if(mView != null) {
             ViewGroup parent = (ViewGroup) mView.getParent();
             if (parent != null) {

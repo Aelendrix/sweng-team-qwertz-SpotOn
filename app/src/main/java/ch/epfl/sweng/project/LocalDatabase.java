@@ -26,6 +26,9 @@ public class LocalDatabase {
     private final static DatabaseReference myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
     private static Location mLocation;
 
+    private LocalDatabase() {
+    }
+
     //refresh the db from the server
     public static void refresh(Location phoneLocation,TabActivity tab){
         Log.d("LocalDB"," refreshing DB");
@@ -103,5 +106,13 @@ public class LocalDatabase {
 
     public static Location getLocation() {
         return mLocation;
+    }
+
+    public static boolean hasKey(String pictureId){
+        return photoDataMap.containsKey(pictureId);
+    }
+
+    public static PhotoObject getPhoto(String pictureId){
+        return photoDataMap.get(pictureId);
     }
 }
