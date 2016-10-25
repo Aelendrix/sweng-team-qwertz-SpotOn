@@ -1,5 +1,6 @@
 package ch.epfl.sweng.project;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 import android.util.SparseArray;
@@ -11,30 +12,32 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class LocalDatabase {
 
-    private String dataPath;
-    private Map<String,PhotoObject> photoDataMap = new HashMap<>();
+    private final static String dataPath = "MediaDirectory";
+    private final static Map<String,PhotoObject> photoDataMap = new HashMap<>();
     // Firebase instance variables
-    private DatabaseReference myDBref;
+    private final static DatabaseReference myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
+    private static Location mLocation;
 
-    public LocalDatabase(String path){
-        dataPath=path;
-        myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
-
+    private LocalDatabase() {
     }
+
     //refresh the db from the server
-    public void refresh(Location phoneLocation){
+    public static void refresh(Location phoneLocation,TabActivity tab){
+        Log.d("LocalDB"," refreshing DB");
         //create a single event listener which return a list of object PhotoObject and loop over it
         //to add in our DB
-        final Location pLocation = phoneLocation;
         final double maxRadius =0.1;// in degree
-        final double longitude = pLocation.getLongitude();
-        final double latitude = pLocation.getLatitude();
+        final double longitude = phoneLocation.getLongitude();
+        final double latitude = phoneLocation.getLatitude();
+        final TabActivity tabActivity = tab;
         //Query photoSortedByLongitude = myDBref.orderByChild("longitude").startAt(longitude-maxRadius).endAt(longitude+maxRadius);
         //get photo still alive
         java.util.Date date= new java.util.Date();
@@ -56,7 +59,8 @@ public class LocalDatabase {
                     }
                 }
                 Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
-
+                //refresh the child of tabActivity
+                tabActivity.endRefreshDB();
             }
 
             @Override
@@ -69,20 +73,46 @@ public class LocalDatabase {
         photoSortedByTime.addListenerForSingleValueEvent(dataListener);
     }
 
-    public void addPhotoObject(PhotoObject photo)
+    public static void addPhotoObject(PhotoObject photo)
     {
         if(!photoDataMap.containsKey(photo.getPictureId())) {
             photoDataMap.put(photo.getPictureId(), photo);
         }
     }
 
-    public void deletePhotoObject(PhotoObject photo)
+    public static void deletePhotoObject(PhotoObject photo)
     {
         photoDataMap.remove(photo.getPictureId());
     }
 
-    public Map<String,PhotoObject> getMap()
+    public static Map<String,PhotoObject> getMap()
     {
         return photoDataMap;
+    }
+
+    public static List<Bitmap> getThumbnailArray(){
+        List<PhotoObject> listPhoto = new ArrayList<>(photoDataMap.values());
+        List<Bitmap> listThumbnail = new ArrayList<>();
+        for(PhotoObject o : listPhoto){
+            listThumbnail.add(o.getThumbnail());
+        }
+        return listThumbnail;
+
+    }
+
+    public static void setLocation(Location location) {
+        mLocation = location;
+    }
+
+    public static Location getLocation() {
+        return mLocation;
+    }
+
+    public static boolean hasKey(String pictureId){
+        return photoDataMap.containsKey(pictureId);
+    }
+
+    public static PhotoObject getPhoto(String pictureId){
+        return photoDataMap.get(pictureId);
     }
 }
