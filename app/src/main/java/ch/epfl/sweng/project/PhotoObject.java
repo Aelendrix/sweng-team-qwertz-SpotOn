@@ -54,13 +54,13 @@ public class PhotoObject {
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
-    public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
+    public PhotoObject(Bitmap fullSizePic, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
         mFullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullSizeImage=true;
         mFullSizeImageLink = null;  // there is no need for a link
         mThumbnail = createThumbnail(mFullSizeImage);
-        mPictureId = pictureId;   //available even offline
+        mPictureId = FirebaseDatabase.getInstance().getReference(DEFAULT_MEDIA_PATH).push().getKey();   //available even offline
         mPhotoName = photoName;
         mCreatedDate = createdDate;
         mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
