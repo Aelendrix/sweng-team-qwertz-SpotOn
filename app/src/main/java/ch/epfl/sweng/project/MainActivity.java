@@ -116,7 +116,7 @@ public final class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
 
@@ -144,12 +144,12 @@ public final class MainActivity extends AppCompatActivity {
     /*
         This method uses the options menu when this activity is launched
          */
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
-    }
+    }*/
 
     public void goToTabActivity() {
         Intent intent = new Intent(this, TabActivity.class);

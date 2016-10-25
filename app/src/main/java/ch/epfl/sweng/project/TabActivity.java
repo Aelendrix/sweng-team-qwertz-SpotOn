@@ -60,7 +60,7 @@ public class TabActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -120,6 +120,10 @@ public class TabActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed(){
+    }
+
     public void dispatchTakePictureIntent(View view) {
         mCameraFragment.dispatchTakePictureIntent(view);
     }
@@ -150,9 +154,9 @@ public class TabActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(mPicturesFragment, "My Stories");
+        adapter.addFragment(mPicturesFragment, "Stories around me");
         adapter.addFragment(mCameraFragment, "Camera");
-        adapter.addFragment(mMapFragment, "Stories around me");
+        adapter.addFragment(mMapFragment, "Map");
         viewPager.setAdapter(adapter);
     }
     /**
