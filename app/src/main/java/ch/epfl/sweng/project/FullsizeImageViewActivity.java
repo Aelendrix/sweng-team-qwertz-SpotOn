@@ -31,7 +31,7 @@ public class FullsizeImageViewActivity extends Activity {
         setContentView(R.layout.activity_fullsize_image_view);
 
         mViewToSet = (ImageView) findViewById(R.id.fullSizeImageView);
-        // TODO - set a default image or thumbnail
+        mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
         Intent displayImageIntent = getIntent();
         String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
