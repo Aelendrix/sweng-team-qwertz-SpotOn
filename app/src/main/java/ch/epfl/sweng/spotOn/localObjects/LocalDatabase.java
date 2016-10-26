@@ -1,9 +1,8 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,6 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
+import ch.epfl.sweng.spotOn.util.Pair;
 
 public class LocalDatabase {
 

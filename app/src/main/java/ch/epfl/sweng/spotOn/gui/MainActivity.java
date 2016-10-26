@@ -3,10 +3,9 @@
  *
  */
 
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -24,7 +23,6 @@ import android.app.PendingIntent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -36,9 +34,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
-import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
+import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 
 
 /**

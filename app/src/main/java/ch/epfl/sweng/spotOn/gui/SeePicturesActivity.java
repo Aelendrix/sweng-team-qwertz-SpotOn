@@ -1,10 +1,8 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,14 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
-import static ch.epfl.sweng.project.FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID;
+import ch.epfl.sweng.spotOn.R;
 
 public class SeePicturesActivity extends Fragment {
 
@@ -91,7 +83,7 @@ public class SeePicturesActivity extends Fragment {
      */
     public void displayFullsizeImage(int positionOfThumbnail){
         Intent displayFullsizeImageIntent = new Intent(this.getActivity(), FullsizeImageViewActivity.class);
-        displayFullsizeImageIntent.putExtra(WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+        displayFullsizeImageIntent.putExtra(FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullsizeImageIntent);
     }
 

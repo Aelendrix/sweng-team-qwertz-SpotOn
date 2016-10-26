@@ -1,11 +1,8 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 /** This activity allows the user to type in a key, and look it up on a firebase database
  *  of key/value String pairs.
