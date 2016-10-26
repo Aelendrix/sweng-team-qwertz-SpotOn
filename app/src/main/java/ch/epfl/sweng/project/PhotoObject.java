@@ -57,19 +57,11 @@ public class PhotoObject {
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
-<<<<<<< HEAD
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullsizeImage=true;
-        mFullsizeImageLink = null;  // there is no need for a link
+        mFullsizeImageLink = null;  // link not avaiable yet
         mThumbnail = createThumbnail(mFullsizeImage);
-        mPictureId = pictureId;   //available even offline
-=======
-        mFullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
-        mHasFullSizeImage=true;
-        mFullSizeImageLink = null;  // there is no need for a link
-        mThumbnail = createThumbnail(mFullSizeImage);
         mPictureId = FirebaseDatabase.getInstance().getReference(DEFAULT_MEDIA_PATH).push().getKey();   //available even offline
->>>>>>> 2df30ebeb7a3473a29d93c8e5c47a795c4d7f726
         mPhotoName = photoName;
         mCreatedDate = createdDate;
         mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
