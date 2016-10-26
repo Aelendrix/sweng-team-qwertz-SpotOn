@@ -14,6 +14,7 @@ import ch.epfl.sweng.spotOn.gui.ViewPagerAdapter;
  * JUnit test that tests if the ViewPagerAdapter class is correctly implemented
  */
 
+/*
 @RunWith(AndroidJUnit4.class)
 public class ViewPagerAdapterTest extends AppCompatActivity {
 
@@ -32,3 +33,4 @@ public class ViewPagerAdapterTest extends AppCompatActivity {
 
     }
 }
+*/
