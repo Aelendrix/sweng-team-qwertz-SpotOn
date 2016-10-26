@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class LocalDatabase {
 
     private final static String dataPath = "MediaDirectory";
@@ -90,14 +89,13 @@ public class LocalDatabase {
         return photoDataMap;
     }
 
-    public static List<Bitmap> getThumbnailArray(){
+    public static List<Pair<Bitmap, String>> getThumbnailArray(){
         List<PhotoObject> listPhoto = new ArrayList<>(photoDataMap.values());
-        List<Bitmap> listThumbnail = new ArrayList<>();
+        List<Pair<Bitmap, String>> listThumbnail = new ArrayList<>();
         for(PhotoObject o : listPhoto){
-            listThumbnail.add(o.getThumbnail());
+            listThumbnail.add(new Pair<Bitmap, String>(o.getThumbnail(), o.getPictureId()));
         }
         return listThumbnail;
-
     }
 
     public static void setLocation(Location location) {

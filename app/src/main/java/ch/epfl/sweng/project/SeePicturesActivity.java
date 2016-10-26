@@ -1,5 +1,6 @@
 package ch.epfl.sweng.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -18,7 +19,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.epfl.sweng.project.FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID;
+
 public class SeePicturesActivity extends Fragment {
+
     /*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,19 +55,22 @@ public class SeePicturesActivity extends Fragment {
     }
     */
 
-    GridView mGridView;
     View mView;
+    GridView mGridView;
+    private ImageAdapter mImageAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_see_pictures, container, false);
         mGridView = (GridView) mView.findViewById(R.id.gridview);
-        ImageAdapter adapter = new ImageAdapter(mView.getContext());
-        mGridView.setAdapter(adapter);
+        mImageAdapter = new ImageAdapter(mView.getContext());
+        mGridView.setAdapter(mImageAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Log.d("Grid","Image nr: " + position);
+                displayFullsizeImage(position);
+                Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
         return mView;
@@ -72,12 +79,20 @@ public class SeePicturesActivity extends Fragment {
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
                     //create a new adapter and refresh the gridView
-                    ImageAdapter adapter = new ImageAdapter(mView.getContext());
+                    mImageAdapter= new ImageAdapter(mView.getContext());
                     mGridView.invalidateViews();
-                    mGridView.setAdapter(adapter);
+                    mGridView.setAdapter(mImageAdapter);
 
         }
 
+    }
+
+    /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked (method called by a OnClickListener in the gridview
+     */
+    public void displayFullsizeImage(int positionOfThumbnail){
+        Intent displayFullsizeImageIntent = new Intent(this.getActivity(), FullsizeImageViewActivity.class);
+        displayFullsizeImageIntent.putExtra(WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+        startActivity(displayFullsizeImageIntent);
     }
 
 

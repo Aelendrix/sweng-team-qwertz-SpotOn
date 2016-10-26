@@ -16,7 +16,8 @@ import java.util.List;
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private List<Bitmap> mThumbnail = LocalDatabase.getThumbnailArray();
+    private List<Pair<Bitmap, String>> mThumbnail = LocalDatabase.getThumbnailArray();
+
     public ImageAdapter(Context c) {
         mContext = c;
     }
@@ -46,7 +47,11 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageBitmap(mThumbnail.get(position));
+        imageView.setImageBitmap(mThumbnail.get(position)._1());
         return imageView;
+    }
+
+    public String getIdAtPosition(int pos){
+        return mThumbnail.get(pos)._2();
     }
 }

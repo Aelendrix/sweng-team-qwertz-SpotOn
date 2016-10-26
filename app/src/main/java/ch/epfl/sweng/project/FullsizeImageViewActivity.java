@@ -1,16 +1,19 @@
 package ch.epfl.sweng.project;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-public class FullsizeImageViewActivity extends AppCompatActivity {
+public class FullsizeImageViewActivity extends Activity {
 
-    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.WANTED_IMAGE_PICTUREID";
-    private final static Bitmap IMAGE_DEFAULT = //TODO
-    private final static Bitmap IMAGE_FAILURE = //TODO
+    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID";
+    private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
+    private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
     private PhotoObject mDisplayedMedia = null;
 
@@ -26,13 +29,13 @@ public class FullsizeImageViewActivity extends AppCompatActivity {
         Intent displayImageIntent = getIntent();
         String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
-        Bitmap imageToDisplay = IMAGE_FAILURE;
         if(LocalDatabase.hasKey(wantedImagePictureId)){
-            mDisplayedMedia = LocalDatabase.getKey(wantedImagePictureId);
-            imageToDisplay = mDisplayedMedia.getFullSizeImage();
+            mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
+            Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
+            viewToSet.setImageBitmap(imageToDisplay);
+        }else{
+            viewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
         }
-
-        viewToSet.setImageBitmap(imageToDisplay);
     }
 
 

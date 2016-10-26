@@ -26,5 +26,7 @@
     <string name="launchQueryButton">Search database</string>
     <string name="queryTextFieldHint">Enter a key to lookup</string>
     <string name="blankQueryResult">...</string>
+    <string name="upvoteButtonText">Up !!</string>
+    <string name="downvoteButtonText">Down</string>
 </resources>
 

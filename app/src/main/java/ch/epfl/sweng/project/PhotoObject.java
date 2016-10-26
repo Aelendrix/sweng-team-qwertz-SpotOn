@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,9 +40,9 @@ public class PhotoObject {
     private final String DEFAULT_PICTURE_PATH = "gs://spoton-ec9ed.appspot.com";
     private final long FIVE_MEGABYTES = 5*1024*1024;
 
-    private Bitmap mFullSizeImage;
-    private String mFullSizeImageLink;   // needed for the "cache-like" behaviour of getFullSizeImage()
-    private boolean mHasFullSizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
+    private Bitmap mFullsizeImage;
+    private String mFullsizeImageLink;   // needed for the "cache-like" behaviour of getFullsizeImage()
+    private boolean mHasFullsizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
     private Bitmap mThumbnail;
     private String mPictureId;
     private String mAuthorID;
@@ -56,10 +57,10 @@ public class PhotoObject {
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String pictureId, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude, int radius){
-        mFullSizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
-        mHasFullSizeImage=true;
-        mFullSizeImageLink = null;  // there is no need for a link
-        mThumbnail = createThumbnail(mFullSizeImage);
+        mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
+        mHasFullsizeImage=true;
+        mFullsizeImageLink = null;  // there is no need for a link
+        mThumbnail = createThumbnail(mFullsizeImage);
         mPictureId = pictureId;   //available even offline
         mPhotoName = photoName;
         mCreatedDate = createdDate;
@@ -73,9 +74,9 @@ public class PhotoObject {
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
                        long expireDate, double latitude, double longitude, int radius){
-        mFullSizeImage = null;
-        mHasFullSizeImage=false;
-        mFullSizeImageLink=fullSizeImageLink;
+        mFullsizeImage = null;
+        mHasFullsizeImage=false;
+        mFullsizeImageLink=fullSizeImageLink;
         mThumbnail = thumbnail;
         mPictureId = pictureId;
         mPhotoName = photoName;
@@ -126,7 +127,7 @@ public class PhotoObject {
 
         // Convert the bitmap image to byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        mFullSizeImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        mFullsizeImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         // upload the file
@@ -142,25 +143,44 @@ public class PhotoObject {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
-                mFullSizeImageLink = taskSnapshot.getDownloadUrl().toString();
-                Log.d("FileUploadedURL", "URL: " + mFullSizeImageLink);
+                mFullsizeImageLink = taskSnapshot.getDownloadUrl().toString();
+                Log.d("FileUploadedURL", "URL: " + mFullsizeImageLink);
             }
         });
     }
 
-    private void getFromFileServer(){
-        // Create a storage reference from our app
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_REFERENCE_URL);
-
-        // Create a reference to a file from a Google Cloud Storage URI
-        StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullSizeImageLink);
-
+    private void getFromFileServer(boolean hasCustomerOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean hasCustomerOnFailureListener, OnFailureListener customerOnFailureListener){
+        // Create a file retrieval task
+        StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullsizeImageLink);
         final long ONE_MEGABYTE = 1024 * 1024;
-        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        Task retrieveFullsizeImageFromFileserver = gsReference.getBytes(ONE_MEGABYTE);
+
+        if(hasCustomerOnSuccessListener){
+            if(customerOnSuccessListener==null){
+                throw new NullPointerException("this listener is specified not to bu null !");
+            }
+            retrieveFullsizeImageFromFileserver.addOnSuccessListener(customerOnSuccessListener);
+        }
+        if(hasCustomerOnFailureListener){
+            if(customerOnFailureListener==null){
+                throw new NullPointerException("this listener is specified not to bu null !");
+            }
+            retrieveFullsizeImageFromFileserver.addOnFailureListener(customerOnFailureListener);
+        }
+        addDefaultListeners(retrieveFullsizeImageFromFileserver);
+    }
+
+    /**
+     * Adds default listeners, which will :
+     *  - store the fullsizeImage in the object once it is retrieved
+     *  - handle failures
+     */
+    private void addDefaultListeners(Task fileServerTask){
+        fileServerTask.addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 // Data for "images/PictureID.jpg" is returns, use this as needed
-                mFullSizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                mFullsizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -173,43 +193,20 @@ public class PhotoObject {
     }
 
 
-
 //ALL THE GETTER FUNCTIONS
 
     // This getter functions as a cache, it gets the fullSizeImage only when needed, and stores it for later
-    public Bitmap getFullSizeImage() {
-        if (mHasFullSizeImage) {
-            return mFullSizeImage.copy(mFullSizeImage.getConfig(), true);
+    public Bitmap getFullsizeImage(boolean hasOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean HasOnfailureListener, OnFailureListener customerOnFailureListener) {
+        if (mHasFullsizeImage) {
+            return mFullsizeImage.copy(mFullsizeImage.getConfig(), true);
         }else{
-            if(mFullSizeImageLink==null){
+            if(mFullsizeImageLink==null){
                 throw new AssertionError("if there is no image stored, object should have a link to retrieve it");
             }
             else {
                 // Download full size image from file server
-                getFromFileServer();
-
-                return this.getFullSizeImage();
+                getFromFileServer(hasOnSuccessListener, customerOnSuccessListener, HasOnfailureListener, customerOnFailureListener);
             }
-/*
-            StorageReference fullsizeImageReference = FirebaseStorage.getInstance().getReferenceFromUrl(DEFAULT_PICTURE_PATH+mFullSizeImageLink);
-            fullsizeImageReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    mFullSizeImage=image;
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    System.out.println("ERROR - couldn't retrieve image from file server");
-                }
-            });
-            System.out.println("did fetching from fileserver succeed ? "+mFullSizeImage==null);
-            mHasFullSizeImage = true;
-            return this.getFullSizeImage();
-            //throw new NoSuchElementException("The code to retrieve the full size image doesn't exist yet");
-
-*/
         }
     }
     public String getPhotoName(){
@@ -239,16 +236,16 @@ public class PhotoObject {
     public String getPictureId() {
         return mPictureId;
     }
-    public String getFullSizeImageLink() { return mFullSizeImageLink; }
+    public String getFullsizeImageLink() { return mFullsizeImageLink; }
 
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
         // TODO obtain link for fullSizeImage in fileserver                                                                 <------
-        String linkToFullSizeImage = "/default.jpg";
+        String linkToFullsizeImage = "/default.jpg";
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
-        return new PhotoObjectStoredInDatabase(linkToFullSizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
+        return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
                 mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
     }
 
