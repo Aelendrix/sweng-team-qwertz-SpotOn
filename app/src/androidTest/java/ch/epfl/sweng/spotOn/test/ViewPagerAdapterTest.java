@@ -1,9 +1,12 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.test;
 
+import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import ch.epfl.sweng.spotOn.gui.ViewPagerAdapter;
 
 /**
  * Created by Alexis Dewaele on 13/10/2016.
@@ -11,6 +14,7 @@ import org.junit.Test;
  * JUnit test that tests if the ViewPagerAdapter class is correctly implemented
  */
 
+@RunWith(AndroidJUnit4.class)
 public class ViewPagerAdapterTest extends AppCompatActivity {
 
     @Test
