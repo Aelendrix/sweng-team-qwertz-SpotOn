@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ch.epfl.sweng.project.FullsizeImageViewActivity">
+    tools:context="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,6 +28,7 @@
             android:scaleType="fitXY"
             android:adjustViewBounds="false" />
 
+<!--      I thought these were part of sprint #4, but they are not. Left them for later
         <Button
             android:text="@string/downvoteButtonText"
             android:layout_width="wrap_content"
@@ -51,5 +52,6 @@
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="13dp"
             android:id="@+id/upvoteButton" />
+-->
     </RelativeLayout>
 </RelativeLayout>

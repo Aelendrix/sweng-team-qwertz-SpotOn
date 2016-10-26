@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.util;
 
 /** A very simple pair of Elements
  * Created by quentin on 25.10.16.

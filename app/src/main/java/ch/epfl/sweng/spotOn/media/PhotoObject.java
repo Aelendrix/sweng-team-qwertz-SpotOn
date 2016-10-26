@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.media;
 
 
 import android.graphics.Bitmap;

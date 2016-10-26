@@ -1,13 +1,10 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -15,9 +12,13 @@ import android.widget.ImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class FullsizeImageViewActivity extends Activity {
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID";
+public class ViewFullsizeImageActivity extends Activity {
+
+    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
@@ -28,16 +29,16 @@ public class FullsizeImageViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fullsize_image_view);
+        setContentView(R.layout.activity_view_fullsize_image);
 
         mViewToSet = (ImageView) findViewById(R.id.fullSizeImageView);
         mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
         Intent displayImageIntent = getIntent();
-        String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
+        final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
         if(!LocalDatabase.hasKey(wantedImagePictureId)){
-            Log.d("Error", "FullsizeImageViewActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
+            Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
         }else {
             mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
@@ -52,7 +53,7 @@ public class FullsizeImageViewActivity extends Activity {
                     mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), true, newFailureImageSetterListener());
                 }catch (IllegalArgumentException e){
                     mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+WANTED_IMAGE_PICTUREID);
+                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
                 }
             }
         }
