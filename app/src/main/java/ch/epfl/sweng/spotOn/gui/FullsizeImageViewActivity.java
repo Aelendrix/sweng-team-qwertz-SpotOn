@@ -38,16 +38,24 @@ public class FullsizeImageViewActivity extends Activity {
         String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
         if(!LocalDatabase.hasKey(wantedImagePictureId)){
+            Log.d("Error", "FullsizeImageViewActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-        }
-        mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
-        Bitmap imageToDisplay = null;
-        if(mDisplayedMedia.hasFullSizeImage()){
-            imageToDisplay = mDisplayedMedia.getFullSizeImage();
-            mViewToSet.setImageBitmap(imageToDisplay);
-        }else{
-            // add a listener that will set the image when it is retrieved
-            mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), false, null);
+        }else {
+            mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
+            Bitmap imageToDisplay = null;
+            if (mDisplayedMedia.hasFullSizeImage()) {
+                imageToDisplay = mDisplayedMedia.getFullSizeImage();
+                mViewToSet.setImageBitmap(imageToDisplay);
+            } else {
+                // retrieveFullsizeImage throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+                try {
+                    // add a listener that will set the image when it is retrieved
+                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), true, newFailureImageSetterListener());
+                }catch (IllegalArgumentException e){
+                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+WANTED_IMAGE_PICTUREID);
+                }
+            }
         }
     }
 
@@ -66,7 +74,7 @@ public class FullsizeImageViewActivity extends Activity {
     /** Factory method which creates a Listener that,
      * in case of failure, displays the received exception on console and sets the image displayed on view to an errorImage
      */
-    private OnFailureListener failureImageSetterListene(){
+    private OnFailureListener newFailureImageSetterListener(){
         return new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

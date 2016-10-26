@@ -112,15 +112,20 @@ public class PhotoObject {
      *  Offers the caller to pass some listeners to trigger custom actions on download success or failure.
      *  Booleans
      */
-    public void retrieveFullsizeImage(boolean hasCustomerOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean hasCustomerOnFailureListener, OnFailureListener customerOnFailureListener){
+    public void retrieveFullsizeImage(boolean hasCustomerOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean hasCustomerOnFailureListener, OnFailureListener customerOnFailureListener) throws IllegalArgumentException{
         // check for necessary conditions
         if(mFullsizeImageLink==null){
             throw new AssertionError("if there is no image stored, object should have a link to retrieve it");
         }
 
         // Create a file retrieval task
-        Log.d("retrieving","full path in fileserver "+mFullsizeImageLink);
-        StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullsizeImageLink);
+        StorageReference gsReference = null;
+        try {
+            gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullsizeImageLink);
+        } catch (IllegalArgumentException e){
+            // getReferenceFromUrl throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+            throw new IllegalArgumentException("Retrieving from improper Firebase Storage link "+mFullsizeImageLink);
+        }
         final long ONE_MEGABYTE = 1024 * 1024;
         Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(ONE_MEGABYTE);
 

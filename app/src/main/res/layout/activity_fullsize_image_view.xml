@@ -51,7 +51,7 @@
             android:layout_marginRight="18dp"
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="13dp"
-            android:id="@+id/button3" />
+            android:id="@+id/upvoteButton" />
 -->
     </RelativeLayout>
 </RelativeLayout>
