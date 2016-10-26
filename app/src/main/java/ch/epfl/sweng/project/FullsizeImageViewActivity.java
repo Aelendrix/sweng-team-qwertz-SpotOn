@@ -37,6 +37,7 @@ public class FullsizeImageViewActivity extends Activity {
         String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
         if(!LocalDatabase.hasKey(wantedImagePictureId)){
+            Log.d("Error", "FullsizeImageViewActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
         }else {
             mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
@@ -45,8 +46,14 @@ public class FullsizeImageViewActivity extends Activity {
                 imageToDisplay = mDisplayedMedia.getFullSizeImage();
                 mViewToSet.setImageBitmap(imageToDisplay);
             } else {
-                // add a listener that will set the image when it is retrieved
-                mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), true, newFailureImageSetterListener());
+                // retrieveFullsizeImage throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+                try {
+                    // add a listener that will set the image when it is retrieved
+                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), true, newFailureImageSetterListener());
+                }catch (IllegalArgumentException e){
+                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+WANTED_IMAGE_PICTUREID);
+                }
             }
         }
     }
