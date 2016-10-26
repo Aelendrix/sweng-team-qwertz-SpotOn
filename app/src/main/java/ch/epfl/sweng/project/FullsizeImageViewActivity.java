@@ -50,7 +50,8 @@ public class FullsizeImageViewActivity extends Activity {
         }
     }
 
-    /** Factory method that returns a listener that sets the imageView with the result of its query
+    /** Factory method that returns a listener that
+     * sets the imageView with the result of its query
      */
     private OnSuccessListener newImageViewSetterListener(){
         return new OnSuccessListener<byte[]>() {
@@ -61,7 +62,8 @@ public class FullsizeImageViewActivity extends Activity {
             }
         };
     }
-    /** Factory method that returns a listener that sets the imageView with the result of its query
+    /** Factory method which creates a Listener that,
+     * in case of failure, displays the received exception on console and sets the image displayed on view to an errorImage
      */
     private OnFailureListener failureImageSetterListene(){
         return new OnFailureListener() {
@@ -74,7 +76,8 @@ public class FullsizeImageViewActivity extends Activity {
     }
 
 
-/*    private void recordUpvote(){
+/*  actually not part of sprint #4 - left for later
+    private void recordUpvote(){
         if(mDisplayedMedia!=null){
 
         }
@@ -84,7 +87,8 @@ public class FullsizeImageViewActivity extends Activity {
         if(mDisplayedMedia!=null){
 
         }
-    }*/
+    }
+*/
 
 
 }

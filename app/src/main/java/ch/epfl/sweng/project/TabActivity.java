@@ -147,9 +147,9 @@ public class TabActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(mPicturesFragment, "My Stories");
-        adapter.addFragment(mCameraFragment, "Camera");
-        adapter.addFragment(mMapFragment, "Stories around me");
+        adapter.addFragment(mPicturesFragment, getString(R.string.tab_aroundme));
+        adapter.addFragment(mCameraFragment, getString(R.string.tab_camera));
+        adapter.addFragment(mMapFragment, getString(R.string.tab_map));
         viewPager.setAdapter(adapter);
     }
     /**

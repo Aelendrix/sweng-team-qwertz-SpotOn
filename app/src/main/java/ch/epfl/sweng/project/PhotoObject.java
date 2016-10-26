@@ -88,16 +88,19 @@ public class PhotoObject {
     }
 
 
+
+
 //FUNCTIONS PROVIDED BY THIS CLASS
 
-    /** uploads the object online
+    /** uploads the object to our online services
      */
     public void upload(){
         // sendToFileServer calls sendToDatabase on success
         sendToFileServer();
     }
 
-    //return true if the coordinates in parameters are in the scope of the picture
+    /** return true if the coordinates in parameters are in the scope of the picture}
+     */
     public boolean isInPictureCircle(LatLng position){
         return computeDistanceBetween(
                 new LatLng(mLatitude, mLongitude),
@@ -105,6 +108,10 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
+    /** retrieves the fullsizeimage from the fileserver and caches it in the object.
+     *  Offers the caller to pass some listeners to trigger custom actions on download success or failure.
+     *  Booleans
+     */
     public void retrieveFullsizeImage(boolean hasCustomerOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean hasCustomerOnFailureListener, OnFailureListener customerOnFailureListener){
         // check for necessary conditions
         if(mFullsizeImageLink==null){
@@ -157,6 +164,8 @@ public class PhotoObject {
     }
 
 
+
+
 //ALL THE GETTER FUNCTIONS
 
     public boolean hasFullSizeImage(){
@@ -199,8 +208,13 @@ public class PhotoObject {
     public String getFullsizeImageLink() { return mFullsizeImageLink; }
 
 
+
+
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 
+    /** converts This into an object that we can store in the database, by converting the thumbnail into a String
+     *  and leaving behing the fullsizeImage (which should be uploaded in fileserver, and retrieveable through the mFullsizeImageLink)
+     */
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
         if(mFullsizeImageLink==null){
             throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
@@ -211,6 +225,8 @@ public class PhotoObject {
                 mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
     }
 
+    /** encodes the passed bitmap into a string
+     */
     private String encodeBitmapAsString(Bitmap img){
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
@@ -218,6 +234,8 @@ public class PhotoObject {
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
+    /** creates the thumbail from this object by reducing the resolution of the fullSizeImage
+     */
     private Bitmap createThumbnail(Bitmap fullSizeImage){
         return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     }
@@ -227,7 +245,8 @@ public class PhotoObject {
         return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
     }
 
-    // Send the full size image to the file server to be stored
+    /** Send the full size image to the file server to be stored
+     */
     private void sendToFileServer() {
         Log.d("sendToFileServer", "PictureID: "+mPictureId);
         // Create a storage reference from our app
