@@ -151,7 +151,7 @@ public class PictureActivity extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
         //TODO: Change Username and ID
-        PhotoObject picObject = new PhotoObject(imageBitmap, "53", "Olivier", imageName, created, mLatitude, mLongitude, 100);
+        PhotoObject picObject = new PhotoObject(imageBitmap, "Gandalf", imageName, created, mLatitude, mLongitude, 100);
         mAllPictures.add(picObject);
         TabActivity tab= (TabActivity) getActivity();
         tab.changeLocalMarkers(mAllPictures);

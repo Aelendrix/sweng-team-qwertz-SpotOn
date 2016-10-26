@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -30,12 +32,19 @@ public class TabActivity extends AppCompatActivity {
     private PictureActivity mCameraFragment = new PictureActivity();
     private MapsActivity mMapFragment = new MapsActivity();
     // The path to the root of the stored pictures Data in the database
-    private final String PATH_TO_PICTURE_DATA = "MediaDirectory";
-    //DB
-    private final LocalDatabase mDB = new LocalDatabase(PATH_TO_PICTURE_DATA);
     //TimerTask
-    private final int TIME_BETWEEN_EXEC = 5*1000; //5 seconds
-    private Timer mTimer;
+    private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds
+    Handler mHandler = new Handler();
+    //
+    private Runnable loopedRefresh = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("Loop","refresh the database");
+            refreshDB();
+            // Repeat this the same runnable code block again
+            mHandler.postDelayed(loopedRefresh, TIME_BETWEEN_EXEC);
+        }
+    };
     //Location objects
     private LocationManager mLocationManager;
     private Location mLocation;
@@ -82,7 +91,7 @@ public class TabActivity extends AppCompatActivity {
                 // Called when a new location is found by the network location provider.
                 Log.d("location","location Changed");
                 refreshLocation();
-                    //pictureFragment part
+                LocalDatabase.setLocation(location);
 
 
             }
@@ -95,7 +104,7 @@ public class TabActivity extends AppCompatActivity {
         };
 
         // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 1*1000; //1 Second
+        final int TIME_BETWEEN_LOCALISATION = 2*1000; //2 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
@@ -118,11 +127,9 @@ public class TabActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //start a looped runnable code every X minutes
-        if(mTimer==null){
-            mTimer = new Timer();
-            mTimer.scheduleAtFixedRate(new InternalClockTask(), 1000, TIME_BETWEEN_EXEC);
-        }
+        //start a looped runnable code
+        mHandler.postDelayed(loopedRefresh,3*1000);
+
     }
     /**
      * Override method stopping the reapeting task
@@ -131,9 +138,7 @@ public class TabActivity extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         //stop the timer
-        mTimer.purge();
-        mTimer.cancel();
-        mTimer = null;
+        mHandler.removeCallbacks(loopedRefresh);
     }
 
     public void rotatePicture(View view) {
@@ -162,15 +167,25 @@ public class TabActivity extends AppCompatActivity {
      * private class refreshing the local database using the firebase server
      * it'll update the mapFragment and display the photoObject on the map as markers
      */
-    private void refreshDB(){
-        if(mLocation!=null) {
-            mDB.refresh(mLocation);
+    private void refreshDB() {
+        if (mLocation != null) {
+            LocalDatabase.refresh(mLocation,this);
         }
-        if(mMapFragment!=null){
-            mMapFragment.displayDBMarkers(mDB);
-        }
+
     }
 
+    /**
+     * public class following the call of refreshDB,
+     * refreshing the map and the grid when the datas from firebase are downloaded
+     */
+    public void endRefreshDB(){
+        if (mMapFragment != null) {
+            mMapFragment.displayDBMarkers();
+        }
+        if (mPicturesFragment != null) {
+            mPicturesFragment.refreshGrid();
+        }
+    }
     //refresh the local markers
     public void changeLocalMarkers(ArrayList<PhotoObject> photoList)
     {
@@ -190,7 +205,7 @@ public class TabActivity extends AppCompatActivity {
                     Log.d("location","new location set");
                     if(mLocation!=null){
                         if(mMapFragment!=null) {
-                            mMapFragment.refreshMapLocation(mLocation);
+                            mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
                         }
                         if(mCameraFragment!=null) {
                             mCameraFragment.refreshLocation(mLocation);
@@ -205,17 +220,6 @@ public class TabActivity extends AppCompatActivity {
         */
         catch(SecurityException e) {
             e.printStackTrace();
-        }
-    }
-    /**
-     * private class representing a task which will be run every x minutes
-     *
-     */
-    private class InternalClockTask extends TimerTask  {
-        public void run() {
-            //refresh the local database every minutes
-            refreshDB();
-
         }
     }
 }
