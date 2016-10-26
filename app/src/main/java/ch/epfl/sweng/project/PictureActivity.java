@@ -189,7 +189,7 @@ public class PictureActivity extends Fragment {
 
     private void storeImage(PhotoObject photo){
         //TEST sendToFileServer
-        photo.sendToFileServer();
+        photo.upload();
 
         if(isStoragePermissionGranted() == true) {
             File pictureFile = getOutputMediaFile(photo);
