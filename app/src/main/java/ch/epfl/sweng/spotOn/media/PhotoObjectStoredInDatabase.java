@@ -22,6 +22,7 @@ public class PhotoObjectStoredInDatabase {
     private double mLatitude;
     private double mLongitude;
     private int mRadius;
+    private int mVotes;
 
     public PhotoObjectStoredInDatabase(){
         // default constructor required to upload object to firebase
@@ -29,7 +30,7 @@ public class PhotoObjectStoredInDatabase {
 
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
-                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius){
+                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius, int votes){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
         mPictureId=pictureId;
@@ -40,6 +41,7 @@ public class PhotoObjectStoredInDatabase {
         mLatitude=latitude;
         mLongitude=longitude;
         mRadius=radius;
+        mVotes = votes;
     }
 
 
@@ -50,7 +52,7 @@ public class PhotoObjectStoredInDatabase {
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mExpireDate, mLatitude, mLongitude, mRadius);
+                mExpireDate, mLatitude, mLongitude, mRadius, mVotes);
     }
 
     // rather meant to be used for debug
@@ -61,6 +63,7 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   authorID="+mAuthorID;
         result+="   ---   photoName="+mPhotoName;
         result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")   ---   radius="+mRadius;
+        result+="   ---   votes="+mVotes;
         result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
         return result;
     }
@@ -87,6 +90,7 @@ public class PhotoObjectStoredInDatabase {
     public double getLatitude(){return mLatitude;}
     public double getLongitude(){return mLongitude;}
     public int getRadius(){ return mRadius;}
+    public int getVotes(){return mVotes;}
 
     // SETTER REQUIRED (PUBLIC) BY FIREBASE
 
@@ -100,5 +104,6 @@ public class PhotoObjectStoredInDatabase {
     public void setLatitude(double latitude){mLatitude=latitude;}
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setRadius(int radius){mRadius=radius;}
+    public void setVotes(int votes){mVotes=votes;}
 
 }
