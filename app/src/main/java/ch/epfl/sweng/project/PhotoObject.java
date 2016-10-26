@@ -202,8 +202,10 @@ public class PhotoObject {
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
-        // TODO obtain link for fullSizeImage in fileserver                                                                 <------
-        String linkToFullsizeImage = "/default.jpg";
+        if(mFullsizeImageLink==null){
+            throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
+        }
+        String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
                 mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
