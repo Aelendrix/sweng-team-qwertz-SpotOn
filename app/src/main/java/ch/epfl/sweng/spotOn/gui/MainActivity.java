@@ -167,12 +167,6 @@ public final class MainActivity extends AppCompatActivity {
         startActivity(mapIntent);
     }
 
-    public void goToQueryDatabaseActivity(View view){
-        //launch the Database Query activity
-        Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
-        startActivity(databaseQueryIntent);
-    }
-
     //read the result of the permission request, leave the app if we don't have the gps permission
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
