@@ -140,8 +140,8 @@ public final class MainActivity extends AppCompatActivity {
 
 
     public void goToPictureActivity(View view){
-        //launch the PictureActivity
-        Intent pictureIntent = new Intent(this, PictureActivity.class);
+        //launch the TakePictureFragment
+        Intent pictureIntent = new Intent(this, TakePictureFragment.class);
         startActivity(pictureIntent);
     }
 
@@ -162,8 +162,8 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToMapsActivity(View view){
         //launch the map Activity
-        //TODO: migrate the MapsActivity inside the fragment manager of MainActivity
-        Intent mapIntent = new Intent(this, MapsActivity.class);
+        //TODO: migrate the MapFragment inside the fragment manager of MainActivity
+        Intent mapIntent = new Intent(this, MapFragment.class);
         startActivity(mapIntent);
     }
 
@@ -182,7 +182,7 @@ public final class MainActivity extends AppCompatActivity {
                 // permission was granted
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //TODO: When the PictureActivity and MapsActivity will be fragment inside MainActivity, create the LocationManager here
+                    //TODO: When the TakePictureFragment and MapFragment will be fragment inside MainActivity, create the LocationManager here
 
                 }
                 //permission denied

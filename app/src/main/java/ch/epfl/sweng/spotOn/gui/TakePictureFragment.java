@@ -39,7 +39,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
  * Activity that will allow the user to access the camera and take a picture to integrate
  * it in the app
  */
-public class PictureActivity extends Fragment {
+public class TakePictureFragment extends Fragment {
 
     //objet representing the phone localisation
     Location mPhoneLocation;

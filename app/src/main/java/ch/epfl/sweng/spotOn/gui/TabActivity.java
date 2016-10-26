@@ -26,9 +26,9 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 public class TabActivity extends AppCompatActivity {
 
 
-    private SeePicturesActivity mPicturesFragment = new SeePicturesActivity();
-    private PictureActivity mCameraFragment = new PictureActivity();
-    private MapsActivity mMapFragment = new MapsActivity();
+    private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
+    private TakePictureFragment mCameraFragment = new TakePictureFragment();
+    private MapFragment mMapFragment = new MapFragment();
     // The path to the root of the stored pictures Data in the database
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds

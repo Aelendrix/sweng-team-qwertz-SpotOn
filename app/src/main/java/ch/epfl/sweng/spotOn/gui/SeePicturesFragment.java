@@ -13,39 +13,7 @@ import android.widget.GridView;
 
 import ch.epfl.sweng.spotOn.R;
 
-public class SeePicturesActivity extends Fragment {
-
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        View view = inflater.inflate(R.layout.activity_see_pictures, container, false);
-
-        //displays the files available
-        String textToDisplay = "There are no files saved";
-        File folder = new File("/storage/emulated/0/Pictures/SpotOn/Pictures");
-
-        if(folder.listFiles() != null) {
-
-            List<File> listOfFiles = Arrays.asList(folder.listFiles());
-            if(!listOfFiles.isEmpty()) {
-                textToDisplay = "The files saved are: \n";
-                for (File file : listOfFiles) {
-                    if (file.isFile()) {
-                        textToDisplay += file.getName() + "\n";
-                    }
-                }
-            }
-        }
-
-        TextView textView = (TextView) view.findViewById(R.id.ListOfFiles);
-        textView.setText(textToDisplay);
-
-        return view;
-
-    }
-    */
+public class SeePicturesFragment extends Fragment {
 
     View mView;
     GridView mGridView;
@@ -82,8 +50,8 @@ public class SeePicturesActivity extends Fragment {
     /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked (method called by a OnClickListener in the gridview
      */
     public void displayFullsizeImage(int positionOfThumbnail){
-        Intent displayFullsizeImageIntent = new Intent(this.getActivity(), FullsizeImageViewActivity.class);
-        displayFullsizeImageIntent.putExtra(FullsizeImageViewActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+        Intent displayFullsizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
+        displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullsizeImageIntent);
     }
 

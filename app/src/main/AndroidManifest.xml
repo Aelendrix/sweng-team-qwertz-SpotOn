@@ -73,7 +73,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="ch.epfl.sweng.spotOn.gui.FullsizeImageViewActivity"></activity>
+        <activity android:name="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity"></activity>
     </application>
 
 </manifest>

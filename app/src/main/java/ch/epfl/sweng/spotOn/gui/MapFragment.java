@@ -26,7 +26,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapsActivity extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
