@@ -105,7 +105,7 @@ public class DatabaseQueryActivity extends AppCompatActivity {
 
         java.util.Date date= new java.util.Date();
         PhotoObject testOBject = new PhotoObject(fullSizeImage, newPictureId, "Dumbledore", new Timestamp(date.getTime()), 0, 0, 100);
-        testOBject.sendToDatabase();
+        testOBject.upload();
     }
 
     public void sendTestObject1(View v){ this.sendTestObject(R.drawable.img1);  }
