@@ -129,6 +129,10 @@ public class TabActivity extends AppCompatActivity {
         mCameraFragment.dispatchTakePictureIntent(view);
     }
 
+    public void storePictureOnInternalStorage(View view){
+        mCameraFragment.storePictureOnInternalStorage(view);
+    }
+
     /**
      * Override method starting the repeating task every TIME_BETWEEN_EXEC seconds
      */

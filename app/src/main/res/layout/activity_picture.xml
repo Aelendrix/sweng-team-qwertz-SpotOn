@@ -33,4 +33,12 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"/>
 
+    <Button
+        android:text="@string/storeButton"
+        android:layout_width="147dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="storePictureOnInternalStorage"
+        android:id="@+id/storeButton" />
+
 </LinearLayout>
