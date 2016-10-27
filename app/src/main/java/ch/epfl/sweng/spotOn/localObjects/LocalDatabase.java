@@ -117,4 +117,8 @@ public class LocalDatabase {
     public static PhotoObject getPhoto(String pictureId){
         return photoDataMap.get(pictureId);
     }
+
+    public static void clearData() {
+        photoDataMap.clear();
+    }
 }
