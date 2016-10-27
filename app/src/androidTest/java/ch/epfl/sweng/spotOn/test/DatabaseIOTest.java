@@ -114,16 +114,16 @@ public class DatabaseIOTest {
         if(photo1.getRadius() != radius) {
             throw new AssertionError("radius wrongly get");
         }
-        if(photo1.getAuthorId().equals(author)) {
+        if(!photo1.getAuthorId().equals(author)) {
             throw new AssertionError("author wrongly get");
         }
-        if(photo1.getPhotoName().equals(photoName)) {
+        if(!photo1.getPhotoName().equals(photoName)) {
             throw new AssertionError("photo name wrongly get");
         }
-        if(photo1.getFullsizeImageLink().equals(imageLink)){
+        if(!photo1.getFullsizeImageLink().equals(imageLink)){
             throw new AssertionError("image link wrongly get");
         }
-        if(photo1.getPictureId().equals(pictureId)){
+        if(!photo1.getPictureId().equals(pictureId)){
             throw new AssertionError("image id wrongly get");
         }
     }
