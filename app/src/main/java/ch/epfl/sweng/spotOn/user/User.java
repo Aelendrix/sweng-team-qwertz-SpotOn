@@ -28,10 +28,12 @@ public class User {
         mLastName = lastName;
         mUserId = userId;
 
+        UserId singletonUserId = UserId.getInstance();
+        singletonUserId.setUserId(userId);
+
         if(userExists() == false){
             createUserInDB();
         }
-
     }
 
 
