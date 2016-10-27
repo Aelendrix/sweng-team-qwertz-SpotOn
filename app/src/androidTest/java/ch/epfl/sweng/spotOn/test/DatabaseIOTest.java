@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
-/** test the database behavious with
+/** test the database behaviour with
  *  @author quentin
  */
 @RunWith(AndroidJUnit4.class)
@@ -146,7 +146,7 @@ public class DatabaseIOTest {
         try {
             image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
         } catch (Exception e) {
-            throw new Exception("Problem instanciating PhotoOBject : image not retrieved from the interned");
+            throw new Exception("Problem instantiating PhotoObject : image not retrieved from the interned");
         }
         String newPictureId = dbref.push().getKey();
         return new PhotoObject(image, "author1", "photo1", new Timestamp(1), 1, 1, 1);

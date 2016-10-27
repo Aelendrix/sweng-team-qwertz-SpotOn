@@ -56,11 +56,9 @@ public class TabActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-
+        //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -151,6 +149,9 @@ public class TabActivity extends AppCompatActivity {
         mHandler.removeCallbacks(loopedRefresh);
     }
 
+    /*
+     * Rotates the picture by 90°
+     */
     public void rotatePicture(View view) {
         mCameraFragment.rotatePicture(view);
     }
@@ -172,6 +173,9 @@ public class TabActivity extends AppCompatActivity {
         return true;
     }
 
+    /*
+     * Handles what action to take when the user clicks on a menu item in the options menu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -187,7 +191,7 @@ public class TabActivity extends AppCompatActivity {
         }
     }
 
-    public void disconnectFacebook() {
+    private void disconnectFacebook() {
         Profile profile = Profile.getCurrentProfile();
         if(profile != null){
             LoginManager.getInstance().logOut();
