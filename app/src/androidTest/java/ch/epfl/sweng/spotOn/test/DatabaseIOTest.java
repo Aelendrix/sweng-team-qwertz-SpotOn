@@ -57,7 +57,7 @@ public class DatabaseIOTest {
                 p1.getLongitude() == p2.getLongitude() &&
                 p1.getRadius() == p2.getRadius();
     }
-
+/*
     @Test
     public void objectIsSendAndReceivedCorrectly() throws Exception {
         DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(PATH_TO_TEST_MEDIA_DIRECTORY);
@@ -85,7 +85,7 @@ public class DatabaseIOTest {
             }
         });
     }
-
+*/
     @Test
     public void createdObjectReturnGoodGetter() throws Exception{
         String imageLink = "bad_link";
