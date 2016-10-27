@@ -113,10 +113,12 @@ public class PhotoObject {
 
     public void upvote(){
         ++mVotes;
+        updateVotesInDB();
     }
 
     public void downvote(){
         --mVotes;
+        updateVotesInDB();
     }
 
     /** retrieves the fullsizeimage from the fileserver and caches it in the object.
@@ -312,6 +314,11 @@ public class PhotoObject {
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
         System.out.println(DBobject);
         DBref.child(mPictureId).setValue(DBobject);
+    }
+
+    private void updateVotesInDB(){
+        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
+        DBref.child(mPictureId).child("votes").setValue(mVotes);
     }
 }
 

@@ -48,7 +48,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private CallbackManager mCallbackManager;
 
-    private final long TIME_BETWEEN_TWO_ALARM = 60000;//one minute for now
+    private final long TIME_BETWEEN_TWO_ALARM = 60 * 60 *1000;//one hour for now
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
