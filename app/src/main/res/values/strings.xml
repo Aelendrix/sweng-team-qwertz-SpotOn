@@ -27,5 +27,6 @@
     <string name="blankQueryResult">...</string>
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
+    <string name="storeButton">Store</string>
 </resources>
 

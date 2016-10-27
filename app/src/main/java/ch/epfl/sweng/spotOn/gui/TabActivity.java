@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+//import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -117,6 +118,10 @@ public class TabActivity extends AppCompatActivity {
 
     public void dispatchTakePictureIntent(View view) {
         mCameraFragment.dispatchTakePictureIntent(view);
+    }
+
+    public void storePictureOnInternalStorage(View view){
+        mCameraFragment.storePictureOnInternalStorage(view);
     }
 
     /**

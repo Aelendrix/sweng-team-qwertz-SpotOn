@@ -51,6 +51,7 @@ public class PhotoObject {
     private double mLatitude;
     private double mLongitude;
     private int mRadius;
+    private boolean mStoredInternally;
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
@@ -68,6 +69,7 @@ public class PhotoObject {
         mLongitude = longitude;
         mRadius = radius;
         mAuthorID = authorID;
+        mStoredInternally = false;
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
@@ -85,6 +87,7 @@ public class PhotoObject {
         mLongitude = longitude;
         mRadius = radius;
         mAuthorID = authorID;
+        mStoredInternally = false;
     }
 
 
@@ -211,6 +214,15 @@ public class PhotoObject {
         return mPictureId;
     }
     public String getFullsizeImageLink() { return mFullsizeImageLink; }
+    public boolean getStoredInternallyStatus(){
+        return mStoredInternally;
+    }
+
+    //SETTER FUNCTIONS
+
+    public void setStoredInternallyStatus(boolean storedInternally){
+        mStoredInternally = storedInternally;
+    }
 
 
 
