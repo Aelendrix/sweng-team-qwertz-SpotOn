@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -85,19 +86,19 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
 
-/*  actually not part of sprint #4 - left for later
-    private void recordUpvote(){
-        if(mDisplayedMedia!=null){
 
+    public void recordUpvote(View view){
+        if(mDisplayedMedia!=null){
+            mDisplayedMedia.upvote();
         }
     }
 
-    private void recordDownvote(){
+    public void recordDownvote(View view){
         if(mDisplayedMedia!=null){
-
+            mDisplayedMedia.downvote();
         }
     }
-*/
+
 
 
 }

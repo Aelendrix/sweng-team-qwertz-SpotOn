@@ -97,8 +97,9 @@ public class DatabaseIOTest {
         double latitude = 4.4;
         double longitude =  6.6;
         int radius = 99;
+        int votes = 0;
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-        expireDate, latitude, longitude, radius);
+        expireDate, latitude, longitude, radius, votes);
         if(photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }
@@ -125,6 +126,9 @@ public class DatabaseIOTest {
         }
         if(!photo1.getPictureId().equals(pictureId)){
             throw new AssertionError("image id wrongly get");
+        }
+        if(!(photo1.getVotes() == votes)){
+            throw new AssertionError("votes wrongly get");
         }
     }
 
