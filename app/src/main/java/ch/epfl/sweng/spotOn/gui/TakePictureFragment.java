@@ -210,8 +210,6 @@ public class TakePictureFragment extends Fragment {
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, (int) x, (int) y, true);
                 b.recycle();
                 b = scaledBitmap;
-
-                //System.gc();
             } else {
                 b = BitmapFactory.decodeStream(in);
             }
