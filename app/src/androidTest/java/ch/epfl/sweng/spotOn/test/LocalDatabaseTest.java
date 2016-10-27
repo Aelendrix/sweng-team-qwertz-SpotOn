@@ -19,8 +19,7 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils;
 @RunWith(AndroidJUnit4.class)
 public class LocalDatabaseTest {
 
-    PhotoObject photo1 = new PhotoObject("invalid link", null, "key1", "author1", "name1", 0, 10000, 0, 0, 0);
-    PhotoObject photo2 = new PhotoObject("invalid link", null, "key2", "author2", "name2", 0, 10000, 0, 0, 0);
+    PhotoObject photo1 = PhotoObjectUtils.getRandomPhotoObject();
     Location location = new Location("");
 
 
