@@ -86,6 +86,48 @@ public class DatabaseIOTest {
         });
     }
 
+    @Test
+    public void createdObjectReturnGoodGetter() throws Exception{
+        String imageLink = "bad_link";
+        String pictureId = "key1";
+        String author = "author1";
+        String photoName = "name1";
+        long createdDate = 1;
+        long expireDate = 1000;
+        double latitude = 4.4;
+        double longitude =  6.6;
+        int radius = 99;
+        PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
+        expireDate, latitude, longitude, radius);
+        if(photo1.getLongitude() != longitude) {
+            throw new AssertionError("longitude wrongly get");
+        }
+        if(photo1.getLatitude() != latitude) {
+            throw new AssertionError("latitude wrongly get");
+        }
+        if(photo1.getCreatedDate().getTime() != createdDate) {
+            throw new AssertionError("created date wrongly get");
+        }
+        if(photo1.getExpireDate().getTime() != expireDate) {
+            throw new AssertionError("expire date wrongly get");
+        }
+        if(photo1.getRadius() != radius) {
+            throw new AssertionError("radius wrongly get");
+        }
+        if(!photo1.getAuthorId().equals(author)) {
+            throw new AssertionError("author wrongly get");
+        }
+        if(!photo1.getPhotoName().equals(photoName)) {
+            throw new AssertionError("photo name wrongly get");
+        }
+        if(!photo1.getFullsizeImageLink().equals(imageLink)){
+            throw new AssertionError("image link wrongly get");
+        }
+        if(!photo1.getPictureId().equals(pictureId)){
+            throw new AssertionError("image id wrongly get");
+        }
+    }
+
 // CONSTRUCTORS FOR A VARIETY OF PhotoObjects
 
     private PhotoObject initTestOBject1(DatabaseReference dbref) throws Exception {
