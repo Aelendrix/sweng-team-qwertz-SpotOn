@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,8 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+
 
 public class TabActivity extends AppCompatActivity {
 
@@ -51,11 +56,9 @@ public class TabActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-
+        //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -115,6 +118,13 @@ public class TabActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Disables the hardware back button of the phone
+     */
+    @Override
+    public void onBackPressed(){
+    }
+
     public void dispatchTakePictureIntent(View view) {
         mCameraFragment.dispatchTakePictureIntent(view);
     }
@@ -139,6 +149,9 @@ public class TabActivity extends AppCompatActivity {
         mHandler.removeCallbacks(loopedRefresh);
     }
 
+    /*
+     * Rotates the picture by 90°
+     */
     public void rotatePicture(View view) {
         mCameraFragment.rotatePicture(view);
     }
@@ -158,6 +171,33 @@ public class TabActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options, menu);
         return true;
+    }
+
+    /*
+     * Handles what action to take when the user clicks on a menu item in the options menu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.log_out:
+                disconnectFacebook();
+                return true;
+            case R.id.action_about:
+                Intent intent = new Intent(this, AboutPage.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void disconnectFacebook() {
+        Profile profile = Profile.getCurrentProfile();
+        if(profile != null){
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 
