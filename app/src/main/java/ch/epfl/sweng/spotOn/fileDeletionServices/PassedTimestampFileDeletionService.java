@@ -1,10 +1,10 @@
-package ch.epfl.sweng.project.backgroudapplication;
+package ch.epfl.sweng.spotOn.fileDeletionServices;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Environment;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class PassedTimestampFileDeletionService extends IntentService {
 
-    private final long timeToKeepFile = 60000; //1 minute for example
+    final long timeToKeepFile = 60000; //1 minute for example
     public PassedTimestampFileDeletionService(){
         super("Deletes files which timestamp value has passed");
     }
@@ -33,17 +33,20 @@ public class PassedTimestampFileDeletionService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        File folder = new File("/storage/emulated/0/Pictures/SpotOn/Pictures");
+        File folder = new File(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                                "/SpotOn/Pictures").getPath());
         List<File> listOfFiles = Collections.emptyList();
         if(folder.listFiles() != null) {
             listOfFiles = Arrays.asList(folder.listFiles());
         }
 
-        while(! listOfFiles.isEmpty()) {
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    if (getTimestampFromName(file) < System.currentTimeMillis() - timeToKeepFile) {
-                        file.delete();
+        while(folder.exists()) {
+            if(! listOfFiles.isEmpty()) {
+                for (File file : listOfFiles) {
+                    if (file.isFile()) {
+                        if (getTimestamp(file) < System.currentTimeMillis() - timeToKeepFile) {
+                            file.delete();
+                        }
                     }
                 }
             }
@@ -65,5 +68,5 @@ public class PassedTimestampFileDeletionService extends IntentService {
         }
     }
 
-    private long getTimestampFromName(File file){return Long.parseLong(file.getName().substring(4, 17));}
+    private long getTimestamp(File file){return file.lastModified();}
 }

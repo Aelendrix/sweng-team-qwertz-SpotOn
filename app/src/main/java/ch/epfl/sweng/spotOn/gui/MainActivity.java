@@ -3,10 +3,9 @@
  *
  */
 
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -24,7 +23,6 @@ import android.app.PendingIntent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -36,9 +34,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
-import ch.epfl.sweng.project.backgroudapplication.PassedTimestampFileDeletionService;
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
+import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 
 
 /**
@@ -140,7 +138,6 @@ public final class MainActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
     /*
         This method uses the options menu when this activity is launched
          */
@@ -158,15 +155,9 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToMapsActivity(View view){
         //launch the map Activity
-        //TODO: migrate the MapsActivity inside the fragment manager of MainActivity
-        Intent mapIntent = new Intent(this, MapsActivity.class);
+        //TODO: migrate the MapFragment inside the fragment manager of MainActivity
+        Intent mapIntent = new Intent(this, MapFragment.class);
         startActivity(mapIntent);
-    }
-
-    public void goToQueryDatabaseActivity(View view){
-        //launch the Database Query activity
-        Intent databaseQueryIntent = new Intent(this, DatabaseQueryActivity.class);
-        startActivity(databaseQueryIntent);
     }
 
     //read the result of the permission request, leave the app if we don't have the gps permission
@@ -178,7 +169,7 @@ public final class MainActivity extends AppCompatActivity {
                 // permission was granted
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //TODO: When the PictureActivity and MapsActivity will be fragment inside MainActivity, create the LocationManager here
+                    //TODO: When the TakePictureFragment and MapFragment will be fragment inside MainActivity, create the LocationManager here
 
                 }
                 //permission denied

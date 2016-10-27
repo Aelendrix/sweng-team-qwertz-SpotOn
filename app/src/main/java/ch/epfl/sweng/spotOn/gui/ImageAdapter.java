@@ -1,8 +1,7 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,12 +10,16 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.util.Pair;
+
 /**
  * This class is the core of the gridView, used to link the data to one of the grid object
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private List<Bitmap> mThumbnail = LocalDatabase.getThumbnailArray();
+    private List<Pair<Bitmap, String>> mThumbnail = LocalDatabase.getThumbnailArray();
+
     public ImageAdapter(Context c) {
         mContext = c;
     }
@@ -46,7 +49,11 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageBitmap(mThumbnail.get(position));
+        imageView.setImageBitmap(mThumbnail.get(position)._1());
         return imageView;
+    }
+
+    public String getIdAtPosition(int pos){
+        return mThumbnail.get(pos)._2();
     }
 }

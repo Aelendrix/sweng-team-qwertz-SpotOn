@@ -1,8 +1,10 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+
+import ch.epfl.sweng.spotOn.R;
 
 public class AboutPage extends AppCompatActivity {
 

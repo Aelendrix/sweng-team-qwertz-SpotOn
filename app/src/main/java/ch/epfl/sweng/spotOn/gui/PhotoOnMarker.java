@@ -1,8 +1,7 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,7 +17,7 @@ import com.google.android.gms.maps.model.Marker;
 /**
  * Class that will create an information window when clicking on a marker on the map
  */
-public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
+public class    PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
 
     private ImageView pictureView;
 

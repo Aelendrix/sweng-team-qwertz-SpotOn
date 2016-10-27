@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,20 +20,20 @@ import android.view.View;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 
 public class TabActivity extends AppCompatActivity {
 
 
-    private SeePicturesActivity mPicturesFragment = new SeePicturesActivity();
-    private PictureActivity mCameraFragment = new PictureActivity();
-    private MapsActivity mMapFragment = new MapsActivity();
+    private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
+    private TakePictureFragment mCameraFragment = new TakePictureFragment();
+    private MapFragment mMapFragment = new MapFragment();
     // The path to the root of the stored pictures Data in the database
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds
@@ -154,9 +154,9 @@ public class TabActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(mPicturesFragment, "Stories around me");
-        adapter.addFragment(mCameraFragment, "Camera");
-        adapter.addFragment(mMapFragment, "Map");
+        adapter.addFragment(mPicturesFragment, getResources().getString(R.string.tab_aroundme));
+        adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        adapter.addFragment(mMapFragment, getResources().getString(R.string.tab_map));
         viewPager.setAdapter(adapter);
     }
     /**

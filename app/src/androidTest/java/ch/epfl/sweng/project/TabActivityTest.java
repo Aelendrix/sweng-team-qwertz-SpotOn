@@ -25,6 +25,9 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
+import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.TabActivity;
+
 
 /**
  * Created by Alexis Dewaele on 26/10/2016.

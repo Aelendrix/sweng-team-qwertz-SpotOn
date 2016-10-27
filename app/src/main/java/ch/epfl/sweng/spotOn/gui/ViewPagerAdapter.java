@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.gui;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

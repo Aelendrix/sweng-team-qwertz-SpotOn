@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.fileDeletionServices;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
