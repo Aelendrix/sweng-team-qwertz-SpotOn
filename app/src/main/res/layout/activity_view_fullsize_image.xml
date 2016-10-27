@@ -28,7 +28,7 @@
             android:scaleType="fitXY"
             android:adjustViewBounds="false" />
 
-<!--      I thought these were part of sprint #4, but they are not. Left them for later
+
         <Button
             android:text="@string/downvoteButtonText"
             android:layout_width="wrap_content"
@@ -39,6 +39,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="17dp"
+            android:onClick="recordDownvote"
             android:id="@+id/downVoteButton" />
 
         <Button
@@ -51,7 +52,8 @@
             android:layout_marginRight="18dp"
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="13dp"
+            android:onClick="recordUpvote"
             android:id="@+id/upvoteButton" />
--->
+
     </RelativeLayout>
 </RelativeLayout>

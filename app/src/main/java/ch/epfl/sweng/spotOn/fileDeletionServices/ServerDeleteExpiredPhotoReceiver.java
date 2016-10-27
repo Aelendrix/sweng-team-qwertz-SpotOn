@@ -23,15 +23,12 @@ import java.util.HashMap;
 public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
 
     private final String PATH_TO_MEDIA_DIRECTORY = "MediaDirectory";
-    private final String PATH_TO_TEST_DIRECTORY = "Test";
     private final FirebaseDatabase mDB = FirebaseDatabase.getInstance();
-    private final String VALUE_TO_CHECK = "expireTime";
+    private final String VALUE_TO_CHECK = "expireDate";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //The print is just for seeing when an alarm is received, we can remove it
-        System.out.println(System.currentTimeMillis());
-        Query query = mDB.getReference(PATH_TO_TEST_DIRECTORY).orderByChild(VALUE_TO_CHECK);
+        Query query = mDB.getReference(PATH_TO_MEDIA_DIRECTORY).orderByChild(VALUE_TO_CHECK);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
 
