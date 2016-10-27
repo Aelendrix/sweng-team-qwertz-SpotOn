@@ -47,7 +47,6 @@ public class TakePictureFragment extends Fragment {
 
     //objet representing the phone localisation
     Location mPhoneLocation;
-    private Toolbar mToolbar;
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -60,7 +59,6 @@ public class TakePictureFragment extends Fragment {
     private Uri mImageToUploadUri;
     private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
