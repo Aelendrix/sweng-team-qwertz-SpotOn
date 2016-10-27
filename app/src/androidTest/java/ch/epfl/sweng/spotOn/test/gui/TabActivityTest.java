@@ -1,4 +1,4 @@
-package ch.epfl.sweng.project;
+package ch.epfl.sweng.spotOn.test.gui;
 
 import android.app.Activity;
 import android.app.Instrumentation;

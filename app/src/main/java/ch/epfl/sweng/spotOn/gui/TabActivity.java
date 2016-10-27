@@ -120,6 +120,9 @@ public class TabActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Disables the hardware back button of the phone
+     */
     @Override
     public void onBackPressed(){
     }
