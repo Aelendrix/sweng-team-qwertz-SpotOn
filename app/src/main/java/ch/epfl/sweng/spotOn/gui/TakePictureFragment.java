@@ -33,6 +33,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.UserId;
 
 
 /**
@@ -150,7 +151,8 @@ public class TakePictureFragment extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
         //TODO: Change Username and ID
-        PhotoObject picObject = new PhotoObject(imageBitmap, "Gandalf", imageName, created, mLatitude, mLongitude, 100);
+        String userId = UserId.getInstance().getUserId();
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude, 100);
         mAllPictures.add(picObject);
         TabActivity tab= (TabActivity) getActivity();
         tab.changeLocalMarkers(mAllPictures);
