@@ -44,7 +44,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 public class CameraTest {
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<>(TabActivity.class);
-/*
+
     @Before
     public void stubCameraIntent(){
         ActivityResult result = createImageCaptureStub();
@@ -55,12 +55,11 @@ public class CameraTest {
     @Test
     public void testTakePhoto() {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        //onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
+        onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
 
         onView(withId(R.id.captureButton)).perform(click());
-        onView(withId(R.id.))
 
-        //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
+        onView(withId(R.id.image_view)).check(matches(hasDrawable()));
     }
 
     private ActivityResult createImageCaptureStub(){
@@ -71,8 +70,8 @@ public class CameraTest {
         Intent resultData = new Intent();
         resultData.putExtra("data", icon);
         return new ActivityResult(Activity.RESULT_OK, resultData);
-    }*/
-
+    }
+/*
     @Test
     public void takePictureTest() {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
@@ -85,5 +84,5 @@ public class CameraTest {
         onView(withId(R.id.captureButton)).perform(click());
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE));
     }
-
+*/
 }
