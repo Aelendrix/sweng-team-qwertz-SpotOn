@@ -1,8 +1,13 @@
 package ch.epfl.sweng.spotOn.localObjects;
 
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserId;
@@ -24,9 +29,19 @@ public class LocalUser {
 
     /* This method refresh the info of the current user from the database */
     public void refreshLocalUser(){
-        //TODO: Finish to implement this method
+        //TODO: Test this method
         String userId = UserId.getInstance().getUserId();
-        //mCurrentUser = userDBRef.child(userId).;
+        userDBRef.child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mCurrentUser = (User) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Firebase UsersDB", databaseError.toString());
+            }
+        });
 
     }
 
