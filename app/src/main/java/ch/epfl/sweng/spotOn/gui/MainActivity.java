@@ -26,9 +26,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -46,13 +43,11 @@ import ch.epfl.sweng.spotOn.user.User;
  */
 public final class MainActivity extends AppCompatActivity {
 
-    private LoginButton mainLoginButton;
-
     private CallbackManager mCallbackManager;
     private Profile mFbProfile;
     private ProfileTracker mFbProfileTracker;
 
-    private final long TIME_BETWEEN_TWO_ALARM = 60000;//one minute for now
+    private final long TIME_BETWEEN_TWO_ALARM = 60 * 60 *1000;//one hour for now
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
@@ -117,8 +112,6 @@ public final class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -135,28 +128,10 @@ public final class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    public void goToPictureActivity(View view){
-        //launch the TakePictureFragment
-        Intent pictureIntent = new Intent(this, TakePictureFragment.class);
-        startActivity(pictureIntent);
-    }
-
-    /*
-        This method uses the options menu when this activity is launched
-         */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
-        return true;
     }
 
     public void goToTabActivity() {
@@ -168,12 +143,6 @@ public final class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToMapsActivity(View view){
-        //launch the map Activity
-        //TODO: migrate the MapFragment inside the fragment manager of MainActivity
-        Intent mapIntent = new Intent(this, MapFragment.class);
-        startActivity(mapIntent);
-    }
 
 
     /* Method to get the Facebook profile of the user */

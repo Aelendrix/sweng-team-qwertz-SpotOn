@@ -7,7 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;

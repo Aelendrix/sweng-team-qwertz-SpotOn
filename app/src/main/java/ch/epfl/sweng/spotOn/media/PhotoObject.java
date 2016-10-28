@@ -51,6 +51,9 @@ public class PhotoObject {
     private double mLatitude;
     private double mLongitude;
     private int mRadius;
+    private boolean mStoredInternally;
+    private int mVotes;
+
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
@@ -68,11 +71,13 @@ public class PhotoObject {
         mLongitude = longitude;
         mRadius = radius;
         mAuthorID = authorID;
+        mStoredInternally = false;
+        mVotes = 0;
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       long expireDate, double latitude, double longitude, int radius){
+                       long expireDate, double latitude, double longitude, int radius, int votes){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
         mFullsizeImageLink=fullSizeImageLink;
@@ -85,6 +90,8 @@ public class PhotoObject {
         mLongitude = longitude;
         mRadius = radius;
         mAuthorID = authorID;
+        mStoredInternally = false;
+        mVotes = votes;
     }
 
 
@@ -106,6 +113,16 @@ public class PhotoObject {
                 new LatLng(mLatitude, mLongitude),
                 position
         ) <= mRadius;
+    }
+
+    public void upvote(){
+        ++mVotes;
+        updateVotesInDB();
+    }
+
+    public void downvote(){
+        --mVotes;
+        updateVotesInDB();
     }
 
     /** retrieves the fullsizeimage from the fileserver and caches it in the object.
@@ -210,9 +227,19 @@ public class PhotoObject {
     public String getPictureId() {
         return mPictureId;
     }
-    public String getFullsizeImageLink() { return mFullsizeImageLink; }
+    public String getFullsizeImageLink() {
+        return mFullsizeImageLink;
+    }
+    public boolean getStoredInternallyStatus(){
+        return mStoredInternally;
+    }
+    public int getVotes(){return mVotes;}
 
+    //SETTER FUNCTIONS
 
+    public void setStoredInternallyStatus(boolean storedInternally){
+        mStoredInternally = storedInternally;
+    }
 
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
@@ -227,7 +254,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius);
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mVotes);
     }
 
     /** encodes the passed bitmap into a string
@@ -300,6 +327,11 @@ public class PhotoObject {
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
         System.out.println(DBobject);
         DBref.child(mPictureId).setValue(DBobject);
+    }
+
+    private void updateVotesInDB(){
+        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
+        DBref.child(mPictureId).child("votes").setValue(mVotes);
     }
 }
 

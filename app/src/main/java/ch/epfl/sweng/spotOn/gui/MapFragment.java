@@ -8,6 +8,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,7 +27,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -129,6 +130,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
         displayDBMarkers();
+        //This will call the method onMarkerClick when clicking a marker
+        mMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -164,27 +167,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
                 LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
                 Marker photoMarker;
-                //add a red marker if the photo can be seen
+                //add a GREEN marker if the photo can be seen
                 if(canActivateIt) {
                     photoMarker = mMap.addMarker(new MarkerOptions()
                             .position(photoPosition)
-                            .title(photo.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    //add the picture thumbnail of the photo as custom object of the marker
+                    //useful to retrieve the picture
+                    photoMarker.setTag(photo.getThumbnail());
                 }
-                //add a yellow marker if it can't be activated to see the picture
+                //add a YELLOW marker if it can't be activated to see the picture
                 else{
                     photoMarker = mMap.addMarker(new MarkerOptions()
                             .position(photoPosition)
-                            .title(photo.getPhotoName())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                 }
-                //add the picture Id of the photo as custom object of the marker
-                //useful to retrieve the picture
-                photoMarker.setTag(photo.getPictureId());
                 //add the marker in the list
                 listMarker.add(photoMarker);
             }
         }
+    }
+
+    /**
+     * Method that associates and display the thumbnail of the photo associated to a marker when clicked
+     * @param marker the marker the user is clicking on
+     * @return false (do not change it)
+     */
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext()));
+        if(marker.getTag() == null) {
+            Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 
     /**
@@ -219,7 +234,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             .position(picSpot)
                             .title(obj.getPhotoName())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                    mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), obj.getFullSizeImage()));
                 }
             }
         }
