@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.UserId;
 
 
 /**
@@ -163,7 +164,9 @@ public class TakePictureFragment extends Fragment {
                 Log.d("creation_temp_storage", "working");
             }
         }
+        //TODO: Fix the problem
         mImageToUploadUri = Uri.fromFile(temporalStorage);
+        Log.d("URI ImageUpload", mImageToUploadUri.toString());
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
@@ -236,8 +239,10 @@ public class TakePictureFragment extends Fragment {
         //Name the picture
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
-        //TODO: Change Username and ID
-        PhotoObject picObject = new PhotoObject(imageBitmap, "Gandalf", imageName, created, mLatitude, mLongitude, 100);
+
+        String userId = UserId.getInstance().getUserId();
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude, 100);
+
         return picObject;
     }
 
