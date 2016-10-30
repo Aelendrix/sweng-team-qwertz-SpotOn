@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
@@ -155,17 +157,19 @@ public class TakePictureFragment extends Fragment {
      */
     public void invokeCamera() {
         Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        File temporalStorage = new File(Environment.getExternalStorageDirectory(),"TEMP_IMAGE.jpg");
-        if(!temporalStorage.exists()){
-            if(!temporalStorage.mkdirs()){
-                Log.d("creation_temp_storage","not working");
+        if (isStoragePermissionGranted()) {
+            File temporalStorage = createTempImageFile();
+            if (temporalStorage != null) {
+                Log.d("gets_inside_if: ", "all right");
+                mImageToUploadUri = FileProvider.getUriForFile(getContext(),
+                        getContext().getApplicationContext().getPackageName() + ".provider", temporalStorage);
+                Log.d("Directory", mImageToUploadUri.getPath());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             } else {
-                Log.d("creation_temp_storage", "working");
+                Log.d("nique ta mère", "bien profond");
             }
         }
-        mImageToUploadUri = Uri.fromFile(temporalStorage);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**
@@ -174,7 +178,8 @@ public class TakePictureFragment extends Fragment {
      * @return The bitmap of the high quality picture
      */
     public static Bitmap getBitmap(String path, Context context){
-        Uri uri = Uri.fromFile(new File(path));
+        Uri uri = FileProvider.getUriForFile(context,
+                BuildConfig.APPLICATION_ID + ".provider", new File(path));
         InputStream in;
         try {
             final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
@@ -251,6 +256,7 @@ public class TakePictureFragment extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             if(mImageToUploadUri != null) {
                 //Get our saved picture from the file in a bitmap image and display it on the image view
@@ -279,9 +285,8 @@ public class TakePictureFragment extends Fragment {
      */
 
     private void storeImage(PhotoObject photo){
-        if(isStoragePermissionGranted() == true) {
+        if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);
-
             if (pictureFile == null) {
                 Log.d("Store Image", "Error creating media file, check storage permissions: ");
                 return;
@@ -315,11 +320,9 @@ public class TakePictureFragment extends Fragment {
      *
      * @return the file where pictures will be stored
      */
-    private File getOutputMediaFile(PhotoObject photo){
+    private File getOutputMediaFile(PhotoObject photo) {
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
-        Log.v("getOutputMediaFile", "accessed this one");
-
         //Create storage directory if it does not exist
         if (!pictureDirectory.exists()) {
             if (!pictureDirectory.mkdirs()) {
@@ -329,5 +332,12 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    private File createTempImageFile() {
+        File tempStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "/SpotOn");
+        File imageStorage = new File(tempStorage.getPath() + File.separator + "Temp_photo");
+        return imageStorage;
     }
 }
