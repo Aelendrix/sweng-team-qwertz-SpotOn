@@ -9,10 +9,10 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-// Add this to the header of your file:
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
@@ -31,9 +31,11 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
+import ch.epfl.sweng.spotOn.user.User;
 
 
 /**
@@ -42,6 +44,8 @@ import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceive
 public final class MainActivity extends AppCompatActivity {
 
     private CallbackManager mCallbackManager;
+    private Profile mFbProfile;
+    private ProfileTracker mFbProfileTracker;
 
     private final long TIME_BETWEEN_TWO_ALARM = 60 * 60 *1000;//one hour for now
 
@@ -74,13 +78,13 @@ public final class MainActivity extends AppCompatActivity {
 
         // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
-
+        //mainLoginButton.setReadPermissions("email","birthday","gender");
         mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected
-                goToTabActivity();
+                getFbProfile();
             }
 
             @Override
@@ -103,7 +107,7 @@ public final class MainActivity extends AppCompatActivity {
 
         // Test if a user is already logged on when creating the MainActivity
         if(AccessToken.getCurrentAccessToken()!= null) {
-            goToTabActivity();
+            getFbProfile();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -131,9 +135,43 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void goToTabActivity() {
+        // create the user
+        User user = new User(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
+
+        //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
+
+
+
+    /* Method to get the Facebook profile of the user */
+    public void getFbProfile(){
+        //get current Facebook profile
+        if(Profile.getCurrentProfile() == null){
+            mFbProfileTracker = new ProfileTracker(){
+                @Override
+                protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
+                    //update the variable of the Facebook profile
+                    mFbProfile = newProfile;
+
+                    //login done so call to goToTabActivity
+                    goToTabActivity();
+
+                    mFbProfileTracker.stopTracking();
+                }
+            };
+        }
+        else {
+            //get the current profile if profile not null
+            mFbProfile = Profile.getCurrentProfile();
+
+            //login done so call to goToTabActivity
+            goToTabActivity();
+
+        }
+    }
+
 
 
     //read the result of the permission request, leave the app if we don't have the gps permission
