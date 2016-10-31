@@ -80,6 +80,7 @@ public class PhotoObject {
         mStoredInternally = false;
         mVotes = 0;
         mVoters = new ArrayList<String>();
+        mVoters.add(UserId.getInstance().getUserId());
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
@@ -123,14 +124,8 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
-    public void upvote(){
-        ++mVotes;
-        mVoters.add(UserId.getInstance().getUserId());
-        updateVotesInDB();
-    }
-
-    public void downvote(){
-        --mVotes;
+    public void vote(int vote){
+        mVotes += vote;
         mVoters.add(UserId.getInstance().getUserId());
         updateVotesInDB();
     }

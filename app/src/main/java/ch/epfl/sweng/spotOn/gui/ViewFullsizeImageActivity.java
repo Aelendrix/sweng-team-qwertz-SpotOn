@@ -90,31 +90,36 @@ public class ViewFullsizeImageActivity extends Activity {
 
 
     public void recordUpvote(View view){
-        if(mDisplayedMedia!=null){
-            String userId = UserId.getInstance().getUserId();
-            if(! mDisplayedMedia.getVoters().contains(userId)) {
-                mDisplayedMedia.upvote();
-                Toast.makeText(this, "Upvoted", Toast.LENGTH_LONG).show();
-            }
-            else {
-                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
-            }
-        }
+        vote(1);
     }
 
     public void recordDownvote(View view){
+        vote(-1);
+    }
+
+    private void vote(int vote){
         if(mDisplayedMedia!=null){
             String userId = UserId.getInstance().getUserId();
             if(! mDisplayedMedia.getVoters().contains(userId)) {
-                mDisplayedMedia.downvote();
-                Toast.makeText(this, "Downvoted", Toast.LENGTH_LONG).show();
+                mDisplayedMedia.vote(vote);
+                String toastText;
+                if(vote == 1){
+                    toastText = "Upvoted";
+                }
+                else{
+                    toastText = "Downvoted";
+                }
+                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+            }
+            else if(mDisplayedMedia.getAuthorId().equals(userId)){
+                Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
             }
             else {
                 Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
             }
         }
+        else{
+            throw new NullPointerException();
+        }
     }
-
-
-
 }
