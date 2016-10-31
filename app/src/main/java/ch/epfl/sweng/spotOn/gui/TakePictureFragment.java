@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserId;
@@ -72,8 +74,8 @@ public class TakePictureFragment extends Fragment {
 
     //function called when the locationListener see a location change
     public void refreshLocation(Location mPhoneLocation) {
-                        mLatitude = mPhoneLocation.getLatitude();
-                        mLongitude = mPhoneLocation.getLongitude();
+        mLatitude = mPhoneLocation.getLatitude();
+        mLongitude = mPhoneLocation.getLongitude();
     }
 
     /**
@@ -112,7 +114,11 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
-    public boolean isStoragePermissionGranted() {
+    /**
+     * Checks if the application has the storage permission
+     * @return
+     */
+    private boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -154,30 +160,33 @@ public class TakePictureFragment extends Fragment {
     /**
      * Method that invokes the camera
      */
-    public void invokeCamera() {
-        Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        File temporalStorage = new File(Environment.getExternalStorageDirectory(),"TEMP_IMAGE.jpg");
-        if(!temporalStorage.exists()){
-            if(!temporalStorage.mkdirs()){
-                Log.d("creation_temp_storage","not working");
+    private void invokeCamera() {
+        //Needed to store the last picture taken on the user's storage in order to have HQ picture
+        if(isStoragePermissionGranted()) {
+            Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "/SpotOn/TEMP_PICTURE.jpg");
+            if(Build.VERSION.SDK_INT <= 23) {
+                mImageToUploadUri = Uri.fromFile(temporalStorage);
+                Log.d("URI ImageUpload", mImageToUploadUri.toString());
             } else {
-                Log.d("creation_temp_storage", "working");
+                //For API >= 24 (was the cause of the crash)
+                mImageToUploadUri = FileProvider.getUriForFile(getContext(),
+                        BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
+                Log.d("URI ImageUpload", mImageToUploadUri.toString());
             }
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
-        //TODO: Fix the problem
-        mImageToUploadUri = Uri.fromFile(temporalStorage);
-        Log.d("URI ImageUpload", mImageToUploadUri.toString());
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**
      * Method that will transform the high quality picture in the storage of the phone into a Bitmap
-     * @param path  Path where the picture is stored
+     * @param photoUri  Uri of where the picture is stored
      * @return The bitmap of the high quality picture
      */
-    public static Bitmap getBitmap(String path, Context context){
-        Uri uri = Uri.fromFile(new File(path));
+    private static Bitmap getBitmap(Uri photoUri,Context context){
+        Uri uri = photoUri;
         InputStream in;
         try {
             final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
@@ -261,7 +270,7 @@ public class TakePictureFragment extends Fragment {
                 //Get our saved picture from the file in a bitmap image and display it on the image view
                 Uri selectedImage = mImageToUploadUri;
                 getContext().getContentResolver().notifyChange(selectedImage, null);
-                Bitmap HQPicture = getBitmap(mImageToUploadUri.getPath(), getContext());
+                Bitmap HQPicture = getBitmap(mImageToUploadUri, getContext());
                 if(HQPicture != null){
                     mPic.setImageBitmap(HQPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
@@ -284,7 +293,7 @@ public class TakePictureFragment extends Fragment {
      */
 
     private void storeImage(PhotoObject photo){
-        if(isStoragePermissionGranted() == true) {
+        if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);
 
             if (pictureFile == null) {
