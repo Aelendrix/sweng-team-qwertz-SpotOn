@@ -25,8 +25,11 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.app.ActionBar;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,16 +45,16 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class CameraTest {
+    /*
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<>(TabActivity.class);
 
     @Before
     public void stubCameraIntent(){
         ActivityResult result = createImageCaptureStub();
-
         intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result);
     }
-/*
+
     @Test
     public void testTakePhoto() {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
@@ -59,9 +62,10 @@ public class CameraTest {
 
         onView(withId(R.id.captureButton)).perform(click());
 
-        onView(withId(R.id.image_view)).check(matches(hasDrawable()));
+        //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
+        Intents.release();
     }
-*/ 
+
     private ActivityResult createImageCaptureStub(){
         Bundle bundle = new Bundle();
         Bitmap icon = BitmapFactory.decodeResource(
@@ -71,6 +75,7 @@ public class CameraTest {
         resultData.putExtra("data", icon);
         return new ActivityResult(Activity.RESULT_OK, resultData);
     }
+    */
 /*
     @Test
     public void takePictureTest() {
@@ -85,4 +90,18 @@ public class CameraTest {
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE));
     }
 */
+
+    @Rule
+    public IntentsTestRule<TabActivity> mRule = new IntentsTestRule<>(TabActivity.class);
+
+    @Test
+    public void captureTest() {
+        onView(withText("Camera")).perform(click());
+        Bitmap icon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
+        Intent resultData = new Intent();
+        resultData.putExtra("data", icon);
+        ActivityResult result = new ActivityResult(Activity.RESULT_OK, resultData);
+        intending(toPackage("com.android.camera2")).respondWith(result);
+        onView(withId(R.id.captureButton)).perform(click());
+    }
 }

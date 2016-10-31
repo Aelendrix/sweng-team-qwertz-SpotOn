@@ -17,6 +17,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.app.ActionBar;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,12 +29,14 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.Intents.intending;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.AboutPage;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 
 
@@ -93,12 +96,19 @@ public class TabActivityTest {
     public void swipe_between_fragments(){
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        IdlingResource idlingResource = startTiming(5000);
-        stopTiming(idlingResource);
+       //IdlingResource idlingResource = startTiming(5000);
+        //stopTiming(idlingResource);
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.viewpager)).perform(swipeRight());
+    }
+
+    @Test
+    public void aboutPagePopsUp() {
+        Intents.init();
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("About")).perform(click());
+        intended(hasComponent(AboutPage.class.getName()));
+        Intents.release();
     }
 
 
