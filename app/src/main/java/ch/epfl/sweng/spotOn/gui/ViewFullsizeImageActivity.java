@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,6 +17,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.UserId;
 
 public class ViewFullsizeImageActivity extends Activity {
 
@@ -89,13 +91,27 @@ public class ViewFullsizeImageActivity extends Activity {
 
     public void recordUpvote(View view){
         if(mDisplayedMedia!=null){
-            mDisplayedMedia.upvote();
+            String userId = UserId.getInstance().getUserId();
+            if(! mDisplayedMedia.getVoters().contains(userId)) {
+                mDisplayedMedia.upvote();
+                Toast.makeText(this, "Upvoted", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     public void recordDownvote(View view){
         if(mDisplayedMedia!=null){
-            mDisplayedMedia.downvote();
+            String userId = UserId.getInstance().getUserId();
+            if(! mDisplayedMedia.getVoters().contains(userId)) {
+                mDisplayedMedia.downvote();
+                Toast.makeText(this, "Downvoted", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
