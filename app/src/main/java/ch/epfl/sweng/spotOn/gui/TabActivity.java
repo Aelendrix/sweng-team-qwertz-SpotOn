@@ -222,7 +222,7 @@ public class TabActivity extends AppCompatActivity {
      */
     public void endRefreshDB(){
         if (mMapFragment != null) {
-            mMapFragment.displayDBMarkers();
+            mMapFragment.addDBMarkers();
         }
         if (mPicturesFragment != null) {
             mPicturesFragment.refreshGrid();
