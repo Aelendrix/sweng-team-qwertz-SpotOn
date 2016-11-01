@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -98,8 +100,10 @@ public class DatabaseIOTest {
         double longitude =  6.6;
         int radius = 99;
         int votes = 0;
+        List<String> voters = new ArrayList<String>();
+        voters.add(author);
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-        expireDate, latitude, longitude, radius, votes);
+        expireDate, latitude, longitude, radius, votes, voters);
         if(photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }
@@ -130,6 +134,10 @@ public class DatabaseIOTest {
         if(!(photo1.getVotes() == votes)){
             throw new AssertionError("votes wrongly get");
         }
+        if(!(photo1.getVoters().equals(voters))){
+            throw new AssertionError("voters wrongly get");
+        }
+
     }
 
 // CONSTRUCTORS FOR A VARIETY OF PhotoObjects
