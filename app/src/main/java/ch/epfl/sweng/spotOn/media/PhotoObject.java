@@ -22,7 +22,12 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
+
+import ch.epfl.sweng.spotOn.user.UserId;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
@@ -53,6 +58,7 @@ public class PhotoObject {
     private int mRadius;
     private boolean mStoredInternally;
     private int mVotes;
+    private ArrayList<String> mVoters;
 
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
@@ -73,11 +79,13 @@ public class PhotoObject {
         mAuthorID = authorID;
         mStoredInternally = false;
         mVotes = 0;
+        mVoters = new ArrayList<String>();
+        mVoters.add(UserId.getInstance().getUserId());
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       long expireDate, double latitude, double longitude, int radius, int votes){
+                       long expireDate, double latitude, double longitude, int radius, int votes, List<String> voters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
         mFullsizeImageLink=fullSizeImageLink;
@@ -92,6 +100,7 @@ public class PhotoObject {
         mAuthorID = authorID;
         mStoredInternally = false;
         mVotes = votes;
+        mVoters = new ArrayList<>(voters);
     }
 
 
@@ -115,13 +124,9 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
-    public void upvote(){
-        ++mVotes;
-        updateVotesInDB();
-    }
-
-    public void downvote(){
-        --mVotes;
+    public void vote(int vote){
+        mVotes += vote;
+        mVoters.add(UserId.getInstance().getUserId());
         updateVotesInDB();
     }
 
@@ -234,6 +239,7 @@ public class PhotoObject {
         return mStoredInternally;
     }
     public int getVotes(){return mVotes;}
+    public List<String> getVoters(){ return Collections.unmodifiableList(mVoters); }
 
     //SETTER FUNCTIONS
 
@@ -254,7 +260,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mVotes);
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mVotes, mVoters);
     }
 
     /** encodes the passed bitmap into a string
@@ -332,6 +338,7 @@ public class PhotoObject {
     private void updateVotesInDB(){
         DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
         DBref.child(mPictureId).child("votes").setValue(mVotes);
+        DBref.child(mPictureId).child("voters").setValue(mVoters);
     }
 }
 

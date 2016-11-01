@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *  This class represents a photoObject in a form that allows it to be sent to a database.
@@ -23,6 +27,7 @@ public class PhotoObjectStoredInDatabase {
     private double mLongitude;
     private int mRadius;
     private int mVotes;
+    private List<String> mVoters;
 
     public PhotoObjectStoredInDatabase(){
         // default constructor required to upload object to firebase
@@ -30,7 +35,8 @@ public class PhotoObjectStoredInDatabase {
 
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
-                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius, int votes){
+                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int radius, int votes,
+                                       List<String> voters){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
         mPictureId=pictureId;
@@ -42,6 +48,7 @@ public class PhotoObjectStoredInDatabase {
         mLongitude=longitude;
         mRadius=radius;
         mVotes = votes;
+        mVoters = new ArrayList<>(voters);
     }
 
 
@@ -51,8 +58,11 @@ public class PhotoObjectStoredInDatabase {
     public PhotoObject convertToPhotoObject(){
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
+        List<String> voters;
+        if(mVoters == null){ voters = Collections.emptyList(); }
+        else{ voters = new ArrayList<>(mVoters);}
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mExpireDate, mLatitude, mLongitude, mRadius, mVotes);
+                mExpireDate, mLatitude, mLongitude, mRadius, mVotes, voters);
     }
 
     // rather meant to be used for debug
@@ -64,6 +74,7 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   photoName="+mPhotoName;
         result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")   ---   radius="+mRadius;
         result+="   ---   votes="+mVotes;
+        result+="   ---   voters are:"+mVoters.toString();
         result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
         return result;
     }
@@ -91,6 +102,7 @@ public class PhotoObjectStoredInDatabase {
     public double getLongitude(){return mLongitude;}
     public int getRadius(){ return mRadius;}
     public int getVotes(){return mVotes;}
+    public List<String> getVoters(){return mVoters;}
 
     // SETTER REQUIRED (PUBLIC) BY FIREBASE
 
@@ -105,5 +117,6 @@ public class PhotoObjectStoredInDatabase {
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setRadius(int radius){mRadius=radius;}
     public void setVotes(int votes){mVotes=votes;}
+    public void setVoters(List<String> voters){mVoters = voters;}
 
 }
