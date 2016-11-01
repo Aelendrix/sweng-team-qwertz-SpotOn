@@ -37,8 +37,7 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
      */
     @Override
     public View getInfoWindow(Marker marker){
-        if(mPin != null &&
-                mPin.getColor().equals(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))){
+        if(mPin != null && mPin.getAccessibility()){
             Bitmap associatedToMarker = mPin.getPhotoObject().getThumbnail();
             pictureView.setImageBitmap(associatedToMarker);
             return pictureView;
