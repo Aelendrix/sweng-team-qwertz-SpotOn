@@ -9,8 +9,21 @@ import com.google.android.gms.tasks.Task;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.getRandomPhotoObject;
