@@ -1,63 +1,42 @@
 package ch.epfl.sweng.spotOn.test;
 
-import android.provider.ContactsContract;
+
 import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-<<<<<<< HEAD
-=======
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> c93d9145c97e3849001d8647feaf89a19e87e5ab
-import java.util.NoSuchElementException;
-import java.util.Objects;
-
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils;
 
-import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.getRandomPhotoObject;
 
-/** test the database behaviour with
+
+/** test the behaviour of photoObjects when sent/received from database and fileserver
  *  @author quentin
  */
 @RunWith(AndroidJUnit4.class)
 public class DatabaseIOTest {
 
-    private final Object lock = new Object();
-    private boolean tester = false;
+    private boolean listenerExecuted_objectIsSentAndtestWaitsForSentCompleted;
 
     @Test(expected=AssertionError.class)
-    public void objectIsSent_testWaitsForSentCompleted(final PhotoObject testOBject1) throws AssertionError {
+    public void objectIsSentAndtestWaitsForSentCompleted() throws AssertionError, InterruptedException {
+        PhotoObject testObject1 = getRandomPhotoObject();
 
-        final String testObjectId = testOBject1.getPictureId();
-        final boolean testifyListenerCodeWasExecuted = false;
-        final DatabaseIOTest refToLock = this;
+        final DatabaseIOTest referenceToLock = this;
+        listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=false;
 
-        testOBject1.upload(true, new OnCompleteListener<Void>() {
+        testObject1.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                tester=true;
-                synchronized(refToLock) {
-                    refToLock.notify();
+                listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
+                synchronized(referenceToLock) {
+                    referenceToLock.notify();
                 }
             }
         });
@@ -66,7 +45,7 @@ public class DatabaseIOTest {
             this.wait();
         }
 
-        if(testifyListenerCodeWasExecuted) {
+        if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
             throw new AssertionError("Test made it this far - test succeeded !");
         }
     }
