@@ -136,7 +136,7 @@ public class PhotoObject {
      *  Offers the caller to pass some listeners to trigger custom actions on download success or failure.
      *  Booleans
      */
-    public void retrieveFullsizeImage(boolean hasCustomerOnSuccessListener, OnSuccessListener customerOnSuccessListener, boolean hasCustomerOnFailureListener, OnFailureListener customerOnFailureListener) throws IllegalArgumentException{
+    public void retrieveFullsizeImage(boolean hasOnCompleteListener, OnCompleteListener completionListener) throws IllegalArgumentException{
         // check for necessary conditions
         if(mFullsizeImageLink==null){
             throw new AssertionError("if there is no image stored, object should have a link to retrieve it");
@@ -153,20 +153,14 @@ public class PhotoObject {
         final long ONE_MEGABYTE = 1024 * 1024;
         Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(ONE_MEGABYTE);
 
-        // add desired listeners
-        if(hasCustomerOnSuccessListener){
-            if(customerOnSuccessListener==null){
+        // add desired listener
+        if(hasOnCompleteListener){
+            if(completionListener==null){
                 throw new NullPointerException("this listener is specified not to be null !");
             }
-            retrieveFullsizeImageFromFileserver.addOnSuccessListener(customerOnSuccessListener);
+            retrieveFullsizeImageFromFileserver.addOnCompleteListener(completionListener);
         }
-        if(hasCustomerOnFailureListener){
-            if(customerOnFailureListener==null){
-                throw new NullPointerException("this listener is specified not to be null !");
-            }
-            retrieveFullsizeImageFromFileserver.addOnFailureListener(customerOnFailureListener);
-        }
-        addDefaultListeners(retrieveFullsizeImageFromFileserver);
+        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);
     }
 
     /**
@@ -174,7 +168,7 @@ public class PhotoObject {
      *  - store the fullsizeImage in the object once it is retrieved
      *  - handle failures
      */
-    private void addDefaultListeners(Task fileServerTask){
+    private void addRetrieveFullsizeImageDefaultListeners(Task fileServerTask){
         fileServerTask.addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
