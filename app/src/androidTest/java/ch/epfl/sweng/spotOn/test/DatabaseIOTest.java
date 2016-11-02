@@ -15,8 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-<<<<<<< HEAD
-=======
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -24,7 +23,6 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> c93d9145c97e3849001d8647feaf89a19e87e5ab
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
