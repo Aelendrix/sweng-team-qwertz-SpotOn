@@ -6,6 +6,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +30,9 @@ import java.util.Objects;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.getRandomPhotoObject;
 
 
@@ -61,6 +68,48 @@ public class DatabaseIOTest {
         if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
             throw new AssertionError("Test made it this far - test succeeded !");
         }
+    }
+
+    @Test
+    public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
+        final PhotoObject po = getRandomPhotoObject();
+        String poId = po.getPictureId();
+        final DatabaseIOTest referenceToLock = this;
+        po.upload(true, new OnCompleteListener<Void>(){
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
+                synchronized(referenceToLock) {
+                    referenceToLock.notify();
+                }
+            }
+        });
+        synchronized (this){
+            this.wait();
+        }
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+        dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                PhotoObjectStoredInDatabase dbPo = dataSnapshot.getValue(PhotoObjectStoredInDatabase.class);
+                PhotoObject retrievedPo = dbPo.convertToPhotoObject();
+               if(!areEquals(po, retrievedPo)){
+                   throw new AssertionError("should be equals");
+               }
+                synchronized (referenceToLock){
+                    referenceToLock.notify();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        synchronized (this){
+            this.wait();
+        }
+
     }
 
     @Test
