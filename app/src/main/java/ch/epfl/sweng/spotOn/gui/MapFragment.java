@@ -4,20 +4,24 @@ package ch.epfl.sweng.spotOn.gui;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +30,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -46,10 +50,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private LatLng mPhoneLatLng;
     //marker representing our location on the map
     private Marker mLocationMarker;
-    //list of photoObject and their marker shown on map
-    private List<Marker> listMarker= new ArrayList<>();
+    //list of photoObject
     private List<PhotoObject> listPhoto;
-
+    private ClusterManager<Pin> mClusterManager;
+    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -128,7 +132,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // Set a preference for minimum and maximum zoom.
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
-        displayDBMarkers();
+        setUpCluster();
+        //This will call the method onMarkerClick when clicking a marker
     }
 
     @Override
@@ -147,44 +152,64 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * use our local database to display our markers on the map
+     * Set up the cluster manager
      */
-    public void displayDBMarkers()
+    private void setUpCluster(){
+        mClusterManager = new ClusterManager<Pin>(getContext(), mMap);
+        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        //Displays the right color to the markers (green or yellow)
+        mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+        mClusterManager.setOnClusterItemClickListener(this);
+        addDBMarkers();
+    }
+
+    /**
+     * use our local database to add the corresponding pins in the cluster manager
+     */
+    public void addDBMarkers()
     {
         listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
         if(mMap!=null && mPhoneLatLng!=null) {
-            //empty the map of the markers
-            for(Marker marker:listMarker) {
-            marker.remove();
-            }
+            //empty the cluster manager
+            mClusterManager.clearItems();
             refreshMapLocation(mPhoneLatLng);
-            listMarker = new ArrayList<>();
-            //add the new markers on the map
+            //add the new markers on the Cluster Manager
             for (PhotoObject photo : listPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
                 LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                Marker photoMarker;
-                //add a red marker if the photo can be seen
+                BitmapDescriptor color;
+                //add a GREEN pin to the cluster manager if the photo can be seen
                 if(canActivateIt) {
-                    photoMarker = mMap.addMarker(new MarkerOptions()
-                            .position(photoPosition)
-                            .title(photo.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                 }
-                //add a yellow marker if it can't be activated to see the picture
+                //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
                 else{
-                    photoMarker = mMap.addMarker(new MarkerOptions()
-                            .position(photoPosition)
-                            .title(photo.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
                 }
-                //add the picture Id of the photo as custom object of the marker
-                //useful to retrieve the picture
-                photoMarker.setTag(photo.getPictureId());
-                //add the marker in the list
-                listMarker.add(photoMarker);
+                Pin pinForPicture = new Pin(photo, color, canActivateIt);
+                //add the marker to the cluster manager
+                mClusterManager.addItem(pinForPicture);
+                mClusterManager.cluster();
             }
         }
+    }
+
+    /**
+     * Method that associates and display the thumbnail of the photo associated to a marker when clicked
+     * @param pin the pin/marker the user is clicking on
+     * @return false (do not change it)
+     */
+    @Override
+    public boolean onClusterItemClick(Pin pin) {
+        mClickedClusterPin = pin;
+        mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
+        //If the marker clicked is yellow
+        if(!pin.getAccessibility()) {
+            Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 
     /**
@@ -219,7 +244,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             .position(picSpot)
                             .title(obj.getPhotoName())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                    mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), obj.getFullSizeImage()));
                 }
             }
         }

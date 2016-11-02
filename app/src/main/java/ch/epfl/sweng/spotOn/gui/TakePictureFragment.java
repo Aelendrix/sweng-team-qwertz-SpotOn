@@ -1,19 +1,23 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
 import android.location.LocationManager;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -28,11 +32,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.UserId;
 
 
 /**
@@ -43,7 +50,6 @@ public class TakePictureFragment extends Fragment {
 
     //objet representing the phone localisation
     Location mPhoneLocation;
-    private Toolbar mToolbar;
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -53,9 +59,9 @@ public class TakePictureFragment extends Fragment {
     private static double mLongitude;
 
     private ImageView mPic;
+    private Uri mImageToUploadUri;
     private LocationManager mLocationManager;
-    private ArrayList<PhotoObject> mAllPictures = new ArrayList<PhotoObject>();
-
+    private PhotoObject mActualPhotoObject;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,8 +74,8 @@ public class TakePictureFragment extends Fragment {
 
     //function called when the locationListener see a location change
     public void refreshLocation(Location mPhoneLocation) {
-                        mLatitude = mPhoneLocation.getLatitude();
-                        mLongitude = mPhoneLocation.getLongitude();
+        mLatitude = mPhoneLocation.getLatitude();
+        mLongitude = mPhoneLocation.getLongitude();
     }
 
     /**
@@ -90,7 +96,29 @@ public class TakePictureFragment extends Fragment {
         mPic.setRotation(mPic.getRotation() + 90);
     }
 
-    public boolean isStoragePermissionGranted() {
+    /**
+     * Method called when clicking the "Store" button, it will store the picture
+     * on the internal storage if not already stored
+     */
+    public void storePictureOnInternalStorage(View view){
+        if(mActualPhotoObject != null) {
+            if(!mActualPhotoObject.getStoredInternallyStatus()) {
+                storeImage(mActualPhotoObject);
+                mActualPhotoObject.setStoredInternallyStatus(true);
+                Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Checks if the application has the storage permission
+     * @return
+     */
+    private boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -132,9 +160,80 @@ public class TakePictureFragment extends Fragment {
     /**
      * Method that invokes the camera
      */
-    public void invokeCamera() {
-        Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    private void invokeCamera() {
+        //Needed to store the last picture taken on the user's storage in order to have HQ picture
+        if(isStoragePermissionGranted()) {
+            Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "/SpotOn/TEMP_PICTURE.jpg");
+            if(Build.VERSION.SDK_INT <= 23) {
+                mImageToUploadUri = Uri.fromFile(temporalStorage);
+                Log.d("URI ImageUpload", mImageToUploadUri.toString());
+            } else {
+                //For API >= 24 (was the cause of the crash)
+                mImageToUploadUri = FileProvider.getUriForFile(getContext(),
+                        BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
+                Log.d("URI ImageUpload", mImageToUploadUri.toString());
+            }
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    /**
+     * Method that will transform the high quality picture in the storage of the phone into a Bitmap
+     * @param photoUri  Uri of where the picture is stored
+     * @return The bitmap of the high quality picture
+     */
+    private static Bitmap getBitmap(Uri photoUri,Context context){
+        Uri uri = photoUri;
+        InputStream in;
+        try {
+            final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
+            in = context.getContentResolver().openInputStream(uri);
+
+            // Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(in, null, o);
+            in.close();
+
+            int scale = 1;
+            while ((o.outWidth * o.outHeight) * (1 / Math.pow(scale, 2)) >
+                    IMAGE_MAX_SIZE) {
+                scale++;
+            }
+            Bitmap b = null;
+            in = context.getContentResolver().openInputStream(uri);
+            if (scale > 1) {
+                scale--;
+                // scale to max possible inSampleSize that still yields an image larger than target
+                o = new BitmapFactory.Options();
+                o.inSampleSize = scale;
+                b = BitmapFactory.decodeStream(in, null, o);
+
+                // resize to desired dimensions
+                int height = b.getHeight();
+                int width = b.getWidth();
+
+                double y = Math.sqrt(IMAGE_MAX_SIZE / (((double) width) / height));
+                double x = (y / height) * width;
+
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, (int) x, (int) y, true);
+                b.recycle();
+                b = scaledBitmap;
+            } else {
+                b = BitmapFactory.decodeStream(in);
+            }
+            in.close();
+
+            Log.d("Bitmap_Size", "bitmap width: " + b.getWidth() + ", height: " +
+                    b.getHeight());
+            return b;
+        } catch (IOException e) {
+            Log.e("Getting_Bitmap", e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
@@ -149,11 +248,10 @@ public class TakePictureFragment extends Fragment {
         //Name the picture
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
-        //TODO: Change Username and ID
-        PhotoObject picObject = new PhotoObject(imageBitmap, "Gandalf", imageName, created, mLatitude, mLongitude, 100);
-        mAllPictures.add(picObject);
-        TabActivity tab= (TabActivity) getActivity();
-        tab.changeLocalMarkers(mAllPictures);
+
+        String userId = UserId.getInstance().getUserId();
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude, 100);
+
         return picObject;
     }
 
@@ -168,14 +266,22 @@ public class TakePictureFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            //Display image on the activity
-            Bundle extras = data.getExtras();
-            Bitmap mImageBitmap = (Bitmap) extras.get("data");
-            mPic.setImageBitmap(mImageBitmap);
-
-            //Create a PhotoObject instance of the picture
-            PhotoObject picObject = createPhotoObject(mImageBitmap);
-            storeImage(picObject);
+            if(mImageToUploadUri != null) {
+                //Get our saved picture from the file in a bitmap image and display it on the image view
+                Uri selectedImage = mImageToUploadUri;
+                getContext().getContentResolver().notifyChange(selectedImage, null);
+                Bitmap HQPicture = getBitmap(mImageToUploadUri, getContext());
+                if(HQPicture != null){
+                    mPic.setImageBitmap(HQPicture);
+                    //Create a PhotoObject instance of the picture and send it to the file server + database
+                    mActualPhotoObject = createPhotoObject(HQPicture);
+                    mActualPhotoObject.upload();
+                } else {
+                    Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -187,10 +293,7 @@ public class TakePictureFragment extends Fragment {
      */
 
     private void storeImage(PhotoObject photo){
-        //TEST sendToFileServer
-        photo.upload();
-
-        if(isStoragePermissionGranted() == true) {
+        if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);
 
             if (pictureFile == null) {

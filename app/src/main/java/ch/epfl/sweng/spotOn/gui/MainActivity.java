@@ -9,10 +9,10 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-// Add this to the header of your file:
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
@@ -26,17 +26,16 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
+import ch.epfl.sweng.spotOn.user.User;
 
 
 /**
@@ -44,11 +43,11 @@ import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceive
  */
 public final class MainActivity extends AppCompatActivity {
 
-    private LoginButton mainLoginButton;
-
     private CallbackManager mCallbackManager;
+    private Profile mFbProfile;
+    private ProfileTracker mFbProfileTracker;
 
-    private final long TIME_BETWEEN_TWO_ALARM = 60000;//one minute for now
+    private final long TIME_BETWEEN_TWO_ALARM = 60 * 60 *1000;//one hour for now
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
@@ -79,13 +78,13 @@ public final class MainActivity extends AppCompatActivity {
 
         // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
-
+        //mainLoginButton.setReadPermissions("email","birthday","gender");
         mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // Once the user is connected
-                goToTabActivity();
+                getFbProfile();
             }
 
             @Override
@@ -108,13 +107,11 @@ public final class MainActivity extends AppCompatActivity {
 
         // Test if a user is already logged on when creating the MainActivity
         if(AccessToken.getCurrentAccessToken()!= null) {
-            goToTabActivity();
+            getFbProfile();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -131,41 +128,51 @@ public final class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    public void goToPictureActivity(View view){
-        //launch the TakePictureFragment
-        Intent pictureIntent = new Intent(this, TakePictureFragment.class);
-        startActivity(pictureIntent);
-    }
-
-    /*
-        This method uses the options menu when this activity is launched
-         */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
-        return true;
-    }
-
     public void goToTabActivity() {
+        // create the user
+        User user = new User(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
+
+        //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
 
-    public void goToMapsActivity(View view){
-        //launch the map Activity
-        //TODO: migrate the MapFragment inside the fragment manager of MainActivity
-        Intent mapIntent = new Intent(this, MapFragment.class);
-        startActivity(mapIntent);
+
+
+    /* Method to get the Facebook profile of the user */
+    public void getFbProfile(){
+        //get current Facebook profile
+        if(Profile.getCurrentProfile() == null){
+            mFbProfileTracker = new ProfileTracker(){
+                @Override
+                protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
+                    //update the variable of the Facebook profile
+                    mFbProfile = newProfile;
+
+                    //login done so call to goToTabActivity
+                    goToTabActivity();
+
+                    mFbProfileTracker.stopTracking();
+                }
+            };
+        }
+        else {
+            //get the current profile if profile not null
+            mFbProfile = Profile.getCurrentProfile();
+
+            //login done so call to goToTabActivity
+            goToTabActivity();
+
+        }
     }
+
+
 
     //read the result of the permission request, leave the app if we don't have the gps permission
     @Override

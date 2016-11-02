@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
     package="ch.epfl.sweng.spotOn">
+
 
     <!--
          TODO: Depending on your app's features, enable some Android features here
@@ -26,6 +27,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity android:name="ch.epfl.sweng.spotOn.gui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,9 +46,11 @@
             android:label="@string/app_name"
             android:theme="@style/com_facebook_activity_theme" />
 
+
         <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
 
         <service android:name="ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService" />
+
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity" />
 
@@ -62,9 +66,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name="ch.epfl.sweng.spotOn.gui.DatabaseQueryActivity"
-            android:label="@string/title_activity_DBquery" />
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -73,7 +74,22 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity"></activity>
+        <activity
+            android:name="ch.epfl.sweng.spotOn.gui.AboutPage"
+            android:theme="@style/AppTheme.PopupWindow"/>
+
+        <activity android:name="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
     </application>
 
 </manifest>

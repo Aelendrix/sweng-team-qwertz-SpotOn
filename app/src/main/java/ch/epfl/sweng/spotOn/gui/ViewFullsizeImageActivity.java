@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,6 +17,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.UserId;
 
 public class ViewFullsizeImageActivity extends Activity {
 
@@ -85,19 +88,38 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
 
-/*  actually not part of sprint #4 - left for later
-    private void recordUpvote(){
-        if(mDisplayedMedia!=null){
 
-        }
+    public void recordUpvote(View view){
+        vote(1);
     }
 
-    private void recordDownvote(){
-        if(mDisplayedMedia!=null){
+    public void recordDownvote(View view){
+        vote(-1);
+    }
 
+    private void vote(int vote){
+        if(mDisplayedMedia!=null){
+            String userId = UserId.getInstance().getUserId();
+            if(! mDisplayedMedia.getVoters().contains(userId)) {
+                mDisplayedMedia.vote(vote);
+                String toastText;
+                if(vote == 1){
+                    toastText = "Upvoted";
+                }
+                else{
+                    toastText = "Downvoted";
+                }
+                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+            }
+            else if(mDisplayedMedia.getAuthorId().equals(userId)){
+                Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else{
+            throw new NullPointerException();
         }
     }
-*/
-
-
 }
