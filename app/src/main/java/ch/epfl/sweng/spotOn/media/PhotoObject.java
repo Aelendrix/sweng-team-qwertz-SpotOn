@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -93,10 +94,11 @@ public class PhotoObject {
 //FUNCTIONS PROVIDED BY THIS CLASS
 
     /** uploads the object to our online services
+     *  prove
      */
-    public void upload(){
+    public void upload(boolean hasListener, OnCompleteListener completionListener){
         // sendToFileServer calls sendToDatabase on success
-        sendToFileServer();
+        sendToFileServer(hasListener, completionListener);
     }
 
     /** return true if the coordinates in parameters are in the scope of the picture}
@@ -252,8 +254,7 @@ public class PhotoObject {
 
     /** Send the full size image to the file server to be stored
      */
-    private void sendToFileServer() {
-        Log.d("sendToFileServer", "PictureID: "+mPictureId);
+    private void sendToFileServer(final boolean hasListener, final OnCompleteListener completionListener) {
         // Create a storage reference from our app
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FILESERVER_MEDIA_PATH);
 
@@ -274,8 +275,7 @@ public class PhotoObject {
         byte[] data = baos.toByteArray();
 
         // upload the file
-        UploadTask uploadTask = pictureRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        pictureRef.putBytes(data).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
@@ -287,7 +287,7 @@ public class PhotoObject {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
                 mFullsizeImageLink = taskSnapshot.getDownloadUrl().toString();
-                sendToDatabase();
+                sendToDatabase(hasListener, completionListener);
             }
         });
     }
@@ -295,11 +295,17 @@ public class PhotoObject {
     /** Stores the object into the database (with intermediary steps : storing fullSIzeImage in the fileServer, converting the object into a PhotoObjectStoredInDatabase)
     * It is the responsibility of the sender to use the correct DBref, accordingly with the pictureId chosen, since the object will be used in a child named after the pictureId
     */
-    private void sendToDatabase(){
+    private void sendToDatabase(boolean hasListener, OnCompleteListener completionListener){
         DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
-        System.out.println(DBobject);
-        DBref.child(mPictureId).setValue(DBobject);
+        if(hasListener) {
+            if(completionListener==null) {
+                throw new AssertionError("The listener was declared to be non-null");
+            }
+            DBref.child(mPictureId).setValue(DBobject).addOnCompleteListener(completionListener);
+        }else {
+            DBref.child(mPictureId).setValue(DBobject);
+        }
     }
 }
 
