@@ -11,8 +11,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -53,7 +55,7 @@ public class ViewFullsizeImageActivity extends Activity {
                 // retrieveFullsizeImage throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
                 try {
                     // add a listener that will set the image when it is retrieved
-                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener(), true, newFailureImageSetterListener());
+                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
                 }catch (IllegalArgumentException e){
                     mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
                     Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
@@ -64,25 +66,18 @@ public class ViewFullsizeImageActivity extends Activity {
 
     /** Factory method that returns a listener that
      * sets the imageView with the result of its query
+     * or deals with errorsif need be
      */
-    private OnSuccessListener newImageViewSetterListener(){
-        return new OnSuccessListener<byte[]>() {
+    private OnCompleteListener<byte[]> newImageViewSetterListener(){
+        return new OnCompleteListener<byte[]>() {
             @Override
-            public void onSuccess(byte[] imageAsByteArray) {
-                Bitmap obtainedImage = BitmapFactory.decodeByteArray(imageAsByteArray, 0, imageAsByteArray.length);
-                mViewToSet.setImageBitmap(obtainedImage);
-            }
-        };
-    }
-    /** Factory method which creates a Listener that,
-     * in case of failure, displays the received exception on console and sets the image displayed on view to an errorImage
-     */
-    private OnFailureListener newFailureImageSetterListener(){
-        return new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Exception", e.toString());
-                mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+            public void onComplete(@NonNull Task<byte[]> uploadMediaTask) {
+                if(uploadMediaTask.getException()!=null){
+                    throw new Error("Uploading media failed");
+                }else{
+                    Bitmap obtainedImage = BitmapFactory.decodeByteArray(uploadMediaTask.getResult(), 0, uploadMediaTask.getResult().length);
+                    mViewToSet.setImageBitmap(obtainedImage);
+                }
             }
         };
     }

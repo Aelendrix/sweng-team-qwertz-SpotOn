@@ -9,9 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOError;
 import java.sql.Timestamp;
-import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils;
@@ -34,21 +32,6 @@ public class PhotoObjectTests {
         int radius = 1;
         assertCreatedObjectMatchesInitializationFields(fullSizePic, authorID, photoName, createdDate, latitude, longitude, radius);
     }
-
-    /*
-    @Test
-    public void photoObjectConversionToDatabaseIsIdentity(){
-        for (PhotoObject po : PhotoObjectUtils.getAllPO()) {
-            po.upload();
-        }
-        DatabaseReference DBref =
-    }
-    */
-
-
-
-
-
 
 
 
