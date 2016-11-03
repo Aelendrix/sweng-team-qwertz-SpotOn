@@ -83,6 +83,4 @@ public class LocalDatabaseTest {
         //TODO: finish this test, i blame @sg.pepper to use a list of pair instead of map
         //if(thumbList.
     }
-
-
 }
