@@ -4,6 +4,7 @@ package ch.epfl.sweng.spotOn.gui;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
     private LatLng mPhoneLatLng;
     //marker representing our location on the map
     private Marker mLocationMarker;
-    //list of photoObject and their marker shown on map
+    //list of photoObject
     private List<PhotoObject> listPhoto;
     private ClusterManager<Pin> mClusterManager;
     private Pin mClickedClusterPin;
@@ -155,14 +156,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
      */
     private void setUpCluster(){
         mClusterManager = new ClusterManager<Pin>(getContext(), mMap);
-        //The cluster manager takes care when the user clicks on a marker
+        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+        mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
         //Displays the right color to the markers (green or yellow)
         mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
         mClusterManager.setOnClusterItemClickListener(this);
         addDBMarkers();
-        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
-                new PhotoOnMarker(getContext(), mClickedClusterPin));
     }
 
     /**
@@ -188,9 +188,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
                 else{
                     color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
                 }
-                Pin pinForPicture = new Pin(photo, color);
+                Pin pinForPicture = new Pin(photo, color, canActivateIt);
                 //add the marker to the cluster manager
                 mClusterManager.addItem(pinForPicture);
+                mClusterManager.cluster();
             }
         }
     }
@@ -205,7 +206,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
         mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
-        if(pin.getColor().equals(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))) {
+        if(!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
         }
         return false;

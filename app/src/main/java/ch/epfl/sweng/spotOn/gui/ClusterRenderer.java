@@ -35,12 +35,7 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
     }
 
     @Override
-    protected void onClusterItemRendered(Pin pin, Marker marker) {
-        super.onClusterItemRendered(pin, marker);
-    }
-
-    @Override
-    protected void onBeforeClusterRendered(Cluster<Pin> cluster, MarkerOptions markerOptions){
-        super.onBeforeClusterRendered(cluster, markerOptions);
+    protected boolean shouldRenderAsCluster(Cluster cluster) {
+        return (cluster.getSize() > 3);
     }
 }
