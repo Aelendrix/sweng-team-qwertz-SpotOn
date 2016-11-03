@@ -105,12 +105,12 @@ public class TabActivityTest {
     }
 
     @Test
-    public void clicLogOut(){
+    public void clicCapture(){
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         IdlingResource idlingResource = startTiming(5000);
         stopTiming(idlingResource);
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("Log out")).perform(click());
+        onView(withId(R.id.captureButton)).perform(click());
+
     }
 /* Need to import android.support.test.espresso.intent but it won't
     @Test
