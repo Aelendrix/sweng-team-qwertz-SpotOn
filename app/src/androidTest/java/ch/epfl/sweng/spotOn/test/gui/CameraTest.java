@@ -101,7 +101,8 @@ public class CameraTest {
         Intent resultData = new Intent();
         resultData.putExtra("data", icon);
         ActivityResult result = new ActivityResult(Activity.RESULT_OK, resultData);
-        intending(toPackage("com.android.camera2")).respondWith(result);
+        intending(toPackage("com.android.camera")).respondWith(result);
         onView(withId(R.id.captureButton)).perform(click());
+        
     }
 }
