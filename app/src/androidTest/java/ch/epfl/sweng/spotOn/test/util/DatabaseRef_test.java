@@ -1,18 +1,20 @@
-package ch.epfl.sweng.spotOn.singletonReferences;
+package ch.epfl.sweng.spotOn.test.util;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-/** Singleton that provides references to the database
- * Created by quentin on 03.11.16.
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+
+/** singleton that provides database directories that will be used for storing test objects
+ * Created by quentin on 04.11.16.
  */
 
-public class DatabaseRef{
+public class DatabaseRef_test {
 
-    private final static String mMediaDirectoryString = "mediaDirectory";
+    private final static String mMediaDirectoryString = "mediaDirectory_tests";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
-    private final static String mUsersDirectoryString = "usersDirectory";
+    private final static String mUsersDirectoryString = "usersDirectory_tests";
     private final static DatabaseReference mUsersDirectory = FirebaseDatabase.getInstance().getReference(mUsersDirectoryString);
 
 
@@ -27,10 +29,10 @@ public class DatabaseRef{
     }
 
 
-// CONSTRUCTOR FOR SINGLETON
-    private DatabaseRef(){
+    // CONSTRUCTOR FOR SINGLETON
+    private DatabaseRef_test(){
         //empty
     }
 
-}
 
+}

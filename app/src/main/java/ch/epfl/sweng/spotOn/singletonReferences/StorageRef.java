@@ -3,19 +3,19 @@ package ch.epfl.sweng.spotOn.singletonReferences;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-/** Singleton the provides access
+/** Singleton the provides references to file server
  * Created by quentin on 04.11.16.
  */
 
 public class StorageRef {
 
-    private final String mStorageRefString = "images";;
-    private final StorageReference mStorageReference = FirebaseStorage.getInstance().getReference(mStorageRefString);
+    private final static String mMediaDirectoryString = "images";;
+    private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
 
 // PUBLIC METHODS
-    public StorageReference getStorageReference(){
-        return mStorageReference;
+    public static StorageReference getMediaDirectory(){
+        return mMediaDirectory;
     }
 
 

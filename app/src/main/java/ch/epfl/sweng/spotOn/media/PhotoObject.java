@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.user.UserId;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
@@ -39,10 +41,6 @@ public class PhotoObject {
 
     private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
-    private final String DATABASE_MEDIA_PATH = "MediaDirectory"; // used for Database Reference
-    private final String FILESERVER_MEDIA_PATH = "gs://spoton-ec9ed.appspot.com/images";
-
-    private final long FIVE_MEGABYTES = 5*1024*1024;
 
     private Bitmap mFullsizeImage;
     private String mFullsizeImageLink;   // needed for the "cache-like" behaviour of getFullsizeImage()
@@ -69,7 +67,7 @@ public class PhotoObject {
         mHasFullsizeImage=true;
         mFullsizeImageLink = null;  // link not avaiable yet
         mThumbnail = createThumbnail(mFullsizeImage);
-        mPictureId = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH).push().getKey();   //available even offline
+        mPictureId = DatabaseRef.getMediaDirectory().push().getKey();   //available even offline
         mPhotoName = photoName;
         mCreatedDate = createdDate;
         mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
@@ -288,18 +286,13 @@ public class PhotoObject {
     private void sendToFileServer() {
         Log.d("sendToFileServer", "PictureID: "+mPictureId);
         // Create a storage reference from our app
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FILESERVER_MEDIA_PATH);
+        StorageReference storageRef = StorageRef.getMediaDirectory();
 
         // Create a reference to "PictureID.jpg"
         StorageReference pictureRef = storageRef.child(mPictureId + ".jpg");
 
         // Create a reference to 'images/"PictureID".jpg'
         StorageReference pictureImagesRef = storageRef.child("images/" + mPictureId +  ".jpg");
-
-        // TODO - what's the point of these 2 lines ?
-        // While the file names are the same, the references point to different files
-        pictureRef.getName().equals(pictureImagesRef.getName());    // true
-        pictureRef.getPath().equals(pictureImagesRef.getPath());    // false
 
         // Convert the bitmap image to byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -329,14 +322,13 @@ public class PhotoObject {
     * It is the responsibility of the sender to use the correct DBref, accordingly with the pictureId chosen, since the object will be used in a child named after the pictureId
     */
     private void sendToDatabase(){
-        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
+        DatabaseReference DBref = DatabaseRef.getMediaDirectory();
         PhotoObjectStoredInDatabase DBobject = this.convertForStorageInDatabase();
-        System.out.println(DBobject);
         DBref.child(mPictureId).setValue(DBobject);
     }
 
     private void updateVotesInDB(){
-        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
+        DatabaseReference DBref = DatabaseRef.getMediaDirectory();
         DBref.child(mPictureId).child("votes").setValue(mVotes);
         DBref.child(mPictureId).child("voters").setValue(mVoters);
     }
