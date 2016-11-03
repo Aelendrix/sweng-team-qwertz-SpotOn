@@ -93,13 +93,13 @@ public class LocalDatabase {
         return photoDataMap;
     }
 
-    public static List<Pair<Bitmap, String>> getThumbnailArray(){
+    public static Map<String, Bitmap> getThumbnailMap(){
         List<PhotoObject> listPhoto = new ArrayList<>(photoDataMap.values());
-        List<Pair<Bitmap, String>> listThumbnail = new ArrayList<>();
+        Map<String, Bitmap> mapThumbnail = new HashMap<>();
         for(PhotoObject o : listPhoto){
-            listThumbnail.add(new Pair<Bitmap, String>(o.getThumbnail(), o.getPictureId()));
+            mapThumbnail.put(o.getPictureId(),o.getThumbnail());
         }
-        return listThumbnail;
+        return mapThumbnail;
     }
 
     public static void setLocation(Location location) {

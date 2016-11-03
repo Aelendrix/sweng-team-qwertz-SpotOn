@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -75,7 +76,7 @@ public class LocalDatabaseTest {
         LocalDatabase.addPhotoObject(photo1);
         LocalDatabase.addPhotoObject(photo2);
         LocalDatabase.addPhotoObject(photo3);
-        List<Pair<Bitmap,String>> thumbList = LocalDatabase.getThumbnailArray();
+        Map<String,Bitmap> thumbList = LocalDatabase.getThumbnailMap();
         if(thumbList.size()!=3)
         {
             throw new AssertionError("return a list with a different size than the map");

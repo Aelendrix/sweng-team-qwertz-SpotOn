@@ -8,7 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.util.Pair;
@@ -18,10 +20,16 @@ import ch.epfl.sweng.spotOn.util.Pair;
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private List<Pair<Bitmap, String>> mThumbnail = LocalDatabase.getThumbnailArray();
+    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getThumbnailMap();
+    private List<String> mThumbId = new ArrayList<>(mThumbnailMap.keySet());
+    private List<Bitmap> mThumbnail = new ArrayList<>();
+
 
     public ImageAdapter(Context c) {
         mContext = c;
+        for(String s: mThumbId){
+            mThumbnail.add(mThumbnailMap.get(s));
+        }
     }
 
     public int getCount() {
@@ -49,11 +57,11 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageBitmap(mThumbnail.get(position)._1());
+        imageView.setImageBitmap(mThumbnail.get(position));
         return imageView;
     }
 
     public String getIdAtPosition(int pos){
-        return mThumbnail.get(pos)._2();
+        return mThumbId.get(pos);
     }
 }
