@@ -23,8 +23,8 @@ public class LocalUser {
     private static final String DIRECTORY_USERS_PATH = "UsersDirectory";
     private static final DatabaseReference userDBRef = FirebaseDatabase.getInstance().getReference(DIRECTORY_USERS_PATH);
 
-    public LocalUser(){
 
+    private LocalUser(){
     }
 
     /* This method refresh the info of the current user from the database */
