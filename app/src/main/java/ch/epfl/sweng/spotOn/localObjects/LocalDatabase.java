@@ -19,7 +19,6 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
-import ch.epfl.sweng.spotOn.util.Pair;
 
 public class LocalDatabase {
 

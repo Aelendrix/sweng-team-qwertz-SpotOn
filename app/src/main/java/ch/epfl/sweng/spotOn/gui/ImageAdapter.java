@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.util.Pair;
 
 /**
  * This class is the core of the gridView, used to link the data to one of the grid object
