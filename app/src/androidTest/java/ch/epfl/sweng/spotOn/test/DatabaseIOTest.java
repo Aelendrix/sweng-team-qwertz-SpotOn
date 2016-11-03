@@ -20,8 +20,8 @@ import java.util.List;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
-import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.areEquals;
-import static ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils.getRandomPhotoObject;
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
 
 
 /** test the behaviour of photoObjects when sent/received from database and fileserver

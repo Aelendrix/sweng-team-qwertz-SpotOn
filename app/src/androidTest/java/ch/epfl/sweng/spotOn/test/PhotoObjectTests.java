@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import java.sql.Timestamp;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectUtils;
+import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 /**
  *  Created by quentin on 26.10.16.
@@ -23,7 +23,7 @@ public class PhotoObjectTests {
     @Test
     public void photoOBjectInstantiatesCorrectly(){
         Bitmap fullSizePic = null;
-        fullSizePic = PhotoObjectUtils.getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
+        fullSizePic = TestPhotoObjectUtils.getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
         String authorID = "author";
         String photoName = "photoName";
         Timestamp createdDate = new Timestamp(9001);
