@@ -27,12 +27,12 @@ public class PhotoObjectUtils {
 
     /* compares the PhotoOBjects field by field for equality */
     public static boolean areEquals(PhotoObject p1, PhotoObject p2){
-        return p1.getThumbnail().sameAs(p2.getThumbnail()) &&
-                p1.getPictureId() == p2.getPictureId() &&
-                p1.getAuthorId() == p2.getAuthorId() &&
+        return p1.getPictureId().equals(p2.getPictureId()) &&
+                p1.getAuthorId().equals(p2.getAuthorId()) &&
                 p1.getLatitude() == p2.getLatitude() &&
                 p1.getLongitude() == p2.getLongitude() &&
-                p1.getRadius() == p2.getRadius();
+                p1.getRadius() == p2.getRadius() &&
+                p1.getThumbnail().sameAs(p2.getThumbnail());
     }
 
 

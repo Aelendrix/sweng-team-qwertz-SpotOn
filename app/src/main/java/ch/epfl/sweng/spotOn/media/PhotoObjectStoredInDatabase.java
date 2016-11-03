@@ -59,6 +59,7 @@ public class PhotoObjectStoredInDatabase {
         //TODO CONVERT THUMBNAIL
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
         List<String> voters;
+//        voters = Collections.emptyList();
         if(mVoters == null){ voters = Collections.emptyList(); }
         else{ voters = new ArrayList<>(mVoters);}
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
@@ -66,7 +67,7 @@ public class PhotoObjectStoredInDatabase {
     }
 
     // rather meant to be used for debug
-    public String toString(){
+    protected String getStringDescription(){
         String result="PhotoOBject";
         result+="   ---   pictureID="+mPictureId;
         result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
@@ -102,7 +103,7 @@ public class PhotoObjectStoredInDatabase {
     public double getLongitude(){return mLongitude;}
     public int getRadius(){ return mRadius;}
     public int getVotes(){return mVotes;}
-    public List<String> getVoters(){return mVoters;}
+//    public List<String> getVoters(){return mVoters;}
 
     // SETTER REQUIRED (PUBLIC) BY FIREBASE
 
