@@ -1,10 +1,6 @@
 package ch.epfl.sweng.spotOn.test;
 
 
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -15,21 +11,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import android.support.annotation.NonNull;
+import android.support.test.runner.AndroidJUnit4;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
@@ -96,7 +83,8 @@ public class DatabaseIOTest {
                 if(!wantedNode.exists()){
                     throw new AssertionError("nothing in the database at this spot : "+wantedNode.toString());
                 }
-                PhotoObject retrievedPo = wantedNode.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                PhotoObject retrievedPo = databaseRetrievedObject.convertToPhotoObject();
                 if(!areEquals(po, retrievedPo)){
                     throw new AssertionError("expected : \n"+po.toString()+"\nReceived : \n"+retrievedPo.toString());
                 }
