@@ -41,7 +41,7 @@ public class TabActivityTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class);
 
     @Test
-    public void swipe_between_fragments(){
+    public void swipe_between_fragments() {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withText("Camera")).perform(click());
@@ -57,5 +57,11 @@ public class TabActivityTest {
         Intents.release();
     }
 
-
+    @Test
+    public void clickRotate() throws InterruptedException {
+        onView(withText("Camera")).perform(click());
+        //Thread.sleep(5000);
+        onView(withId(R.id.rotateButton)).perform(click());
+    }
 }
+
