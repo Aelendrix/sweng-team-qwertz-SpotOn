@@ -20,6 +20,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 
+import junit.framework.Assert;
+
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -41,6 +43,10 @@ public class PhotoObject {
     private final int THUMBNAIL_SIZE = 128; // in pixels
     private final String DATABASE_MEDIA_PATH = "MediaDirectory"; // used for Database Reference
     private final String FILESERVER_MEDIA_PATH = "gs://spoton-ec9ed.appspot.com/images";
+
+    private final static int MAX_VIEW_RADIUS = 7000;    // in meters
+    private final static int DEFAULT_VIEW_RADIUS = 70;
+    private final static int MIN_VIEW_RADIUS = 20;
 
     private final long FIVE_MEGABYTES = 5*1024*1024;
 
@@ -66,7 +72,7 @@ public class PhotoObject {
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
      *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
     public PhotoObject(Bitmap fullSizePic, String authorID, String photoName,
-                       Timestamp createdDate, double latitude, double longitude, int radius){
+                       Timestamp createdDate, double latitude, double longitude){
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullsizeImage=true;
         mFullsizeImageLink = null;  // link not avaiable yet
@@ -77,7 +83,7 @@ public class PhotoObject {
         mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         mLatitude = latitude;
         mLongitude = longitude;
-        mRadius = radius;
+        mRadius = computeRadius();
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
@@ -88,7 +94,7 @@ public class PhotoObject {
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       long expireDate, double latitude, double longitude, int radius, int nbUpvotes, int nbDownvotes, List<String> upvoters,
+                       long expireDate, double latitude, double longitude, int nbUpvotes, int nbDownvotes, List<String> upvoters,
                        List<String> downvoters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
@@ -100,7 +106,7 @@ public class PhotoObject {
         mExpireDate = new Timestamp(expireDate);
         mLatitude = latitude;
         mLongitude = longitude;
-        mRadius = radius;
+        mRadius = computeRadius();
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = nbUpvotes;
@@ -243,6 +249,27 @@ public class PhotoObject {
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 
+    /** Computes the radius of the image according to its popularity
+     */
+    private int computeRadius(){
+        double upvotesRatio = mNbUpvotes / (mNbDownvotes+mNbUpvotes);       // in ]0, 1[
+        double downvotesRatio = mNbDownvotes / (mNbDownvotes+mNbUpvotes);   // in ]0, 1[
+        if(upvotesRatio<=0 || upvotesRatio>=1 || downvotesRatio<=0 || downvotesRatio>=1){
+            throw new AssertionError("up/down votes ratio should be in ]0, 1[");
+        }
+        double popularityRatio = upvotesRatio - downvotesRatio;             // in [-1, 1]
+        int resultingRadius = DEFAULT_VIEW_RADIUS;
+        if(popularityRatio<0){
+            resultingRadius =  (int)Math.ceil(popularityRatio*MAX_VIEW_RADIUS + (1-popularityRatio)*DEFAULT_VIEW_RADIUS);
+        }else if (popularityRatio>0){
+            resultingRadius =  (int)Math.ceil(-popularityRatio*MIN_VIEW_RADIUS + (1+popularityRatio)*DEFAULT_VIEW_RADIUS);
+        }
+        if(resultingRadius < MIN_VIEW_RADIUS){
+            throw new AssertionError("can't be < MIN_VIEW_RADIUS");
+        }
+        return resultingRadius;
+    }
+
     /**
      * Adds default listeners to a query, which will :
      *  - store the fullsizeImage in the object once it is retrieved
@@ -276,7 +303,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
     }
 
     /** encodes the passed bitmap into a string

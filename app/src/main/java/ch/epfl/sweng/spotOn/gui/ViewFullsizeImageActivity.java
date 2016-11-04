@@ -119,7 +119,8 @@ public class ViewFullsizeImageActivity extends Activity {
                 }
                 mDisplayedMedia.recordVote(vote);
             }
-            Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+            final int TOAST_DISPLAY_DURATION = Toast.LENGTH_SHORT;
+            Toast.makeText(this, toastText, TOAST_DISPLAY_DURATION).show();
         }
     }
 }
