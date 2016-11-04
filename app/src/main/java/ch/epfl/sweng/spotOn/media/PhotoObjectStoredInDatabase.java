@@ -22,7 +22,6 @@ public class PhotoObjectStoredInDatabase {
     private String mAuthorID;
     private String mPhotoName;
     private long mCreatedDate;
-    private long mExpireDate;
     private double mLatitude;
     private double mLongitude;
     private int mNbUpvotes;
@@ -36,7 +35,7 @@ public class PhotoObjectStoredInDatabase {
 
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
-                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int upvotes, int downvotes,
+                                       Timestamp createdDate, double latitude, double longitude, int upvotes, int downvotes,
                                        List<String> upvotersList, List<String> downvotersList){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
@@ -44,7 +43,6 @@ public class PhotoObjectStoredInDatabase {
         mAuthorID=authorID;
         mPhotoName=photoName;
         mCreatedDate=createdDate.getTime();
-        mExpireDate=expireDate.getTime();
         mLatitude=latitude;
         mLongitude=longitude;
         mNbUpvotes = upvotes;
@@ -72,7 +70,7 @@ public class PhotoObjectStoredInDatabase {
             downvotersList = new ArrayList<>((mDownvotersList));
         }
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, upvotersList, downvotersList);
+                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, upvotersList, downvotersList);
     }
 
     // rather meant to be used for debug
@@ -82,7 +80,7 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
         result+="   ---   authorID="+mAuthorID;
         result+="   ---   photoName="+mPhotoName;
-        result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")";
+        result+="   ---   createdDate="+mCreatedDate+"   ---   pos=("+mLatitude+", "+mLongitude+")";
         result+="   ---   upvotes="+mNbUpvotes+" downvotes="+mNbDownvotes;
         result+="   ---   voters are:"+mDownvotersList.toString()+mUpvotersList.toString();
         result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
@@ -107,7 +105,6 @@ public class PhotoObjectStoredInDatabase {
     public String getAuthorID(){ return mAuthorID;}
     public String getPhotoName(){ return mPhotoName;}
     public long getCreatedDate() { return mCreatedDate; }
-    public long getExpireDate() { return mExpireDate; }
     public double getLatitude(){return mLatitude;}
     public double getLongitude(){return mLongitude;}
     public int getUpvotes(){return mNbUpvotes;}
@@ -123,7 +120,6 @@ public class PhotoObjectStoredInDatabase {
     public void setAuthorID(String authorID){mAuthorID=authorID;}
     public void setPhotoName(String photoName){mPhotoName=photoName;}
     public void setCreatedDate(long createdDate) { mCreatedDate=createdDate; }
-    public void setExpireDate(long expireDate) {mExpireDate=expireDate;}
     public void setLatitude(double latitude){mLatitude=latitude;}
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setUpvotes(int upvotes){mNbUpvotes=upvotes;}

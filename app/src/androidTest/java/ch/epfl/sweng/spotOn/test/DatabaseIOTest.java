@@ -189,7 +189,7 @@ public class DatabaseIOTest {
         upvotersList.add("machine");
         ArrayList<String> downvotersList = new ArrayList<String>();
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-                expireDate, latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
+                latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
         if (photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }

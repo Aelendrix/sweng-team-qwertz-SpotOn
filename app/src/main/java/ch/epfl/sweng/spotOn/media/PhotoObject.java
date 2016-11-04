@@ -7,7 +7,6 @@ import android.media.ThumbnailUtils;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,13 +15,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 
-import com.google.firebase.database.FirebaseDatabase;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-
-import junit.framework.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
@@ -33,7 +29,6 @@ import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.user.UserId;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
@@ -43,12 +38,15 @@ import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
  */
 public class PhotoObject {
 
-    private final long DEFAULT_PICTURE_LIFETIME = 24*60*60*1000; // in milliseconds - 24H
     private final int THUMBNAIL_SIZE = 128; // in pixels
 
     public final static int MAX_VIEW_RADIUS = 7000;    // in meters
     public final static int DEFAULT_VIEW_RADIUS = 70;
     public final static int MIN_VIEW_RADIUS = 20;
+
+    public final static long MAX_LIFETIME = 3*24*60*60*1000 ;              // in ms - 72h
+    public final static long DEFAULT_LIFETIME = 24*60*60*1000;     // in milliseconds - 24H
+    public final static long MIN_LIFETIME = 2*60*60*1000;                  // in ms - 1h
 
     private Bitmap mFullsizeImage;
     private String mFullsizeImageLink;   // needed for the "cache-like" behaviour of getFullsizeImage()
@@ -80,21 +78,21 @@ public class PhotoObject {
         mPictureId = DatabaseRef.getMediaDirectory().push().getKey();   //available even offline
         mPhotoName = photoName;
         mCreatedDate = createdDate;
-        mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         mLatitude = latitude;
         mLongitude = longitude;
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
         mNbDownvotes = 1;
-        mRadius = computeRadius();
         mDownvotersList = new ArrayList<String>();
         mUpvotersList = new ArrayList<String>();
+        this.computeRadius();
+        this.computeExpireDate();
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       long expireDate, double latitude, double longitude, int nbUpvotes, int nbDownvotes, List<String> upvoters,
+                       double latitude, double longitude, int nbUpvotes, int nbDownvotes, List<String> upvoters,
                        List<String> downvoters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
@@ -103,16 +101,16 @@ public class PhotoObject {
         mPictureId = pictureId;
         mPhotoName = photoName;
         mCreatedDate = new Timestamp(createdDate);
-        mExpireDate = new Timestamp(expireDate);
         mLatitude = latitude;
         mLongitude = longitude;
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = nbUpvotes;
         mNbDownvotes = nbDownvotes;
-        mRadius = computeRadius();
         mUpvotersList = new ArrayList<>(upvoters);
         mDownvotersList = new ArrayList<>(downvoters);
+        this.computeRadius();
+        this.computeExpireDate();
     }
 
 
@@ -176,6 +174,7 @@ public class PhotoObject {
             }
 
             this.computeRadius();
+            this.computeExpireDate();
 
             // push changes to Database
             DatabaseReference DBref = DatabaseRef.getMediaDirectory();
@@ -284,37 +283,58 @@ public class PhotoObject {
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 
-    /** Computes the radius of the image according to its popularity and automatically updates the value
-     */
-    private int computeRadius(){
+    /** Computes a popularity ratio, that belongs in ]-1,1[, -1 being the lest popular and 1 the most popular
+    */
+    private double computePopularityRatio(){
         if(mNbDownvotes+mNbUpvotes==0){
             throw new AssertionError(" upvotes+downvoted=0 => the PhotoObject was not initialized correctly\n"+this.toString());
         }
+        /* doing it this way gave rounding errors for (1,4)... weird ?
         double upvotesRatio = (double)mNbUpvotes / (double)(mNbDownvotes+mNbUpvotes);       // in ]0, 1[
         double downvotesRatio = (double)mNbDownvotes / (double)(mNbDownvotes+mNbUpvotes);   // in ]0, 1[
         if(upvotesRatio<=0 || upvotesRatio>=1 || downvotesRatio<=0 || downvotesRatio>=1){
             throw new AssertionError("up/down votes ratio should be in ]0, 1[\n"+this.toString());
         }
         double popularityRatio = upvotesRatio - downvotesRatio;             // in [-1, 1]
-        int resultingRadius = DEFAULT_VIEW_RADIUS;
-        if(popularityRatio>0){
-            resultingRadius =  (int)Math.ceil(DEFAULT_VIEW_RADIUS + popularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));  // scale between default and max if popular
-        }else if (popularityRatio<0){
-            double unpopularityRatio = -popularityRatio;
-            resultingRadius =  (int)Math.ceil(MIN_VIEW_RADIUS + unpopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));  // scale between min and default if unpopular
-        }
-        if(resultingRadius < MIN_VIEW_RADIUS){
-            throw new AssertionError("can't be < MIN_VIEW_RADIUS : computed "+resultingRadius+"\n"+this.toString());
-        }
-        mRadius=resultingRadius;
-        return resultingRadius;
+        */
+        double popularityRatio = (double)(mNbUpvotes-mNbDownvotes) / (double)(mNbDownvotes+mNbUpvotes);
+        return popularityRatio;
     }
 
-    /**
-     * Adds default listeners to a query, which will :
-     *  - store the fullsizeImage in the object once it is retrieved
-     *  - handle failures
+    /** Computes the radius of the image according to its popularity and automatically updates the value
      */
+    private int computeRadius(){
+        int computedRadius = DEFAULT_VIEW_RADIUS;
+        double popularityRatio = computePopularityRatio();
+        if(popularityRatio>0){
+            computedRadius =  (int)Math.ceil(DEFAULT_VIEW_RADIUS + popularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));  // scale between default and max if popular
+        }else if (popularityRatio<0){
+            double unpopularityRatio = -popularityRatio;
+            computedRadius =  (int)Math.ceil(MIN_VIEW_RADIUS + unpopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));  // scale between min and default if unpopular
+        }
+        if(computedRadius < MIN_VIEW_RADIUS){
+            throw new AssertionError("can't be < MIN_LIFETIME : computed "+computedRadius+"\n"+this.toString());
+        }
+        mRadius=computedRadius;
+        return computedRadius;
+    }
+
+    private Timestamp computeExpireDate(){
+        double popularityRatio = computePopularityRatio();
+        long computedLifetime = DEFAULT_LIFETIME;
+        if(popularityRatio>0){
+            computedLifetime = (int)Math.ceil(DEFAULT_LIFETIME + popularityRatio*(MAX_LIFETIME-DEFAULT_LIFETIME));      // scale between default and max if popular
+        }else if(popularityRatio<0){
+            double unpopularityRatio = -popularityRatio;
+            computedLifetime = (int)Math.ceil(MIN_LIFETIME + unpopularityRatio*(DEFAULT_LIFETIME-MIN_LIFETIME));        // scale between min and default if unpopular
+        }
+        if(computedLifetime<MIN_LIFETIME){
+            throw new AssertionError("can't be < MIN_LIFETIME : computed "+computedLifetime+"\n"+this.toString());
+        }
+        mExpireDate = new Timestamp(mCreatedDate.getTime()+computedLifetime);
+        return mExpireDate;
+    }
+
     /**
      * Adds default listeners, which will :
      *  - store the fullsizeImage in the object once it is retrieved
@@ -349,7 +369,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
+                mCreatedDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
     }
 
     /** encodes the passed bitmap into a string
