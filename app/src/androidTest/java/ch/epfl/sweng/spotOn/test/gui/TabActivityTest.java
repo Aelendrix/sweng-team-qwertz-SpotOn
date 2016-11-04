@@ -60,7 +60,7 @@ public class TabActivityTest {
     @Test
     public void clickRotate() throws InterruptedException {
         onView(withText("Camera")).perform(click());
-        //Thread.sleep(5000);
+        Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
     }
 }
