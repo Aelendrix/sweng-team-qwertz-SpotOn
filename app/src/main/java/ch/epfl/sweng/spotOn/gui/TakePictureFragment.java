@@ -250,7 +250,7 @@ public class TakePictureFragment extends Fragment {
         String imageName = "PIC_" + timestamp + ".jpeg";
 
         String userId = UserId.getInstance().getUserId();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude, 100);
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude);
 
         return picObject;
     }

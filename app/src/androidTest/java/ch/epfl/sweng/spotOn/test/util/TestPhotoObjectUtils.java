@@ -88,17 +88,17 @@ public class TestPhotoObjectUtils {
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "Test", "cc", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(1), 1, 1);
     }
 
     public static PhotoObject germaynDeryckePO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        return new PhotoObject(image, "Test", "photo1", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "photo1", new Timestamp(1), 1, 1);
     }
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(1), 1, 1);
     }
 
 

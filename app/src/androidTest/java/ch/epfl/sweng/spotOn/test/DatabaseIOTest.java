@@ -176,11 +176,14 @@ public class DatabaseIOTest {
         double latitude = 4.4;
         double longitude = 6.6;
         int radius = 99;
-        int votes = 0;
-        List<String> voters = new ArrayList<String>();
-        voters.add(author);
+        int upvotes = 9;
+        int downvotes = 7;
+        ArrayList<String> upvotersList = new ArrayList<String>();
+        upvotersList.add("truc");
+        upvotersList.add("machine");
+        ArrayList<String> downvotersList = new ArrayList<String>();
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-                expireDate, latitude, longitude, radius, votes, voters);
+                expireDate, latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
         if (photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }
@@ -208,13 +211,19 @@ public class DatabaseIOTest {
         if (!photo1.getPictureId().equals(pictureId)) {
             throw new AssertionError("image id wrongly get");
         }
-        if (!(photo1.getVotes() == votes)) {
+        if (!(photo1.getUpvotes() == upvotes)) {
             throw new AssertionError("votes wrongly get");
         }
-        if (!(photo1.getVoters().equals(voters))) {
+        if (!(photo1.getDownvotes() == downvotes)) {
+            throw new AssertionError("votes wrongly get");
+        }
+        if (!(photo1.getUpvotersList().equals(upvotersList))) {
             throw new AssertionError("voters wrongly get");
         }
 
+        if (!(photo1.getDownvotersList().equals(downvotersList))) {
+            throw new AssertionError("voters wrongly get");
+        }
     }
 
 

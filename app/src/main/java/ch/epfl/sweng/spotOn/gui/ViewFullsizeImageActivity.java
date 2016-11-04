@@ -93,28 +93,12 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
     private void vote(int vote){
-        if(mDisplayedMedia!=null){
-            String userId = UserId.getInstance().getUserId();
-            if(! mDisplayedMedia.getVoters().contains(userId)) {
-                mDisplayedMedia.vote(vote);
-                String toastText;
-                if(vote == 1){
-                    toastText = "Upvoted";
-                }
-                else{
-                    toastText = "Downvoted";
-                }
-                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
-            }
-            else if(mDisplayedMedia.getAuthorId().equals(userId)){
-                Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
-            }
-            else {
-                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
-            }
-        }
-        else{
+        if(mDisplayedMedia==null) {
             throw new NullPointerException();
+        }else{
+            String userId = UserId.getInstance().getUserId();
+            String toastMessage = mDisplayedMedia.processVote(vote, userId);
+            Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
         }
     }
 }
