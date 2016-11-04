@@ -95,23 +95,6 @@ public class TabActivityTest {
         stopTiming(idlingResource);
         onView(withId(R.id.rotateButton)).perform(click());
     }
-
-    @Test
-    public void clicSave(){
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        IdlingResource idlingResource = startTiming(5000);
-        stopTiming(idlingResource);
-        onView(withId(R.id.storeButton)).perform(click());
-    }
-
-    @Test
-    public void clicCapture(){
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        IdlingResource idlingResource = startTiming(5000);
-        stopTiming(idlingResource);
-        onView(withId(R.id.captureButton)).perform(click());
-
-    }
 /* Need to import android.support.test.espresso.intent but it won't
     @Test
     public void take_picture_test(){
