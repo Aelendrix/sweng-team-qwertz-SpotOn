@@ -22,6 +22,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
 
 
@@ -63,105 +64,111 @@ public class DatabaseIOTest {
 
     @Test
     public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
-        final PhotoObject po = getRandomPhotoObject();
-        final String poId = po.getPictureId();
-        final Object lock = new Object();
-        po.upload(true, new OnCompleteListener<Void>(){
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                synchronized(lock) {
-                    lock.notify();
+        for(PhotoObject p : getAllPO()) {
+            final PhotoObject po = p;
+            final String poId = po.getPictureId();
+            final Object lock = new Object();
+            po.upload(true, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-        });
-        synchronized (lock){
-            lock.wait();
-        }
-        final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
-        dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot wantedNode = dataSnapshot.child(poId);
-                if(!wantedNode.exists()){
-                    throw new AssertionError("nothing in the database at this spot : "+wantedNode.toString());
+            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    DataSnapshot wantedNode = dataSnapshot.child(poId);
+                    if (!wantedNode.exists()) {
+                        throw new AssertionError("nothing in the database at this spot : " + wantedNode.toString());
+                    }
+                    PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                    PhotoObject retrievedPo = databaseRetrievedObject.convertToPhotoObject();
+                    if (!areEquals(po, retrievedPo)) {
+                        throw new AssertionError("expected : \n" + po.toString() + "\nReceived : \n" + retrievedPo.toString());
+                    }
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
-                PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
-                PhotoObject retrievedPo = databaseRetrievedObject.convertToPhotoObject();
-                if(!areEquals(po, retrievedPo)){
-                    throw new AssertionError("expected : \n"+po.toString()+"\nReceived : \n"+retrievedPo.toString());
-                }
-                synchronized (lock){
-                    lock.notify();
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-        });
-        synchronized (lock){
-            lock.wait();
         }
     }
 
     @Test
     public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
-        // UPLOAD A RANDOM PHOTOOBJECT
-        final PhotoObject original = getRandomPhotoObject();
-        final String poId = original.getPictureId();
-        final Object lock = new Object();
-        original.upload(true, new OnCompleteListener<Void>(){
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                synchronized(lock) {
-                    lock.notify();
+        for(PhotoObject p : getAllPO()) {
+
+            // UPLOAD PHOTOOBJECT
+            final PhotoObject original = p;
+            final String poId = original.getPictureId();
+            final Object lock = new Object();
+            original.upload(true, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-        });
-        synchronized (lock){
-            lock.wait();
-        }
-        // OBTAIN OBJECT FROM DATABASE
-        final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
-        dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot wantedNode = dataSnapshot.child(poId);
-                if(!wantedNode.exists()){
-                    throw new AssertionError("nothing in the database at this spot : "+wantedNode.toString());
+            // RETRIEVE OBJECT FROM DATABASE
+            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    DataSnapshot wantedNode = dataSnapshot.child(poId);
+                    if (!wantedNode.exists()) {
+                        throw new AssertionError("nothing in the database at this spot : " + wantedNode.toString());
+                    }
+                    PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                    final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
+                    retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
-                PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
-                final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
-                retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
-                synchronized (lock){
-                    lock.notify();
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
                 }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        synchronized (lock){
-            lock.wait();
-        }
-        // RETRIEVE FULLSIZEIMAGE FROM FILESERVER
-        Log.d("dbio_test","retrieved \n"+retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
-        retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                synchronized (lock){
-                    lock.notify();
+            // RETRIEVE FULLSIZEIMAGE FROM FILESERVER
+            Log.d("dbio_test", "retrieved \n" + retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-        });
-        synchronized (lock){
-            lock.wait();
-        }
-        // CHECK WE DID ACTUALLY RETRIEVE THE IMAGE
-        if(!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()){
-            throw new AssertionError("retrieved object should have fullsizeimage :\n"+
-                    retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            // CHECK WE DID ACTUALLY RETRIEVE THE IMAGE
+            if (!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()) {
+                throw new AssertionError("retrieved object should have fullsizeimage :\n" +
+                        retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            }
         }
     }
 
@@ -175,7 +182,6 @@ public class DatabaseIOTest {
         long expireDate = 1000;
         double latitude = 4.4;
         double longitude = 6.6;
-        int radius = 99;
         int upvotes = 9;
         int downvotes = 7;
         ArrayList<String> upvotersList = new ArrayList<String>();
@@ -196,7 +202,7 @@ public class DatabaseIOTest {
         if (photo1.getExpireDate().getTime() != expireDate) {
             throw new AssertionError("expire date wrongly get");
         }
-        if (photo1.getRadius() != radius) {
+        if (photo1.getRadius()>PhotoObject.MAX_VIEW_RADIUS || photo1.getRadius()<PhotoObject.MIN_VIEW_RADIUS) {
             throw new AssertionError("radius wrongly get");
         }
         if (!photo1.getAuthorId().equals(author)) {
