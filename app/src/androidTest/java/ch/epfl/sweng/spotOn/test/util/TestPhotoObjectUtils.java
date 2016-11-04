@@ -27,7 +27,6 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
  *  Created by quentin on 26.10.16.
  */
 
-@RunWith(AndroidJUnit4.class)
 public class TestPhotoObjectUtils {
 
     public final static int NB_PO_AVAILABLE = 3;
