@@ -1,8 +1,3 @@
-/** Use of code that can be found here:
- * https://developers.facebook.com/docs/facebook-login/android/
- *
- */
-
 package ch.epfl.sweng.spotOn.gui;
 
 import com.facebook.AccessToken;
