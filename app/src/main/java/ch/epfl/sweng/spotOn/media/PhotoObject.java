@@ -268,13 +268,14 @@ public class PhotoObject {
         }
         double popularityRatio = upvotesRatio - downvotesRatio;             // in [-1, 1]
         int resultingRadius = DEFAULT_VIEW_RADIUS;
-        if(popularityRatio<0){
-            resultingRadius =  (int)Math.ceil(popularityRatio*MAX_VIEW_RADIUS + (1-popularityRatio)*DEFAULT_VIEW_RADIUS);
-        }else if (popularityRatio>0){
-            resultingRadius =  (int)Math.ceil(-popularityRatio*MIN_VIEW_RADIUS + (1+popularityRatio)*DEFAULT_VIEW_RADIUS);
+        if(popularityRatio>0){
+            resultingRadius =  (int)Math.ceil(DEFAULT_VIEW_RADIUS + popularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));  // scale between default and max if popular
+        }else if (popularityRatio<0){
+            double unpopularityRatio = -popularityRatio;
+            resultingRadius =  (int)Math.ceil(MIN_VIEW_RADIUS + unpopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));  // scale between min and default if unpopular
         }
         if(resultingRadius < MIN_VIEW_RADIUS){
-            throw new AssertionError("can't be < MIN_VIEW_RADIUS");
+            throw new AssertionError("can't be < MIN_VIEW_RADIUS : computed "+resultingRadius+"\n"+this.toString());
         }
         return resultingRadius;
     }
@@ -336,7 +337,8 @@ public class PhotoObject {
                 "\n  ---  author : "+mAuthorID+
                 "\n  ---  name : "+mPhotoName+
                 "\n  ---  pos : ("+mLatitude+","+mLongitude+")"+
-                "\n  ---  up/down votes : "+mNbUpvotes+", "+mNbDownvotes
+                "\n  ---  up/down votes : "+mNbUpvotes+", "+mNbDownvotes+
+                "\n  ---  radius : "+mRadius
                 ;
     }
 
