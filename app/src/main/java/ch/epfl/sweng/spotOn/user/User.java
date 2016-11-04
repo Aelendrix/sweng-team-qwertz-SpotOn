@@ -1,7 +1,21 @@
 package ch.epfl.sweng.spotOn.user;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /*
  * This class corresponds to a User
@@ -17,8 +31,10 @@ public class User {
     private String mUserId;
 
 
-    public User(){
+    public User(String userId){
+        mUserId = userId;
 
+        getUser();
     }
 
 
@@ -31,9 +47,7 @@ public class User {
         UserId singletonUserId = UserId.getInstance();
         singletonUserId.setUserId(userId);
 
-        if(userExists() == false){
-            createUserInDB();
-        }
+        getUser();
     }
 
 
@@ -44,18 +58,94 @@ public class User {
     }
 
 
-    /* Method to detect if a user is already defined in the database */
-    private boolean userExists(){
-        boolean userExists = false;
+    /* Method to get the user if it is already defined in the database and if not it creates it */
+    private void getUser(){
         DatabaseReference DBRef = FirebaseDatabase.getInstance().getReference(DATABASE_USERS_PATH);
+        Query userQuery = DBRef.orderByChild("userId");
 
-        if(DBRef.child(mUserId).getKey() != mUserId){
-            userExists = true;
-        }
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean userExists = false;
+                // test if user is already in the db
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    String key = userSnapshot.getKey();
+                    if(mUserId.equals(key)){
+                        userExists = true;
+                        retrieveUserFirstName(updateFirstNameListener(),failureFirstNameListener());
+                        //working only in debug mode
+                        //mFirstName = userSnapshot.child("firstName").getValue().toString();
+                        //mLastName = userSnapshot.child("lastName").getValue().toString();
+                        break;
+                    }
+                }
 
-        return userExists;
+                if(!userExists){
+                    createUserInDB();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //
+                Log.e("Firebase", "error in checkUser", databaseError.toException());
+            }
+        };
+
+        userQuery.addListenerForSingleValueEvent(userListener);
+
     }
 
+    public void retrieveUserFirstName(final OnSuccessListener customOnSuccessListener,
+                                      OnFailureListener customOnFailureListener) {
+        DatabaseReference DBRef = FirebaseDatabase.getInstance().getReference(DATABASE_USERS_PATH);
+        Query userQuery = DBRef.orderByChild("userId");
+
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean userExists = false;
+                // test if user is already in the db
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    String key = userSnapshot.getKey();
+                    if(mUserId.equals(key)){
+                        userExists = true;
+                        // try to get the firstname in the db
+                        Task<Object> firstNameTask = (Task) userSnapshot.child("firstName").getValue();
+                        firstNameTask.addOnSuccessListener(customOnSuccessListener);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //
+                Log.e("Firebase", "error in checkUser", databaseError.toException());
+            }
+        };
+    }
+
+
+    private OnSuccessListener updateFirstNameListener(){
+        return new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String firstName) {
+                mFirstName = firstName;
+            }
+        };
+    }
+
+
+    private OnFailureListener failureFirstNameListener(){
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("FirstNameFailure", e.toString());
+                mFirstName = "";
+            }
+        };
+    }
 
     //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }

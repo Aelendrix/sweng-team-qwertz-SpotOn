@@ -7,11 +7,16 @@
         android:title="@string/options_menu"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/user_profile"
+        android:title="Profile"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/log_out"
         android:title="@string/log_out"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/action_about"
         android:title="@string/about_menu"
