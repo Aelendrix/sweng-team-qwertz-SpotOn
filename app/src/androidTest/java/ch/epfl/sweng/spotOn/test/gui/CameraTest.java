@@ -7,6 +7,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.spotOn.test.gui.ImageViewCatcher.hasDrawable;
 import static org.hamcrest.Matchers.not;
 
@@ -47,12 +48,12 @@ public class CameraTest {
 
     @Test
     public void testTakePhoto() {
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        onView(withText("Camera")).perform(click());
         onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
 
         onView(withId(R.id.captureButton)).perform(click());
 
-        //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
+        onView(withId(R.id.image_view)).check(matches(hasDrawable()));
         onView(withId(R.id.storeButton)).perform(click());
 
     }
