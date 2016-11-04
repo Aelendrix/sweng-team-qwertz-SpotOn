@@ -8,7 +8,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class DatabaseRef{
-
+    //Need to change back to MediaDirectory
     private final static String mMediaDirectoryString = "mediaDirectory_alex";//"MediaDirectory";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
