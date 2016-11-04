@@ -182,6 +182,7 @@ public class PhotoObject {
             DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
             DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
             DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
+            DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
         }
 
         return toastText;
@@ -369,7 +370,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
     }
 
     /** encodes the passed bitmap into a string

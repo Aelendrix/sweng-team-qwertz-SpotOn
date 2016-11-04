@@ -22,6 +22,7 @@ public class PhotoObjectStoredInDatabase {
     private String mAuthorID;
     private String mPhotoName;
     private long mCreatedDate;
+    private long mExpireDate;
     private double mLatitude;
     private double mLongitude;
     private int mNbUpvotes;
@@ -35,7 +36,7 @@ public class PhotoObjectStoredInDatabase {
 
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
-                                       Timestamp createdDate, double latitude, double longitude, int upvotes, int downvotes,
+                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int upvotes, int downvotes,
                                        List<String> upvotersList, List<String> downvotersList){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
@@ -43,6 +44,7 @@ public class PhotoObjectStoredInDatabase {
         mAuthorID=authorID;
         mPhotoName=photoName;
         mCreatedDate=createdDate.getTime();
+        mExpireDate=expireDate.getTime();
         mLatitude=latitude;
         mLongitude=longitude;
         mNbUpvotes = upvotes;
@@ -74,7 +76,7 @@ public class PhotoObjectStoredInDatabase {
     }
 
     // rather meant to be used for debug
-    protected String getStringDescription(){
+    public String toString(){
         String result="PhotoOBject";
         result+="   ---   pictureID="+mPictureId;
         result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
@@ -105,6 +107,7 @@ public class PhotoObjectStoredInDatabase {
     public String getAuthorID(){ return mAuthorID;}
     public String getPhotoName(){ return mPhotoName;}
     public long getCreatedDate() { return mCreatedDate; }
+    public long getExpireDate() { return mExpireDate; }
     public double getLatitude(){return mLatitude;}
     public double getLongitude(){return mLongitude;}
     public int getUpvotes(){return mNbUpvotes;}
@@ -120,6 +123,7 @@ public class PhotoObjectStoredInDatabase {
     public void setAuthorID(String authorID){mAuthorID=authorID;}
     public void setPhotoName(String photoName){mPhotoName=photoName;}
     public void setCreatedDate(long createdDate) { mCreatedDate=createdDate; }
+    public void setExpireDate(long expireDate) { mExpireDate=expireDate; }
     public void setLatitude(double latitude){mLatitude=latitude;}
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setUpvotes(int upvotes){mNbUpvotes=upvotes;}
