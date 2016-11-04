@@ -104,7 +104,7 @@
         android:text="@string/userProfileNbPicturesTaken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userProfileNbVotesTextView"
+        android:layout_below="@+id/profileNbVotesTextView"
         android:layout_marginTop="20dp"
         android:textStyle="normal|bold"
         android:id="@+id/profileNbPicturesTakenTextView" />

@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.user;
 
 import android.util.Log;
 
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,7 +18,7 @@ import ch.epfl.sweng.spotOn.gui.UserProfile;
 
 public class User {
 
-    private final String DATABASE_USERS_PATH = "UsersDirectory"; // used for Database Reference
+    private static final String DATABASE_USERS_PATH = "UsersDirectory"; // used for Database Reference
 
     private String mFirstName;
     private String mLastName;
@@ -102,7 +103,14 @@ public class User {
 
                 mFirstName = retrievedUser.getFirstName();
                 mLastName = retrievedUser.getLastName();
-                userProfile.fillInFields();
+
+                if(userProfile == null) {
+                    Log.e("UserError","userProfile is null");
+                }
+                else {
+                    userProfile.fillInFields();
+                }
+
             }
 
             @Override
@@ -128,4 +136,25 @@ public class User {
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
 
+
+    @Override
+    public int hashCode() {
+        int result = mFirstName.hashCode();
+        result = 31 * result + mLastName.hashCode();
+        result = 31 * result + mUserId.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!mFirstName.equals(user.mFirstName)) return false;
+        if (!mLastName.equals(user.mLastName)) return false;
+        return mUserId.equals(user.mUserId);
+
+    }
 }
