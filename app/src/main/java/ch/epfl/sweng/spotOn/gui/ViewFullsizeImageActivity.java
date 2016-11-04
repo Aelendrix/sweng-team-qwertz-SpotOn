@@ -105,16 +105,13 @@ public class ViewFullsizeImageActivity extends Activity {
                 String toastText;
                 if(vote == 1){
                     toastText = "Upvoted";
-                }
-                else{
+                }else{
                     toastText = "Downvoted";
                 }
                 Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
-            }
-            else if(mDisplayedMedia.getAuthorId().equals(userId)){
+            }else if(mDisplayedMedia.getAuthorId().equals(userId)){
                 Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
-            }
-            else {
+            }else{
                 Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
             }
         }

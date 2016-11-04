@@ -57,8 +57,10 @@ public class PhotoObject {
     private double mLongitude;
     private int mRadius;
     private boolean mStoredInternally;
-    private int mVotes;
-    private ArrayList<String> mVoters;
+    private int mNbUpvotes;
+    private int mNbDownvotes;
+    private ArrayList<String> mDownvotersList;
+    private ArrayList<String> mUpvotersList;
 
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
@@ -78,14 +80,16 @@ public class PhotoObject {
         mRadius = radius;
         mAuthorID = authorID;
         mStoredInternally = false;
-        mVotes = 0;
-        mVoters = new ArrayList<String>();
-        mVoters.add(UserId.getInstance().getUserId());
+        mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
+        mNbDownvotes = 1;
+        mDownvotersList = new ArrayList<String>();
+        mUpvotersList = new ArrayList<String>();
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       long expireDate, double latitude, double longitude, int radius, int votes, List<String> voters){
+                       long expireDate, double latitude, double longitude, int radius, int nbUpvotes, int nbDownvotes, List<String> upvoters,
+                       List<String> downvoters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
         mFullsizeImageLink=fullSizeImageLink;
@@ -99,8 +103,10 @@ public class PhotoObject {
         mRadius = radius;
         mAuthorID = authorID;
         mStoredInternally = false;
-        mVotes = votes;
-        mVoters = new ArrayList<>(voters);
+        mNbUpvotes = nbUpvotes;
+        mNbDownvotes = nbDownvotes;
+        mUpvotersList = new ArrayList<>(upvoters);
+        mDownvotersList = new ArrayList<>(downvoters);
     }
 
 
@@ -124,9 +130,16 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
-    public void vote(int vote){
-        mVotes += vote;
-        mVoters.add(UserId.getInstance().getUserId());
+    public void recordVote(int vote){
+        if(vote==-1){
+            mNbDownvotes+=1;
+            mDownvotersList.add(UserId.getInstance().getUserId());
+            mUpvotersList.remove(UserId.getInstance().getUserId());
+        }else if(vote == 1){
+            mNbUpvotes+=1;
+            mUpvotersList.add(UserId.getInstance().getUserId());
+            mDownvotersList.remove(UserId.getInstance().getUserId());
+        }
         updateVotesInDB();
     }
 
@@ -165,29 +178,6 @@ public class PhotoObject {
             retrieveFullsizeImageFromFileserver.addOnFailureListener(customerOnFailureListener);
         }
         addDefaultListeners(retrieveFullsizeImageFromFileserver);
-    }
-
-    /**
-     * Adds default listeners, which will :
-     *  - store the fullsizeImage in the object once it is retrieved
-     *  - handle failures
-     */
-    private void addDefaultListeners(Task fileServerTask){
-        fileServerTask.addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                // Data for "images/PictureID.jpg" is returns, use this as needed
-                mFullsizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                mHasFullsizeImage = true;
-                Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-                Log.e("DownloadFromFileServer", "Exception raised by getFromFileServer()");
-            }
-        });
     }
 
 
@@ -238,10 +228,13 @@ public class PhotoObject {
     public boolean getStoredInternallyStatus(){
         return mStoredInternally;
     }
-    public int getVotes(){return mVotes;}
-    public List<String> getVoters(){ return Collections.unmodifiableList(mVoters); }
+    public int getUpvotes(){return mNbUpvotes;}
+    public int getDownvotes(){return mNbDownvotes;}
+    public List<String> getUpvotersList(){ return Collections.unmodifiableList(mUpvotersList); }
+    public List<String> getDownvotersList(){ return Collections.unmodifiableList(mDownvotersList); }
 
-    //SETTER FUNCTIONS
+
+//SETTER FUNCTIONS
 
     public void setStoredInternallyStatus(boolean storedInternally){
         mStoredInternally = storedInternally;
@@ -249,6 +242,29 @@ public class PhotoObject {
 
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
+
+    /**
+     * Adds default listeners to a query, which will :
+     *  - store the fullsizeImage in the object once it is retrieved
+     *  - handle failures
+     */
+    private void addDefaultListeners(Task fileServerTask){
+        fileServerTask.addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Data for "images/PictureID.jpg" is returns, use this as needed
+                mFullsizeImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                mHasFullsizeImage = true;
+                Log.d("DownloadFromFileServer", "Downloaded full size image from FileServer");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e("DownloadFromFileServer", "Exception raised by getFromFileServer()");
+            }
+        });
+    }
 
     /** converts This into an object that we can store in the database, by converting the thumbnail into a String
      *  and leaving behing the fullsizeImage (which should be uploaded in fileserver, and retrieveable through the mFullsizeImageLink)
@@ -260,7 +276,7 @@ public class PhotoObject {
         String linkToFullsizeImage = mFullsizeImageLink;
         String thumbnailAsString = encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mVotes, mVoters);
+                mCreatedDate, mExpireDate, mLatitude, mLongitude, mRadius, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
     }
 
     /** encodes the passed bitmap into a string
@@ -337,8 +353,10 @@ public class PhotoObject {
 
     private void updateVotesInDB(){
         DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(DATABASE_MEDIA_PATH);
-        DBref.child(mPictureId).child("votes").setValue(mVotes);
-        DBref.child(mPictureId).child("voters").setValue(mVoters);
+        DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
+        DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
+        DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
+        DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
     }
 }
 
