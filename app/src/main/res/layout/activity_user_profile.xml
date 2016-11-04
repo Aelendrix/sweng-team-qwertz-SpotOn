@@ -89,4 +89,24 @@
         android:layout_alignStart="@+id/profileFirstNameTextView"
         android:layout_marginTop="20dp" />
 
+    <TextView
+        android:text="@string/userProfileNbVotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileBirthdayTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:textStyle="normal|bold"
+        android:id="@+id/profileNbVotesTextView" />
+
+    <TextView
+        android:text="@string/userProfileNbPicturesTaken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userProfileNbVotesTextView"
+        android:layout_marginTop="20dp"
+        android:textStyle="normal|bold"
+        android:id="@+id/profileNbPicturesTakenTextView" />
+
 </RelativeLayout>

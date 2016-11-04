@@ -192,7 +192,7 @@ public class TabActivity extends AppCompatActivity {
                 return true;
             case R.id.user_profile:
                 Intent profileIntent = new Intent(this, UserProfile.class);
-                startActivity(profileIntent);
+                startActivity(profileIntent); // go to the User Profile Activity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
