@@ -72,17 +72,17 @@ public class PhotoObjectStoredInDatabase {
             downvotersList = new ArrayList<>((mDownvotersList));
         }
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, upvotersList, downvotersList);
+                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, upvotersList, downvotersList);
     }
 
     // rather meant to be used for debug
-    protected String getStringDescription(){
+    public String toString(){
         String result="PhotoOBject";
         result+="   ---   pictureID="+mPictureId;
         result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
         result+="   ---   authorID="+mAuthorID;
         result+="   ---   photoName="+mPhotoName;
-        result+="   ---   createdDate="+mCreatedDate+"   ---   expireDate="+mExpireDate+"   ---   pos=("+mLatitude+", "+mLongitude+")";
+        result+="   ---   createdDate="+mCreatedDate+"   ---   pos=("+mLatitude+", "+mLongitude+")";
         result+="   ---   upvotes="+mNbUpvotes+" downvotes="+mNbDownvotes;
         result+="   ---   voters are:"+mDownvotersList.toString()+mUpvotersList.toString();
         result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
@@ -123,7 +123,7 @@ public class PhotoObjectStoredInDatabase {
     public void setAuthorID(String authorID){mAuthorID=authorID;}
     public void setPhotoName(String photoName){mPhotoName=photoName;}
     public void setCreatedDate(long createdDate) { mCreatedDate=createdDate; }
-    public void setExpireDate(long expireDate) {mExpireDate=expireDate;}
+    public void setExpireDate(long expireDate) { mExpireDate=expireDate; }
     public void setLatitude(double latitude){mLatitude=latitude;}
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setUpvotes(int upvotes){mNbUpvotes=upvotes;}
