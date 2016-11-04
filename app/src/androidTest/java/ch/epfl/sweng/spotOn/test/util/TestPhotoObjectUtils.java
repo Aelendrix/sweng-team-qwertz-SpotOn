@@ -2,6 +2,15 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import org.junit.runner.RunWith;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -18,6 +27,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
  *  Created by quentin on 26.10.16.
  */
 
+@RunWith(AndroidJUnit4.class)
 public class TestPhotoObjectUtils {
 
     public final static int NB_PO_AVAILABLE = 3;
@@ -27,14 +37,22 @@ public class TestPhotoObjectUtils {
 
     /* compares the PhotoOBjects field by field for equality */
     public static boolean areEquals(PhotoObject p1, PhotoObject p2){
-        return p1.getPictureId().equals(p2.getPictureId()) &&
-                p1.getAuthorId().equals(p2.getAuthorId()) &&
+        boolean fullSizeImagesComparedMask = true;
+        if(p1.hasFullSizeImage() && p2.hasFullSizeImage()){
+            fullSizeImagesComparedMask = p1.getFullSizeImage().sameAs(p2.getFullSizeImage());
+        }
+        return fullSizeImagesComparedMask &&
+                p1.getFullsizeImageLink().equals(p2.getFullsizeImageLink()) &&
+                p1.getThumbnail().sameAs(p2.getThumbnail()) &&
+                p1.getPictureId().equals(p2.getPictureId()) &&
+                p1.getPhotoName().equals(p2.getPhotoName()) &&
+                p1.getCreatedDate().equals(p2.getCreatedDate()) &&
+                // expireDate can be mutated via votes
                 p1.getLatitude() == p2.getLatitude() &&
                 p1.getLongitude() == p2.getLongitude() &&
-                p1.getRadius() == p2.getRadius() &&
-                p1.getThumbnail().sameAs(p2.getThumbnail());
+                // radius can be mutated via votes
+                p1.getAuthorId().equals(p2.getAuthorId());
     }
-
 
 
 // FACTORY METHODS TO INSTANCIATE PREMADE PHOTOBJECTS

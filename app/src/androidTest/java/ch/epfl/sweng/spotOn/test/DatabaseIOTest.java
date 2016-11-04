@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,25 +33,27 @@ public class DatabaseIOTest {
 
     private boolean listenerExecuted_objectIsSentAndtestWaitsForSentCompleted;
 
+    private PhotoObject retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject=null;
+
     @Test(expected=AssertionError.class)
     public void objectIsSentAndtestWaitsForSentCompleted() throws AssertionError, InterruptedException {
         PhotoObject testObject1 = getRandomPhotoObject();
 
-        final DatabaseIOTest referenceToLock = this;
+        final Object lock = new Object();
         listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=false;
 
         testObject1.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
-                synchronized(referenceToLock) {
-                    referenceToLock.notify();
+                synchronized(lock) {
+                    lock.notify();
                 }
             }
         });
 
-        synchronized (this) {
-            this.wait();
+        synchronized (lock) {
+            lock.wait();
         }
 
         if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
@@ -62,18 +65,17 @@ public class DatabaseIOTest {
     public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
         final PhotoObject po = getRandomPhotoObject();
         final String poId = po.getPictureId();
-        final DatabaseIOTest referenceToLock = this;
+        final Object lock = new Object();
         po.upload(true, new OnCompleteListener<Void>(){
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
-                synchronized(referenceToLock) {
-                    referenceToLock.notify();
+                synchronized(lock) {
+                    lock.notify();
                 }
             }
         });
-        synchronized (this){
-            this.wait();
+        synchronized (lock){
+            lock.wait();
         }
         final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
         dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,8 +90,8 @@ public class DatabaseIOTest {
                 if(!areEquals(po, retrievedPo)){
                     throw new AssertionError("expected : \n"+po.toString()+"\nReceived : \n"+retrievedPo.toString());
                 }
-                synchronized (referenceToLock){
-                    referenceToLock.notify();
+                synchronized (lock){
+                    lock.notify();
                 }
             }
 
@@ -98,10 +100,69 @@ public class DatabaseIOTest {
 
             }
         });
-        synchronized (this){
-            this.wait();
+        synchronized (lock){
+            lock.wait();
         }
+    }
 
+    @Test
+    public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
+        // UPLOAD A RANDOM PHOTOOBJECT
+        final PhotoObject original = getRandomPhotoObject();
+        final String poId = original.getPictureId();
+        final Object lock = new Object();
+        original.upload(true, new OnCompleteListener<Void>(){
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                synchronized(lock) {
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+        // OBTAIN OBJECT FROM DATABASE
+        final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+        dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataSnapshot wantedNode = dataSnapshot.child(poId);
+                if(!wantedNode.exists()){
+                    throw new AssertionError("nothing in the database at this spot : "+wantedNode.toString());
+                }
+                PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
+                retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+        // RETRIEVE FULLSIZEIMAGE FROM FILESERVER
+        Log.d("dbio_test","retrieved \n"+retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+        retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+        // CHECK WE DID RETRIEVE THE IMAGE
+        if(!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()){
+            throw new AssertionError("retrieved object should have fullsizeimage :\n"+
+                    retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+        }
     }
 
     @Test
@@ -156,32 +217,5 @@ public class DatabaseIOTest {
 
     }
 
-    /*
-    @Test (expected=AssertionError.class)
-    public void objectWithWrongPictureIsRejected() throws Exception {
-        final PhotoObject testOBject1 = PhotoObjectUtils.paulVanDykPO();
-        final String testObjectId = testOBject1.getPictureId();
-        testOBject1.upload();
-
-        final PhotoObject testOBject_wrong = PhotoObjectUtils.germaynDeryckePO();
-
-        PhotoObjectUtils.DBref.child(testObjectId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    throw new NoSuchElementException("datasnapshot doesn't exist");
-                }
-                PhotoObject receivedPhotoOBject = dataSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                if(!areEquals(receivedPhotoOBject, testOBject_wrong)){
-                    throw new AssertionError("testObjects are equal, should be different");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // nada
-            }
-        });
-    */
 
 }

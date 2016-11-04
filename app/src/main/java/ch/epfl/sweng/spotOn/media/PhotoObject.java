@@ -153,14 +153,16 @@ public class PhotoObject {
         final long ONE_MEGABYTE = 1024 * 1024;
         Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(ONE_MEGABYTE);
 
-        // add desired listener
+        // add default listener to cache the obtained image
+        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);
+
+        // add optionnal (user's) listener
         if(hasOnCompleteListener){
             if(completionListener==null){
                 throw new NullPointerException("this listener is specified not to be null !");
             }
             retrieveFullsizeImageFromFileserver.addOnCompleteListener(completionListener);
         }
-        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);
     }
 
     /**
