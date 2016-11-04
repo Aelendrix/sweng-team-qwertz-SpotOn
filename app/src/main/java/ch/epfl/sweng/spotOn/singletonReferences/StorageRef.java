@@ -9,7 +9,7 @@ import com.google.firebase.storage.StorageReference;
 
 public class StorageRef {
 
-    private final static String mMediaDirectoryString = "images";;
+    private final static String mMediaDirectoryString = "Images";;
     private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
 
