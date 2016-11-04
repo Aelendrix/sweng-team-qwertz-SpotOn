@@ -180,7 +180,6 @@ public class DatabaseIOTest {
         String author = "author1";
         String photoName = "name1";
         long createdDate = 1;
-        long expireDate = 1000;
         double latitude = 4.4;
         double longitude = 6.6;
         int upvotes = 9;
@@ -200,7 +199,7 @@ public class DatabaseIOTest {
         if (photo1.getCreatedDate().getTime() != createdDate) {
             throw new AssertionError("created date wrongly get");
         }
-        if (photo1.getExpireDate().getTime() != expireDate) {
+        if (photo1.getExpireDate().getTime() <= createdDate) {
             throw new AssertionError("expire date wrongly get");
         }
         if (photo1.getRadius()>PhotoObject.MAX_VIEW_RADIUS || photo1.getRadius()<PhotoObject.MIN_VIEW_RADIUS) {
@@ -227,7 +226,6 @@ public class DatabaseIOTest {
         if (!(photo1.getUpvotersList().equals(upvotersList))) {
             throw new AssertionError("voters wrongly get");
         }
-
         if (!(photo1.getDownvotersList().equals(downvotersList))) {
             throw new AssertionError("voters wrongly get");
         }
