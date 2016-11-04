@@ -117,7 +117,7 @@ public class ViewFullsizeImageActivity extends Activity {
                 }else {
                     throw new IllegalArgumentException("votes should be either 1 (upvote) or -1 (downvote)");
                 }
-                mDisplayedMedia.recordVote(vote);
+                mDisplayedMedia.recordVote(vote, userId);
             }
             final int TOAST_DISPLAY_DURATION = Toast.LENGTH_SHORT;
             Toast.makeText(this, toastText, TOAST_DISPLAY_DURATION).show();

@@ -127,7 +127,7 @@ public class PhotoObjectStoredInDatabase {
     public void setLatitude(double latitude){mLatitude=latitude;}
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setUpvotes(int upvotes){mNbUpvotes=upvotes;}
-    public void getDownvotes(int downvotes){mNbDownvotes=downvotes;}
+    public void setDownvotes(int downvotes){mNbDownvotes=downvotes;}
     public void setUpvotersList(List<String> upvotersList){mUpvotersList=upvotersList;}
     public void setDownvotersList(List<String> downvotersList){mDownvotersList=downvotersList;}
 

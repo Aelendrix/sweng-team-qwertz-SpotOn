@@ -83,11 +83,11 @@ public class PhotoObject {
         mExpireDate = new Timestamp(createdDate.getTime()+DEFAULT_PICTURE_LIFETIME);
         mLatitude = latitude;
         mLongitude = longitude;
-        mRadius = computeRadius();
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
         mNbDownvotes = 1;
+        mRadius = computeRadius();
         mDownvotersList = new ArrayList<String>();
         mUpvotersList = new ArrayList<String>();
     }
@@ -106,11 +106,11 @@ public class PhotoObject {
         mExpireDate = new Timestamp(expireDate);
         mLatitude = latitude;
         mLongitude = longitude;
-        mRadius = computeRadius();
         mAuthorID = authorID;
         mStoredInternally = false;
         mNbUpvotes = nbUpvotes;
         mNbDownvotes = nbDownvotes;
+        mRadius = computeRadius();
         mUpvotersList = new ArrayList<>(upvoters);
         mDownvotersList = new ArrayList<>(downvoters);
     }
@@ -136,12 +136,18 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
-    public void recordVote(int vote){
+    public void recordVote(int vote, String votersId){
         if(vote==-1){
+            if(this.mUpvotersList.contains(votersId)){ //need to remove user's previous upvote
+                mNbUpvotes-=1;
+            }
             mNbDownvotes+=1;
             mDownvotersList.add(UserId.getInstance().getUserId());
             mUpvotersList.remove(UserId.getInstance().getUserId());
         }else if(vote == 1){
+            if(this.mDownvotersList.contains(votersId)){ //need to remove user's previous downvote
+                mNbDownvotes-=1;
+            }
             mNbUpvotes+=1;
             mUpvotersList.add(UserId.getInstance().getUserId());
             mDownvotersList.remove(UserId.getInstance().getUserId());
@@ -252,10 +258,13 @@ public class PhotoObject {
     /** Computes the radius of the image according to its popularity
      */
     private int computeRadius(){
-        double upvotesRatio = mNbUpvotes / (mNbDownvotes+mNbUpvotes);       // in ]0, 1[
-        double downvotesRatio = mNbDownvotes / (mNbDownvotes+mNbUpvotes);   // in ]0, 1[
+        if(mNbDownvotes+mNbUpvotes==0){
+            throw new AssertionError(" upvotes+downvoted=0 => the PhotoObject was not initialized correctly\n"+this.toString());
+        }
+        double upvotesRatio = (double)mNbUpvotes / (double)(mNbDownvotes+mNbUpvotes);       // in ]0, 1[
+        double downvotesRatio = (double)mNbDownvotes / (double)(mNbDownvotes+mNbUpvotes);   // in ]0, 1[
         if(upvotesRatio<=0 || upvotesRatio>=1 || downvotesRatio<=0 || downvotesRatio>=1){
-            throw new AssertionError("up/down votes ratio should be in ]0, 1[");
+            throw new AssertionError("up/down votes ratio should be in ]0, 1[\n"+this.toString());
         }
         double popularityRatio = upvotesRatio - downvotesRatio;             // in [-1, 1]
         int resultingRadius = DEFAULT_VIEW_RADIUS;
@@ -323,7 +332,12 @@ public class PhotoObject {
 
     @Override
     public String toString(){
-        return "PhotoObject: "+mPictureId+" lat: "+mLatitude+" long: "+mLongitude;
+        return "PhotoObject: "+mPictureId+
+                "\n  ---  author : "+mAuthorID+
+                "\n  ---  name : "+mPhotoName+
+                "\n  ---  pos : ("+mLatitude+","+mLongitude+")"+
+                "\n  ---  up/down votes : "+mNbUpvotes+", "+mNbDownvotes
+                ;
     }
 
     /** Send the full size image to the file server to be stored
