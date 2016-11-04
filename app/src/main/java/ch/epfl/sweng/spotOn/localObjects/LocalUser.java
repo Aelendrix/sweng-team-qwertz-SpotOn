@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserId;
 
@@ -20,18 +21,14 @@ public class LocalUser {
 
     private User mCurrentUser;
 
-    private static final String DIRECTORY_USERS_PATH = "UsersDirectory";
-    private static final DatabaseReference userDBRef = FirebaseDatabase.getInstance().getReference(DIRECTORY_USERS_PATH);
-
     public LocalUser(){
-
     }
 
     /* This method refresh the info of the current user from the database */
     public void refreshLocalUser(){
         //TODO: Test this method
         String userId = UserId.getInstance().getUserId();
-        userDBRef.child(userId).addValueEventListener(new ValueEventListener() {
+        DatabaseRef.getUsersDirectory().child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mCurrentUser = (User) dataSnapshot.getValue();

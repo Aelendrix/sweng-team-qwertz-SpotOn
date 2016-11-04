@@ -3,14 +3,14 @@ package ch.epfl.sweng.spotOn.user;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+
 /*
  * This class corresponds to a User
  * It contains methods to create the user in the database and get the user from the database
  */
 
 public class User {
-
-    private final String DATABASE_USERS_PATH = "UsersDirectory"; // used for Database Reference
 
     private String mFirstName;
     private String mLastName;
@@ -39,7 +39,7 @@ public class User {
 
     /* Add a new user in the database */
     private void createUserInDB(){
-        DatabaseReference DBRef = FirebaseDatabase.getInstance().getReference(DATABASE_USERS_PATH);
+        DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         DBRef.child(mUserId).setValue(this);
     }
 
@@ -47,7 +47,7 @@ public class User {
     /* Method to detect if a user is already defined in the database */
     private boolean userExists(){
         boolean userExists = false;
-        DatabaseReference DBRef = FirebaseDatabase.getInstance().getReference(DATABASE_USERS_PATH);
+        DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
 
         if(DBRef.child(mUserId).getKey() != mUserId){
             userExists = true;
