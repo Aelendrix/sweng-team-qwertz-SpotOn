@@ -20,6 +20,7 @@ import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
@@ -79,7 +80,7 @@ public class DatabaseIOTest {
             synchronized (lock) {
                 lock.wait();
             }
-            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            final DatabaseReference dbref = DatabaseRef.getMediaDirectory();
             dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,7 +129,7 @@ public class DatabaseIOTest {
                 lock.wait();
             }
             // RETRIEVE OBJECT FROM DATABASE
-            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            final DatabaseReference dbref = DatabaseRef.getMediaDirectory();
             dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
