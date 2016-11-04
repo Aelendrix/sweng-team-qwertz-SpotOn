@@ -1,5 +1,7 @@
 package ch.epfl.sweng.spotOn.user;
 
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -10,7 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class User {
 
-    private final String DATABASE_USERS_PATH = "UsersDirectory"; // used for Database Reference
+    private static final String DATABASE_USERS_PATH = "UsersDirectory"; // used for Database Reference
 
     private String mFirstName;
     private String mLastName;
@@ -31,7 +33,7 @@ public class User {
         UserId singletonUserId = UserId.getInstance();
         singletonUserId.setUserId(userId);
 
-        if(userExists() == false){
+        if(!userExists()){
             createUserInDB();
         }
     }
@@ -49,7 +51,8 @@ public class User {
         boolean userExists = false;
         DatabaseReference DBRef = FirebaseDatabase.getInstance().getReference(DATABASE_USERS_PATH);
 
-        if(DBRef.child(mUserId).getKey() != mUserId){
+
+        if(DBRef.child(mUserId).getKey().equals(mUserId)){
             userExists = true;
         }
 
@@ -62,9 +65,31 @@ public class User {
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
 
+
     //PUBLIC SETTERS
     public void setFirstName(String firstName){ mFirstName = firstName; }
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
 
+
+    @Override
+    public int hashCode() {
+        int result = mFirstName.hashCode();
+        result = 31 * result + mLastName.hashCode();
+        result = 31 * result + mUserId.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!mFirstName.equals(user.mFirstName)) return false;
+        if (!mLastName.equals(user.mLastName)) return false;
+        return mUserId.equals(user.mUserId);
+
+    }
 }
