@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DatabaseRef{
 
-    private final static String mMediaDirectoryString = "MediaDirectory";
+    private final static String mMediaDirectoryString = "mediaDirectory_alex";//"MediaDirectory";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";
