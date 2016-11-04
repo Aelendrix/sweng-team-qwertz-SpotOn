@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -19,13 +17,11 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class LocalDatabase {
 
-    private final static String dataPath = "MediaDirectory";
     private final static Map<String,PhotoObject> photoDataMap = new HashMap<>();
-    // Firebase instance variables
-    private final static DatabaseReference myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
     private static Location mLocation;
 
     private LocalDatabase() {
@@ -43,7 +39,7 @@ public class LocalDatabase {
         //Query photoSortedByLongitude = myDBref.orderByChild("longitude").startAt(longitude-maxRadius).endAt(longitude+maxRadius);
         //get photo still alive
         java.util.Date date= new java.util.Date();
-        Query photoSortedByTime = myDBref.orderByChild("expireDate").startAt(date.getTime());
+        Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(date.getTime());
         ValueEventListener dataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
