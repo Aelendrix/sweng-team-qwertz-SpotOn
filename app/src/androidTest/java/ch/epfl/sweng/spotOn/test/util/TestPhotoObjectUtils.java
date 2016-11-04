@@ -32,16 +32,17 @@ public class TestPhotoObjectUtils {
     public final static int NB_PO_AVAILABLE = 3;
 
 
-// USEFUL METHODS ON PHOTOBJECTS
+// USEFUL METHODS ON PHOTOOBJECTS
 
     /* compares the PhotoOBjects field by field for equality */
     public static boolean areEquals(PhotoObject p1, PhotoObject p2){
-        boolean fullSizeImagesComparedMask = true;
+        boolean fullsizeImageOrLinkComparison = false;      // images have either a fullsizeimage or a link
         if(p1.hasFullSizeImage() && p2.hasFullSizeImage()){
-            fullSizeImagesComparedMask = p1.getFullSizeImage().sameAs(p2.getFullSizeImage());
+            fullsizeImageOrLinkComparison = p1.getFullSizeImage().sameAs(p2.getFullSizeImage());
+        }else{
+            fullsizeImageOrLinkComparison = p1.getFullsizeImageLink().equals(p2.getFullsizeImageLink());
         }
-        return fullSizeImagesComparedMask &&
-                p1.getFullsizeImageLink().equals(p2.getFullsizeImageLink()) &&
+        return fullsizeImageOrLinkComparison &&
                 p1.getThumbnail().sameAs(p2.getThumbnail()) &&
                 p1.getPictureId().equals(p2.getPictureId()) &&
                 p1.getPhotoName().equals(p2.getPhotoName()) &&
