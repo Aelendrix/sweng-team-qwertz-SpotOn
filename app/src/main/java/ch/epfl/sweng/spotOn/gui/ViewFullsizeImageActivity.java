@@ -98,25 +98,28 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
     private void vote(int vote){
-        if(mDisplayedMedia!=null){
-            String userId = UserId.getInstance().getUserId();
-            if(! mDisplayedMedia.getVoters().contains(userId)) {
-                mDisplayedMedia.vote(vote);
-                String toastText;
-                if(vote == 1){
-                    toastText = "Upvoted";
-                }else{
-                    toastText = "Downvoted";
-                }
-                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
-            }else if(mDisplayedMedia.getAuthorId().equals(userId)){
-                Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this, "You've already voted for this picture!", Toast.LENGTH_LONG).show();
-            }
-        }
-        else{
+        if(mDisplayedMedia==null) {
             throw new NullPointerException();
+        }else{
+            String userId = UserId.getInstance().getUserId();
+            String toastText="";   // message that will be displayed as the action's result
+            if(mDisplayedMedia.getAuthorId().equals(userId)){
+                Toast.makeText(this, "You can't vote for your own photo!", Toast.LENGTH_LONG).show();
+            }else if(mDisplayedMedia.getUpvotersList().contains(userId) && vote==1) {   // illegal upvote
+                toastText = "you already upvoted this image !";
+            }else if(mDisplayedMedia.getDownvotersList().contains(userId) && vote==-1){ // illegal downvote
+                toastText = "you already downvoted this image !";
+            }else{
+                if(vote == 1) {
+                    toastText = "upvoted !";
+                }else if(vote == -1) {
+                    toastText = "downvoted !";
+                }else {
+                    throw new IllegalArgumentException("votes should be either 1 (upvote) or -1 (downvote)");
+                }
+                mDisplayedMedia.recordVote(vote);
+            }
+            Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
         }
     }
 }
