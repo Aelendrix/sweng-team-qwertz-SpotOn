@@ -11,10 +11,10 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class DatabaseRef_test {
 
-    private final static String mMediaDirectoryString = "MediaDirectory_tests";
+    private final static String mMediaDirectoryString = "MediaDirectory_test";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
-    private final static String mUsersDirectoryString = "UsersDirectory_tests";
+    private final static String mUsersDirectoryString = "UsersDirectory_test";
     private final static DatabaseReference mUsersDirectory = FirebaseDatabase.getInstance().getReference(mUsersDirectoryString);
 
 
