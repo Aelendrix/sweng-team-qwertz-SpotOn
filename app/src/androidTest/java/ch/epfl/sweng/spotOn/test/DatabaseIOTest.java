@@ -1,9 +1,8 @@
 package ch.epfl.sweng.spotOn.test;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.test.runner.AndroidJUnit4;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,84 +11,169 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import android.support.annotation.NonNull;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
-/** test the database behaviour with
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
+import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
+
+
+/** test the behaviour of photoObjects when sent/received from database and fileserver
  *  @author quentin
  */
 @RunWith(AndroidJUnit4.class)
 public class DatabaseIOTest {
 
-    // a special directory in the database to avoid interfering with real data
-    private final String PATH_TO_TEST_MEDIA_DIRECTORY = "MediaDirectory_Tests";
+    private boolean listenerExecuted_objectIsSentAndtestWaitsForSentCompleted;
 
+    private PhotoObject retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject=null;
 
-    /* Retrieves a bitmap file from the internet since it's the easiest way to get one consistently across multiple computers */
-    private static Bitmap getBitmapFromURL(String src) throws Exception {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            throw new Exception("Couldn't fetch image from the internet");
+    @Test(expected=AssertionError.class)
+    public void objectIsSentAndtestWaitsForSentCompleted() throws AssertionError, InterruptedException {
+        PhotoObject testObject1 = getRandomPhotoObject();
+
+        final Object lock = new Object();
+        listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=false;
+
+        testObject1.upload(true, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
+                synchronized(lock) {
+                    lock.notify();
+                }
+            }
+        });
+
+        synchronized (lock) {
+            lock.wait();
+        }
+
+        if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
+            throw new AssertionError("Test made it this far - test succeeded !");
         }
     }
 
-    /* compares the PhotoOBjects for equality */
-    private boolean areEquals(PhotoObject p1, PhotoObject p2){
-        return p1.getThumbnail().sameAs(p2.getThumbnail()) &&
-                p1.getPictureId() == p2.getPictureId() &&
-                p1.getAuthorId() == p2.getAuthorId() &&
-                p1.getLatitude() == p2.getLatitude() &&
-                p1.getLongitude() == p2.getLongitude() &&
-                p1.getRadius() == p2.getRadius();
-    }
-/*
     @Test
-    public void objectIsSendAndReceivedCorrectly() throws Exception {
-        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference(PATH_TO_TEST_MEDIA_DIRECTORY);
-        final PhotoObject testOBject1 = initTestOBject1(DBref);
-        final String testObjectId = testOBject1.getPictureId();
-
-        testOBject1.upload();
-
-        DBref.child(testObjectId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    throw new NoSuchElementException("datasnapshot doesn't exist");
+    public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
+        for(PhotoObject p : getAllPO()) {
+            final PhotoObject po = p;
+            final String poId = po.getPictureId();
+            final Object lock = new Object();
+            po.upload(true, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
-                PhotoObject receivedPhotoOBject = dataSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                if(!areEquals(receivedPhotoOBject, testOBject1)){
-                    throw new AssertionError("the send and received objects are different \n"
-                            +testOBject1.toString()+"\n"+receivedPhotoOBject.toString());
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    DataSnapshot wantedNode = dataSnapshot.child(poId);
+                    if (!wantedNode.exists()) {
+                        throw new AssertionError("nothing in the database at this spot : " + wantedNode.toString());
+                    }
+                    PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                    PhotoObject retrievedPo = databaseRetrievedObject.convertToPhotoObject();
+                    if (!areEquals(po, retrievedPo)) {
+                        throw new AssertionError("expected : \n" + po.toString() + "\nReceived : \n" + retrievedPo.toString());
+                    }
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                throw new Error();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
             }
-        });
+        }
     }
-*/
+
     @Test
-    public void createdObjectReturnGoodGetter() throws Exception{
+    public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
+        for(PhotoObject p : getAllPO()) {
+
+            // UPLOAD PHOTOOBJECT
+            final PhotoObject original = p;
+            final String poId = original.getPictureId();
+            final Object lock = new Object();
+            original.upload(true, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+            // RETRIEVE OBJECT FROM DATABASE
+            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    DataSnapshot wantedNode = dataSnapshot.child(poId);
+                    if (!wantedNode.exists()) {
+                        throw new AssertionError("nothing in the database at this spot : " + wantedNode.toString());
+                    }
+                    PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
+                    final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
+                    retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
+                    synchronized (lock) {
+                        lock.notify();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+            // RETRIEVE FULLSIZEIMAGE FROM FILESERVER
+            Log.d("dbio_test", "retrieved \n" + retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+            // CHECK WE DID ACTUALLY RETRIEVE THE IMAGE
+            if (!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()) {
+                throw new AssertionError("retrieved object should have fullsizeimage :\n" +
+                        retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            }
+        }
+    }
+
+    @Test
+    public void gettersWorkCorrectly() throws Exception {
         String imageLink = "bad_link";
         String pictureId = "key1";
         String author = "author1";
@@ -97,71 +181,56 @@ public class DatabaseIOTest {
         long createdDate = 1;
         long expireDate = 1000;
         double latitude = 4.4;
-        double longitude =  6.6;
-        int radius = 99;
-        int votes = 0;
-        List<String> voters = new ArrayList<String>();
-        voters.add(author);
+        double longitude = 6.6;
+        int upvotes = 9;
+        int downvotes = 7;
+        ArrayList<String> upvotersList = new ArrayList<String>();
+        upvotersList.add("truc");
+        upvotersList.add("machine");
+        ArrayList<String> downvotersList = new ArrayList<String>();
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-        expireDate, latitude, longitude, radius, votes, voters);
-        if(photo1.getLongitude() != longitude) {
+                expireDate, latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
+        if (photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }
-        if(photo1.getLatitude() != latitude) {
+        if (photo1.getLatitude() != latitude) {
             throw new AssertionError("latitude wrongly get");
         }
-        if(photo1.getCreatedDate().getTime() != createdDate) {
+        if (photo1.getCreatedDate().getTime() != createdDate) {
             throw new AssertionError("created date wrongly get");
         }
-        if(photo1.getExpireDate().getTime() != expireDate) {
+        if (photo1.getExpireDate().getTime() != expireDate) {
             throw new AssertionError("expire date wrongly get");
         }
-        if(photo1.getRadius() != radius) {
+        if (photo1.getRadius()>PhotoObject.MAX_VIEW_RADIUS || photo1.getRadius()<PhotoObject.MIN_VIEW_RADIUS) {
             throw new AssertionError("radius wrongly get");
         }
-        if(!photo1.getAuthorId().equals(author)) {
+        if (!photo1.getAuthorId().equals(author)) {
             throw new AssertionError("author wrongly get");
         }
-        if(!photo1.getPhotoName().equals(photoName)) {
+        if (!photo1.getPhotoName().equals(photoName)) {
             throw new AssertionError("photo name wrongly get");
         }
-        if(!photo1.getFullsizeImageLink().equals(imageLink)){
+        if (!photo1.getFullsizeImageLink().equals(imageLink)) {
             throw new AssertionError("image link wrongly get");
         }
-        if(!photo1.getPictureId().equals(pictureId)){
+        if (!photo1.getPictureId().equals(pictureId)) {
             throw new AssertionError("image id wrongly get");
         }
-        if(!(photo1.getVotes() == votes)){
+        if (!(photo1.getUpvotes() == upvotes)) {
             throw new AssertionError("votes wrongly get");
         }
-        if(!(photo1.getVoters().equals(voters))){
+        if (!(photo1.getDownvotes() == downvotes)) {
+            throw new AssertionError("votes wrongly get");
+        }
+        if (!(photo1.getUpvotersList().equals(upvotersList))) {
             throw new AssertionError("voters wrongly get");
         }
 
-    }
-
-// CONSTRUCTORS FOR A VARIETY OF PhotoObjects
-
-    private PhotoObject initTestOBject1(DatabaseReference dbref) throws Exception {
-        Bitmap image = null;
-        try {
-            image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        } catch (Exception e) {
-            throw new Exception("Problem instanciating PhotoOBject : image not retrieved from the interned");
+        if (!(photo1.getDownvotersList().equals(downvotersList))) {
+            throw new AssertionError("voters wrongly get");
         }
-        String newPictureId = dbref.push().getKey();
-        return new PhotoObject(image, "author1", "photo1", new Timestamp(1), 1, 1, 1);
     }
 
-    private PhotoObject initTestOBject1_withWrongImage(DatabaseReference dbref) throws Exception {
-        Bitmap image = null;
-        try {
-            image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        } catch (Exception e) {
-            throw new Exception("Problem instantiating PhotoObject : image not retrieved from the interned");
-        }
-        String newPictureId = dbref.push().getKey();
-        return new PhotoObject(image, "author1", "photo1", new Timestamp(1), 1, 1, 1);
-    }
 
 }

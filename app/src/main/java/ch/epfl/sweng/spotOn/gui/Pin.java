@@ -14,11 +14,13 @@ public class Pin implements ClusterItem {
 
     private final LatLng mPosition;
     private final PhotoObject mPictureAssociated;
+    private boolean isAccessible;
     private BitmapDescriptor color;
 
-    public Pin(PhotoObject picture, BitmapDescriptor color){
+    public Pin(PhotoObject picture, BitmapDescriptor color, boolean isAccessible){
         mPosition = new LatLng(picture.getLatitude(), picture.getLongitude());
         mPictureAssociated = picture;
+        this.isAccessible = isAccessible;
         this.color = color;
     }
 
@@ -33,5 +35,13 @@ public class Pin implements ClusterItem {
 
     public BitmapDescriptor getColor(){
         return color;
+    }
+
+    public boolean getAccessibility(){
+        return isAccessible;
+    }
+
+    public void setAccessibility(boolean newAccessibility){
+        isAccessible = newAccessibility;
     }
 }
