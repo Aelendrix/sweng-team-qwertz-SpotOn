@@ -250,7 +250,7 @@ public class TakePictureFragment extends Fragment {
         String imageName = "PIC_" + timestamp + ".jpeg";
 
         String userId = UserId.getInstance().getUserId();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude, 100);
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude);
 
         return picObject;
     }
@@ -275,7 +275,7 @@ public class TakePictureFragment extends Fragment {
                     mPic.setImageBitmap(HQPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
                     mActualPhotoObject = createPhotoObject(HQPicture);
-                    mActualPhotoObject.upload();
+                    mActualPhotoObject.upload(false, null); // no onCOmplete listener
                 } else {
                     Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
                 }

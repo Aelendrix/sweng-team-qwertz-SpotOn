@@ -28,10 +28,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-        <activity android:name="ch.epfl.sweng.spotOn.gui.MainActivity">
+        <activity android:name="ch.epfl.sweng.spotOn.gui.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -52,7 +53,10 @@
         <service android:name="ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService" />
 
 
-        <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity" />
+        <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
