@@ -158,7 +158,7 @@ public class DatabaseIOTest {
         synchronized (lock){
             lock.wait();
         }
-        // CHECK WE DID RETRIEVE THE IMAGE
+        // CHECK WE DID ACTUALLY RETRIEVE THE IMAGE
         if(!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()){
             throw new AssertionError("retrieved object should have fullsizeimage :\n"+
                     retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
