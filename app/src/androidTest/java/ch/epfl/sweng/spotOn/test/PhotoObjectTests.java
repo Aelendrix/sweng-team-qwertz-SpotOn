@@ -34,6 +34,43 @@ import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhoto
 @RunWith(AndroidJUnit4.class)
 public class PhotoObjectTests {
 
+    @Test
+    public void upvotesChangeLifetime(){
+        for(PhotoObject p : getAllPO()) {
+            long originalLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(originalLifetime!=DEFAULT_LIFETIME){
+                throw new AssertionError("initially, lifetime should be default");
+            }
+            p.processVote(1, "wertqwert");
+            p.processVote(1, "zertherth");
+            p.processVote(1, "wergwasdf");
+            double newPopularityRatio = (double)(4-1)/(double)5;
+            long newLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(newLifetime != (int)Math.ceil(DEFAULT_LIFETIME + newPopularityRatio*(MAX_LIFETIME-DEFAULT_LIFETIME)) || newLifetime<originalLifetime){
+                throw new AssertionError("new lifetime is wrong");
+            }
+        }
+    }
+
+    @Test
+    public void downvotesChangeLifetime(){
+        for(PhotoObject p : getAllPO()) {
+            long originalLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(originalLifetime!=DEFAULT_LIFETIME){
+                throw new AssertionError("initially, lifetime should be default");
+            }
+            p.processVote(-1, "wertqwert");
+            p.processVote(-1, "zertherth");
+            p.processVote(-1, "wergwasdf");
+            double newPopularityRatio = (double)(1-4)/(double)5;
+            double newUnPopularityRatio = -newPopularityRatio;
+            long expectedLifetime  = (int)Math.ceil(MIN_LIFETIME + newUnPopularityRatio*(DEFAULT_LIFETIME-MIN_LIFETIME));
+            long newLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(newLifetime != expectedLifetime || newLifetime>originalLifetime){
+                throw new AssertionError("new lifetime is wrong expected : "+expectedLifetime+" computed : "+newLifetime);
+            }
+        }
+    }
 
     @Test
     public void chainedVotesRegisterWell(){
