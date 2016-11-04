@@ -174,7 +174,7 @@ public class DatabaseIOTest {
     }
 
     @Test
-    public void gettersWorkCorrectly() throws Exception {
+    public void gettersWorkCorrectly() throws Exception     {
         String imageLink = "bad_link";
         String pictureId = "key1";
         String author = "author1";
@@ -199,7 +199,7 @@ public class DatabaseIOTest {
         if (photo1.getCreatedDate().getTime() != createdDate) {
             throw new AssertionError("created date wrongly get");
         }
-        if (photo1.getExpireDate().getTime() <= createdDate) {
+        if (photo1.getExpireDate().getTime() <= createdDate ) {
             throw new AssertionError("expire date wrongly get");
         }
         if (photo1.getRadius()>PhotoObject.MAX_VIEW_RADIUS || photo1.getRadius()<PhotoObject.MIN_VIEW_RADIUS) {

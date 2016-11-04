@@ -176,13 +176,15 @@ public class PhotoObject {
             this.computeRadius();
             this.computeExpireDate();
 
-            // push changes to Database
-            DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-            DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
-            DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
-            DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
-            DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
-            DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
+            // push changes to Database if the object was uploaded
+            if(mFullsizeImageLink!=null) {
+                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
+                DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
+                DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
+                DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
+                DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
+            }
         }
 
         return toastText;

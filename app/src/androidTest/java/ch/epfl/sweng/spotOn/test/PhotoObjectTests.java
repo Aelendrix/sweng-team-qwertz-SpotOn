@@ -207,7 +207,7 @@ public class PhotoObjectTests {
                                                                Timestamp createdDate, double latitude, double longitude){
         PhotoObject po = new PhotoObject(fullSizePic, authorID, photoName,
                 createdDate, latitude, longitude);
-        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference("MediaPath");
+        DatabaseReference DBref = DatabaseRef.getMediaDirectory();
         assert (po.getFullSizeImage() == fullSizePic);
         assert (po.getAuthorId() == authorID);
         assert (po.getPhotoName() == photoName);
