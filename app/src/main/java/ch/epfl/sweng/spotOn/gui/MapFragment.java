@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -179,16 +180,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
             for (PhotoObject photo : listPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
                 LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                BitmapDescriptor color;
-                //add a GREEN pin to the cluster manager if the photo can be seen
-                if(canActivateIt) {
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-                }
-                //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
-                else{
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-                }
-                Pin pinForPicture = new Pin(photo, color, canActivateIt);
+                Pin pinForPicture = new Pin(photo, canActivateIt);
                 //add the marker to the cluster manager
                 mClusterManager.addItem(pinForPicture);
                 //Re-cluster the cluster at each addition of a pin
