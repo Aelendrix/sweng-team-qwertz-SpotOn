@@ -9,7 +9,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
  * Created by quentin on 04.11.16.
  */
 
-public class DatabaseRef_test {
+public class DatabaseRef_Test {
 
     private final static String mMediaDirectoryString = "MediaDirectory_test";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
@@ -30,7 +30,7 @@ public class DatabaseRef_test {
 
 
     // CONSTRUCTOR FOR SINGLETON
-    private DatabaseRef_test(){
+    private DatabaseRef_Test(){
         //empty
     }
 

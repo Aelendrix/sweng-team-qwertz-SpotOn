@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -88,11 +89,17 @@ public class LocalDatabase {
         return photoDataMap;
     }
 
-    public static Map<String, Bitmap> getThumbnailMap(){
+    public static Map<String, Bitmap> getViewableThumbnail(){
         List<PhotoObject> listPhoto = new ArrayList<>(photoDataMap.values());
         Map<String, Bitmap> mapThumbnail = new HashMap<>();
+        if(mLocation==null){
+            return mapThumbnail;
+        }
+        LatLng loc = new LatLng(mLocation.getLatitude(),mLocation.getLongitude());
         for(PhotoObject o : listPhoto){
-            mapThumbnail.put(o.getPictureId(),o.getThumbnail());
+            if(o.isInPictureCircle(loc)) {
+                mapThumbnail.put(o.getPictureId(), o.getThumbnail());
+            }
         }
         return mapThumbnail;
     }
