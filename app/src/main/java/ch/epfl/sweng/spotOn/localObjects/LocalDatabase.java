@@ -46,17 +46,17 @@ public class LocalDatabase {
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
                     PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
                     PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
-                    Log.d("LocalDB",photoObject.toString());
                     //filter the photo in function of the location
                     double photoLat = photoObject.getLatitude();
                     double photoLng = photoObject.getLongitude();
                     if(photoLat-maxRadius<latitude && latitude < photoLat+maxRadius) {
                         if(photoLng-maxRadius<longitude && longitude < photoLng+maxRadius) {
+                            Log.d("LocalDB",photoObject.toString());
                             addPhotoObject(photoObject);
                         }
                     }
                 }
-                Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
+                Log.d("LocalDB",LocalDatabase.getMap().size()+" photoObjects added");
                 //refresh the child of tabActivity
                 tabActivity.endRefreshDB();
             }
