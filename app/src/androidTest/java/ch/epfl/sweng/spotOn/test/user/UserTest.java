@@ -3,13 +3,12 @@ package ch.epfl.sweng.spotOn.test.user;
 import android.support.test.runner.AndroidJUnit4;
 
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.gui.UserProfile;
 
 @RunWith(AndroidJUnit4.class)
 public class UserTest {
@@ -17,10 +16,6 @@ public class UserTest {
     private User testUser = null;
     private User mlbTest = null;
 
-    @After
-    public void tearDown(){
-
-    }
 
     @Test
     public void setUser(){
@@ -49,7 +44,7 @@ public class UserTest {
     // This method tests the User method getUser()
     @Test
     public void testGetUser(){
-        UserProfile userProfile = null;
+        UserProfileActivity userProfile = null;
         mlbTest = new User("10209394363510335",userProfile);
 
         try {

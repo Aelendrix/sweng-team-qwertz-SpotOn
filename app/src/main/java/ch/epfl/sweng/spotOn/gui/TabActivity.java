@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.LocalisationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 
@@ -48,8 +49,6 @@ public class TabActivity extends AppCompatActivity {
             mHandler.postDelayed(loopedRefresh, TIME_BETWEEN_EXEC);
         }
     };
-    //Location objects
-    private LocationManager mLocationManager;
     private Location mLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,38 +83,13 @@ public class TabActivity extends AppCompatActivity {
             }
         });
 
-        // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
+        LocalisationTracker locationTracker = new LocalisationTracker(this.getApplicationContext()){
+            @Override
+            public void refreshTrackerLocation(){
                 // Called when a new location is found by the network location provider.
-                Log.d("location","location Changed");
                 refreshLocation();
-                LocalDatabase.setLocation(location);
-
-
             }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
         };
-
-        // Register the listener with the Location Manager to receive location updates
-        final int TIME_BETWEEN_LOCALISATION = 2*1000; //2 Second
-        final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
-        try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, locationListener);
-        }
-        /*Catch exception because location acces always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
-            e.printStackTrace();
-        }
     }
 
     /*
@@ -140,7 +114,7 @@ public class TabActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //start a looped runnable code
-        mHandler.postDelayed(loopedRefresh,3*1000);
+        mHandler.postDelayed(loopedRefresh,10*1000);
 
     }
     /**
@@ -191,7 +165,7 @@ public class TabActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.user_profile:
-                Intent profileIntent = new Intent(this, UserProfile.class);
+                Intent profileIntent = new Intent(this, UserProfileActivity.class);
                 startActivity(profileIntent); // go to the User Profile Activity
                 return true;
             default:
@@ -216,6 +190,9 @@ public class TabActivity extends AppCompatActivity {
     private void refreshDB() {
         if (mLocation != null) {
             LocalDatabase.refresh(mLocation,this);
+        }
+        else{
+            Log.d("Loop","DB not refreshed: no localisation discovered yet");
         }
 
     }
@@ -242,30 +219,14 @@ public class TabActivity extends AppCompatActivity {
      * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
      */
     private void refreshLocation(){
-        try {
-            if (mLocationManager != null) {
-                //check if gps is enable
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    //get the location according of the gps
-                    mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    Log.d("location","new location set");
-                    if(mLocation!=null){
-                        if(mMapFragment!=null) {
-                            mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
-                        }
-                        if(mCameraFragment!=null) {
-                            mCameraFragment.refreshLocation(mLocation);
-                        }
-                    }
-                }
+        mLocation = LocalDatabase.getLocation();
+        if(mLocation!=null){
+            if(mMapFragment!=null) {
+                mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
             }
-        }
-        /**
-         * Catch exception because location access always need to have the localisation permission
-        * In our app if the permission is rejected, we can't access this activity anyway (ATM)
-        */
-        catch(SecurityException e) {
-            e.printStackTrace();
+            if(mCameraFragment!=null) {
+                mCameraFragment.refreshLocation(mLocation);
+            }
         }
     }
 }

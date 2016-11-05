@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import ch.epfl.sweng.spotOn.gui.UserProfile;
+import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /*
@@ -28,10 +28,14 @@ public class User {
 
 
     //constructor only used from UserProfile
-    public User(String userId, UserProfile userProfile){
+    public User(String userId, UserProfileActivity userProfile){
         mUserId = userId;
 
-        getUser(userProfile);
+        try {
+            getUser(userProfile);
+        } catch(AssertionError a){
+            a.printStackTrace();
+        }
     }
 
 
@@ -45,7 +49,7 @@ public class User {
         UserId singletonUserId = UserId.getInstance();
         singletonUserId.setUserId(userId);
 
-        getUser();
+        checkUser();
     }
 
 
@@ -56,8 +60,8 @@ public class User {
     }
 
 
-    /* Method to get the user if it is already defined in the database and if not it creates it */
-    private void getUser(){
+    /* Method to check if the user is already defined in the database and if not it creates it */
+    private void checkUser(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         Query userQuery = DBRef.orderByChild("userId").equalTo(mUserId);
 
@@ -68,27 +72,32 @@ public class User {
                 if (!userToRetrieve.exists()) {
                     createUserInDB();
                 }
-                User retrievedUser = userToRetrieve.getValue(User.class);
-                // We can set the fields of User
-                mFirstName = retrievedUser.getFirstName();
-                mLastName = retrievedUser.getLastName();
+                else {
+                    User retrievedUser = userToRetrieve.getValue(User.class);
+
+                    if (retrievedUser == null) {
+                        Log.e("UserProfile Error", "retrievedUser is null");
+                    } else {
+                        // We can set the fields of User
+                        mFirstName = retrievedUser.getFirstName();
+                        mLastName = retrievedUser.getLastName();
+                    }
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 //
-                Log.e("Firebase", "error in getUser", databaseError.toException());
+                Log.e("Firebase", "error in checkUser", databaseError.toException());
             }
         };
 
         userQuery.addListenerForSingleValueEvent(userListener);
-
-
     }
 
 
     /* Method to get the user already defined in the database */
-    private void getUser(final UserProfile userProfile) {
+    private void getUser(final UserProfileActivity userProfile) throws AssertionError{
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         Query userQuery = DBRef.orderByChild("userId").equalTo(mUserId);
 
@@ -99,18 +108,23 @@ public class User {
                 if (!userToRetrieve.exists()) {
                     throw new AssertionError("UserId doesn't exist in the database " + mUserId);
                 }
-                User retrievedUser = userToRetrieve.getValue(User.class);
-
-                mFirstName = retrievedUser.getFirstName();
-                mLastName = retrievedUser.getLastName();
-
-                if(userProfile == null) {
-                    Log.e("UserError","userProfile is null");
-                }
                 else {
-                    userProfile.fillInFields();
-                }
+                    User retrievedUser = userToRetrieve.getValue(User.class);
 
+                    if (retrievedUser == null) {
+                        Log.e("UserError", "retrievedUser is null");
+                    } else {
+                        // We can set the fields of User
+                        mFirstName = retrievedUser.getFirstName();
+                        mLastName = retrievedUser.getLastName();
+                    }
+
+                    if (userProfile == null) {
+                        Log.e("UserError", "userProfile is null");
+                    } else {
+                        userProfile.fillInFields();
+                    }
+                }
             }
 
             @Override
