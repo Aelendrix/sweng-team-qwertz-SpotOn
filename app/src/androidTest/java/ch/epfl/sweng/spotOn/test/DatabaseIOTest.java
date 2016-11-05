@@ -20,6 +20,7 @@ import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
@@ -79,7 +80,7 @@ public class DatabaseIOTest {
             synchronized (lock) {
                 lock.wait();
             }
-            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            final DatabaseReference dbref = DatabaseRef.getMediaDirectory();
             dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,7 +129,7 @@ public class DatabaseIOTest {
                 lock.wait();
             }
             // RETRIEVE OBJECT FROM DATABASE
-            final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("MediaDirectory");
+            final DatabaseReference dbref = DatabaseRef.getMediaDirectory();
             dbref.orderByChild("pictureId").equalTo(poId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -173,13 +174,12 @@ public class DatabaseIOTest {
     }
 
     @Test
-    public void gettersWorkCorrectly() throws Exception {
+    public void gettersWorkCorrectly() throws Exception     {
         String imageLink = "bad_link";
         String pictureId = "key1";
         String author = "author1";
         String photoName = "name1";
         long createdDate = 1;
-        long expireDate = 1000;
         double latitude = 4.4;
         double longitude = 6.6;
         int upvotes = 9;
@@ -189,7 +189,7 @@ public class DatabaseIOTest {
         upvotersList.add("machine");
         ArrayList<String> downvotersList = new ArrayList<String>();
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
-                expireDate, latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
+                latitude, longitude, upvotes, downvotes, upvotersList, downvotersList);
         if (photo1.getLongitude() != longitude) {
             throw new AssertionError("longitude wrongly get");
         }
@@ -199,7 +199,7 @@ public class DatabaseIOTest {
         if (photo1.getCreatedDate().getTime() != createdDate) {
             throw new AssertionError("created date wrongly get");
         }
-        if (photo1.getExpireDate().getTime() != expireDate) {
+        if (photo1.getExpireDate().getTime() <= createdDate ) {
             throw new AssertionError("expire date wrongly get");
         }
         if (photo1.getRadius()>PhotoObject.MAX_VIEW_RADIUS || photo1.getRadius()<PhotoObject.MIN_VIEW_RADIUS) {
@@ -226,7 +226,6 @@ public class DatabaseIOTest {
         if (!(photo1.getUpvotersList().equals(upvotersList))) {
             throw new AssertionError("voters wrongly get");
         }
-
         if (!(photo1.getDownvotersList().equals(downvotersList))) {
             throw new AssertionError("voters wrongly get");
         }

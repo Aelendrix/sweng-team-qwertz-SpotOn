@@ -19,14 +19,58 @@ import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
+import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_LIFETIME;
+import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_VIEW_RADIUS;
+import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_LIFETIME;
+import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_VIEW_RADIUS;
+import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_LIFETIME;
+import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_VIEW_RADIUS;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
 
-/**
+/** Tests all aspects of PhotoObjects (upload / download / changing radius / changing lifetime / votes / ...)
  *  Created by quentin on 26.10.16.
  */
 @RunWith(AndroidJUnit4.class)
 public class PhotoObjectTests {
+
+    @Test
+    public void upvotesChangeLifetime(){
+        for(PhotoObject p : getAllPO()) {
+            long originalLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(originalLifetime!=DEFAULT_LIFETIME){
+                throw new AssertionError("initially, lifetime should be default");
+            }
+            p.processVote(1, "wertqwert");
+            p.processVote(1, "zertherth");
+            p.processVote(1, "wergwasdf");
+            double newPopularityRatio = (double)(4-1)/(double)5;
+            long newLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(newLifetime != (int)Math.ceil(DEFAULT_LIFETIME + newPopularityRatio*(MAX_LIFETIME-DEFAULT_LIFETIME)) || newLifetime<originalLifetime){
+                throw new AssertionError("new lifetime is wrong");
+            }
+        }
+    }
+
+    @Test
+    public void downvotesChangeLifetime(){
+        for(PhotoObject p : getAllPO()) {
+            long originalLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(originalLifetime!=DEFAULT_LIFETIME){
+                throw new AssertionError("initially, lifetime should be default");
+            }
+            p.processVote(-1, "wertqwert");
+            p.processVote(-1, "zertherth");
+            p.processVote(-1, "wergwasdf");
+            double newPopularityRatio = (double)(1-4)/(double)5;
+            double newUnPopularityRatio = -newPopularityRatio;
+            long expectedLifetime  = (int)Math.ceil(MIN_LIFETIME + newUnPopularityRatio*(DEFAULT_LIFETIME-MIN_LIFETIME));
+            long newLifetime = p.getExpireDate().getTime()-p.getCreatedDate().getTime();
+            if(newLifetime != expectedLifetime || newLifetime>originalLifetime){
+                throw new AssertionError("new lifetime is wrong expected : "+expectedLifetime+" computed : "+newLifetime);
+            }
+        }
+    }
 
     @Test
     public void chainedVotesRegisterWell(){
@@ -98,14 +142,16 @@ public class PhotoObjectTests {
     @Test
     public void radiusForUpvotedMedia() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
-            if (p.getRadius() != PhotoObject.DEFAULT_VIEW_RADIUS) {
+            if (p.getRadius() != DEFAULT_VIEW_RADIUS) {
                 throw new AssertionError("at creation, should have default radius");
             }
             p.processVote(1, "user9981204598263");
             p.processVote(1, "user99ertz4598263");
 
-            if (p.getRadius() <= PhotoObject.DEFAULT_VIEW_RADIUS) {
-                throw new AssertionError();
+            double newPopularityRatio = ((double)(3-1))/((double)4);
+            int expectedRadius = (int)Math.ceil(DEFAULT_VIEW_RADIUS + newPopularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));
+            if (p.getRadius()!= expectedRadius || p.getRadius() <= DEFAULT_VIEW_RADIUS) {
+                throw new AssertionError("new radius incorrect : expected="+expectedRadius+" computed="+p.getRadius());
             }
         }
     }
@@ -113,14 +159,18 @@ public class PhotoObjectTests {
     @Test
     public void radiusForDownvotedMedia() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
-            if (p.getRadius() != PhotoObject.DEFAULT_VIEW_RADIUS) {
+            if (p.getRadius() != DEFAULT_VIEW_RADIUS) {
                 throw new AssertionError("at creation, should have default radius");
             }
             p.processVote(-1, "user9981204598263");
             p.processVote(-1, "user99ertz4598263");
 
-            if (p.getRadius() >= PhotoObject.DEFAULT_VIEW_RADIUS) {
-                throw new AssertionError();
+
+            double newPopularityRatio = ((double)(1-3))/((double)4);
+            int expectedRadius = (int)Math.ceil(MIN_VIEW_RADIUS + (-1)*newPopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));
+
+            if (p.getRadius()!= expectedRadius || p.getRadius() >= DEFAULT_VIEW_RADIUS) {
+                throw new AssertionError("new radius incorrect : expected="+expectedRadius+" computed="+p.getRadius());
             }
         }
     }
@@ -157,7 +207,7 @@ public class PhotoObjectTests {
                                                                Timestamp createdDate, double latitude, double longitude){
         PhotoObject po = new PhotoObject(fullSizePic, authorID, photoName,
                 createdDate, latitude, longitude);
-        DatabaseReference DBref = FirebaseDatabase.getInstance().getReference("MediaPath");
+        DatabaseReference DBref = DatabaseRef.getMediaDirectory();
         assert (po.getFullSizeImage() == fullSizePic);
         assert (po.getAuthorId() == authorID);
         assert (po.getPhotoName() == photoName);

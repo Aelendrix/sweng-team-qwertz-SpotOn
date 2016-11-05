@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -88,17 +89,17 @@ public class TestPhotoObjectUtils {
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "Test", "cc", new Timestamp(1), 1, 1);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.52890355757567, 6.569420238493345);
     }
 
     public static PhotoObject germaynDeryckePO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        return new PhotoObject(image, "Test", "photo1", new Timestamp(1), 1, 1);
+        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 46.52890355757765, 6.569420238493765);
     }
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(1), 1, 1);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757654, 6.5694202384937871);
     }
 
 
