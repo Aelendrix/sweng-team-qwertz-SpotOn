@@ -191,6 +191,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
                 Pin pinForPicture = new Pin(photo, color, canActivateIt);
                 //add the marker to the cluster manager
                 mClusterManager.addItem(pinForPicture);
+                //Re-cluster the cluster at each addition of a pin
                 mClusterManager.cluster();
             }
         }
