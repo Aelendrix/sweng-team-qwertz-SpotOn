@@ -2,35 +2,28 @@
     <string name="app_name">SpotOn</string>
     <string name="mainLoginTextView">Please sign in to access our awesome app</string>
     <string name="facebook_app_id">348409365495965</string>
-    <string name="action_settings">Settings</string>
     <string name="options_menu">Options</string>
     <string name="log_out">Log out</string>
     <string name="about_menu">About</string>
     <string name="tab_aroundme">Around me</string>
     <string name="tab_camera">Camera</string>
     <string name="tab_map">Map</string>
-    <string name="next_activity">Next</string>
     <string name="captureButton">Capture</string>
-    <string name="takeAPic">Take A Pic</string>
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="rotate">Rotate</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="button_to_map">Go To Map</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
-    <string name="savePicButton">Save Picture</string>
-    <string name="seePictures">See Saved Pictures</string>
-    <string name="title_activity_see_pictures">SeePicturesActivity</string>
-    <string name="queryDatabase">Query Database</string>
-    <string name="title_activity_DBquery">Query Database</string>
-    <string name="launchQueryButton">Search database</string>
-    <string name="queryTextFieldHint">Enter a key to lookup</string>
-    <string name="blankQueryResult">...</string>
+    <!-- <string name="queryDatabase">Query Database</string>
+     <string name="title_activity_DBquery">Query Database</string>
+     <string name="launchQueryButton">Search database</string>
+     <string name="queryTextFieldHint">Enter a key to lookup</string>
+     <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
     <string name="storeButton">Store</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.
     </string>
+    <string name="fullSizeImage">Thumbnail in full size</string>
 </resources>
 
