@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -102,6 +103,17 @@ public class LocalDatabase {
             }
         }
         return mapThumbnail;
+    }
+
+    public static List<PhotoObject> getViewablePhotos() {
+        List<PhotoObject> photoList = new ArrayList<>(photoDataMap.values());
+        LatLng loc = new LatLng(mLocation.getLatitude(),mLocation.getLongitude());
+        for(PhotoObject p : photoList) {
+            if(!p.isInPictureCircle(loc)) {
+                photoList.remove(p);
+            }
+        }
+        return photoList;
     }
 
     public static void setLocation(Location location) {
