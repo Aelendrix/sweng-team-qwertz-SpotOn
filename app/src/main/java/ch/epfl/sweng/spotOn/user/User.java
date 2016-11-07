@@ -104,25 +104,30 @@ public class User {
         ValueEventListener userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot userToRetrieve = dataSnapshot.child(mUserId);
-                if (!userToRetrieve.exists()) {
-                    throw new AssertionError("UserId doesn't exist in the database " + mUserId);
+                if(mUserId == null)
+                {
+                    throw new AssertionError("User.mUserId is null");
                 }
                 else {
-                    User retrievedUser = userToRetrieve.getValue(User.class);
-
-                    if (retrievedUser == null) {
-                        Log.e("UserError", "retrievedUser is null");
+                    DataSnapshot userToRetrieve = dataSnapshot.child(mUserId);
+                    if (!userToRetrieve.exists()) {
+                        throw new AssertionError("UserId doesn't exist in the database " + mUserId);
                     } else {
-                        // We can set the fields of User
-                        mFirstName = retrievedUser.getFirstName();
-                        mLastName = retrievedUser.getLastName();
-                    }
+                        User retrievedUser = userToRetrieve.getValue(User.class);
 
-                    if (userProfile == null) {
-                        Log.e("UserError", "userProfile is null");
-                    } else {
-                        userProfile.fillInFields();
+                        if (retrievedUser == null) {
+                            Log.e("UserError", "retrievedUser is null");
+                        } else {
+                            // We can set the fields of User
+                            mFirstName = retrievedUser.getFirstName();
+                            mLastName = retrievedUser.getLastName();
+                        }
+
+                        if (userProfile == null) {
+                            Log.e("UserError", "userProfile is null");
+                        } else {
+                            userProfile.fillInFields();
+                        }
                     }
                 }
             }

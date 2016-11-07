@@ -11,14 +11,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity">
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/fullSizeImageActivityLayout">
+        android:id="@+id/fullSizeImageActivityLayout">-->
 
         <ImageView
+            android:contentDescription="@string/fullSizeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@color/cardview_shadow_start_color"
@@ -55,5 +56,5 @@
             android:onClick="recordUpvote"
             android:id="@+id/upvoteButton" />
 
-    </RelativeLayout>
+   <!-- </RelativeLayout>-->
 </RelativeLayout>
