@@ -4,10 +4,9 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -19,14 +18,11 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
-import ch.epfl.sweng.spotOn.util.Pair;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class LocalDatabase {
 
-    private final static String dataPath = "MediaDirectory";
     private final static Map<String,PhotoObject> photoDataMap = new HashMap<>();
-    // Firebase instance variables
-    private final static DatabaseReference myDBref = FirebaseDatabase.getInstance().getReference(dataPath);
     private static Location mLocation;
 
     private LocalDatabase() {
@@ -44,24 +40,24 @@ public class LocalDatabase {
         //Query photoSortedByLongitude = myDBref.orderByChild("longitude").startAt(longitude-maxRadius).endAt(longitude+maxRadius);
         //get photo still alive
         java.util.Date date= new java.util.Date();
-        Query photoSortedByTime = myDBref.orderByChild("expireDate").startAt(date.getTime());
+        Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(date.getTime());
         ValueEventListener dataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
                     PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
                     PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
-                    Log.d("LocalDB",photoObject.toString());
                     //filter the photo in function of the location
                     double photoLat = photoObject.getLatitude();
                     double photoLng = photoObject.getLongitude();
                     if(photoLat-maxRadius<latitude && latitude < photoLat+maxRadius) {
                         if(photoLng-maxRadius<longitude && longitude < photoLng+maxRadius) {
+                            Log.d("LocalDB",photoObject.toString());
                             addPhotoObject(photoObject);
                         }
                     }
                 }
-                Log.d("LocalDB",dataSnapshot.getChildrenCount()+" photoObjects added");
+                Log.d("LocalDB",LocalDatabase.getMap().size()+" photoObjects added");
                 //refresh the child of tabActivity
                 tabActivity.endRefreshDB();
             }
@@ -93,13 +89,19 @@ public class LocalDatabase {
         return photoDataMap;
     }
 
-    public static List<Pair<Bitmap, String>> getThumbnailArray(){
+    public static Map<String, Bitmap> getViewableThumbnail(){
         List<PhotoObject> listPhoto = new ArrayList<>(photoDataMap.values());
-        List<Pair<Bitmap, String>> listThumbnail = new ArrayList<>();
-        for(PhotoObject o : listPhoto){
-            listThumbnail.add(new Pair<Bitmap, String>(o.getThumbnail(), o.getPictureId()));
+        Map<String, Bitmap> mapThumbnail = new HashMap<>();
+        if(mLocation==null){
+            return mapThumbnail;
         }
-        return listThumbnail;
+        LatLng loc = new LatLng(mLocation.getLatitude(),mLocation.getLongitude());
+        for(PhotoObject o : listPhoto){
+            if(o.isInPictureCircle(loc)) {
+                mapThumbnail.put(o.getPictureId(), o.getThumbnail());
+            }
+        }
+        return mapThumbnail;
     }
 
     public static void setLocation(Location location) {

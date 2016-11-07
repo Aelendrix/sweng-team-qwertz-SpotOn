@@ -2,6 +2,14 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -19,23 +28,32 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
  *  Created by quentin on 26.10.16.
  */
 
-public class PhotoObjectUtils {
+public class TestPhotoObjectUtils {
 
     public final static int NB_PO_AVAILABLE = 3;
 
 
-// USEFUL METHODS ON PHOTOBJECTS
+// USEFUL METHODS ON PHOTOOBJECTS
 
     /* compares the PhotoOBjects field by field for equality */
     public static boolean areEquals(PhotoObject p1, PhotoObject p2){
-        return p1.getThumbnail().sameAs(p2.getThumbnail()) &&
-                p1.getPictureId() == p2.getPictureId() &&
-                p1.getAuthorId() == p2.getAuthorId() &&
+        boolean fullsizeImageOrLinkComparison = false;      // images have either a fullsizeimage or a link
+        if(p1.hasFullSizeImage() && p2.hasFullSizeImage()){
+            fullsizeImageOrLinkComparison = p1.getFullSizeImage().sameAs(p2.getFullSizeImage());
+        }else{
+            fullsizeImageOrLinkComparison = p1.getFullsizeImageLink().equals(p2.getFullsizeImageLink());
+        }
+        return fullsizeImageOrLinkComparison &&
+                p1.getThumbnail().sameAs(p2.getThumbnail()) &&
+                p1.getPictureId().equals(p2.getPictureId()) &&
+                p1.getPhotoName().equals(p2.getPhotoName()) &&
+                p1.getCreatedDate().equals(p2.getCreatedDate()) &&
+                // expireDate can be mutated via votes
                 p1.getLatitude() == p2.getLatitude() &&
                 p1.getLongitude() == p2.getLongitude() &&
-                p1.getRadius() == p2.getRadius();
+                // radius can be mutated via votes
+                p1.getAuthorId().equals(p2.getAuthorId());
     }
-
 
 
 // FACTORY METHODS TO INSTANCIATE PREMADE PHOTOBJECTS
@@ -71,17 +89,17 @@ public class PhotoObjectUtils {
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "paul", "cc", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.52890355757567, 6.569420238493345);
     }
 
     public static PhotoObject germaynDeryckePO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        return new PhotoObject(image, "author1", "photo1", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 46.52890355757765, 6.569420238493765);
     }
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "saruman", "icediving", new Timestamp(1), 1, 1, 1);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757654, 6.5694202384937871);
     }
 
 
