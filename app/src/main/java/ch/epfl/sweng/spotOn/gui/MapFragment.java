@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.gui;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,7 +32,8 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<Pin> {
+public class MapFragment extends Fragment implements OnMapReadyCallback,
+        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -54,7 +56,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
     //list of photoObject
     private List<PhotoObject> listPhoto;
     private ClusterManager<Pin> mClusterManager;
-    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -160,9 +161,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
         //The cluster manager takes care when the user clicks on a marker and regroups the markers together
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
         //Displays the right color to the markers (green or yellow)
         mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
         mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         addDBMarkers();
     }
 
@@ -196,13 +199,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
-        mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
         if(!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
         }
         return false;
+    }
+
+    /**
+     * Method called when clicking the info window of a pin. It will go to the ViewFullSizeImageActivity
+     * to display the full size image associated to the info window clicked
+     * @param pin the pin/marker the user is clicking on its info window
+     */
+    @Override
+    public void onClusterItemInfoWindowClick(Pin pin){
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
+        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pin.getPhotoObject().getPictureId());
+        startActivity(displayFullSizeImageIntent);
     }
 
     /**
