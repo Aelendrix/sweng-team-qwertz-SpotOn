@@ -107,6 +107,10 @@ public class TabActivity extends AppCompatActivity {
         mCameraFragment.storePictureOnInternalStorage(view);
     }
 
+    public void sendPictureToServer(View view){
+        mCameraFragment.sendPictureToServer(view);
+    }
+
     /**
      * Override method starting the repeating task every TIME_BETWEEN_EXEC seconds
      */
