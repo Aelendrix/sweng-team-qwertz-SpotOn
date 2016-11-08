@@ -10,7 +10,7 @@ import org.hamcrest.Description;
  * Created by Alexis Dewaele on 28/10/2016.
  */
 
-public class ImageViewCatcher {
+public class ImageViewCatcherTest {
 
     public static BoundedMatcher<View, ImageView> hasDrawable(){
         return new BoundedMatcher<View, ImageView>(ImageView.class) {
