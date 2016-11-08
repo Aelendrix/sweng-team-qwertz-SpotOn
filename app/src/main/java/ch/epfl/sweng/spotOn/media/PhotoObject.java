@@ -441,6 +441,7 @@ public class PhotoObject {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
                 mFullsizeImageLink = taskSnapshot.getDownloadUrl().toString();
+                mStoredInServer = true;
                 sendToDatabase(hasListener, completionListener);
             }
         });
@@ -460,7 +461,6 @@ public class PhotoObject {
         }else {
             DBref.child(mPictureId).setValue(DBobject);
         }
-        mStoredInServer = true;
     }
 
 }

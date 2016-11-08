@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
@@ -33,7 +34,9 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
-        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin> {
+        ClusterManager.OnClusterItemClickListener<Pin>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
+        ClusterManager.OnClusterClickListener<Pin>{
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -154,10 +157,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     /**
-     * Set up the cluster manager
+     * Set up the cluster manager of the map
      */
     private void setUpCluster(){
-        mClusterManager = new ClusterManager<Pin>(getContext(), mMap);
+        mClusterManager = new ClusterManager<>(getContext(), mMap);
         //The cluster manager takes care when the user clicks on a marker and regroups the markers together
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -165,6 +168,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         //Displays the right color to the markers (green or yellow)
         mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
         mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         addDBMarkers();
     }
@@ -217,6 +221,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pin.getPhotoObject().getPictureId());
         startActivity(displayFullSizeImageIntent);
+    }
+
+    /**
+     * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
+     * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
+     * cluster displayed the info window of the pin.
+     * @param cluster the cluster that is clicked on
+     * @return true -> clicking on a cluster does nothing
+     */
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster){
+        return true;
     }
 
     /**

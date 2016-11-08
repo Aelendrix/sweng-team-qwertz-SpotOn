@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -101,11 +102,16 @@ public class TakePictureFragment extends Fragment {
      * @param view
      */
     public void rotatePicture(View view) {
-        mPic.setRotation(mPic.getRotation() + 90);
         if(mActualPhotoObject != null){
+            mPic.setRotation(mPic.getRotation() + 90);
+            Bitmap original = mActualPhotoObject.getFullSizeImage();
             boolean alreadySentToServer = mActualPhotoObject.isStoredInServer();
             boolean alreadyStoredInternally = mActualPhotoObject.isStoredInternally();
-            Bitmap rotatedBitmap = ((BitmapDrawable)mPic.getDrawable()).getBitmap();
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.postRotate(90);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(original, 0, 0, original.getWidth(),
+                    original.getHeight(), rotationMatrix, true);
+            //Bitmap rotatedBitmap = ((BitmapDrawable)mPic.getDrawable()).getBitmap();
             mActualPhotoObject = createPhotoObject(rotatedBitmap);
             mActualPhotoObject.setSentToServerStatus(alreadySentToServer);
             mActualPhotoObject.setStoredInternallyStatus(alreadyStoredInternally);
@@ -135,6 +141,7 @@ public class TakePictureFragment extends Fragment {
             if(!mActualPhotoObject.isStoredInServer()){
                 mActualPhotoObject.upload(false, null); // no onCOmplete listener
                 //TODO: Design something rather than displaying a message
+                mActualPhotoObject.setSentToServerStatus(true);
                 Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
