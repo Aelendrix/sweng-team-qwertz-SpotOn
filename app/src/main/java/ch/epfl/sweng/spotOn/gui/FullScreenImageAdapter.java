@@ -1,53 +1,75 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserId;
 
-public class ViewFullsizeImageActivity extends Activity {
+/**
+ * Created by Alexis Dewaele on 08/11/2016.
+ */
+
+public class FullScreenImageAdapter extends PagerAdapter {
+    private Activity mActivity;
+    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getViewableThumbnail();
+    private List<String> mThumbId = new ArrayList<>(mThumbnailMap.keySet());
+    private List<Bitmap> mThumbnail = new ArrayList<>();
+    private ImageView mViewToSet;
+    private PhotoObject mDisplayedMedia = null;
 
     public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
-    private PhotoObject mDisplayedMedia = null;
-    private ImageView mViewToSet;
-
+    public FullScreenImageAdapter(Activity activity) {
+        mActivity = activity;
+        for(String s : mThumbId) {
+            mThumbnail.add(mThumbnailMap.get(s));
+        }
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_fullsize_image);
+    public int getCount() {
+        return mThumbnail.size();
+    }
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        Intent i = getIntent();
-        int position = i.getIntExtra("position", 0);
-        FullScreenImageAdapter fullScreenImageAdapter = new FullScreenImageAdapter(this);
-        viewPager.setAdapter(fullScreenImageAdapter);
-        viewPager.setCurrentItem(position);
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return (view == (RelativeLayout) object);
+    }
 
-        /*mViewToSet = (ImageView) findViewById(R.id.fullSizeImageView);
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
+        mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
         mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
-        Intent displayImageIntent = getIntent();
+        Intent displayImageIntent = mActivity.getIntent();
         final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
         if(!LocalDatabase.hasKey(wantedImagePictureId)){
@@ -69,7 +91,14 @@ public class ViewFullsizeImageActivity extends Activity {
                     Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
                 }
             }
-        }*/
+        }
+        ((ViewPager) container).addView(viewLayout);
+        return viewLayout;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        ((ViewPager) container).removeView((RelativeLayout) object);
     }
 
     /** Factory method that returns a listener that
@@ -106,7 +135,7 @@ public class ViewFullsizeImageActivity extends Activity {
         }else{
             String userId = UserId.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
     }
 }

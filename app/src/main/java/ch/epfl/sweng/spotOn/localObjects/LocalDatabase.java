@@ -105,17 +105,6 @@ public class LocalDatabase {
         return mapThumbnail;
     }
 
-    public static List<PhotoObject> getViewablePhotos() {
-        List<PhotoObject> photoList = new ArrayList<>(photoDataMap.values());
-        LatLng loc = new LatLng(mLocation.getLatitude(),mLocation.getLongitude());
-        for(PhotoObject p : photoList) {
-            if(!p.isInPictureCircle(loc)) {
-                photoList.remove(p);
-            }
-        }
-        return photoList;
-    }
-
     public static void setLocation(Location location) {
         mLocation = location;
     }
