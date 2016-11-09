@@ -47,10 +47,12 @@ public class TabActivityTest {
 
     @Test
     public void swipe_between_fragments() {
+        Intents.init();
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.viewpager)).perform(swipeRight());
+        Intents.release();
     }
 
     @Test
@@ -77,13 +79,16 @@ public class TabActivityTest {
 
     @Test
     public void clickRotate() throws InterruptedException {
+        Intents.init();
         onView(withText("Camera")).perform(click());
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
+        Intents.release();
     }
 
     @Test
     public void refreshDB() throws Exception{
+        Intents.init();
         Location location = new Location("testLocationProvider");
         location.setLatitude(46.52890355757567);
         location.setLongitude(6.569420238493345);
@@ -94,7 +99,9 @@ public class TabActivityTest {
         TabActivity tabActivity = (TabActivity) mActivityTestRule.getActivity();
 
         tabActivity.mLocationTracker.refreshTrackerLocation();
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        Intents.release();
+
     }
 }
 
