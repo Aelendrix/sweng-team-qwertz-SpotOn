@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +36,11 @@ import ch.epfl.sweng.spotOn.user.UserId;
 
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
-    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getViewableThumbnail();
-    private List<String> mThumbId = new ArrayList<>(mThumbnailMap.keySet());
-    private List<Bitmap> mThumbnail = new ArrayList<>();
+
+    private Map<String, PhotoObject> mPhotoMap = LocalDatabase.getViewablePhotos();
+    private List<String> mPhotosId = new ArrayList<>(mPhotoMap.keySet());
+    private List<PhotoObject> mPhotos = new ArrayList<>();
+
     private ImageView mViewToSet;
     private PhotoObject mDisplayedMedia = null;
 
@@ -47,19 +50,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
-        for(String s : mThumbId) {
-            mThumbnail.add(mThumbnailMap.get(s));
+        for(String s : mPhotosId) {
+            mPhotos.add(mPhotoMap.get(s));
         }
     }
 
     @Override
     public int getCount() {
-        return mThumbnail.size();
+        return mPhotos.size();
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return (view == (RelativeLayout) object);
+        return view == object;
     }
 
     @Override
@@ -76,13 +79,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
         }else {
-            mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
+            mDisplayedMedia = mPhotos.get(position);
             Bitmap imageToDisplay = null;
             if (mDisplayedMedia.hasFullSizeImage()) {
                 imageToDisplay = mDisplayedMedia.getFullSizeImage();
                 mViewToSet.setImageBitmap(imageToDisplay);
             } else {
-                // retrieveFullsizeImage throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+                // retrieveFullsizeImage throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
                 try {
                     // add a listener that will set the image when it is retrieved
                     mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
@@ -92,13 +95,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
         }
-        ((ViewPager) container).addView(viewLayout);
+
+        container.addView(viewLayout);
         return viewLayout;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ((ViewPager) container).removeView((RelativeLayout) object);
+        container.removeView((RelativeLayout) object);
     }
 
     /** Factory method that returns a listener that

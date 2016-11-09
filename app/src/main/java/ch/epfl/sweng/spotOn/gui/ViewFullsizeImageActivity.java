@@ -31,6 +31,8 @@ public class ViewFullsizeImageActivity extends Activity {
     private PhotoObject mDisplayedMedia = null;
     private ImageView mViewToSet;
 
+    private FullScreenImageAdapter mFullScreenImageAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,10 @@ public class ViewFullsizeImageActivity extends Activity {
         setContentView(R.layout.activity_view_fullsize_image);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        Intent i = getIntent();
-        int position = i.getIntExtra("position", 0);
-        FullScreenImageAdapter fullScreenImageAdapter = new FullScreenImageAdapter(this);
-        viewPager.setAdapter(fullScreenImageAdapter);
+        mFullScreenImageAdapter = new FullScreenImageAdapter(this);
+        viewPager.setAdapter(mFullScreenImageAdapter);
+        Intent displayImageIntent = getIntent();
+        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mPosition);
         viewPager.setCurrentItem(position);
 
         /*mViewToSet = (ImageView) findViewById(R.id.fullSizeImageView);
@@ -74,7 +76,7 @@ public class ViewFullsizeImageActivity extends Activity {
 
     /** Factory method that returns a listener that
      * sets the imageView with the result of its query
-     * or deals with errorsif need be
+     * or deals with errors if need be
      */
     private OnCompleteListener<byte[]> newImageViewSetterListener(){
         return new OnCompleteListener<byte[]>() {
@@ -90,8 +92,15 @@ public class ViewFullsizeImageActivity extends Activity {
         };
     }
 
+    public void recordUpvote(View view) {
+        mFullScreenImageAdapter.recordUpvote(view);
+    }
 
+    public void recordDownvote(View view) {
+        mFullScreenImageAdapter.recordDownvote(view);
+    }
 
+/*
     public void recordUpvote(View view){
         vote(1);
     }
@@ -109,4 +118,5 @@ public class ViewFullsizeImageActivity extends Activity {
             Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
         }
     }
+    */
 }
