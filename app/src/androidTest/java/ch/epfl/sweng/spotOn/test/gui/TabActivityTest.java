@@ -77,16 +77,6 @@ public class TabActivityTest {
     }
 
 
-    @Test
-    public void clickRotate() throws InterruptedException {
-        Intents.init();
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.viewpager)).perform(swipeRight());
-        Thread.sleep(5000);
-        onView(withId(R.id.rotateButton)).perform(click());
-        Intents.release();
-    }
 
     @Test
     public void refreshDB() throws Exception{
@@ -98,7 +88,7 @@ public class TabActivityTest {
         location.setTime(System.currentTimeMillis());
         LocalDatabase.setLocation(location);
 
-        TabActivity tabActivity = (TabActivity) mActivityTestRule.getActivity();
+        TabActivity tabActivity = mActivityTestRule.getActivity();
 
         tabActivity.mLocationTracker.refreshTrackerLocation();
         Thread.sleep(10000);
