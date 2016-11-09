@@ -79,4 +79,3 @@ public class TabActivityTest {
         onView(withId(R.id.rotateButton)).perform(click());
     }
 }
-

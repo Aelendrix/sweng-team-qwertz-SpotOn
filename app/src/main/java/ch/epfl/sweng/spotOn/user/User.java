@@ -155,15 +155,6 @@ public class User {
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
 
-
-    @Override
-    public int hashCode() {
-        int result = mFirstName.hashCode();
-        result = 31 * result + mLastName.hashCode();
-        result = 31 * result + mUserId.hashCode();
-        return result;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -32,6 +32,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 public class TabActivity extends AppCompatActivity {
 
 
+    public LocalisationTracker mLocationTracker;
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
     private TakePictureFragment mCameraFragment = new TakePictureFragment();
     private MapFragment mMapFragment = new MapFragment();
@@ -84,7 +85,7 @@ public class TabActivity extends AppCompatActivity {
             }
         });
 
-        LocalisationTracker locationTracker = new LocalisationTracker(this.getApplicationContext()){
+        mLocationTracker = new LocalisationTracker(this.getApplicationContext()){
             @Override
             public void refreshTrackerLocation(){
                 // Called when a new location is found by the network location provider.
