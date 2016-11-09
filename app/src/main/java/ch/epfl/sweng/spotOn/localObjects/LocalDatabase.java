@@ -2,7 +2,9 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
@@ -102,6 +104,20 @@ public class LocalDatabase {
             }
         }
         return mapThumbnail;
+    }
+
+    public static Map<String, PhotoObject > getViewablePhotos() {
+        Map<String, PhotoObject> filteredPhotos = new HashMap<>();
+        int index = 0;
+        if(mLocation != null) {
+            LatLng loc = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+            for (String key : photoDataMap.keySet()) {
+                if (getPhoto(key).isInPictureCircle(loc)) {
+                    filteredPhotos.put(key, getPhoto(key));
+                }
+            }
+        }
+        return filteredPhotos;
     }
 
     public static void setLocation(Location location) {
