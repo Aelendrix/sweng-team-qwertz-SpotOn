@@ -36,7 +36,7 @@
             android:id="@+id/fullSizeImageView"
             android:scaleType="fitXY"
             android:adjustViewBounds="false" />
-
+-->
 
         <Button
             android:text="@string/downvoteButtonText"
@@ -62,7 +62,7 @@
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="13dp"
             android:onClick="recordUpvote"
-            android:id="@+id/upvoteButton" /> -->
+            android:id="@+id/upvoteButton" />
 
    <!-- </RelativeLayout>-->
 </RelativeLayout>
