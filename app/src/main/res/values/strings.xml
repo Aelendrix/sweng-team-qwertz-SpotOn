@@ -20,10 +20,21 @@
      <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
-    <string name="storeButton">Store</string>
+    <string name="storeButton">Save to gallery</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.
     </string>
+
+    <string name="userProfileTitle">User Profile</string>
+    <string name="userProfileFirstName">First Name:</string>
+    <string name="userProfileLastName">Last Name:</string>
+    <string name="userProfileGender">Gender:</string>
+    <string name="userProfileEmailAddress">Email Address:</string>
+    <string name="userProfileBirthday">Birthday:</string>
+    <string name="userProfileNbVotes">Number of votes:</string>
+    <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
+    <string name="userProfileBackButton">Back</string>
+
     <string name="fullSizeImage">Thumbnail in full size</string>
 </resources>
 

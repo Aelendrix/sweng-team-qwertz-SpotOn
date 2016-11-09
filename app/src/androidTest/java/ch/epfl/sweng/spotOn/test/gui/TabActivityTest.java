@@ -18,6 +18,8 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.ViewMatchers.withChild;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -25,7 +27,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.AboutPage;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-
+import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 
 
 /**
@@ -57,6 +59,19 @@ public class TabActivityTest {
         Intents.release();
     }
 
+
+    @Test
+    public void startUserProfileActivity() {
+        Intents.init();
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
+        onView(withText("Profile")).perform(click());
+        intended(hasComponent(UserProfileActivity.class.getName()));
+        onView(withText("Back")).perform(click());
+        intended(hasComponent(TabActivity.class.getName()));
+        Intents.release();
+    }
+
+
     @Test
     public void clickRotate() throws InterruptedException {
         onView(withText("Camera")).perform(click());
@@ -64,4 +79,3 @@ public class TabActivityTest {
         onView(withId(R.id.rotateButton)).perform(click());
     }
 }
-
