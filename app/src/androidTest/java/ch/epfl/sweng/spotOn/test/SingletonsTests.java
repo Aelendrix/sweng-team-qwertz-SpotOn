@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.DatabaseRef_test;
-import ch.epfl.sweng.spotOn.test.util.StorageRef_test;
+import ch.epfl.sweng.spotOn.test.util.DatabaseRef_Test;
+import ch.epfl.sweng.spotOn.test.util.StorageRef_Test;
 
 /**
  * Created by quentin on 04.11.16.
@@ -25,13 +25,14 @@ public class SingletonsTests {
         if(!(DatabaseRef.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory")))){
             throw new AssertionError();
         }
-        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory")))){
+        //TODO:Need to put MediaDirectory instead of mediaDirectory_alex
+        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("mediaDirectory_alex")))){
             throw new AssertionError();
         }
-        if(!(DatabaseRef_test.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory_test")))){
+        if(!(DatabaseRef_Test.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory_test")))){
             throw new AssertionError();
         }
-        if(!(DatabaseRef_test.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_test")))){
+        if(!(DatabaseRef_Test.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_test")))){
             throw new AssertionError();
         }
     }
@@ -41,7 +42,7 @@ public class SingletonsTests {
         if(!(StorageRef.getMediaDirectory().equals(FirebaseStorage.getInstance().getReference("Images")))){
             throw new AssertionError();
         }
-        if(!(StorageRef_test.getMediaDirectory().equals(FirebaseStorage.getInstance().getReference("Images_test")))){
+        if(!(StorageRef_Test.getMediaDirectory().equals(FirebaseStorage.getInstance().getReference("Images_test")))){
             throw new AssertionError();
         }
     }

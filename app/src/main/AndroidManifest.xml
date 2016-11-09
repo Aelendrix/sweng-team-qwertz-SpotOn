@@ -82,6 +82,9 @@
             android:name="ch.epfl.sweng.spotOn.gui.AboutPage"
             android:theme="@style/AppTheme.PopupWindow"/>
 
+        <activity
+            android:name="ch.epfl.sweng.spotOn.gui.UserProfileActivity"/>
+
         <activity android:name="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity"/>
 
         <provider

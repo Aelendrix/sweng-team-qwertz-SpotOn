@@ -38,6 +38,7 @@ public class TabActivity extends AppCompatActivity {
     // The path to the root of the stored pictures Data in the database
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds
+    private boolean hasLocalisation = false;
     Handler mHandler = new Handler();
     //
     private Runnable loopedRefresh = new Runnable() {
@@ -87,6 +88,12 @@ public class TabActivity extends AppCompatActivity {
             @Override
             public void refreshTrackerLocation(){
                 // Called when a new location is found by the network location provider.
+                if(!hasLocalisation){
+                    synchronized (this) {
+                        mHandler.postDelayed(loopedRefresh, 3 * 1000);
+                        hasLocalisation = true;
+                    }
+                }
                 refreshLocation();
             }
         };
@@ -118,7 +125,9 @@ public class TabActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //start a looped runnable code
-        mHandler.postDelayed(loopedRefresh,10*1000);
+        if(hasLocalisation) {
+            mHandler.postDelayed(loopedRefresh, 10 * 1000);
+        }
 
     }
     /**
@@ -168,6 +177,10 @@ public class TabActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
                 return true;
+            case R.id.user_profile:
+                Intent profileIntent = new Intent(this, UserProfileActivity.class);
+                startActivity(profileIntent); // go to the User Profile Activity
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -215,7 +228,7 @@ public class TabActivity extends AppCompatActivity {
         mMapFragment.displayPictureMarkers(photoList);
     }
     /**
-     * Private classe refreshing the current location
+     * Private class refreshing the current location
      * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
      */
     private void refreshLocation(){
