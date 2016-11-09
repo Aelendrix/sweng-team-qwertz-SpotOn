@@ -39,8 +39,8 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
                         if(child == null) {
                             child.getRef().removeValue();
                         }else {
-                            HashMap<String, Long> resultAsMap = ((HashMap<String, Long>) child.getValue());
-                            long expireTime = resultAsMap.get(VALUE_TO_CHECK);
+                            HashMap<String, Object> resultAsMap = ((HashMap<String, Object>) child.getValue());
+                            long expireTime = ((long) resultAsMap.get(VALUE_TO_CHECK));
                             if (expireTime < System.currentTimeMillis()) {
                                 child.getRef().removeValue();
                             }
