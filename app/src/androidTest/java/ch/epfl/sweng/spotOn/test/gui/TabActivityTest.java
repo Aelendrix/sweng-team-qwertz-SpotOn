@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 
-import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.filters.SmallTest;
@@ -29,8 +28,6 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.AboutPage;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.LocalisationTracker;
 
 
 /**
@@ -47,12 +44,10 @@ public class TabActivityTest {
 
     @Test
     public void swipe_between_fragments() {
-        Intents.init();
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.viewpager)).perform(swipeRight());
-        Intents.release();
     }
 
     @Test
@@ -77,23 +72,10 @@ public class TabActivityTest {
     }
 
 
-
     @Test
-    public void refreshDB() throws Exception{
-        Intents.init();
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-        LocalDatabase.setLocation(location);
-
-        TabActivity tabActivity = mActivityTestRule.getActivity();
-
-        tabActivity.mLocationTracker.refreshTrackerLocation();
-        Thread.sleep(10000);
-        Intents.release();
-
+    public void clickRotate() throws InterruptedException {
+        onView(withText("Camera")).perform(click());
+        Thread.sleep(5000);
+        onView(withId(R.id.rotateButton)).perform(click());
     }
 }
-
