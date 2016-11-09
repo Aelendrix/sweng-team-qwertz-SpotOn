@@ -78,14 +78,5 @@ public class TabActivityTest {
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
     }
-    @Test
-
-    public void clickSave() throws InterruptedException {
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.viewpager)).perform(swipeRight());
-        Thread.sleep(5000);
-        onView(withId(R.id.storeButton)).perform(click());
-    }
 }
 
