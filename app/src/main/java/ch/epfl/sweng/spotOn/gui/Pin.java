@@ -16,13 +16,16 @@ public class Pin implements ClusterItem {
 
     private final LatLng mPosition;
     private final PhotoObject mPictureAssociated;
-    private boolean isAccessible;
+    private boolean mIsAccessible;
+    private String mTitle;
     private float color;
 
     public Pin(PhotoObject picture, boolean isAccessible) {
         mPosition = new LatLng(picture.getLatitude(), picture.getLongitude());
         mPictureAssociated = picture;
-        this.isAccessible = isAccessible;
+        this.mIsAccessible = isAccessible;
+        //Title only useful for testing
+        mTitle = picture.getPhotoName();
         //Green Pin if it is accessible
         if(isAccessible) {
             color = BitmapDescriptorFactory.HUE_GREEN;
@@ -47,10 +50,14 @@ public class Pin implements ClusterItem {
     }
 
     public boolean getAccessibility(){
-        return isAccessible;
+        return mIsAccessible;
+    }
+
+    public String getTitle(){
+        return mTitle;
     }
 
     public void setAccessibility(boolean newAccessibility){
-        isAccessible = newAccessibility;
+        mIsAccessible = newAccessibility;
     }
 }
