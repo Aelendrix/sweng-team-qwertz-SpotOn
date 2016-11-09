@@ -36,7 +36,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public Object getItem(int position) {
-        return null;
+        return mThumbnail.get(position);
     }
 
     public long getItemId(int position) {
@@ -45,19 +45,18 @@ public class ImageAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        SquareImageView sImageView;
         if (convertView == null) {
             // attribute of one object in the grid
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(300,300));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            sImageView = new SquareImageView(mContext);
+            sImageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+            sImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
-            imageView = (ImageView) convertView;
+            sImageView = (SquareImageView) convertView;
         }
 
-        imageView.setImageBitmap(mThumbnail.get(position));
-        return imageView;
+        sImageView.setImageBitmap(mThumbnail.get(position));
+        return sImageView;
     }
 
     public String getIdAtPosition(int pos){
