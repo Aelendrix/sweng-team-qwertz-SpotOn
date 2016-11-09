@@ -80,7 +80,9 @@ public class TabActivityTest {
     @Test
     public void clickRotate() throws InterruptedException {
         Intents.init();
-        onView(withText("Camera")).perform(click());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        onView(withId(R.id.viewpager)).perform(swipeRight());
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
         Intents.release();
