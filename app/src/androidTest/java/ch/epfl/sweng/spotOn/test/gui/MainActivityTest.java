@@ -20,6 +20,8 @@ public class MainActivityTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
+    //TODO: change this test cause it'll fail if the mainActivity jump to tabActivity
+    //and couldn't click the mainActivity Button
     @Test
     public void launchFullPictureActivity() throws Exception{
         Thread.sleep(2000);
