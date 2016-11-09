@@ -17,7 +17,7 @@ public class Pin implements ClusterItem {
     private final LatLng mPosition;
     private final PhotoObject mPictureAssociated;
     private boolean isAccessible;
-    private BitmapDescriptor color;
+    private float color;
 
     public Pin(PhotoObject picture, boolean isAccessible) {
         mPosition = new LatLng(picture.getLatitude(), picture.getLongitude());
@@ -25,11 +25,11 @@ public class Pin implements ClusterItem {
         this.isAccessible = isAccessible;
         //Green Pin if it is accessible
         if(isAccessible) {
-            color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            color = BitmapDescriptorFactory.HUE_GREEN;
         }
         //Yellow pin if not accessible
         else{
-            color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+            color = BitmapDescriptorFactory.HUE_YELLOW;
         }
     }
 
@@ -42,7 +42,7 @@ public class Pin implements ClusterItem {
         return mPictureAssociated;
     }
 
-    public BitmapDescriptor getColor(){
+    public float getColor(){
         return color;
     }
 

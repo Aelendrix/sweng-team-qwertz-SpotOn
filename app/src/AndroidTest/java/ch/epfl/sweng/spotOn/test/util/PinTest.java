@@ -15,11 +15,11 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 @RunWith(AndroidJUnit4.class)
 public class PinTest {
 
-    PhotoObject photo1 = TestPhotoObjectUtils.paulVanDykPO();
-    PhotoObject photo2 = TestPhotoObjectUtils.iceDivingPO();
+    private PhotoObject photo1 = TestPhotoObjectUtils.paulVanDykPO();
+    private PhotoObject photo2 = TestPhotoObjectUtils.iceDivingPO();
 
-    Pin pin1 = new Pin(photo1, true);
-    Pin pin2 = new Pin(photo2, false);
+    private Pin pin1 = new Pin(photo1, true);
+    private Pin pin2 = new Pin(photo2, false);
 
     @Test
     public void equalPinsTest() throws Exception {
