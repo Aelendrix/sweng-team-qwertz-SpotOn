@@ -19,9 +19,12 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class User {
 
+    private final int INITIAL_KARMA = 0;
+
     private String mFirstName;
     private String mLastName;
     private String mUserId;
+    private long mKarma;
 
 
     public User(){} // needed for use of firebase database
@@ -53,9 +56,10 @@ public class User {
     }
 
 
-    /* Add a new user in the database */
+    /* Add a new user in the database with its karma instanciated to a arbitrary value*/
     private void createUserInDB(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
+        mKarma = INITIAL_KARMA;
         DBRef.child(mUserId).setValue(this);
     }
 
@@ -81,6 +85,7 @@ public class User {
                         // We can set the fields of User
                         mFirstName = retrievedUser.getFirstName();
                         mLastName = retrievedUser.getLastName();
+                        mKarma = retrievedUser.getKarma();
                     }
                 }
             }
@@ -121,6 +126,7 @@ public class User {
                             // We can set the fields of User
                             mFirstName = retrievedUser.getFirstName();
                             mLastName = retrievedUser.getLastName();
+                            mKarma = retrievedUser.getKarma();
                         }
 
                         if (userProfile == null) {
@@ -148,12 +154,14 @@ public class User {
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
+    public long getKarma() { return mKarma; }
 
 
     //PUBLIC SETTERS
     public void setFirstName(String firstName){ mFirstName = firstName; }
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
+    public void setKarma(long karma){ mKarma = karma; }
 
     @Override
     public boolean equals(Object o) {
@@ -164,6 +172,7 @@ public class User {
 
         if (!mFirstName.equals(user.mFirstName)) return false;
         if (!mLastName.equals(user.mLastName)) return false;
+        if (mKarma != user.getKarma()) return false;
         return mUserId.equals(user.mUserId);
 
     }
