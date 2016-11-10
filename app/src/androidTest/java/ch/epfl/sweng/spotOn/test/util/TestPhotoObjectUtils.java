@@ -99,7 +99,7 @@ public class TestPhotoObjectUtils {
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757654, 6.5694202384937871);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.520013, 6.566721);
     }
 
 

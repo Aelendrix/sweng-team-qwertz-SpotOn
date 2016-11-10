@@ -236,6 +236,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     /**
+     * Method useful for testing that removes the location marker
+     */
+    /*public static Marker removeLocationMarker() {
+        return mLocationMarker;
+    }*/
+
+    /**
      * Display a circle around each marker on the map representing the radius
      * where the picture is visible
      * @param picture the photoObject on which the circle will be set

@@ -18,6 +18,7 @@ public class SeePicturesFragment extends Fragment {
     View mView;
     GridView mGridView;
     private ImageAdapter mImageAdapter;
+    protected static int mPosition = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class SeePicturesFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+                mPosition = position;
                 displayFullsizeImage(position);
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }

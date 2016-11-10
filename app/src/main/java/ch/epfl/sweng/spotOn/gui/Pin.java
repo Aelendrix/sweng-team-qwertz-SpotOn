@@ -1,7 +1,5 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
@@ -25,7 +23,7 @@ public class Pin implements ClusterItem {
         mPictureAssociated = picture;
         this.mIsAccessible = isAccessible;
         //Title only useful for testing
-        mTitle = picture.getPhotoName();
+        mTitle = picture.getPictureId();
         //Green Pin if it is accessible
         if(isAccessible) {
             color = BitmapDescriptorFactory.HUE_GREEN;

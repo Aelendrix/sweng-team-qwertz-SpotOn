@@ -57,7 +57,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.defaultMarker(pin.getColor());
         markerOptions.icon(markerDescriptor);
-        markerOptions.title(pin.getTitle());
     }
 
     /*@Override
