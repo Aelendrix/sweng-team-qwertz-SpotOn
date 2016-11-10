@@ -37,7 +37,7 @@ public class MapFragmentTest {
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<>(TabActivity.class);
 
     UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-    //This will be useful when clicking on pins (not the one for the location)
+    //This will be useful when clicking on pins (not the pin for the location)
     String pictureID = ViewFullSizeImageActivityTest.initLocalDatabase().get(0);
 
     public void goToMapFragment() throws Exception {
