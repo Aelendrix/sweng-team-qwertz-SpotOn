@@ -13,9 +13,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,6 +32,7 @@ import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
+import ch.epfl.sweng.spotOn.user.User;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
@@ -46,7 +50,10 @@ public class PhotoObject {
 
     public final static long MAX_LIFETIME = 3*24*60*60*1000 ;              // in ms - 72h
     public final static long DEFAULT_LIFETIME = 24*60*60*1000;     // in milliseconds - 24H
-    public final static long MIN_LIFETIME = 2*60*60*1000;                  // in ms - 1h
+    public final static long MIN_LIFETIME = 2*60*60*1000;                  // in ms - 2h
+
+    private final int DOWNVOTE_KARMA_GIVEN = -5;
+    private final int UPVOTE_KARMA_GIVEN = 10;
 
     private Bitmap mFullsizeImage;
     private String mFullsizeImageLink;   // needed for the "cache-like" behaviour of getFullsizeImage()
@@ -141,19 +148,22 @@ public class PhotoObject {
     public String processVote(int vote, String votersId){
         String toastText="";   // message that will be displayed as the action's result
         boolean voteIsValid=false;
-        if(this.getAuthorId().equals(votersId)){
+        int karmaAdded = 0;    // karma given to the photo's author
+        if(mAuthorID.equals(votersId)){
             toastText="You can't vote for your own photo!";
-        }else if(this.getUpvotersList().contains(votersId) && vote==1) {   // illegal upvote
+        }else if(mUpvotersList.contains(votersId) && vote==1) {   // illegal upvote
             toastText = "you already upvoted this image !";
-        }else if(this.getDownvotersList().contains(votersId) && vote==-1){ // illegal downvote
+        }else if(mDownvotersList.contains(votersId) && vote==-1){ // illegal downvote
             toastText = "you already downvoted this image !";
         }else{
             if(vote == 1) {
                 voteIsValid=true;
                 toastText = "upvoted !";
+                karmaAdded = UPVOTE_KARMA_GIVEN;
             }else if(vote == -1) {
                 voteIsValid=true;
                 toastText = "downvoted !";
+                karmaAdded = DOWNVOTE_KARMA_GIVEN;
             }else {
                 throw new IllegalArgumentException("votes should be either 1 (upvote) or -1 (downvote)");
             }
@@ -161,23 +171,25 @@ public class PhotoObject {
 
         if(voteIsValid) {
             if (vote == -1) {
-                if (this.mUpvotersList.contains(votersId)) { //need to remove user's previous upvote
+                if (mUpvotersList.contains(votersId)) { //need to remove user's previous upvote and get back the karma from that upvote
                     mNbUpvotes -= 1;
+                    karmaAdded -= UPVOTE_KARMA_GIVEN;
                 }
                 mNbDownvotes += 1;
                 mDownvotersList.add(votersId);
                 mUpvotersList.remove(votersId);
             } else if (vote == 1) {
-                if (this.mDownvotersList.contains(votersId)) { //need to remove user's previous downvote
+                if (mDownvotersList.contains(votersId)) { //need to remove user's previous downvote and give back karma from that downvote
                     mNbDownvotes -= 1;
+                    karmaAdded -= DOWNVOTE_KARMA_GIVEN;
                 }
                 mNbUpvotes += 1;
                 mUpvotersList.add(votersId);
                 mDownvotersList.remove(votersId);
             }
 
-            this.computeRadius();
-            this.computeExpireDate();
+            computeRadius();
+            computeExpireDate();
 
             // push changes to Database if the object was uploaded
             if(mFullsizeImageLink!=null) {
@@ -187,6 +199,7 @@ public class PhotoObject {
                 DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
                 DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
                 DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
+                giveAuthorHisKarma(karmaAdded);
             }
         }
 
@@ -461,6 +474,35 @@ public class PhotoObject {
         }else {
             DBref.child(mPictureId).setValue(DBobject);
         }
+    }
+
+    private void giveAuthorHisKarma(final int addedKarma){
+        final DatabaseReference DBref = DatabaseRef.getUsersDirectory();
+        DBref.orderByChild("userId").equalTo(mAuthorID).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    if(dataSnapshot.child(mAuthorID).child("karma").getValue() == null){
+                        DBref.child(mAuthorID).child("karma").setValue(0);
+                    }
+                    long newKarma = 0;
+
+                    if(dataSnapshot.child(mAuthorID).child("karma").getValue() != null) {
+                        newKarma = ((long) dataSnapshot.child(mAuthorID).child("karma").getValue());
+                    }
+                    newKarma += addedKarma;
+                    DBref.child(mAuthorID).child("karma").setValue(newKarma);
+                    
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
     }
 
 }

@@ -24,6 +24,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView mBirthdayTextView = null;
     private TextView mNbVotesTextView = null;
     private TextView mNbPicturesTakenTextView = null;
+    private TextView mKarmaTextView = null;
     private User mUser = null;
 
     @Override
@@ -46,6 +47,7 @@ public class UserProfileActivity extends AppCompatActivity {
             mBirthdayTextView = (TextView) findViewById(R.id.profileBirthdayTextView);
             mNbVotesTextView = (TextView) findViewById(R.id.profileNbVotesTextView);
             mNbPicturesTakenTextView = (TextView) findViewById(R.id.profileNbPicturesTakenTextView);
+            mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
 
             Context context = getApplicationContext();
             String toastMessage = "Please wait a little bit while your info are updating";
@@ -69,6 +71,7 @@ public class UserProfileActivity extends AppCompatActivity {
     public void fillInFields(){
         mFirstNameTextView.setText(mFirstNameTextView.getText() + " " + mUser.getFirstName());
         mLastNameTextView.setText(mLastNameTextView.getText() + " " + mUser.getLastName());
+        mKarmaTextView.setText(mKarmaTextView.getText() + " " + mUser.getKarma());
     }
 
 
