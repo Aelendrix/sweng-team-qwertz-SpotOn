@@ -24,7 +24,7 @@ public class User {
     private String mFirstName;
     private String mLastName;
     private String mUserId;
-    private int mKarma;
+    private long mKarma;
 
 
     public User(){} // needed for use of firebase database
@@ -59,7 +59,7 @@ public class User {
     /* Add a new user in the database with its karma instanciated to a arbitrary value*/
     private void createUserInDB(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
-        this.mKarma = INITIAL_KARMA;
+        mKarma = INITIAL_KARMA;
         DBRef.child(mUserId).setValue(this);
     }
 
@@ -154,14 +154,14 @@ public class User {
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
-    public int getKarma() { return mKarma; }
+    public long getKarma() { return mKarma; }
 
 
     //PUBLIC SETTERS
     public void setFirstName(String firstName){ mFirstName = firstName; }
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
-    public void setKarma(int valueToIncrement){ mKarma += valueToIncrement; }
+    public void setKarma(long karma){ mKarma = karma; }
 
     @Override
     public boolean equals(Object o) {

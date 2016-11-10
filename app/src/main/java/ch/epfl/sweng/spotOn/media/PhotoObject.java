@@ -146,11 +146,11 @@ public class PhotoObject {
         String toastText="";   // message that will be displayed as the action's result
         boolean voteIsValid=false;
         int karmaAdded = 0;    // karma given to the photo's author
-        if(this.getAuthorId().equals(votersId)){
+        if(mAuthorID.equals(votersId)){
             toastText="You can't vote for your own photo!";
-        }else if(this.getUpvotersList().contains(votersId) && vote==1) {   // illegal upvote
+        }else if(mUpvotersList.contains(votersId) && vote==1) {   // illegal upvote
             toastText = "you already upvoted this image !";
-        }else if(this.getDownvotersList().contains(votersId) && vote==-1){ // illegal downvote
+        }else if(mDownvotersList.contains(votersId) && vote==-1){ // illegal downvote
             toastText = "you already downvoted this image !";
         }else{
             if(vote == 1) {
@@ -168,7 +168,7 @@ public class PhotoObject {
 
         if(voteIsValid) {
             if (vote == -1) {
-                if (this.mUpvotersList.contains(votersId)) { //need to remove user's previous upvote and get back the karma from that upvote
+                if (mUpvotersList.contains(votersId)) { //need to remove user's previous upvote and get back the karma from that upvote
                     mNbUpvotes -= 1;
                     karmaAdded -= UPVOTE_KARMA_GIVEN;
                 }
@@ -176,7 +176,7 @@ public class PhotoObject {
                 mDownvotersList.add(votersId);
                 mUpvotersList.remove(votersId);
             } else if (vote == 1) {
-                if (this.mDownvotersList.contains(votersId)) { //need to remove user's previous downvote and give back karma from that downvote
+                if (mDownvotersList.contains(votersId)) { //need to remove user's previous downvote and give back karma from that downvote
                     mNbDownvotes -= 1;
                     karmaAdded -= DOWNVOTE_KARMA_GIVEN;
                 }
@@ -185,8 +185,8 @@ public class PhotoObject {
                 mDownvotersList.remove(votersId);
             }
 
-            this.computeRadius();
-            this.computeExpireDate();
+            computeRadius();
+            computeExpireDate();
 
             // push changes to Database if the object was uploaded
             if(mFullsizeImageLink!=null) {
@@ -475,9 +475,14 @@ public class PhotoObject {
                     if(dataSnapshot.child(mAuthorID).child("karma").getValue() == null){
                         DBref.child(mAuthorID).child("karma").setValue(0);
                     }
-                    User author = dataSnapshot.child(mAuthorID).getValue(User.class);
-                    author.setKarma(addedKarma);
-                    DBref.child(mAuthorID).setValue(author);
+                    long newKarma = 0;
+
+                    if(dataSnapshot.child(mAuthorID).child("karma").getValue() != null) {
+                        newKarma = ((long) dataSnapshot.child(mAuthorID).child("karma").getValue());
+                    }
+                    newKarma += addedKarma;
+                    DBref.child(mAuthorID).child("karma").setValue(newKarma);
+                    
                 }
             }
 
