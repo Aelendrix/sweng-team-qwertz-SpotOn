@@ -60,8 +60,9 @@
         android:layout_height="match_parent"
         android:id="@+id/image_view"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/rotateButton"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/sendButton" />
+        android:scaleType="fitXY"
+        tools:ignore="ContentDescription"
+        android:adjustViewBounds="false" />
 
 </RelativeLayout>
