@@ -90,19 +90,19 @@ public class ViewFullSizeImageActivityTest {
         PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
         String pictureID1 = po1.getPictureId();
         picIDs.add(pictureID1);
-        /*po1.upload(true, new OnCompleteListener<Void>() {
+        po1.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
             }
-        });*/
+        });
         PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
         String pictureID2 = po2.getPictureId();
         picIDs.add(pictureID2);
-        /*po2.upload(true, new OnCompleteListener<Void>() {
+        po2.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
             }
-        });*/
+        });
         LocalDatabase.addPhotoObject(po1);
         LocalDatabase.addPhotoObject(po2);
         return picIDs;
