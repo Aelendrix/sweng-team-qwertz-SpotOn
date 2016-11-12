@@ -231,44 +231,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      * @return true -> clicking on a cluster does nothing
      */
     @Override
-    public boolean onClusterClick(Cluster<Pin> cluster){
-        return true;
-    }
-
-    /**
-     * Display a circle around each marker on the map representing the radius
-     * where the picture is visible
-     * @param picture the photoObject on which the circle will be set
-     */
-    public void displayCircleForPicture(PhotoObject picture){
-        if (picture != null) {
-            if(mMap!=null) {
-                mMap.addCircle(new CircleOptions()
-                        .center(new LatLng(picture.getLatitude(), picture.getLongitude()))
-                        .radius(picture.getRadius())
-                        .strokeColor(Color.RED));
-            }
-        }
-    }
-
-    /**
-     * Display a marker on the map at the location where the picture was taken
-     * and displays the bitmap image when clicking the marker
-     * @param photos the list of photos we represent on the map
-     */
-    public void displayPictureMarkers(ArrayList<PhotoObject> photos){
-        if(!photos.isEmpty()) {
-            for (int i = 0; i < photos.size(); i++) {
-                PhotoObject obj = photos.get(i);
-                LatLng picSpot = new LatLng(obj.getLatitude(), obj.getLongitude());
-                displayCircleForPicture(obj);
-                if(mMap!=null) {
-                    mMap.addMarker(new MarkerOptions()
-                            .position(picSpot)
-                            .title(obj.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                }
-            }
-        }
-    }
+    public boolean onClusterClick(Cluster<Pin> cluster){return true;}
 }
