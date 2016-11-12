@@ -68,6 +68,7 @@ public class PhotoObject {
     private double mLongitude;
     private int mRadius;
     private boolean mStoredInternally;
+    private boolean mStoredInServer;
     private int mNbUpvotes;
     private int mNbDownvotes;
     private ArrayList<String> mDownvotersList;
@@ -89,6 +90,7 @@ public class PhotoObject {
         mLongitude = longitude;
         mAuthorID = authorID;
         mStoredInternally = false;
+        mStoredInServer = false;
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
         mNbDownvotes = 1;
         mDownvotersList = new ArrayList<String>();
@@ -112,6 +114,7 @@ public class PhotoObject {
         mLongitude = longitude;
         mAuthorID = authorID;
         mStoredInternally = false;
+        mStoredInServer = false;
         mNbUpvotes = nbUpvotes;
         mNbDownvotes = nbDownvotes;
         mUpvotersList = new ArrayList<>(upvoters);
@@ -281,8 +284,11 @@ public class PhotoObject {
     public String getFullsizeImageLink() {
         return mFullsizeImageLink;
     }
-    public boolean getStoredInternallyStatus(){
+    public boolean isStoredInternally(){
         return mStoredInternally;
+    }
+    public boolean isStoredInServer() {
+        return mStoredInServer;
     }
     public int getUpvotes(){return mNbUpvotes;}
     public int getDownvotes(){return mNbDownvotes;}
@@ -294,6 +300,10 @@ public class PhotoObject {
 
     public void setStoredInternallyStatus(boolean storedInternally){
         mStoredInternally = storedInternally;
+    }
+
+    public void setSentToServerStatus(boolean alreadySent){
+        mStoredInServer = alreadySent;
     }
 
 
@@ -444,6 +454,7 @@ public class PhotoObject {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 // get the download link of the file
                 mFullsizeImageLink = taskSnapshot.getDownloadUrl().toString();
+                mStoredInServer = true;
                 sendToDatabase(hasListener, completionListener);
             }
         });

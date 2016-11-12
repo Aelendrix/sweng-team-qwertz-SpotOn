@@ -1,6 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -14,14 +14,24 @@ public class Pin implements ClusterItem {
 
     private final LatLng mPosition;
     private final PhotoObject mPictureAssociated;
-    private boolean isAccessible;
-    private BitmapDescriptor color;
+    private boolean mIsAccessible;
+    private String mTitle;
+    private float color;
 
-    public Pin(PhotoObject picture, BitmapDescriptor color, boolean isAccessible){
+    public Pin(PhotoObject picture, boolean isAccessible) {
         mPosition = new LatLng(picture.getLatitude(), picture.getLongitude());
         mPictureAssociated = picture;
-        this.isAccessible = isAccessible;
-        this.color = color;
+        this.mIsAccessible = isAccessible;
+        //Title only useful for testing
+        mTitle = picture.getPictureId();
+        //Green Pin if it is accessible
+        if(isAccessible) {
+            color = BitmapDescriptorFactory.HUE_GREEN;
+        }
+        //Yellow pin if not accessible
+        else{
+            color = BitmapDescriptorFactory.HUE_YELLOW;
+        }
     }
 
     @Override
@@ -33,15 +43,19 @@ public class Pin implements ClusterItem {
         return mPictureAssociated;
     }
 
-    public BitmapDescriptor getColor(){
+    public float getColor(){
         return color;
     }
 
     public boolean getAccessibility(){
-        return isAccessible;
+        return mIsAccessible;
+    }
+
+    public String getTitle(){
+        return mTitle;
     }
 
     public void setAccessibility(boolean newAccessibility){
-        isAccessible = newAccessibility;
+        mIsAccessible = newAccessibility;
     }
 }

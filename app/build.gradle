@@ -7,7 +7,8 @@ android {
 
     defaultConfig {
         applicationId "ch.epfl.sweng.project"
-        minSdkVersion 15
+        //Need minSdkVersion to be at least 18 (15 before) to be able to use UI Automator test for the map
+        minSdkVersion 18
         targetSdkVersion 24
 
         versionCode 1
@@ -53,7 +54,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.6.1'
     compile 'com.google.maps.android:android-maps-utils:0.4+'
     androidTestCompile 'junit:junit:4.12'
-
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2'
 
     // for firebase

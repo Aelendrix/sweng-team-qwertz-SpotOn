@@ -54,8 +54,12 @@ public class CameraTest {
         onView(withId(R.id.captureButton)).perform(click());
 
         //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
+        //Test all behavior: before and after rotating picture
         onView(withId(R.id.storeButton)).perform(click());
-
+        onView(withId(R.id.sendButton)).perform(click());
+        onView(withId(R.id.rotateButton)).perform(click());
+        onView(withId(R.id.storeButton)).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
     }
 
     private ActivityResult createImageCaptureStub() {

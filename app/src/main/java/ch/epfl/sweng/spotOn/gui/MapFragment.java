@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.gui;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
@@ -30,7 +33,10 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<Pin> {
+public class MapFragment extends Fragment implements OnMapReadyCallback,
+        ClusterManager.OnClusterItemClickListener<Pin>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
+        ClusterManager.OnClusterClickListener<Pin>{
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -53,7 +59,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
     //list of photoObject
     private List<PhotoObject> listPhoto;
     private ClusterManager<Pin> mClusterManager;
-    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -152,16 +157,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
     }
 
     /**
-     * Set up the cluster manager
+     * Set up the cluster manager of the map
      */
     private void setUpCluster(){
-        mClusterManager = new ClusterManager<Pin>(getContext(), mMap);
+        mClusterManager = new ClusterManager<>(getContext(), mMap);
         //The cluster manager takes care when the user clicks on a marker and regroups the markers together
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
         //Displays the right color to the markers (green or yellow)
         mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
         mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         addDBMarkers();
     }
 
@@ -179,18 +187,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
             for (PhotoObject photo : listPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
                 LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                BitmapDescriptor color;
-                //add a GREEN pin to the cluster manager if the photo can be seen
-                if(canActivateIt) {
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-                }
-                //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
-                else{
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-                }
-                Pin pinForPicture = new Pin(photo, color, canActivateIt);
+                Pin pinForPicture = new Pin(photo, canActivateIt);
                 //add the marker to the cluster manager
                 mClusterManager.addItem(pinForPicture);
+                //Re-cluster the cluster at each addition of a pin
                 mClusterManager.cluster();
             }
         }
@@ -203,7 +203,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
-        mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
         if(!pin.getAccessibility()) {
@@ -213,39 +212,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Cluster
     }
 
     /**
-     * Display a circle around each marker on the map representing the radius
-     * where the picture is visible
-     * @param picture the photoObject on which the circle will be set
+     * Method called when clicking the info window of a pin. It will go to the ViewFullSizeImageActivity
+     * to display the full size image associated to the info window clicked
+     * @param pin the pin/marker the user is clicking on its info window
      */
-    public void displayCircleForPicture(PhotoObject picture){
-        if (picture != null) {
-            if(mMap!=null) {
-                mMap.addCircle(new CircleOptions()
-                        .center(new LatLng(picture.getLatitude(), picture.getLongitude()))
-                        .radius(picture.getRadius())
-                        .strokeColor(Color.RED));
-            }
-        }
+    @Override
+    public void onClusterItemInfoWindowClick(Pin pin){
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
+        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pin.getPhotoObject().getPictureId());
+        startActivity(displayFullSizeImageIntent);
     }
 
     /**
-     * Display a marker on the map at the location where the picture was taken
-     * and displays the bitmap image when clicking the marker
-     * @param photos the list of photos we represent on the map
+     * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
+     * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
+     * cluster displayed the info window of the pin.
+     * @param cluster the cluster that is clicked on
+     * @return true -> clicking on a cluster does nothing
      */
-    public void displayPictureMarkers(ArrayList<PhotoObject> photos){
-        if(!photos.isEmpty()) {
-            for (int i = 0; i < photos.size(); i++) {
-                PhotoObject obj = photos.get(i);
-                LatLng picSpot = new LatLng(obj.getLatitude(), obj.getLongitude());
-                displayCircleForPicture(obj);
-                if(mMap!=null) {
-                    mMap.addMarker(new MarkerOptions()
-                            .position(picSpot)
-                            .title(obj.getPhotoName())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                }
-            }
-        }
-    }
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster){return true;}
 }

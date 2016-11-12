@@ -20,6 +20,7 @@
      <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
+    <string name="sendButton">Send</string>
     <string name="storeButton">Save to gallery</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.

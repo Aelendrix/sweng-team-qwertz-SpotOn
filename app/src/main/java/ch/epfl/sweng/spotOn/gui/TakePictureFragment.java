@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -92,8 +94,28 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    /**
+     * Method that will be called when clicking on the Rotate button. It will rotate the image view
+     * and create a new PhotoObject from the rotatedPicture, but it will keep from the previous picture
+     * the alreadyStored status and alreadySentToServer status in order for the user to avoid sending
+     * the rotated picture if he already sent the non rotated picture before
+     * @param view
+     */
     public void rotatePicture(View view) {
-        mPic.setRotation(mPic.getRotation() + 90);
+        if(mActualPhotoObject != null){
+            mPic.setRotation(mPic.getRotation() + 90);
+            Bitmap original = mActualPhotoObject.getFullSizeImage();
+            boolean alreadySentToServer = mActualPhotoObject.isStoredInServer();
+            boolean alreadyStoredInternally = mActualPhotoObject.isStoredInternally();
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.postRotate(90);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(original, 0, 0, original.getWidth(),
+                    original.getHeight(), rotationMatrix, true);
+            //Bitmap rotatedBitmap = ((BitmapDrawable)mPic.getDrawable()).getBitmap();
+            mActualPhotoObject = createPhotoObject(rotatedBitmap);
+            mActualPhotoObject.setSentToServerStatus(alreadySentToServer);
+            mActualPhotoObject.setStoredInternallyStatus(alreadyStoredInternally);
+        }
     }
 
     /**
@@ -102,7 +124,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void storePictureOnInternalStorage(View view){
         if(mActualPhotoObject != null) {
-            if(!mActualPhotoObject.getStoredInternallyStatus()) {
+            if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
                 Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
@@ -111,6 +133,21 @@ public class TakePictureFragment extends Fragment {
             }
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void sendPictureToServer(View view){
+        if(mActualPhotoObject != null){
+            if(!mActualPhotoObject.isStoredInServer()){
+                mActualPhotoObject.upload(false, null); // no onCOmplete listener
+                //TODO: Design something rather than displaying a message
+                mActualPhotoObject.setSentToServerStatus(true);
+                Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -275,7 +312,6 @@ public class TakePictureFragment extends Fragment {
                     mPic.setImageBitmap(HQPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
                     mActualPhotoObject = createPhotoObject(HQPicture);
-                    mActualPhotoObject.upload(false, null); // no onCOmplete listener
                 } else {
                     Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
                 }

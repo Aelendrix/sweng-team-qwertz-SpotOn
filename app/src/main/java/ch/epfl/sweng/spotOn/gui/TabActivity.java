@@ -115,6 +115,10 @@ public class TabActivity extends AppCompatActivity {
         mCameraFragment.storePictureOnInternalStorage(view);
     }
 
+    public void sendPictureToServer(View view){
+        mCameraFragment.sendPictureToServer(view);
+    }
+
     /**
      * Override method starting the repeating task every TIME_BETWEEN_EXEC seconds
      */
@@ -219,11 +223,7 @@ public class TabActivity extends AppCompatActivity {
             mPicturesFragment.refreshGrid();
         }
     }
-    //refresh the local markers
-    public void changeLocalMarkers(ArrayList<PhotoObject> photoList)
-    {
-        mMapFragment.displayPictureMarkers(photoList);
-    }
+
     /**
      * Private class refreshing the current location
      * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
