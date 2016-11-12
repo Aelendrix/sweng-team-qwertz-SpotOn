@@ -7,40 +7,15 @@
 
     <ImageView
         android:contentDescription="@string/fullSizeImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:srcCompat="@color/cardview_shadow_start_color"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:id="@+id/fullSizeImageView"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="false" />
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_centerInParent="true"/>
 
-<!--
-    <Button
-        android:text="@string/downvoteButtonText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="17dp"
-        android:onClick="recordDownvote"
-        android:id="@+id/downVoteButton" />
-
-    <Button
-        android:text="@string/upvoteButtonText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="18dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="13dp"
-        android:onClick="recordUpvote"
-        android:id="@+id/upvoteButton" />
--->
+    <!--android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitXY"-->
 </RelativeLayout>
