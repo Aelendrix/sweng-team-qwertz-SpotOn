@@ -1,10 +1,20 @@
 package ch.epfl.sweng.spotOn.gui;
 
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -12,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -32,6 +43,8 @@ import java.util.List;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<Pin>,
@@ -66,8 +79,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapsInitializer.initialize(getApplicationContext());
         //setRetainInstance(true);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /*super.onCreateView(inflater, container, savedInstanceState);
@@ -119,7 +134,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 if (mLocationMarker == null) {
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
                                         .position(mPhoneLatLng)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                        .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
+                                                R.drawable.ic_position_marker_30dp))));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
                 } else {
                     mLocationMarker.setPosition(mPhoneLatLng);
@@ -137,7 +153,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
         setUpCluster();
-        //This will call the method onMarkerClick when clicking a marker
     }
 
     @Override
@@ -231,4 +246,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public boolean onClusterClick(Cluster<Pin> cluster){return true;}
+
+    /**
+     * Get a bitmap from a VectorDrawable (xml file) -> this method is only working before LOLLIPOP API
+     * @param vectorDrawable the VectorDrawable to get its bitmap
+     * @return the bitmap of the VectorDrawable
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    /**
+     * Get the bitmap from an xml file to be the icon of the position marker
+     * @param context the context of the fragment
+     * @param drawableId the ID of the xml file
+     * @return the bitmap of the resource xml file
+     */
+    private static Bitmap getBitmap(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable instanceof BitmapDrawable) {
+            return BitmapFactory.decodeResource(context.getResources(), drawableId);
+        } else if (drawable instanceof VectorDrawable) {
+            return getBitmap((VectorDrawable) drawable);
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
+    }
 }

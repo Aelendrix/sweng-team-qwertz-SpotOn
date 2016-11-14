@@ -17,7 +17,7 @@ public class SeePicturesFragment extends Fragment {
 
     View mView;
     GridView mGridView;
-    private ImageAdapter mImageAdapter;
+    private static ImageAdapter mImageAdapter;
     protected static int mPosition = 0;
 
     @Override
@@ -56,6 +56,4 @@ public class SeePicturesFragment extends Fragment {
         displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullsizeImageIntent);
     }
-
-
 }
