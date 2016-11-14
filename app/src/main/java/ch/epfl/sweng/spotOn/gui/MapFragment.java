@@ -182,7 +182,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         if(mMap!=null && mPhoneLatLng!=null) {
             //empty the cluster manager
             mClusterManager.clearItems();
-            refreshMapLocation(mPhoneLatLng);
             //add the new markers on the Cluster Manager
             for (PhotoObject photo : listPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);

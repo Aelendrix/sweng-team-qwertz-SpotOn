@@ -237,6 +237,7 @@ public class TabActivity extends AppCompatActivity {
             if(mCameraFragment!=null) {
                 mCameraFragment.refreshLocation(mLocation);
             }
+            endRefreshDB();
         }
     }
 }
