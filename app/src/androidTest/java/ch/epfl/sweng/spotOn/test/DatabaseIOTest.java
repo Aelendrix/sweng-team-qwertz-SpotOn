@@ -21,6 +21,7 @@ import java.util.List;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
@@ -59,7 +60,8 @@ public class DatabaseIOTest {
         }
 
         if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
-            DatabaseRef.getMediaDirectory().child(testObject1.getPictureId()).removeValue();
+            DatabaseRef.deletePhotoObjectFromDB(testObject1.getPictureId());
+            StorageRef.deletePictureFromStorage(testObject1.getPictureId());
             throw new AssertionError("Test made it this far - test succeeded !");
         }
 
@@ -97,7 +99,9 @@ public class DatabaseIOTest {
                     }
                     else{
                         //delete the PO after the test from the firebaseDB
-                        DatabaseRef.getMediaDirectory().child(poId).removeValue();
+                        DatabaseRef.deletePhotoObjectFromDB(poId);
+                        StorageRef.deletePictureFromStorage(poId);
+
                     }
                     synchronized (lock) {
                         lock.notify();
@@ -177,7 +181,8 @@ public class DatabaseIOTest {
                         retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
             }
             else{
-                dbref.child(poId).removeValue();
+                DatabaseRef.deletePhotoObjectFromDB(poId);
+                StorageRef.deletePictureFromStorage(poId);
             }
         }
     }

@@ -28,6 +28,7 @@ import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -86,6 +87,7 @@ public class FullPictureActivityTest {
 
     @After
     public void clearPO(){
-        DatabaseRef.getMediaDirectory().child(pictureID).removeValue();
+        DatabaseRef.deletePhotoObjectFromDB(pictureID);
+        StorageRef.deletePictureFromStorage(pictureID);
     }
 }
