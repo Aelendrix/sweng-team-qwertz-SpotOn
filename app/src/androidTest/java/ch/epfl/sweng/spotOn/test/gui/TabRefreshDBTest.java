@@ -31,7 +31,7 @@ public class TabRefreshDBTest {
         location.setTime(System.currentTimeMillis());
         LocalDatabase.setLocation(location);
 
-        TabActivity tabActivity = (TabActivity) mActivityTestRule.getActivity();
+        TabActivity tabActivity = mActivityTestRule.getActivity();
 
         tabActivity.mLocationTracker.refreshTrackerLocation();
         Thread.sleep(10000);
