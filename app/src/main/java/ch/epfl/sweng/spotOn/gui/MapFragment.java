@@ -119,7 +119,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 if (mLocationMarker == null) {
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
                                         .position(mPhoneLatLng)
-                                        .title("My position")
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
                 } else {
@@ -186,7 +185,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             //add the new markers on the Cluster Manager
             for (PhotoObject photo : listPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
-                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
                 Pin pinForPicture = new Pin(photo, canActivateIt);
                 //add the marker to the cluster manager
                 mClusterManager.addItem(pinForPicture);
@@ -207,6 +205,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         //If the marker clicked is yellow
         if(!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
+            return true;
         }
         return false;
     }

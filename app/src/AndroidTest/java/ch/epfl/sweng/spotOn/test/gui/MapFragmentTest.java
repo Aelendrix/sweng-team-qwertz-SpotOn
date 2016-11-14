@@ -37,7 +37,7 @@ public class MapFragmentTest {
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<>(TabActivity.class);
 
     UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-    //This will be useful when clicking on pins (not the pin for the location)
+    //Get the pictureID associated to the first picture of the Local DB (also the title of the marker)
     String pictureID = ViewFullSizeImageActivityTest.initLocalDatabase().get(0);
 
     public void goToMapFragment() throws Exception {
@@ -57,7 +57,7 @@ public class MapFragmentTest {
     @Test
     public void clickingOnMarkerTest() throws Exception {
         goToMapFragment();
-        UiObject pin = mDevice.findObject(new UiSelector().descriptionContains("My Position"));
+        UiObject pin = mDevice.findObject(new UiSelector().descriptionContains(pictureID));
         pin.click();
         Thread.sleep(1000);
     }

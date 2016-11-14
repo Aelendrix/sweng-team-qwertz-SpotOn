@@ -7,12 +7,6 @@
     android:layout_height="match_parent"
     tools:context="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-    </android.support.v4.view.ViewPager>
-
     <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,22 +27,29 @@
             android:scaleType="fitXY"
             android:adjustViewBounds="false" />
 -->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+    </android.support.v4.view.ViewPager>
 
-    <Button
-        android:text="@string/upvoteButtonText"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="18dp"
         android:layout_marginEnd="18dp"
         android:onClick="recordUpvote"
         android:id="@+id/upvoteButton"
+        android:src="@drawable/ic_thumb_up_30dp"
+        android:background="@drawable/button_shape_upvote"
         android:layout_alignBaseline="@+id/downVoteButton"
         android:layout_alignBottom="@+id/downVoteButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <Button
-        android:text="@string/downvoteButtonText"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="19dp"
@@ -56,6 +57,8 @@
         android:layout_marginBottom="16dp"
         android:onClick="recordDownvote"
         android:id="@+id/downVoteButton"
+        android:src="@drawable/ic_thumb_down_30dp"
+        android:background="@drawable/button_shape_downvote"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

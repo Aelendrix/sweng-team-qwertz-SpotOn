@@ -87,6 +87,7 @@ public class ViewFullSizeImageActivityTest {
         location.setTime(System.currentTimeMillis());
         LocalDatabase.clearData();
         LocalDatabase.setLocation(location);
+
         PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
         String pictureID1 = po1.getPictureId();
         picIDs.add(pictureID1);
@@ -95,6 +96,7 @@ public class ViewFullSizeImageActivityTest {
             public void onComplete(@NonNull Task<Void> task) {
             }
         });
+
         PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
         String pictureID2 = po2.getPictureId();
         picIDs.add(pictureID2);
@@ -103,6 +105,7 @@ public class ViewFullSizeImageActivityTest {
             public void onComplete(@NonNull Task<Void> task) {
             }
         });
+
         LocalDatabase.addPhotoObject(po1);
         LocalDatabase.addPhotoObject(po2);
         return picIDs;
