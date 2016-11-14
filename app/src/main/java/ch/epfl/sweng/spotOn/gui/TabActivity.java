@@ -237,7 +237,14 @@ public class TabActivity extends AppCompatActivity {
             if(mCameraFragment!=null) {
                 mCameraFragment.refreshLocation(mLocation);
             }
-            endRefreshDB();
+            if(mPicturesFragment!=null) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPicturesFragment.refreshGrid();
+                    }
+                });
+            }
         }
     }
 }

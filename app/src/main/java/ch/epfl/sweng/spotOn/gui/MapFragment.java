@@ -125,6 +125,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 } else {
                     mLocationMarker.setPosition(mPhoneLatLng);
                 }
+                addDBMarkers();
             }
         }
     }
