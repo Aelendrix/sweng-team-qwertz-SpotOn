@@ -93,6 +93,10 @@ public class DatabaseIOTest {
                     if (!areEquals(po, retrievedPo)) {
                         throw new AssertionError("expected : \n" + po.toString() + "\nReceived : \n" + retrievedPo.toString());
                     }
+                    else{
+                        //delete the PO after the test from the firebaseDB
+                        DatabaseRef.getMediaDirectory().child(poId).removeValue();
+                    }
                     synchronized (lock) {
                         lock.notify();
                     }

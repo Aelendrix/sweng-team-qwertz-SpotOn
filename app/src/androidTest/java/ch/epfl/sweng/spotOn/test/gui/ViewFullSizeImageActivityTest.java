@@ -120,24 +120,24 @@ public class ViewFullSizeImageActivityTest {
         location.setTime(System.currentTimeMillis());
         LocalDatabase.clearData();
         LocalDatabase.setLocation(location);
-        PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
-        String pictureID1 = po1.getPictureId();
-        picIDs.add(pictureID1);
-        po1.upload(true, new OnCompleteListener<Void>() {
+        PhotoObject po3 = TestPhotoObjectUtils.paulVanDykPO();
+        String pictureID3 = po3.getPictureId();
+        picIDs.add(pictureID3);
+        po3.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
             }
         });
-        PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
-        String pictureID2 = po2.getPictureId();
-        picIDs.add(pictureID2);
-        po2.upload(true, new OnCompleteListener<Void>() {
+        PhotoObject po4 = TestPhotoObjectUtils.germaynDeryckePO();
+        String pictureID4 = po4.getPictureId();
+        picIDs.add(pictureID4);
+        po4.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
             }
         });
-        LocalDatabase.addPhotoObject(po1);
-        LocalDatabase.addPhotoObject(po2);
+        LocalDatabase.addPhotoObject(po3);
+        LocalDatabase.addPhotoObject(po4);
         return picIDs;
     }
 }
