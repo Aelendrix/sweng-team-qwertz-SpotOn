@@ -191,8 +191,8 @@ public class TabActivity extends AppCompatActivity {
         Profile profile = Profile.getCurrentProfile();
         if(profile != null){
             LoginManager.getInstance().logOut();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            //go to the mainActivity in the activity stack
+            finish();
         }
     }
 
