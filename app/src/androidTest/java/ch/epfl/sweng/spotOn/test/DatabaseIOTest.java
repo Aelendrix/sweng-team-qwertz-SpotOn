@@ -174,6 +174,9 @@ public class DatabaseIOTest {
                 throw new AssertionError("retrieved object should have fullsizeimage :\n" +
                         retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
             }
+            else{
+                dbref.child(poId).removeValue();
+            }
         }
     }
 
