@@ -59,8 +59,10 @@ public class DatabaseIOTest {
         }
 
         if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
+            DatabaseRef.getMediaDirectory().child(testObject1.getPictureId()).removeValue();
             throw new AssertionError("Test made it this far - test succeeded !");
         }
+
     }
 
     @Test
