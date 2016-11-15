@@ -26,11 +26,17 @@ public class DatabaseRef{
         return mUsersDirectory;
     }
 
+    public static void deletePhotoObjectFromDB(String pictureID){
+        mMediaDirectory.child(pictureID).removeValue();
+    }
+
+    public static void deleteUserFromDB(String userID){
+        mUsersDirectory.child(userID).removeValue();
+    }
 
 // CONSTRUCTOR FOR SINGLETON
     private DatabaseRef(){
         //empty
     }
-
 }
 

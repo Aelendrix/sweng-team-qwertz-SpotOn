@@ -81,9 +81,9 @@ public class LocalDatabase {
         }
     }
 
-    public static void deletePhotoObject(PhotoObject photo)
+    public static void deletePhotoObject(String pictureID)
     {
-        photoDataMap.remove(photo.getPictureId());
+        photoDataMap.remove(pictureID);
     }
 
     public static Map<String,PhotoObject> getMap()

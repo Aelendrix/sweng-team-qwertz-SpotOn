@@ -16,6 +16,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,6 +27,8 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -80,5 +83,11 @@ public class FullPictureActivityTest {
         Thread.sleep(1000);
         onView(withText("Down")).perform(click());
 
+    }
+
+    @After
+    public void clearPO(){
+        DatabaseRef.deletePhotoObjectFromDB(pictureID);
+        StorageRef.deletePictureFromStorage(pictureID);
     }
 }

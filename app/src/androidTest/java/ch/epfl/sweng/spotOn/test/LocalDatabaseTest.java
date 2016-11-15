@@ -35,11 +35,11 @@ public class LocalDatabaseTest {
     @Test
     public void removeToDB() throws Exception {
         if(LocalDatabase.hasKey(photo1.getPictureId())) {
-            LocalDatabase.deletePhotoObject(photo1);
+            LocalDatabase.deletePhotoObject(photo1.getPictureId());
         }
         if(!LocalDatabase.hasKey(photo1.getPictureId())) {
             LocalDatabase.addPhotoObject(photo1);
-            LocalDatabase.deletePhotoObject(photo1);
+            LocalDatabase.deletePhotoObject(photo1.getPictureId());
         }
         if(LocalDatabase.hasKey(photo1.getPictureId())) {
             throw new AssertionError("Picture not removed from the localDB");
@@ -51,7 +51,7 @@ public class LocalDatabaseTest {
     public void getPhotoFromDB() throws Exception{
         if(LocalDatabase.hasKey(photo1.getPictureId()))
         {
-            LocalDatabase.deletePhotoObject(photo1);
+            LocalDatabase.deletePhotoObject(photo1.getPictureId());
         }
         LocalDatabase.addPhotoObject(photo1);
         if(!TestPhotoObjectUtils.areEquals(photo1,LocalDatabase.getPhoto(photo1.getPictureId()))) {

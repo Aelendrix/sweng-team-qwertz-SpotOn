@@ -12,7 +12,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 
 /**
  * Created by Bruno on 20/10/2016.
@@ -28,24 +30,16 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Query query = DatabaseRef.getMediaDirectory().orderByChild(VALUE_TO_CHECK);
-
+        Query query = DatabaseRef.getMediaDirectory().orderByChild(VALUE_TO_CHECK).endAt(System.currentTimeMillis());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child == null) {
-                            child.getRef().removeValue();
-                        }else {
-                            HashMap<String, Object> resultAsMap = ((HashMap<String, Object>) child.getValue());
-                            long expireTime = ((long) resultAsMap.get(VALUE_TO_CHECK));
-                            if (expireTime < System.currentTimeMillis()) {
-                                child.getRef().removeValue();
-                            }
-                        }
-                    }
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
+                    String pictureID = photoWithoutPic.getPictureId();
+                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
+                    StorageRef.deletePictureFromStorage(pictureID);
                 }
             }
 
