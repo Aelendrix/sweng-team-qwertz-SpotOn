@@ -64,6 +64,7 @@ public class TakePictureFragment extends Fragment {
     private Uri mImageToUploadUri;
     private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
+    private String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +72,8 @@ public class TakePictureFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_picture, container, false);
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
+        Intent intent = getActivity().getIntent();
+        mTextToDraw = intent.getStringExtra(DrawTextActivity.EXTRA_TEXT);
         return view;
     }
 
