@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/gridview"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:numColumns="3"
-android:verticalSpacing="0dp"
-android:horizontalSpacing="0dp"
-android:stretchMode="columnWidth"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:id="@+id/empty_grid_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    >
+
+    <ImageView
+    android:layout_height="382dp"
+    android:layout_width="wrap_content"
+    android:paddingTop="20dp"
+    android:gravity="center"
+    android:src="@drawable/img1"
+    android:adjustViewBounds="false"
+    android:baselineAlignBottom="false" />
+
+    <TextView
+        android:text="There is maybe some picture around, look at the map! :)"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/empty_grid_textview" />
+
+    <Button
+        android:text="Go to the Map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/empty_grid_button"
+        android:layout_weight="1"
+        android:onClick="onEmptyGridButtonClick" />
+
+</LinearLayout>
+
+    <GridView
+    android:id="@+id/gridview"
+    android:paddingTop="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:numColumns="3"
+    android:verticalSpacing="0dp"
+    android:horizontalSpacing="0dp"
+    android:stretchMode="columnWidth"
     />
+</FrameLayout>

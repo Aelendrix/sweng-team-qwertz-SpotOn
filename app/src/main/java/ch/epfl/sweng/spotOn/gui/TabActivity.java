@@ -36,6 +36,7 @@ public class TabActivity extends AppCompatActivity {
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
     private TakePictureFragment mCameraFragment = new TakePictureFragment();
     private MapFragment mMapFragment = new MapFragment();
+    private TabLayout mTabLayout;
     // The path to the root of the stored pictures Data in the database
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60*1000; //60 seconds
@@ -64,11 +65,11 @@ public class TabActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+        TabLayout mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setupWithViewPager(viewPager);
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -222,6 +223,10 @@ public class TabActivity extends AppCompatActivity {
         if (mPicturesFragment != null) {
             mPicturesFragment.refreshGrid();
         }
+    }
+
+    public void onEmptyGridButtonClick(View v){
+        mTabLayout.getTabAt(2).select();
     }
 
     /**
