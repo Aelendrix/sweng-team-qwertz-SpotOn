@@ -78,8 +78,7 @@ public class TakePictureFragment extends Fragment {
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
 
-        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");
+
         return view;
     }
 
@@ -95,6 +94,8 @@ public class TakePictureFragment extends Fragment {
      */
 
     public void dispatchTakePictureIntent(View view){
+        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mTextToDraw = bb.getString("TD", "");
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -326,6 +327,10 @@ public class TakePictureFragment extends Fragment {
                     float y = HQPicture.getHeight() - 200;
                     paint.setFakeBoldText(true);
                     canvas.drawText(mTextToDraw, x, y, paint);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.remove("TD");
+                    edit.apply();
                     mPic.setImageBitmap(HQPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
                     mActualPhotoObject = createPhotoObject(HQPicture);
