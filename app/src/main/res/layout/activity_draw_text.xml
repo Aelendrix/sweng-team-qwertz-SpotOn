@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:hint="Text to draw into picture"
+        android:hint="@string/textToBeDrawn"
+        android:maxLength="30"
         android:id="@+id/textToDraw"
         android:gravity="center"
         android:layout_marginBottom="44dp"
@@ -17,7 +18,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Ok !"
+        android:text="@string/okButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/sendTextToDrawButton"

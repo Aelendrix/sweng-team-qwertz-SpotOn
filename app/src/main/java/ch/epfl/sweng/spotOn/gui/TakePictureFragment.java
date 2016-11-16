@@ -69,7 +69,7 @@ public class TakePictureFragment extends Fragment {
     private Uri mImageToUploadUri;
     private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
-    public static String mTextToDraw;
+    public String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -319,21 +319,25 @@ public class TakePictureFragment extends Fragment {
                 getContext().getContentResolver().notifyChange(selectedImage, null);
                 Bitmap HQPicture = getBitmap(mImageToUploadUri, getContext());
                 if(HQPicture != null){
-                    Canvas canvas = new Canvas(HQPicture);
+                    //Creates a mutable copy of the bitmap.
+                    Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
+                    //Edits the bitmap in a canvas
+                    Canvas canvas = new Canvas(modifiedPicture);
                     Paint paint = new Paint();
                     paint.setColor(Color.RED);
                     paint.setTextSize(50);
-                    float x = 100;
-                    float y = HQPicture.getHeight() - 200;
+                    float x = 50;
+                    float y = modifiedPicture.getHeight() - 200;
                     paint.setFakeBoldText(true);
                     canvas.drawText(mTextToDraw, x, y, paint);
+                    //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
                     SharedPreferences.Editor edit = preferences.edit();
                     edit.remove("TD");
                     edit.apply();
-                    mPic.setImageBitmap(HQPicture);
+                    mPic.setImageBitmap(modifiedPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
-                    mActualPhotoObject = createPhotoObject(HQPicture);
+                    mActualPhotoObject = createPhotoObject(modifiedPicture);
                 } else {
                     Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
                 }

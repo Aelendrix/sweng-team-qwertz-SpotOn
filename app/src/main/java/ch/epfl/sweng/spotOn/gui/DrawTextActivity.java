@@ -31,6 +31,7 @@ public class DrawTextActivity extends AppCompatActivity{
         getWindow().setLayout((int) (width * 0.8), (int) (height * 0.3));
     }
 
+    //Stores the string (limited to 30 characters) typed by user in the shared preferences
     public void sendTextToDraw(View view) {
         EditText inputText = (EditText) findViewById(R.id.textToDraw);
         String text = inputText.getText().toString();

@@ -1,5 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -39,7 +41,8 @@ public class DrawTextActivityTest {
         onView(withText("Add Text")).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
-        assertThat(TakePictureFragment.mTextToDraw, is("Hello !"));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivityTestRule.getActivity());
+        assertThat(preferences.getString("TD", ""), is("Hello !"));
     }
 
 }

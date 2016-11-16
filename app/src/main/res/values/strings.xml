@@ -37,7 +37,8 @@
     <string name="userProfileKarma">Karma:</string>
     <string name="userProfileBackButton">Back</string>
     <string name="addTextButton">Add Text</string>
-
+    <string name="textToBeDrawn">Text to be drawn into the picture</string>
+    <string name="okButton">Ok !</string>
     <string name="fullSizeImage">Thumbnail in full size</string>
 </resources>
 
