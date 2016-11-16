@@ -1,7 +1,8 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -15,7 +16,6 @@ import ch.epfl.sweng.spotOn.R;
  */
 
 public class DrawTextActivity extends AppCompatActivity{
-    public static final String EXTRA_TEXT = "ch.epfl.sweng.TEXT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,15 @@ public class DrawTextActivity extends AppCompatActivity{
     }
 
     public void sendTextToDraw(View view) {
-        Intent intent = new Intent(this, TakePictureFragment.class);
         EditText inputText = (EditText) findViewById(R.id.textToDraw);
-        intent.putExtra(EXTRA_TEXT, inputText.getText());
+        String text = inputText.getText().toString();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putString("TD", text);
+        edit.apply();
+
         super.onBackPressed();
     }
+
+
 }

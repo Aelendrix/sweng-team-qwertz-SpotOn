@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -250,5 +249,6 @@ public class TabActivity extends AppCompatActivity {
 
     public void goToDrawTextActivity(View view) {
         Intent intent = new Intent(this, DrawTextActivity.class);
-        startActivity(intent);    }
+        startActivity(intent);
+    }
 }

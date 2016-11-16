@@ -3,10 +3,14 @@ package ch.epfl.sweng.spotOn.gui;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -14,6 +18,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -64,7 +69,7 @@ public class TakePictureFragment extends Fragment {
     private Uri mImageToUploadUri;
     private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
-    private String mTextToDraw;
+    public static String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +77,9 @@ public class TakePictureFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_picture, container, false);
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
-        Intent intent = getActivity().getIntent();
-        mTextToDraw = intent.getStringExtra(DrawTextActivity.EXTRA_TEXT);
+
+        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mTextToDraw = bb.getString("TD", "");
         return view;
     }
 
@@ -312,6 +318,14 @@ public class TakePictureFragment extends Fragment {
                 getContext().getContentResolver().notifyChange(selectedImage, null);
                 Bitmap HQPicture = getBitmap(mImageToUploadUri, getContext());
                 if(HQPicture != null){
+                    Canvas canvas = new Canvas(HQPicture);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    paint.setTextSize(50);
+                    float x = 100;
+                    float y = HQPicture.getHeight() - 200;
+                    paint.setFakeBoldText(true);
+                    canvas.drawText(mTextToDraw, x, y, paint);
                     mPic.setImageBitmap(HQPicture);
                     //Create a PhotoObject instance of the picture and send it to the file server + database
                     mActualPhotoObject = createPhotoObject(HQPicture);
