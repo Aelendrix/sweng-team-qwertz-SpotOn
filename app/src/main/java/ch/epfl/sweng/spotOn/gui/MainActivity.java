@@ -54,9 +54,6 @@ public final class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
-        startService(deleteFileService);
-
         /*Create an alarm which will go off for sending queries to the Firebase server
          * to check the expiration time of the files.
          */
