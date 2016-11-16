@@ -19,7 +19,8 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getViewableThumbnail();
+
+    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getInstance().getViewableThumbmails();
     private List<String> mThumbId = new ArrayList<>(mThumbnailMap.keySet());
     private List<Bitmap> mThumbnail = new ArrayList<>();
 

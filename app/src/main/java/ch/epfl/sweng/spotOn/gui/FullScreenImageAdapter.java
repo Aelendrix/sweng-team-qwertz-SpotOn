@@ -37,7 +37,7 @@ import ch.epfl.sweng.spotOn.user.UserId;
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
 
-    private Map<String, PhotoObject> mPhotoMap = LocalDatabase.getViewablePhotos();
+    private Map<String, PhotoObject> mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
     private List<String> mPhotosId = new ArrayList<>(mPhotoMap.keySet());
     private List<PhotoObject> mPhotos = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         Intent displayImageIntent = mActivity.getIntent();
         final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
-        if(!LocalDatabase.hasKey(wantedImagePictureId)){
+        if(!LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
             Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
         }else {

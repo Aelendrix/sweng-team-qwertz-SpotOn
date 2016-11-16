@@ -30,6 +30,8 @@ import android.widget.Toast;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
 
 
@@ -50,6 +52,12 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // initialize LocationTracker and LocalDatabase
+        Log.d("MainActivity","initializing singletons");
+        LocationTracker.initialize(getApplicationContext());
+        LocalDatabase.initialize();
+        Log.d("MainActivity","done initializing");
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
