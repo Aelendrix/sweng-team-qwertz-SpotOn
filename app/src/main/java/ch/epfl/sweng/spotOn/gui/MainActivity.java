@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 import ch.epfl.sweng.spotOn.user.User;
 

@@ -50,8 +50,6 @@
 
         <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
 
-        <service android:name="ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService" />
-
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"
             android:screenOrientation="portrait"

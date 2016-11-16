@@ -44,9 +44,7 @@ public class TestTakePictureFragment {
     public void StoreFunctionWorking() throws Exception{
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
         TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().findFragmentByTag("Camera");
-        //pictureFragment.
 
-    /*
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
@@ -59,6 +57,8 @@ public class TestTakePictureFragment {
         fOut.close(); // do not forget to close the stream
 
         mImageToUploadUri = Uri.fromFile(file);
+
+        pictureFragment.processResult(mImageToUploadUri);
         /*
         if(Build.VERSION.SDK_INT <= 23) {
             mImageToUploadUri = Uri.fromFile(temporalStorage);
