@@ -26,10 +26,17 @@ public class LocationTrackerTest {
     Location location0 = new Location("testLocationProvider");
     Location location1 = new Location("testLocationProvider");
     Location location2 = new Location("testLocationProvider");
+    Location location3 = new Location("testLocationProvider");
 
 
     @Before
     public void initLocation() {
+
+        location3.setLatitude(0);
+        location3.setLongitude(0);
+        location3.setAltitude(0);
+        location3.setAccuracy(100);
+        location3.setTime(100);
 
         location2.setLatitude(0);
         location2.setLongitude(0);
@@ -72,6 +79,9 @@ public class LocationTrackerTest {
                 }
                 if (lt.isBetterLocation(location1, location0)) {
                     throw new AssertionError("the new location is less accurate");
+                }
+                if (!lt.isBetterLocation(location3, location2)) {
+                    throw new AssertionError("the new location is less accurate but is newer from the same locationprovider");
                 }
 
             }
