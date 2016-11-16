@@ -36,6 +36,7 @@
     <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
     <string name="userProfileKarma">Karma:</string>
     <string name="userProfileBackButton">Back</string>
+    <string name="addTextButton">Add Text</string>
 
     <string name="fullSizeImage">Thumbnail in full size</string>
 </resources>

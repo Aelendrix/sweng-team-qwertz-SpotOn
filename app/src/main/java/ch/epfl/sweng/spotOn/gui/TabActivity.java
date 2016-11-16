@@ -247,4 +247,8 @@ public class TabActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void goToDrawTextActivity(View view) {
+        Intent intent = new Intent(this, DrawTextActivity.class);
+        startActivity(intent);    }
 }
