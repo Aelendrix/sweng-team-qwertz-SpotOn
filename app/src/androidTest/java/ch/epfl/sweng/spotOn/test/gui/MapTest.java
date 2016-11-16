@@ -1,7 +1,10 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -31,12 +34,21 @@ public class MapTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class);
 
     @Test
-    public void refreshLocalisationMarker(){
-            onView(withId(R.id.viewpager)).perform(swipeRight());
-            onView(withId(R.id.viewpager)).perform(swipeLeft());
-            onView(withId(R.id.viewpager)).perform(swipeLeft());
+    public void refreshLocalisationMarker() throws Exception{
+        onView(withId(R.id.viewpager)).perform(swipeRight());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(5000);
+        Log.d("xD",""+mActivityTestRule.getActivity().getSupportFragmentManager().getFragments());
         final MapFragment mapFragment = (MapFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(2);
-        mapFragment.refreshMapLocation(new LatLng(0,0));
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mapFragment.refreshMapLocation(new LatLng(0,0));
+                mapFragment.refreshMapLocation(new LatLng(1,1));
+            }
+
+        });
 
     }
 }
