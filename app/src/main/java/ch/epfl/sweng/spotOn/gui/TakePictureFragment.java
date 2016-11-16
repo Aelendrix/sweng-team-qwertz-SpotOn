@@ -63,7 +63,6 @@ public class TakePictureFragment extends Fragment {
 
     private ImageView mPic;
     private Uri mImageToUploadUri;
-    private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
 
     @Override

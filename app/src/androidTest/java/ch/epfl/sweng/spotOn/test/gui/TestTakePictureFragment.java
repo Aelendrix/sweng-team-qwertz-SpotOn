@@ -34,6 +34,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 public class TestTakePictureFragment {
@@ -47,7 +48,7 @@ public class TestTakePictureFragment {
         onView(withId(R.id.viewpager)).perform(swipeRight());
         onView(withId(R.id.viewpager)).perform(swipeRight());
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
@@ -60,7 +61,16 @@ public class TestTakePictureFragment {
         fOut.flush(); // Not really required
         fOut.close(); // do not forget to close the stream
 
-        mImageToUploadUri = Uri.fromFile(file);
+        //mImageToUploadUri = Uri.fromFile(file);
+        if(Build.VERSION.SDK_INT <= 23) {
+            mImageToUploadUri = Uri.fromFile(file);
+            Log.d("URI ImageUpload", mImageToUploadUri.toString());
+        } else {
+            //For API >= 24 (was the cause of the crash)
+            mImageToUploadUri = FileProvider.getUriForFile(pictureFragment.getContext(),
+                    BuildConfig.APPLICATION_ID + ".provider", file);
+            Log.d("URI ImageUpload", mImageToUploadUri.toString());
+        }
 
         mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -69,16 +79,17 @@ public class TestTakePictureFragment {
 
             }
         });
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
+        onView(withText("Rotate")).perform(click());
+        Thread.sleep(1000);
+        onView(withText("Save to gallery")).perform(click());
+        Thread.sleep(1000);
+        onView(withText("Send")).perform(click());
+        Thread.sleep(1000);
+
         /*
-        if(Build.VERSION.SDK_INT <= 23) {
-            mImageToUploadUri = Uri.fromFile(temporalStorage);
-            Log.d("URI ImageUpload", mImageToUploadUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            mImageToUploadUri = FileProvider.getUriForFile(pictureFragment.getContext(),
-                    BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
-            Log.d("URI ImageUpload", mImageToUploadUri.toString());
-        }
+
 
 
         // Mock up an ActivityResult:
