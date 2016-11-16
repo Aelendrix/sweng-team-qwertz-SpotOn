@@ -58,7 +58,7 @@ public class LocalisationTracker {
     private final int THRESHOLD_ONE_MINUTE = 1000*60; //1 minute
 
 
-    private boolean isBetterLocation(Location location, Location currentBestLocation) {
+    public boolean isBetterLocation(Location location, Location currentBestLocation) {
         if (currentBestLocation == null) {
             return true;
         }
@@ -87,7 +87,7 @@ public class LocalisationTracker {
     }
 
     //Compare 2 providers
-    private boolean isSameProvider(String provider1, String provider2) {
+    public boolean isSameProvider(String provider1, String provider2) {
         return provider2 != null && provider2.equals(provider1);
     }
 
