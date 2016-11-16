@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -22,15 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,6 +42,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
+        //GoogleMap.OnMarkerClickListener,
         ClusterManager.OnClusterItemClickListener<Pin>,
         ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
         ClusterManager.OnClusterClickListener<Pin>{
@@ -70,7 +66,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     //marker representing our location on the map
     private Marker mLocationMarker;
     //list of photoObject
-    private List<PhotoObject> listPhoto;
+    private List<PhotoObject> mListPhoto;
+    private List<String> mThumbIDs;
     private ClusterManager<Pin> mClusterManager;
     private GoogleMap mMap;
 
@@ -79,7 +76,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MapsInitializer.initialize(getApplicationContext());
         //setRetainInstance(true);
     }
 
@@ -153,6 +149,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
         setUpCluster();
+        //mMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -192,13 +189,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     public void addDBMarkers()
     {
-        listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
+        mListPhoto = new ArrayList<>(LocalDatabase.getMap().values());
+        mThumbIDs = new ArrayList<>(LocalDatabase.getViewableThumbnail().keySet());
         if(mMap!=null && mPhoneLatLng!=null) {
             //empty the cluster manager
             mClusterManager.clearItems();
             refreshMapLocation(mPhoneLatLng);
             //add the new markers on the Cluster Manager
-            for (PhotoObject photo : listPhoto) {
+            for (PhotoObject photo : mListPhoto) {
                 boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
                 Pin pinForPicture = new Pin(photo, canActivateIt);
                 //add the marker to the cluster manager
@@ -232,10 +230,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
+        String thumbID = pin.getPhotoObject().getPictureId();
+        if(mThumbIDs.contains(thumbID)) {
+            SeePicturesFragment.mPosition = mThumbIDs.indexOf(thumbID);
+        } else {
+            Log.d("Thumbnail", "thumbnail clicked not in the list");
+        }
         Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pin.getPhotoObject().getPictureId());
+        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
+
+    /**
+     * Clicking on the location marker does nothing. It corrects the bug that clicking on a pin and
+     * then clicking on the location marker displayed the thumbnail of the pin clicked.
+     * @param marker the location marker
+     * @return true -> clicking on the marker does nothing
+     */
+    /**@Override
+    public boolean onMarkerClick(Marker marker){
+        if(marker.equals(mLocationMarker)){
+            return true;
+        }
+        return false;
+    }*/
 
     /**
      * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
@@ -248,7 +266,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public boolean onClusterClick(Cluster<Pin> cluster){return true;}
 
     /**
-     * Get a bitmap from a VectorDrawable (xml file) -> this method is only working before LOLLIPOP API
+     * Get a bitmap from a VectorDrawable (xml file) -> this method will be called if the API is
+     * Lollipop or below
      * @param vectorDrawable the VectorDrawable to get its bitmap
      * @return the bitmap of the VectorDrawable
      */

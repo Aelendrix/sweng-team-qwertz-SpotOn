@@ -62,9 +62,9 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws InterruptedException{
         mActivityTestRule.launchActivity(displayFullsizeImageIntent);
         Thread.sleep(1000);
-        onView(withText("Up !!")).perform(click());
+        onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Down")).perform(click());
+        onView(withText(R.id.downvoteButton)).perform(click());
     }
 
     @Test
