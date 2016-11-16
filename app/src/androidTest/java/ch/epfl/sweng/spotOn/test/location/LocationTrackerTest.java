@@ -21,12 +21,12 @@ import ch.epfl.sweng.spotOn.localisation.LocalisationTracker;
 @RunWith(AndroidJUnit4.class)
 public class LocationTrackerTest {
 
-    LocalisationTracker lt;
+    private LocalisationTracker lt;
 
-    Location location0 = new Location("testLocationProvider");
-    Location location1 = new Location("testLocationProvider");
-    Location location2 = new Location("testLocationProvider");
-    Location location3 = new Location("testLocationProvider");
+    private Location location0 = new Location("testLocationProvider");
+    private Location location1 = new Location("testLocationProvider");
+    private Location location2 = new Location("testLocationProvider");
+    private Location location3 = new Location("testLocationProvider");
 
 
     @Before
