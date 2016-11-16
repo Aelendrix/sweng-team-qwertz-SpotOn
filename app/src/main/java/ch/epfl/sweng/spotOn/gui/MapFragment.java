@@ -30,6 +30,7 @@ import java.util.List;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -55,10 +56,10 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // add as listener
-        if(!LocalDatabase.instanceExists() || !LocationTracker.instanceExists()){
+        if(!LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists()){
             throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instanciated"));
         }
-        LocationTracker.getInstance().addListener(this);
+        ConcreteLocationTracker.getInstance().addListener(this);
         LocalDatabase.getInstance().addListener(this);
     }
 
@@ -102,8 +103,8 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     /** function used to refresh the local location variable
      *  and apply it to our special marker on the map   */
     public void refreshMapLocation() {
-        if(LocationTracker.getInstance().hasValidLocation()){
-            LatLng newLocation = LocationTracker.getInstance().getLatLng();
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
             if(mMap!=null){
                 if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
@@ -140,10 +141,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     @Override
     public void onResume() {
         super.onResume();
-        // new
-        if(!LocationTracker.instanceExists()){
-            throw new IllegalStateException("Location tracker not initialized");
-        }
         if (mMap == null) {
             ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment)).getMapAsync(this);
         }
@@ -168,7 +165,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     public void addDBMarkers()
     {
-        LatLng currLoc = LocationTracker.getInstance().getLatLng();
+        LatLng currLoc = ConcreteLocationTracker.getInstance().getLatLng();
         listPhoto = new ArrayList<>(LocalDatabase.getInstance().getAllNearbyMediasMap().values());
         // old if(mMap!=null && currLoc!=null) {
         if(mMap!=null) {

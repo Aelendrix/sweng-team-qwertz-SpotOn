@@ -135,6 +135,9 @@ public class PhotoObject {
         // sendToFileServer calls sendToDatabase on success
         sendToFileServer(hasListener, completionListener);
     }
+    public void upload(){
+        upload(false, null);
+    }
 
     /** return true if the coordinates in parameters are in the scope of the picture}
      */

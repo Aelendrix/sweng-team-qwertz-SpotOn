@@ -35,6 +35,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -55,34 +56,30 @@ public class ViewFullSizeImageActivityTest {
     public String pictureID1;
     public String pictureID2;
     public Intent displayFullSizeImageIntent;
+
     @Before
     public void getPictureID(){
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-        LocalDatabase.clearData();
-        LocalDatabase.setLocation(location);
+        MockLocationTracker mlt = new MockLocationTracker(46.52890355757567, 6.569420238493345);
+        LocalDatabase.initialize(mlt);
+// old
+//        Location location = new Location("testLocationProvider");
+//        location.setLatitude(46.52890355757567);
+//        location.setLongitude(6.569420238493345);
+//        location.setAltitude(0);
+//        location.setTime(System.currentTimeMillis());
+        LocalDatabase.getInstance().clear();
+// no longer exists
+        // LocalDatabase.setLocation(location);
         PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
-        po1.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
+        po1.upload();
         PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
-        po2.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
-        LocalDatabase.addPhotoObject(po1);
-        LocalDatabase.addPhotoObject(po2);
+        po2.upload();
+        LocalDatabase.getInstance().addPhotoObject(po1);
+        LocalDatabase.getInstance().addPhotoObject(po2);
         pictureID1 = po1.getPictureId();
         pictureID2 = po2.getPictureId();
         displayFullSizeImageIntent = new Intent();
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID1);
-
     }
 
     @Test
@@ -100,47 +97,49 @@ public class ViewFullSizeImageActivityTest {
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
+
     @After
     public void deletePhotoObject(){
         DatabaseRef.deletePhotoObjectFromDB(pictureID1);
         DatabaseRef.deletePhotoObjectFromDB(pictureID2);
         StorageRef.deletePictureFromStorage(pictureID1);
         StorageRef.deletePictureFromStorage(pictureID2);
-        LocalDatabase.deletePhotoObject(pictureID1);
-        LocalDatabase.deletePhotoObject(pictureID2);
+        LocalDatabase.getInstance().removePhotoObject(pictureID1);
+        LocalDatabase.getInstance().removePhotoObject(pictureID2);
     }
 
-    /**
-     * Initialize the local database with 2 sample pictures (useful for testing)
-     * @return the list of picture IDs pictures added in the local database
-     */
-    public static List<String> initLocalDatabase() {
-        List<String> picIDs = new ArrayList<>();
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-        LocalDatabase.clearData();
-        LocalDatabase.setLocation(location);
-        PhotoObject po3 = TestPhotoObjectUtils.paulVanDykPO();
-        String pictureID3 = po3.getPictureId();
-        picIDs.add(pictureID3);
-        po3.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
-        PhotoObject po4 = TestPhotoObjectUtils.germaynDeryckePO();
-        String pictureID4 = po4.getPictureId();
-        picIDs.add(pictureID4);
-        po4.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
-        LocalDatabase.addPhotoObject(po3);
-        LocalDatabase.addPhotoObject(po4);
-        return picIDs;
-    }
+// never called ?
+//    /**
+//     * Initialize the local database with 2 sample pictures (useful for testing)
+//     * @return the list of picture IDs pictures added in the local database
+//     */
+//    public static List<String> initLocalDatabase() {
+//        List<String> picIDs = new ArrayList<>();
+//        Location location = new Location("testLocationProvider");
+//        location.setLatitude(46.52890355757567);
+//        location.setLongitude(6.569420238493345);
+//        location.setAltitude(0);
+//        location.setTime(System.currentTimeMillis());
+//        LocalDatabase.getInstance().clear();
+//        // no longer exists LocalDatabase.setLocation(location);
+//        PhotoObject po3 = TestPhotoObjectUtils.paulVanDykPO();
+//        String pictureID3 = po3.getPictureId();
+//        picIDs.add(pictureID3);
+//        po3.upload(true, new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//            }
+//        });
+//        PhotoObject po4 = TestPhotoObjectUtils.germaynDeryckePO();
+//        String pictureID4 = po4.getPictureId();
+//        picIDs.add(pictureID4);
+//        po4.upload(true, new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//            }
+//        });
+//        LocalDatabase.getInstance().addPhotoObject(po3);
+//        LocalDatabase.getInstance().addPhotoObject(po4);
+//        return picIDs;
+//    }
 }

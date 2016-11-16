@@ -32,6 +32,8 @@ public class LocalDatabase implements LocationTrackerListener{
 
     private Location mCachedLocation;
 
+    private LocationTracker refToLocationTracker;
+
     // these settings help to avoid unnecessary refreshes of the database due to location changes, which are costly in bandwidth, ect
     private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE = 1*1000; // refresh the localdatabase at most every 1 seconds on position changes
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 2*60*1000; // refresh at lest every 2 minutes
@@ -42,19 +44,17 @@ public class LocalDatabase implements LocationTrackerListener{
 
 
     // CONSTRUCTOR / INITIALIZE()
-    public static void initialize(){
-        if(!LocationTracker.instanceExists()){
-            throw new IllegalStateException("Error : the LocationTracker singleton isn't initialized yet");
-        }
-        mSingleInstance = new LocalDatabase();
-        LocationTracker.getInstance().addListener(mSingleInstance);
-        mSingleInstance.setAutoRefresh();
+    public static void initialize(LocationTracker l){
+            mSingleInstance = new LocalDatabase(l);
+            l.addListener(mSingleInstance);
+            mSingleInstance.setAutoRefresh();
     }
 
-    private LocalDatabase() {
+    private LocalDatabase(LocationTracker l) {
         mediaDataMap = new HashMap<>();
         mListeners = new ArrayList<>();
         mViewableMediaDataMap = new HashMap<>();
+        refToLocationTracker = l;
     }
 
 
@@ -67,7 +67,7 @@ public class LocalDatabase implements LocationTrackerListener{
 
     public static LocalDatabase getInstance(){
         if(mSingleInstance==null){
-            initialize();
+            throw new IllegalStateException("Localdatabase not initialized yet");
         }
         return mSingleInstance;
     }
@@ -83,6 +83,12 @@ public class LocalDatabase implements LocationTrackerListener{
     public void addPhotoObject(PhotoObject photo){
         if(!mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
+            Location photoLocation = new Location("mockProvider");
+            photoLocation.setLatitude(photo.getLatitude());
+            photoLocation.setLongitude(photo.getLongitude());
+            if(refToLocationTracker.getLocation().distanceTo(photoLocation) < photo.getRadius()) {
+                mViewableMediaDataMap.put(photo.getPictureId(), photo);
+            }
         }
     }
 
@@ -90,10 +96,10 @@ public class LocalDatabase implements LocationTrackerListener{
      *  of the current cached location
      */
     public void testAndAddPhotoObject(PhotoObject newObject) {
-        if(!LocationTracker.getInstance().hasValidLocation()){
+        if(!refToLocationTracker.hasValidLocation()){
             Log.d("LocalDatabase", "No valid location, can't refresh DB");
         }else {
-            mCachedLocation = LocationTracker.getInstance().getLocation();
+            mCachedLocation = refToLocationTracker.getLocation();
             if (Math.abs(newObject.getLatitude() - mCachedLocation.getLatitude()) < FETCH_RADIUS
                     && Math.abs(newObject.getLongitude() - mCachedLocation.getLongitude()) < FETCH_RADIUS) {
                 if (!mediaDataMap.containsKey(newObject.getPictureId())) {
@@ -143,7 +149,7 @@ public class LocalDatabase implements LocationTrackerListener{
     }
 
     /** clears all data from the LocalDatabase */
-    private void clear() {
+    public void clear() {
         mediaDataMap.clear();
         mViewableMediaDataMap.clear();
         notifyListeners();
@@ -157,7 +163,7 @@ public class LocalDatabase implements LocationTrackerListener{
             newObjectLocation.setLatitude(po.getLatitude());
             newObjectLocation.setLongitude(po.getLongitude());
             // compare it with the location provided by the LocationTracker
-            if(newObjectLocation.distanceTo(LocationTracker.getInstance().getLocation()) < po.getRadius()) {
+            if(newObjectLocation.distanceTo(refToLocationTracker.getLocation()) < po.getRadius()) {
                 if(!mViewableMediaDataMap.containsKey(po.getPictureId())) {
                     mViewableMediaDataMap.put(po.getPictureId(), po);
                 }
@@ -182,7 +188,7 @@ public class LocalDatabase implements LocationTrackerListener{
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!LocationTracker.getInstance().hasValidLocation()){
+                if(!refToLocationTracker.hasValidLocation()){
                     Log.d("LocalDatabase","can't refresh, LocationProvider has no valid Location");
                 }else {
                     LocalDatabase.getInstance().clear();
