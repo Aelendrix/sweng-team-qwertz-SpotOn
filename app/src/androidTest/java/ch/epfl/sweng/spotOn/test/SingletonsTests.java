@@ -26,7 +26,7 @@ public class SingletonsTests {
             throw new AssertionError();
         }
         //TODO:Need to put MediaDirectory instead of mediaDirectory_alex
-        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("mediaDirectory_alex")))){
+        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory")))){
             throw new AssertionError();
         }
         if(!(DatabaseRef_Test.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory_test")))){

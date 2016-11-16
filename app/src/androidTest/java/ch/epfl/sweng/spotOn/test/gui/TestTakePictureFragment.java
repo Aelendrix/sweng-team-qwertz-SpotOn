@@ -31,6 +31,8 @@ import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
@@ -42,7 +44,10 @@ public class TestTakePictureFragment {
 
     @Test
     public void StoreFunctionWorking() throws Exception{
+        onView(withId(R.id.viewpager)).perform(swipeRight());
+        onView(withId(R.id.viewpager)).perform(swipeRight());
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
+        Thread.sleep(3000);
         TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().findFragmentByTag("Camera");
 
         String path = Environment.getExternalStorageDirectory().toString();
