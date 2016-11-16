@@ -57,7 +57,7 @@ public class LocationTrackerTest {
             @Override
             public void run() {
                 lt = new LocalisationTracker(InstrumentationRegistry.getContext());
-
+                lt.refreshTrackerLocation();//useless line
                 if (!lt.isBetterLocation(location2, null)) {
                     throw new AssertionError("a location is better that no location at all");
                 }
