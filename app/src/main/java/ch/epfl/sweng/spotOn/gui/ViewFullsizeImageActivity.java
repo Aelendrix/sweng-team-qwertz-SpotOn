@@ -73,5 +73,5 @@ public class ViewFullsizeImageActivity extends Activity {
     public void recordDownvote(View view) {
         mFullScreenImageAdapter.recordDownvote(view);
     }
-    
+
 }
