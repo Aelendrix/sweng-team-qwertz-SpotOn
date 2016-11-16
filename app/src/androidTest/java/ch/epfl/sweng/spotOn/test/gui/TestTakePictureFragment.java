@@ -47,9 +47,8 @@ public class TestTakePictureFragment {
         onView(withId(R.id.viewpager)).perform(swipeRight());
         onView(withId(R.id.viewpager)).perform(swipeRight());
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
-        Thread.sleep(3000);
-        TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().findFragmentByTag("Camera");
-
+        Thread.sleep(2000);
+        final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
@@ -63,7 +62,13 @@ public class TestTakePictureFragment {
 
         mImageToUploadUri = Uri.fromFile(file);
 
-        pictureFragment.processResult(mImageToUploadUri);
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pictureFragment.processResult(mImageToUploadUri);
+
+            }
+        });
         /*
         if(Build.VERSION.SDK_INT <= 23) {
             mImageToUploadUri = Uri.fromFile(temporalStorage);
