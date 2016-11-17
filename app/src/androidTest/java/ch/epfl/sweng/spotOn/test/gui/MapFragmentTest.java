@@ -69,7 +69,13 @@ public class MapFragmentTest {
 
 
     public void goToMapFragment() throws Exception {
+        if(withId(R.id.viewpager)==null){
+            throw new AssertionError("Could not find viewPager");
+        }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
+        if(withId(R.id.viewpager)==null){
+            throw new AssertionError("Could not find viewPager (2nd swipe)");
+        }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
     }
@@ -78,8 +84,7 @@ public class MapFragmentTest {
     public void displayClusterTest() throws Exception {
         PhotoObject picToAdd = TestPhotoObjectUtils.iceDivingPO();
         LocalDatabase.getInstance().addPhotoObject(picToAdd);
-//        goToMapFragment();
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        goToMapFragment();
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
         Thread.sleep(1000);
@@ -93,7 +98,10 @@ public class MapFragmentTest {
             throw new AssertionError("Could not find viewPager");
         }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        //onView(withId(R.id.viewpager)).perform(swipeLeft());
+        if(withId(R.id.viewpager)==null){
+            throw new AssertionError("Could not find viewPager (2nd swipe");
+        }
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
         UiSelector myPositionUiSelecter = new UiSelector().descriptionContains("My Position");
         if(myPositionUiSelecter==null){
