@@ -342,20 +342,22 @@ public class TakePictureFragment extends Fragment {
             if(HQPicture != null){
                 //Creates a mutable copy of the bitmap.
                 Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
-                //Edits the bitmap in a canvas
-                Canvas canvas = new Canvas(modifiedPicture);
-                Paint paint = new Paint();
-                paint.setColor(Color.RED);
-                paint.setTextSize(50);
-                float x = 50;
-                float y = modifiedPicture.getHeight() - 200;
-                paint.setFakeBoldText(true);
-                canvas.drawText(mTextToDraw, x, y, paint);
-                //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-                SharedPreferences.Editor edit = preferences.edit();
-                edit.remove("TD");
-                edit.apply();
+                if(mTextToDraw != null) {
+                    //Edits the bitmap in a canvas
+                    Canvas canvas = new Canvas(modifiedPicture);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    paint.setTextSize(50);
+                    float x = 50;
+                    float y = modifiedPicture.getHeight() - 200;
+                    paint.setFakeBoldText(true);
+                    canvas.drawText(mTextToDraw, x, y, paint);
+                    //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.remove("TD");
+                    edit.apply();
+                }
                 mPic.setImageBitmap(modifiedPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){

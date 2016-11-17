@@ -15,6 +15,9 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.DrawTextActivity;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -33,10 +36,20 @@ import static org.hamcrest.Matchers.is;
 public class DrawTextActivityTest {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class);
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
+        @Override
+        public void beforeActivityLaunched(){
+            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+            LocalDatabase.initialize(mlt);
+            ConcreteLocationTracker.setMockLocationTracker(mlt);
+        }
+    };
 
     @Test
     public void getTextRight() {
+        if(!LocalDatabase.instanceExists()){
+            throw new AssertionError("LocalDatabase incorrectly initialized");
+        }
         onView(withText("Camera")).perform(click());
         onView(withText("Add Text")).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
