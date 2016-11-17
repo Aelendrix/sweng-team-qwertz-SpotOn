@@ -58,9 +58,12 @@ public class PhotoObjectTestUtils {
     }
 
     public static PhotoObjectStoredInDatabase convertToStoredInDatabase(PhotoObject po){
-        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(), BitmapUtils.encodeBitmapAsString(po.getThumbnail()),
-                po.getPictureId(), po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(), po.getLatitude(), po.getLongitude(),
-                po.getUpvotes(), po.getDownvotes(), po.getUpvotersList(), po.getDownvotersList());
+        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(),
+                BitmapUtils.encodeBitmapAsString(po.getThumbnail()), po.getPictureId(),
+                po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(),
+                po.getLatitude(), po.getLongitude(), po.getUpvotes(), po.getDownvotes(),
+                po.getReports(), po.getUpvotersList(), po.getDownvotersList(),
+                po.getReportersList());
         return posd;
     }
 
