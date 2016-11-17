@@ -46,7 +46,7 @@ public class MapFragmentTest {
 
     //This will be useful when clicking on pins (not the pin for the location)
     String mPictureId;
-    UiDevice mDevice;   
+    UiDevice mDevice;
 
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
