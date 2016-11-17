@@ -4,10 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -15,6 +19,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -60,6 +65,7 @@ public class TakePictureFragment extends Fragment {
     private ImageView mPic;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
+    public String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +82,8 @@ public class TakePictureFragment extends Fragment {
         });
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
+
+
         return view;
     }
 
@@ -92,6 +100,8 @@ public class TakePictureFragment extends Fragment {
      */
 
     public void dispatchTakePictureIntent(View view){
+        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mTextToDraw = bb.getString("TD", "");
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -330,7 +340,25 @@ public class TakePictureFragment extends Fragment {
             getContext().getContentResolver().notifyChange(selectedImage, null);
             Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
-                mPic.setImageBitmap(HQPicture);
+                //Creates a mutable copy of the bitmap.
+                Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
+                if(mTextToDraw != null) {
+                    //Edits the bitmap in a canvas
+                    Canvas canvas = new Canvas(modifiedPicture);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    paint.setTextSize(50);
+                    float x = 50;
+                    float y = modifiedPicture.getHeight() - 200;
+                    paint.setFakeBoldText(true);
+                    canvas.drawText(mTextToDraw, x, y, paint);
+                    //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.remove("TD");
+                    edit.apply();
+                }
+                mPic.setImageBitmap(modifiedPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
                     Toast.makeText(getContext(), "Can't create post without proposer Location data", Toast.LENGTH_LONG);
@@ -404,5 +432,10 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    public void goToDrawTextActivity(View view) {
+        Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);
+        startActivity(intent);
     }
 }
