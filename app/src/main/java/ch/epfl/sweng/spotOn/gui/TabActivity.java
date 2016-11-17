@@ -18,7 +18,6 @@ import com.facebook.login.LoginManager;
 import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 
@@ -28,7 +27,11 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
     private TakePictureFragment mCameraFragment = new TakePictureFragment();
     private MapFragment mMapFragment = new MapFragment();
+
+    private TabLayout mTabLayout;
+
     /* On vire
+    // The path to the root of the stored pictures Data in the database
     //TimerTask
     private final int TIME_BETWEEN_EXEC = 60 * 1000; //60 seconds
     private boolean hasLocalisation = false;
@@ -58,31 +61,52 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setupWithViewPager(viewPager);
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+// old (my branch)
+//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+//            @Override
+//            public void onPageSelected(int pageNb) {
+//                // needed for my sprint 7 (quentin)
+//            }
+//        });
+
+        // new
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onPageSelected(int pageNb) {
-                // needed for my sprint 7 (quentin)
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
+// end new
 
-        /* On vire
-        mLocationTracker = new LocationTracker(this.getApplicationContext()){
-
-            @Override
-            public void refreshTrackerLocation() {
-                    // Called when a new location is found by the network location provider.
-                    if (!hasLocalisation) {
-                        synchronized (this) {
-                            mHandler.postDelayed(loopedRefresh, 3 * 1000);
-                            hasLocalisation = true;
-                        }
-                    }
-                    refreshLocation();
-            }
-        };*/
+// On vire
+//        mLocationTracker = new LocationTracker(this.getApplicationContext()){
+//
+//            @Override
+//            public void refreshTrackerLocation() {
+//                    // Called when a new location is found by the network location provider.
+//                    if (!hasLocalisation) {
+//                        synchronized (this) {
+//                            mHandler.postDelayed(loopedRefresh, 3 * 1000);
+//                            hasLocalisation = true;
+//                        }
+//                    }
+//                    refreshLocation();
+//            }
+//        };
     }
 
 
@@ -209,10 +233,11 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
 //        }
 //    }
 
-    //refresh the local markers
-    public void changeLocalMarkers(ArrayList<PhotoObject> photoList) {
-        mMapFragment.displayPictureMarkers(photoList);
-    }
+// no longer handled by this class ?
+//    //refresh the local markers
+//    public void changeLocalMarkers(ArrayList<PhotoObject> photoList) {
+//        mMapFragment.displayPictureMarkers(photoList);
+//    }
 
 // on vire
 //    /**
@@ -231,8 +256,39 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
 //        }
 //    }
 
+
     @Override
     public void onTabChanged(String tabId) {
         // needed for my sprint 7 (quentin)
     }
+
+    public void onEmptyGridButtonClick(View v){
+        mTabLayout.getTabAt(2).select();
+    }
+
+// tabActivity no longer "owns" the LocationProvider - on vire
+//    /**
+//     * Private class refreshing the current location
+//     * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
+//     */
+//    private void refreshLocation(){
+//        mLocation = LocalDatabase.getLocation();
+//        if(mLocation!=null){
+//            if(mMapFragment!=null) {
+//                mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
+//            }
+//            if(mCameraFragment!=null) {
+//                mCameraFragment.refreshLocation(mLocation);
+//            }
+//            if(mPicturesFragment!=null) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mPicturesFragment.refreshGrid();
+//                    }
+//                });
+//            }
+//        }
+//    }
+
 }

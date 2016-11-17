@@ -227,8 +227,8 @@ public class PhotoObject {
             // getReferenceFromUrl throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
             throw new IllegalArgumentException("Retrieving from improper Firebase Storage link "+mFullsizeImageLink);
         }
-        final long ONE_MEGABYTE = 1024 * 1024;
-        Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(ONE_MEGABYTE);
+        final long TWO_MEGABYTE = 2 * 1024 * 1024;
+        Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(TWO_MEGABYTE);
 
         // add default listener to cache the obtained image
         addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);

@@ -62,7 +62,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         // Define a listener that responds to location updates
         LocationListener currentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {
-                if(isBetterLocation(newLocation ,mLocation)){
+                if(LocalizationUtils.isBetterLocation(newLocation ,mLocation)){
                     mLocation = newLocation;
                     notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
                     mLocationTimeoutHandler.postDelayed(mRunOnTimeout, TIMEOUT_LOCATION);
@@ -142,43 +142,6 @@ public final class ConcreteLocationTracker implements LocationTracker {
     public void addListener(LocationTrackerListener l){
         mListenersList.add(l);
         Log.d("LocationTracker","Added listener"+l.toString());
-    }
-
-
-
-    // PRIVATE HELPERS
-    private boolean isBetterLocation(Location location, Location currentBestLocation) {
-        final int THRESHOLD_ONE_MINUTE = 60*1000;
-        if (currentBestLocation == null) {
-            return true;
-        }
-
-        // Filter 2 locations in function of time
-        long timeDiff = location.getTime() - currentBestLocation.getTime();
-        boolean isNewer = timeDiff > 0;
-        if (timeDiff > THRESHOLD_ONE_MINUTE) {
-            return true;
-        } else if (-timeDiff > THRESHOLD_ONE_MINUTE) {
-            return false;
-        }
-
-        // Filter 2 location in function of accuracy
-        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
-
-        // Determine location quality using a combination of timeliness and accuracy
-        if (accuracyDelta < 0) {
-            return true;
-        } else if (isNewer &&
-                accuracyDelta < 200 &&
-                isSameProvider(location.getProvider(), currentBestLocation.getProvider())) {
-            return true;
-        }
-        return false;
-    }
-
-    //Compare 2 providers
-    private boolean isSameProvider(String provider1, String provider2) {
-        return provider2 != null && provider2.equals(provider1);
     }
 
 

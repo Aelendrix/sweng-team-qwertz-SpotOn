@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -63,7 +64,6 @@ public class TakePictureFragment extends Fragment {
 
     private ImageView mPic;
     private Uri mImageToUploadUri;
-    private LocationManager mLocationManager;
     private PhotoObject mActualPhotoObject;
 
     @Override
@@ -314,23 +314,28 @@ public class TakePictureFragment extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            if(mImageToUploadUri != null) {
-                //Get our saved picture from the file in a bitmap image and display it on the image view
-                Uri selectedImage = mImageToUploadUri;
-                getContext().getContentResolver().notifyChange(selectedImage, null);
-                Bitmap HQPicture = getBitmap(mImageToUploadUri, getContext());
-                if(HQPicture != null){
-                    mPic.setImageBitmap(HQPicture);
-                    //Create a PhotoObject instance of the picture and send it to the file server + database
-                    mActualPhotoObject = createPhotoObject(HQPicture);
-                } else {
-                    Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
-            }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            processResult(mImageToUploadUri);
+        }
+    }
 
+    public void processResult(Uri imageToUploadUri){
+        if(imageToUploadUri != null) {
+            //Get our saved picture from the file in a bitmap image and display it on the image view
+            Uri selectedImage = imageToUploadUri;
+            getContext().getContentResolver().notifyChange(selectedImage, null);
+            Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
+            if(HQPicture != null){
+                mPic.setImageBitmap(HQPicture);
+                //Create a PhotoObject instance of the picture and send it to the file server + database
+                mActualPhotoObject = createPhotoObject(HQPicture);
+            }
+            else {
+                Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
         }
     }
 
