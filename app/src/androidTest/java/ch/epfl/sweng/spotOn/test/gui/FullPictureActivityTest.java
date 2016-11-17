@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -14,6 +15,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
@@ -40,17 +43,14 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase(){
-        // new
-        // don't modifie the values passed to MockLocationTracker
-        MockLocationTracker mlt = new MockLocationTracker(46.52890355757567, 6.569420238493345);
+        Location location = new Location("testLocationProvider");
+        location.setLatitude(46.52890355757567);
+        location.setLongitude(6.569420238493345);
+        location.setAltitude(0);
+        location.setTime(System.currentTimeMillis());
+
+        MockLocationTracker mlt = new MockLocationTracker(location);
         LocalDatabase.initialize(mlt);
-// old
-//        Location location = new Location("testLocationProvider");
-//        location.setLatitude(46.52890355757567);
-//        location.setLongitude(6.569420238493345);
-//        location.setAltitude(0);
-//        location.setTime(System.currentTimeMillis());
-//        LocalDatabase.getInstance().setLocation(location);
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
         pictureID = po.getPictureId();
         po.upload();
