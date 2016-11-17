@@ -47,7 +47,6 @@ public class FullPictureActivityTest {
         location.setAltitude(0);
         location.setTime(System.currentTimeMillis());
 
-        //MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 

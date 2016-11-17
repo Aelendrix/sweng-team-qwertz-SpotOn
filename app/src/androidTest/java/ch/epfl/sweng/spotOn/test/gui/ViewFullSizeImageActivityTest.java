@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.location.Location;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -31,6 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ViewFullSizeImageActivityTest {
 
     @Rule
@@ -66,14 +68,14 @@ public class ViewFullSizeImageActivityTest {
     }
 
 // exact same test is ran in FullPictureActivityTest
-//    @Test
-//    public void launchFullPictureActivity() throws InterruptedException{
-//        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-//        Thread.sleep(1000);
-//        onView(withText("Up !!")).perform(click());
-//        Thread.sleep(1000);
-//        onView(withText("Down")).perform(click());
-//    }
+    @Test
+    public void launchFullPictureActivity() throws InterruptedException{
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(1000);
+        onView(withText("Up !!")).perform(click());
+        Thread.sleep(1000);
+        onView(withText("Down")).perform(click());
+    }
 
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
