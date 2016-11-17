@@ -12,17 +12,14 @@ import static ch.epfl.sweng.spotOn.test.gui.TestImageViewCatcher.hasDrawable;
 import static org.hamcrest.Matchers.not;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Instrumentation.ActivityResult;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.runner.AndroidJUnitRunner;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,8 +30,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -48,7 +44,7 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker mlt = new MockLocationTracker();
+            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
         }
@@ -68,6 +64,7 @@ public class CameraTest{
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }
+
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
 

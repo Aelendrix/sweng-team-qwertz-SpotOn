@@ -14,7 +14,7 @@
 //
 //import ch.epfl.sweng.spotOn.gui.TabActivity;
 //import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-//import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
+//import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 //
 ///**
 // * Created by nico on 09.11.16.
@@ -28,7 +28,7 @@
 //
 //    @Before
 //    public void initTestContext(){
-//        MockLocationTracker mlt = new MockLocationTracker(46.52890355757567, 6.569420238493345);
+//        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
 //        LocalDatabase.initialize(mlt);
 //    }
 //

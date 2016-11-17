@@ -15,15 +15,15 @@ import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
  * Created by quentin on 16.11.16.
  */
 
-public class MockLocationTracker implements LocationTracker {
+public class MockLocationTracker_forTest implements LocationTracker {
 
     List<LocationTrackerListener> listeners = new ArrayList<>();
     Location mockLocation = null;
 
-    public MockLocationTracker(Location loc){
+    public MockLocationTracker_forTest(Location loc){
         mockLocation=loc;
     }
-    public MockLocationTracker(double latitude, double longitude){
+    public MockLocationTracker_forTest(double latitude, double longitude){
         Location newMockLocation = new Location("mockProvider");
         newMockLocation.setLatitude(latitude);
         newMockLocation.setLongitude(longitude);
@@ -32,7 +32,7 @@ public class MockLocationTracker implements LocationTracker {
         newMockLocation.setTime(new Date().getTime());
         mockLocation=newMockLocation;
     }
-    public MockLocationTracker(){
+    public MockLocationTracker_forTest(){
         Location newMockLocation = new Location("mockProvider");
         newMockLocation.setLatitude(46.52942111671832);
         newMockLocation.setLongitude(6.569539974900668);

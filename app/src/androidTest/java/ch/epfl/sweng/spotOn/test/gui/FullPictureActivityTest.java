@@ -15,12 +15,10 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -49,7 +47,7 @@ public class FullPictureActivityTest {
         location.setAltitude(0);
         location.setTime(System.currentTimeMillis());
 
-        MockLocationTracker mlt = new MockLocationTracker(location);
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
         PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
         pictureID = po.getPictureId();

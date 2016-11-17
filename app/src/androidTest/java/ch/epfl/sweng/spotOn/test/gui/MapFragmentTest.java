@@ -1,19 +1,12 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
-import android.app.Instrumentation;
 import android.location.Location;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,12 +20,11 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 /**
@@ -42,7 +34,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 public class MapFragmentTest {
 
-    MockLocationTracker mMockLocationTracker;
+    MockLocationTracker_forTest mMockLocationTracker;
 
     //This will be useful when clicking on pins (not the pin for the location)
     String mPictureId;
@@ -58,7 +50,7 @@ public class MapFragmentTest {
             location.setAltitude(0);
             location.setTime(System.currentTimeMillis());
 
-            mMockLocationTracker = new MockLocationTracker(location);
+            mMockLocationTracker = new MockLocationTracker_forTest(location);
             LocalDatabase.initialize(mMockLocationTracker);
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
 
@@ -101,8 +93,6 @@ public class MapFragmentTest {
     @Test
     public void clickingOnMarkerTest() throws Exception {
         goToMapFragment();
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
         UiSelector myPositionUiSelecter = new UiSelector().descriptionContains("My Position");
         if(myPositionUiSelecter==null){
             throw new AssertionError("the \"my position\" pin should exist");

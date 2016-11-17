@@ -7,8 +7,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +16,9 @@ import java.util.Date;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MapFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -36,13 +33,13 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class MapTest {
 
-    MockLocationTracker mMockLocationTracker;
+    MockLocationTracker_forTest mMockLocationTracker;
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            mMockLocationTracker = new MockLocationTracker();
+            mMockLocationTracker = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mMockLocationTracker);
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
         }
