@@ -64,7 +64,7 @@ public class ViewFullSizeImageActivityTest {
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText(R.id.downvoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
     }
 
     @Test
