@@ -89,7 +89,11 @@ public class MapFragmentTest {
     @Test
     public void clickingOnMarkerTest() throws Exception {
         goToMapFragment();
-        UiObject pin = mDevice.findObject(new UiSelector().descriptionContains("My Position"));
+        UiSelector myPositionUiSelecter = new UiSelector().descriptionContains("My Position");
+        if(myPositionUiSelecter==null){
+            throw new AssertionError("the \"my position\" pin should exist");
+        }
+        UiObject pin = mDevice.findObject(myPositionUiSelecter);
         pin.click();
         Thread.sleep(1000);
     }
