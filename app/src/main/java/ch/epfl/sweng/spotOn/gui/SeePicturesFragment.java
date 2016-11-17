@@ -20,7 +20,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     View mView;
     GridView mGridView;
     private ImageAdapter mImageAdapter;
-    protected static int mPosition = 0;
+    protected static int mDefaultItemPosition = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                mPosition = position;
+                mDefaultItemPosition = position;
                 displayFullsizeImage(position);
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }

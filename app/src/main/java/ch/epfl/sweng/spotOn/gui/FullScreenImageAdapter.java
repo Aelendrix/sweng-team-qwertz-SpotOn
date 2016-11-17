@@ -37,12 +37,12 @@ import ch.epfl.sweng.spotOn.user.UserId;
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
 
-    private Map<String, PhotoObject> mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
-    private List<String> mPhotosId = new ArrayList<>(mPhotoMap.keySet());
-    private List<PhotoObject> mPhotos = new ArrayList<>();
+    private Map<String, PhotoObject> mPhotoMap;
+    private List<String> mPhotosId;
+    private List<PhotoObject> mPhotos;
 
     private ImageView mViewToSet;
-    private PhotoObject mDisplayedMedia = null;
+    private PhotoObject mDisplayedMedia;
 
     public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
@@ -50,9 +50,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
-        for(String s : mPhotosId) {
-            mPhotos.add(mPhotoMap.get(s));
-        }
+        mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
+        mPhotosId = new ArrayList<>(mPhotoMap.keySet());
+        mPhotos = new ArrayList<>(mPhotoMap.values());
     }
 
     @Override
@@ -135,7 +135,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     private void vote(int vote){
         if(mDisplayedMedia==null) {
-            throw new NullPointerException();
+            throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserId.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
