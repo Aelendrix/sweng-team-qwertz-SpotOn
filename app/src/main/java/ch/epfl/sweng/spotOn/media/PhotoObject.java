@@ -32,7 +32,6 @@ import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.user.User;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 

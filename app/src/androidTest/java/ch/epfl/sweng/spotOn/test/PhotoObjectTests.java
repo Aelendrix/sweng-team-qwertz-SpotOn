@@ -3,21 +3,17 @@ package ch.epfl.sweng.spotOn.test;
 import android.graphics.Bitmap;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
@@ -200,18 +196,18 @@ public class PhotoObjectTests {
     }
     */
 
+    @Test
+    public void testProcessReport(){
+        for(PhotoObject p : getAllPO()) {
+            ArrayList<String> reporters = new ArrayList<String>(){};
+            reporters.add("user1");
 
+            p.processReport("user1");
 
-
-
-
-
-
-
-
-
-
-
+            Assert.assertEquals(p.getReports(), 1);
+            Assert.assertEquals(p.getReportersList().equals(reporters), true);
+        }
+    }
 
     @Test
     public void photoOBjectInstantiatesCorrectly(){
