@@ -10,18 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 
-public class SeePicturesFragment extends Fragment {
+public class SeePicturesFragment extends Fragment implements LocalDatabaseListener{
 
     View mView;
     GridView mGridView;
     private ImageAdapter mImageAdapter;
-    protected static int mPosition = 0;
+    protected static int mDefaultItemPosition = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LocalDatabase.getInstance().addListener(this);
+
         mView = inflater.inflate(R.layout.activity_see_pictures, container, false);
         mGridView = (GridView) mView.findViewById(R.id.gridview);
         mImageAdapter = new ImageAdapter(mView.getContext());
@@ -30,13 +35,15 @@ public class SeePicturesFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                mPosition = position;
+                mDefaultItemPosition = position;
                 displayFullsizeImage(position);
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
+        refreshGrid();
         return mView;
     }
+
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
@@ -44,7 +51,14 @@ public class SeePicturesFragment extends Fragment {
                     mImageAdapter= new ImageAdapter(mView.getContext());
                     mGridView.invalidateViews();
                     mGridView.setAdapter(mImageAdapter);
-
+                    LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                    if(mImageAdapter.getCount()==0){
+                        mGridView.setVisibility(View.GONE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }else{
+                        linearLayout.setVisibility(View.GONE);
+                        mGridView.setVisibility(View.VISIBLE);
+                    }
         }
 
     }
@@ -57,5 +71,9 @@ public class SeePicturesFragment extends Fragment {
         startActivity(displayFullsizeImageIntent);
     }
 
+    @Override
+    public void databaseUpdated() {
+        refreshGrid();
+    }
 
 }

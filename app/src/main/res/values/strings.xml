@@ -40,5 +40,10 @@
     <string name="textToBeDrawn">Text to be drawn into the picture</string>
     <string name="okButton">Ok !</string>
     <string name="fullSizeImage">Thumbnail in full size</string>
+
+    <string name="noPictureViewable">There is maybe some picture around, look at the map! :)</string>
+    <string name="goToMap">Go to the Map</string>
+
+
 </resources>
 
