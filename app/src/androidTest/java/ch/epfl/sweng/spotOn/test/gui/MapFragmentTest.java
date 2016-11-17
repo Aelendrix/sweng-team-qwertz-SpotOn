@@ -90,7 +90,7 @@ public class MapFragmentTest {
     public void clickingOnMarkerTest() throws Exception {
 //        goToMapFragment();
         if(withId(R.id.viewpager)==null){
-            throw new AssertionError("Could not find viewPager");
+            throw new AssertionError("Could not find viewPager");   
         }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
