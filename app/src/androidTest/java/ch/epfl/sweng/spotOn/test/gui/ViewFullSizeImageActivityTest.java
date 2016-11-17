@@ -65,14 +65,15 @@ public class ViewFullSizeImageActivityTest {
         pictureID2 = po2.getPictureId();
     }
 
-    @Test
-    public void launchFullPictureActivity() throws InterruptedException{
-        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
-        onView(withText("Up !!")).perform(click());
-        Thread.sleep(1000);
-        onView(withText("Down")).perform(click());
-    }
+// already tested in FullPictureActivityTest
+//    @Test
+//    public void launchFullPictureActivity() throws InterruptedException{
+//        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+//        Thread.sleep(1000);
+//        onView(withText("Up !!")).perform(click());
+//        Thread.sleep(1000);
+//        onView(withText("Down")).perform(click());
+//    }
 
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
