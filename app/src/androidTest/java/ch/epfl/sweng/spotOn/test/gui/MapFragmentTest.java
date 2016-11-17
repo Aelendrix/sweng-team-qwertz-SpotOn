@@ -85,10 +85,6 @@ public class MapFragmentTest {
             throw new AssertionError("Could not find viewPager");
         }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        if(withId(R.id.viewpager)==null){
-            throw new AssertionError("Could not find viewPager (2nd swipe)");
-        }
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
     }
 
