@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 
 public class SeePicturesFragment extends Fragment implements LocalDatabaseListener{
@@ -24,6 +25,8 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LocalDatabase.getInstance().addListener(this);
+
         mView = inflater.inflate(R.layout.activity_see_pictures, container, false);
         mGridView = (GridView) mView.findViewById(R.id.gridview);
         mImageAdapter = new ImageAdapter(mView.getContext());
@@ -37,6 +40,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
+        refreshGrid();
         return mView;
     }
 
@@ -51,12 +55,10 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                     if(mImageAdapter.getCount()==0){
                         mGridView.setVisibility(View.GONE);
                         linearLayout.setVisibility(View.VISIBLE);
-                    }
-                    else{
+                    }else{
                         linearLayout.setVisibility(View.GONE);
                         mGridView.setVisibility(View.VISIBLE);
                     }
-
         }
 
     }
@@ -73,4 +75,5 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     public void databaseUpdated() {
         refreshGrid();
     }
+
 }
