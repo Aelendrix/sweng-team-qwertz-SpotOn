@@ -78,7 +78,10 @@ public class MapFragmentTest {
     public void displayClusterTest() throws Exception {
         PhotoObject picToAdd = TestPhotoObjectUtils.iceDivingPO();
         LocalDatabase.getInstance().addPhotoObject(picToAdd);
-        goToMapFragment();
+//        goToMapFragment();
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
         Thread.sleep(1000);
     }
 
