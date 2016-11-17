@@ -13,8 +13,9 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 
-public class SeePicturesFragment extends Fragment {
+public class SeePicturesFragment extends Fragment implements LocalDatabaseListener{
 
     View mView;
     GridView mGridView;
@@ -38,6 +39,7 @@ public class SeePicturesFragment extends Fragment {
         });
         return mView;
     }
+
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
@@ -65,5 +67,10 @@ public class SeePicturesFragment extends Fragment {
         Intent displayFullsizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
         displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullsizeImageIntent);
+    }
+
+    @Override
+    public void databaseUpdated() {
+        refreshGrid();
     }
 }
