@@ -48,15 +48,6 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-//            InstrumentationRegistry.getTargetContext();
-//            if(getActivity()==null){
-//                throw new AssertionError("nikzeub");
-//            }
-//            if(getActivity().getApplicationContext()==null){
-//                throw new AssertionError("nikzeub2");
-//            }
-            //ConcreteLocationTracker.initialize(InstrumentationRegistry.getTargetContext());
-            //LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
             MockLocationTracker mlt = new MockLocationTracker();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);

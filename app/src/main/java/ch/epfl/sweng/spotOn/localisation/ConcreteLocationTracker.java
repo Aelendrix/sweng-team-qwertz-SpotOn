@@ -25,18 +25,12 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     private static LocationTracker mSingleInstance=null;
 
-    private Location mLocation;
-
     private LocationManager mLocationManager;
     private Handler mLocationTimeoutHandler;
     private Runnable mRunOnTimeout;
 
     private List<LocationTrackerListener> mListenersList;
-
-    private final static int TIMEOUT_LOCATION = 3*60*1000;  // 3 minutes
-
-    private final static int LISTENERS_NOTIFICATION_NEW_LOCATION = 0;
-    private final static int LISTENERS_NOTIFICATION_LOCATION_TIMEOUT = 1;
+    private Location mLocation;
 
 
     // INITIALIZE AND CONSTRUCTOR
