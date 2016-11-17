@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import ch.epfl.sweng.spotOn.BitmapUtils;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.user.User;
@@ -82,7 +83,7 @@ public class PhotoObject {
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullsizeImage=true;
         mFullsizeImageLink = null;  // link not avaiable yet
-        mThumbnail = createThumbnail(mFullsizeImage);
+        mThumbnail = BitmapUtils.createThumbnail(mFullsizeImage, THUMBNAIL_SIZE);
         mPictureId = DatabaseRef.getMediaDirectory().push().getKey();   //available even offline
         mPhotoName = photoName;
         mCreatedDate = createdDate;
@@ -134,6 +135,9 @@ public class PhotoObject {
     public void upload(boolean hasListener, OnCompleteListener completionListener){
         // sendToFileServer calls sendToDatabase on success
         sendToFileServer(hasListener, completionListener);
+    }
+    public void upload(){
+        upload(false, null);
     }
 
     /** return true if the coordinates in parameters are in the scope of the picture}
@@ -393,24 +397,9 @@ public class PhotoObject {
             throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
         }
         String linkToFullsizeImage = mFullsizeImageLink;
-        String thumbnailAsString = encodeBitmapAsString(mThumbnail);
+        String thumbnailAsString = BitmapUtils.encodeBitmapAsString(mThumbnail);
         return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
                 mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
-    }
-
-    /** encodes the passed bitmap into a string
-     */
-    private String encodeBitmapAsString(Bitmap img){
-        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
-        //TODO img.recycle() ??;
-        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
-    }
-
-    /** creates the thumbail from this object by reducing the resolution of the fullSizeImage
-     */
-    private Bitmap createThumbnail(Bitmap fullSizeImage){
-        return ThumbnailUtils.extractThumbnail(fullSizeImage, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     }
 
     @Override
