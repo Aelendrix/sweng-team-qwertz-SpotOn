@@ -30,6 +30,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,6 +47,7 @@ import java.util.ArrayList;
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserId;
 
 
@@ -50,6 +56,9 @@ import ch.epfl.sweng.spotOn.user.UserId;
  * it in the app
  */
 public class TakePictureFragment extends Fragment {
+
+    private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
+    private final String USER_ID = UserId.getInstance().getUserId();
 
     //objet representing the phone localisation
     Location mPhoneLocation;
@@ -60,6 +69,7 @@ public class TakePictureFragment extends Fragment {
     //latitude and longitude, not always assigned
     private static double mLatitude;
     private static double mLongitude;
+    private static long mRemainingPhotos;
 
     private ImageView mPic;
     private Uri mImageToUploadUri;
@@ -71,6 +81,7 @@ public class TakePictureFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_picture, container, false);
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
+        getRemainingPhotoInDay();
         return view;
     }
 
@@ -128,6 +139,7 @@ public class TakePictureFragment extends Fragment {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
                 Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
+
             } else {
                 Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
             }
@@ -139,10 +151,18 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
-                mActualPhotoObject.upload(false, null); // no onCOmplete listener
-                //TODO: Design something rather than displaying a message
-                mActualPhotoObject.setSentToServerStatus(true);
-                Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
+
+                if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
+                    --mRemainingPhotos;
+                    UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
+                    mActualPhotoObject.upload(false, null); // no onCOmplete listener
+                    //TODO: Design something rather than displaying a message
+                    mActualPhotoObject.setSentToServerStatus(true);
+                    Toast.makeText(this.getActivity(), "Picture sent to server, You have "+mRemainingPhotos+" left today!", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(this.getActivity(), "You have 0 remaining photos you can post today", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
             }
@@ -384,5 +404,28 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    private void getRemainingPhotoInDay(){
+
+        UserRef.orderByChild("userId").equalTo(USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    if(dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null){
+                        mRemainingPhotos = ((long)dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                    }
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void setRemainingPhotos(long remainingPhotos){
+        mRemainingPhotos = remainingPhotos;
     }
 }

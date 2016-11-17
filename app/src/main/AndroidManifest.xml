@@ -49,6 +49,8 @@
 
 
         <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
+        <receiver android:name="ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver" />
+
 
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"

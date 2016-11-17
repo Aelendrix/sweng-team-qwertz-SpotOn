@@ -27,7 +27,9 @@ public class DatabaseRef{
     }
 
     public static void deletePhotoObjectFromDB(String pictureID){
-        mMediaDirectory.child(pictureID).removeValue();
+        if(pictureID != null) {
+            mMediaDirectory.child(pictureID).removeValue();
+        }
     }
 
     public static void deleteUserFromDB(String userID){
