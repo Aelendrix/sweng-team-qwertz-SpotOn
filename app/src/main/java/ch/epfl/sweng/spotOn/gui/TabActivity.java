@@ -30,25 +30,6 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
 
     private TabLayout mTabLayout;
 
-    /* On vire
-    // The path to the root of the stored pictures Data in the database
-    //TimerTask
-    private final int TIME_BETWEEN_EXEC = 60 * 1000; //60 seconds
-    private boolean hasLocalisation = false;
-    Handler mHandler = new Handler();
-    //
-    private Runnable loopedRefresh = new Runnable() {
-        @Override
-        public void run() {
-            Log.d("Loop", "refresh the database");
-            refreshDB();
-            // Repeat this the same runnable code block again
-            mHandler.postDelayed(loopedRefresh, TIME_BETWEEN_EXEC);
-        }
-    };
-    private Location mLocation;
-    */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,15 +45,6 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setupWithViewPager(viewPager);
 
-// old (my branch)
-//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
-//            @Override
-//            public void onPageSelected(int pageNb) {
-//                // needed for my sprint 7 (quentin)
-//            }
-//        });
-
-        // new
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -90,23 +62,6 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
 
             }
         });
-// end new
-
-// On vire
-//        mLocationTracker = new LocationTracker(this.getApplicationContext()){
-//
-//            @Override
-//            public void refreshTrackerLocation() {
-//                    // Called when a new location is found by the network location provider.
-//                    if (!hasLocalisation) {
-//                        synchronized (this) {
-//                            mHandler.postDelayed(loopedRefresh, 3 * 1000);
-//                            hasLocalisation = true;
-//                        }
-//                    }
-//                    refreshLocation();
-//            }
-//        };
     }
 
 
@@ -124,31 +79,6 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
     public void storePictureOnInternalStorage(View view) {
         mCameraFragment.storePictureOnInternalStorage(view);
     }
-
-// on vire
-//    /*
-//    /**
-//     * Override method starting the repeating task every TIME_BETWEEN_EXEC seconds
-//     */
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        //start a looped runnable code
-//        if (hasLocalisation) {
-//            mHandler.postDelayed(loopedRefresh, 10 * 1000);
-//        }
-//    }
-//
-//    /**
-//     * Override method stopping the reapeting task
-//     */
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        //stop the timer
-//        mHandler.removeCallbacks(loopedRefresh);
-//    }
-
 
     /*
      * Rotates the picture by 90°
@@ -201,60 +131,10 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         Profile profile = Profile.getCurrentProfile();
         if (profile != null) {
             LoginManager.getInstance().logOut();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            //go to the mainActivity in the activity stack
+            finish();
         }
     }
-
-// on vire
-//    /**
-//     * private class refreshing the local database using the firebase server
-//     * it'll update the mapFragment and display the photoObject on the map as markers
-//     */
-//    private void refreshDB() {
-//        if (LocationTracker.locationIsValid()) {
-//            LocalDatabase.refresh((mLocation), this);
-//        } else {
-//            Log.d("Loop", "DB not refreshed: no localisation discovered yet");
-//        }
-//
-//    }
-//
-//    /**
-//     * public class following the call of refreshDB,
-//     * refreshing the map and the grid when the datas from firebase are downloaded
-//     */
-//    public void endRefreshDB() {
-//        if (mMapFragment != null) {
-//            mMapFragment.addDBMarkers();
-//        }
-//        if (mPicturesFragment != null) {
-//            mPicturesFragment.refreshGrid();
-//        }
-//    }
-
-// no longer handled by this class ?
-//    //refresh the local markers
-//    public void changeLocalMarkers(ArrayList<PhotoObject> photoList) {
-//        mMapFragment.displayPictureMarkers(photoList);
-//    }
-
-// on vire
-//    /**
-//     * Private class refreshing the current location
-//     * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
-//     */
-//    private void refreshLocation() {
-//        mLocation = LocalDatabase.getLocation();
-//        if (mLocation != null) {
-//            if (mMapFragment != null) {
-//                mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(), mLocation.getLongitude()));
-//            }
-//            if (mCameraFragment != null) {
-//                mCameraFragment.refreshLocation(mLocation);
-//            }
-//        }
-//    }
 
 
     @Override
@@ -265,30 +145,5 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
     }
-
-// tabActivity no longer "owns" the LocationProvider - on vire
-//    /**
-//     * Private class refreshing the current location
-//     * and update the (mapFragment and pictureFragment) fragment's local variable of the location.
-//     */
-//    private void refreshLocation(){
-//        mLocation = LocalDatabase.getLocation();
-//        if(mLocation!=null){
-//            if(mMapFragment!=null) {
-//                mMapFragment.refreshMapLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
-//            }
-//            if(mCameraFragment!=null) {
-//                mCameraFragment.refreshLocation(mLocation);
-//            }
-//            if(mPicturesFragment!=null) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mPicturesFragment.refreshGrid();
-//                    }
-//                });
-//            }
-//        }
-//    }
 
 }

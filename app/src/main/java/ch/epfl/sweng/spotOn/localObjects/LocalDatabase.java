@@ -163,7 +163,7 @@ public class LocalDatabase implements LocationTrackerListener{
             newObjectLocation.setLatitude(po.getLatitude());
             newObjectLocation.setLongitude(po.getLongitude());
             // compare it with the location provided by the LocationTracker
-            if(newObjectLocation.distanceTo(refToLocationTracker.getLocation()) < po.getRadius()) {
+            if(newObjectLocation.distanceTo(mCachedLocation) < po.getRadius()) {
                 if(!mViewableMediaDataMap.containsKey(po.getPictureId())) {
                     mViewableMediaDataMap.put(po.getPictureId(), po);
                 }

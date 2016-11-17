@@ -87,21 +87,5 @@ public class LocationTrackerTest {
         if (LocalizationUtils.isSameProvider(null, "provider1")) {
             throw new AssertionError("should be same provider");
         }
-// old way
-//        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//            @Override
-//            public void run() {
-//                lt = new LocalisationTracker(InstrumentationRegistry.getContext());
-//
-//                if (!lt.isSameProvider("provider1", "provider1")) {
-//                    throw new AssertionError("should be same provider");
-//                }
-//
-//                if (lt.isSameProvider(null, "provider1")) {
-//                    throw new AssertionError("should be same provider");
-//                }
-//
-//            }
-//        });
     }
 }

@@ -51,7 +51,7 @@ public class MapTest {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(5000);
-        Log.d("xD",""+mActivityTestRule.getActivity().getSupportFragmentManager().getFragments());
+
         final MapFragment mapFragment = (MapFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(2);
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {

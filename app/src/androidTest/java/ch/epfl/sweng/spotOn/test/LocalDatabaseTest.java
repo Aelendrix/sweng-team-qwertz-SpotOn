@@ -45,9 +45,7 @@ public class LocalDatabaseTest {
     @Test
     public void removeToDB() throws Exception {
         LocalDatabase.getInstance().clear();
-        if(LocalDatabase.getInstance().hasKey(photo1.getPictureId())) {
-            LocalDatabase.getInstance().removePhotoObject(photo1.getPictureId());
-        }
+
         if(!LocalDatabase.getInstance().hasKey(photo1.getPictureId())) {
             LocalDatabase.getInstance().addPhotoObject(photo1);
             LocalDatabase.getInstance().removePhotoObject(photo1.getPictureId());
@@ -61,25 +59,13 @@ public class LocalDatabaseTest {
     @Test
     public void getPhotoFromDB() throws Exception{
         LocalDatabase.getInstance().clear();
-        if(LocalDatabase.getInstance().hasKey(photo1.getPictureId())){
-            LocalDatabase.getInstance().removePhotoObject(photo1.getPictureId());
-        }
+
         LocalDatabase.getInstance().addPhotoObject(photo1);
         if(!PhotoObjectTestUtils.areEquals(photo1,LocalDatabase.getInstance().get(photo1.getPictureId()))) {
             throw new AssertionError("LocalDB give wrong photo");
         }
         LocalDatabase.getInstance().clear();
     }
-
-//    /* tested method no longer exists
-//    @Test
-//    public void locationTest() throws Exception{
-//        LocalDatabase.setLocation(location);
-//        if(!LocalDatabase.getLocation().equals(location))
-//        {
-//            throw new AssertionError("Location not correctly set");
-//        }
-//    }*/
 
     @Test
     public void getThumbnailListTest() throws Exception{

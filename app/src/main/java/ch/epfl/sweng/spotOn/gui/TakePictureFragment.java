@@ -300,7 +300,7 @@ public class TakePictureFragment extends Fragment {
             throw new AssertionError("Location tracker should be started");
         }
         if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
-            // todo pop toast message
+            throw new IllegalStateException("can't create new object withou a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
         PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -332,7 +332,11 @@ public class TakePictureFragment extends Fragment {
             if(HQPicture != null){
                 mPic.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
-                mActualPhotoObject = createPhotoObject(HQPicture);
+                if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
+                    Toast.makeText(getContext(), "Can't create post without proposer Location data", Toast.LENGTH_LONG);
+                }else {
+                    mActualPhotoObject = createPhotoObject(HQPicture);
+                }
             }
             else {
                 Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();

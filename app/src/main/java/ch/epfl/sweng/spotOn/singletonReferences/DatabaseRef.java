@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.singletonReferences;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.BuildConfig;
 
 /** Singleton that provides references to the database
  * Created by quentin on 03.11.16.
@@ -19,6 +20,9 @@ public class DatabaseRef{
 // PUBLIC METHODS
 
     public static DatabaseReference getMediaDirectory(){
+        if(BuildConfig.DEBUG){
+
+        }
         return mMediaDirectory;
     }
 
