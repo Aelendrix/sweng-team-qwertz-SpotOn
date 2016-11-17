@@ -41,14 +41,14 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase(){
-        // ignore this
-//        Location location = new Location("testLocationProvider");
-//        location.setLatitude(46.52890355757567);
-//        location.setLongitude(6.569420238493345);
-//        location.setAltitude(0);
-//        location.setTime(System.currentTimeMillis());
+        Location location = new Location("testLocationProvider");
+        location.setLatitude(46.52890355757567);
+        location.setLongitude(6.569420238493345);
+        location.setAltitude(0);
+        location.setTime(System.currentTimeMillis());
 
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
+        //MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
