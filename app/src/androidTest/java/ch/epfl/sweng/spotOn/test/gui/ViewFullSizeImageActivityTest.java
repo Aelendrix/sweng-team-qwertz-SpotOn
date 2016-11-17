@@ -51,18 +51,18 @@ public class ViewFullSizeImageActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        LocalDatabase.getInstance().clear();
-
         PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
         po1.upload();
-        PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
-        po2.upload();
         LocalDatabase.getInstance().addPhotoObject(po1);
-        LocalDatabase.getInstance().addPhotoObject(po2);
         pictureID1 = po1.getPictureId();
-        pictureID2 = po2.getPictureId();
+
         displayFullSizeImageIntent = new Intent();
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID1);
+
+        PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
+        po2.upload();
+        LocalDatabase.getInstance().addPhotoObject(po2);
+        pictureID2 = po2.getPictureId();
     }
 
     @Test
