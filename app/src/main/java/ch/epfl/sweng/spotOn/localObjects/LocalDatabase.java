@@ -213,11 +213,12 @@ public class LocalDatabase implements LocationTrackerListener{
 
 
 
-    // LISTENER FUNCTIONS
+// LISTENER FUNCTIONS
     @Override
     public void updateLocation(Location newLocation) {
         if (mCachedLocation == null) {
             Log.d("Localdatabase", "location updated, forcing single refresh");
+            mCachedLocation = newLocation;
             forceSingleRefresh();
         } else {
             boolean tooLongWithoutRefreshing = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
@@ -225,6 +226,7 @@ public class LocalDatabase implements LocationTrackerListener{
             boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
             if (tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh)) {
                 Log.d("Localdatabase", "location updated, forcing single refresh");
+                mCachedLocation = newLocation;
                 forceSingleRefresh();
             }// otherwise, it's not worth it to refresh the database
         }

@@ -1,4 +1,3 @@
-// passe pas
 //package ch.epfl.sweng.spotOn.test.gui;
 //
 //

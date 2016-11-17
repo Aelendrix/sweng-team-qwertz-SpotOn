@@ -225,6 +225,16 @@ public class PhotoObjectTests {
         assertCreatedObjectMatchesInitializationFields(fullSizePic, authorID, photoName, createdDate, latitude, longitude);
     }
 
+
+    @Test
+    public void toStringIsCorrect(){
+        PhotoObject p = TestPhotoObjectUtils.getRandomPhotoObject();
+        if(!p.toString().contains(p.getPictureId())){
+            throw new AssertionError(" toString() should at least contain the pictureId");
+        }
+    }
+
+
 // PRIVATE HELPERS
 
     private void assertCreatedObjectMatchesInitializationFields(Bitmap fullSizePic, String authorID, String photoName,

@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -40,17 +41,18 @@ public class ViewFullSizeImageActivityTest {
 
     @Before
     public void getPictureID(){
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
+
+        Location location = new Location("testLocationProvider");
+        location.setLatitude(46.52890355757567);
+        location.setLongitude(6.569420238493345);
+        location.setAltitude(0);
+        location.setTime(System.currentTimeMillis());
+
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
-// old
-//        Location location = new Location("testLocationProvider");
-//        location.setLatitude(46.52890355757567);
-//        location.setLongitude(6.569420238493345);
-//        location.setAltitude(0);
-//        location.setTime(System.currentTimeMillis());
+
         LocalDatabase.getInstance().clear();
-// no longer exists
-        // LocalDatabase.setLocation(location);
+
         PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
         po1.upload();
         PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
