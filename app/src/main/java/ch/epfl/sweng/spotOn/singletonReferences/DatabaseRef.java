@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DatabaseRef{
     //TODO:Need to put MediaDirectory instead of mediaDirectory_alex
-    private final static String mMediaDirectoryString = "mediaDirectory_alex";
+    private final static String mMediaDirectoryString = "MediaDirectory_mlb";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";

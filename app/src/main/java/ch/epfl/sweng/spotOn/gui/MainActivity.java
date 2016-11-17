@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.fileDeletionServices.PassedTimestampFileDeletionService;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 import ch.epfl.sweng.spotOn.user.User;
 
@@ -54,9 +53,6 @@ public final class MainActivity extends AppCompatActivity {
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
-
-        Intent deleteFileService = new Intent(this, PassedTimestampFileDeletionService.class);
-        startService(deleteFileService);
 
         /*Create an alarm which will go off for sending queries to the Firebase server
          * to check the expiration time of the files.

@@ -27,17 +27,22 @@ public class PhotoObjectStoredInDatabase {
     private double mLongitude;
     private int mNbUpvotes;
     private int mNbDownvotes;
+    private int mNbReports;
     private List<String> mUpvotersList;
     private List<String> mDownvotersList;
+    private List<String> mReportersList;
 
     public PhotoObjectStoredInDatabase(){
         // default constructor required to upload object to firebase
     }
 
     /** Constructor meant to be called by the conversion function in the PhotoObject class     */
-    public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString, String pictureId, String authorID, String photoName,
-                                       Timestamp createdDate, Timestamp expireDate, double latitude, double longitude, int upvotes, int downvotes,
-                                       List<String> upvotersList, List<String> downvotersList){
+    public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString,
+                                       String pictureId, String authorID, String photoName,
+                                       Timestamp createdDate, Timestamp expireDate, double latitude,
+                                       double longitude, int upvotes, int downvotes, int reports,
+                                       List<String> upvotersList, List<String> downvotersList,
+                                       List<String> reportersList){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
         mPictureId=pictureId;
@@ -49,8 +54,10 @@ public class PhotoObjectStoredInDatabase {
         mLongitude=longitude;
         mNbUpvotes = upvotes;
         mNbDownvotes = downvotes;
+        mNbReports = reports;
         mUpvotersList = new ArrayList<>(upvotersList);
         mDownvotersList = new ArrayList<>(downvotersList);
+        mReportersList = new ArrayList<>(reportersList);
     }
 
 
@@ -61,18 +68,30 @@ public class PhotoObjectStoredInDatabase {
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
         List<String> upvotersList;
         List<String> downvotersList;
+        List<String> reportersList;
+
         if(mUpvotersList == null){
             upvotersList = Collections.emptyList();
         }else{
             upvotersList = new ArrayList<>(mUpvotersList);
         }
+
         if(mDownvotersList == null){
             downvotersList = Collections.emptyList();
         }else{
             downvotersList = new ArrayList<>((mDownvotersList));
         }
+
+        if(mReportersList == null){
+            reportersList = Collections.emptyList();
+        }
+        else{
+            reportersList = new ArrayList<>(mReportersList);
+        }
+
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, upvotersList, downvotersList);
+                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mNbReports, upvotersList, downvotersList,
+                reportersList);
     }
 
     // rather meant to be used for debug
@@ -85,6 +104,7 @@ public class PhotoObjectStoredInDatabase {
         result+="   ---   createdDate="+mCreatedDate+"   ---   pos=("+mLatitude+", "+mLongitude+")";
         result+="   ---   upvotes="+mNbUpvotes+" downvotes="+mNbDownvotes;
         result+="   ---   voters are:"+mDownvotersList.toString()+mUpvotersList.toString();
+        result+="   ---   reporters are:"+mReportersList.toString();
         result+="   ---   thumbnailAsString length="+mThumbnailAsString.length();
         return result;
     }
@@ -112,8 +132,10 @@ public class PhotoObjectStoredInDatabase {
     public double getLongitude(){return mLongitude;}
     public int getUpvotes(){return mNbUpvotes;}
     public int getDownvotes(){return mNbDownvotes;}
+    public int getReports(){ return mNbReports;}
     public List<String> getUpvotersList(){return mUpvotersList;}
     public List<String> getDownvotersList(){return mDownvotersList;}
+    public List<String> getReportersList(){return mReportersList;}
 
     // SETTER REQUIRED (PUBLIC) BY FIREBASE
 
@@ -128,7 +150,9 @@ public class PhotoObjectStoredInDatabase {
     public void setLongitude(double longitude){mLongitude=longitude;}
     public void setUpvotes(int upvotes){mNbUpvotes=upvotes;}
     public void setDownvotes(int downvotes){mNbDownvotes=downvotes;}
+    public void setReports(int reports){ mNbReports = reports;}
     public void setUpvotersList(List<String> upvotersList){mUpvotersList=upvotersList;}
     public void setDownvotersList(List<String> downvotersList){mDownvotersList=downvotersList;}
+    public void setReportersList(List<String> reportersList){mReportersList=reportersList;}
 
 }
