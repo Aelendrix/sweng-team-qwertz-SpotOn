@@ -20,6 +20,9 @@ public class MockLocationTracker implements LocationTracker {
     List<LocationTrackerListener> listeners = new ArrayList<>();
     Location mockLocation = null;
 
+    public MockLocationTracker(Location loc){
+        mockLocation=loc;
+    }
     public MockLocationTracker(double latitude, double longitude){
         Location newMockLocation = new Location("mockProvider");
         newMockLocation.setLatitude(latitude);

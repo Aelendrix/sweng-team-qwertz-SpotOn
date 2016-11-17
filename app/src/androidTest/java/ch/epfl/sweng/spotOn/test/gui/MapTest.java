@@ -61,8 +61,10 @@ public class MapTest {
             @Override
             public void run() {
                 mMockLocationTracker.forceLocationChange(createLocation0());
+                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
                 mapFragment.refreshMapLocation();
                 mMockLocationTracker.forceLocationChange(createLocation1());
+                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
                 mapFragment.refreshMapLocation();
             }
 
