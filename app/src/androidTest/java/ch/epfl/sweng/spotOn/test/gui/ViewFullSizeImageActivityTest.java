@@ -81,6 +81,7 @@ public class ViewFullSizeImageActivityTest {
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
+
     @After
     public void deletePhotoObject(){
         DatabaseRef.deletePhotoObjectFromDB(pictureID1);
@@ -115,6 +116,7 @@ public class ViewFullSizeImageActivityTest {
             }
         });
         PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
+        po1.setRadiusMax();
         String pictureID4 = po2.getPictureId();
         picIDs.add(pictureID4);
         po2.upload(true, new OnCompleteListener<Void>() {
