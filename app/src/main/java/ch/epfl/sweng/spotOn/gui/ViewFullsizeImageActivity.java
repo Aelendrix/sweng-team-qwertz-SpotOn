@@ -74,24 +74,6 @@ public class ViewFullsizeImageActivity extends Activity {
         }*/
     }
 
-    /** Factory method that returns a listener that
-     * sets the imageView with the result of its query
-     * or deals with errors if need be
-     */
-    private OnCompleteListener<byte[]> newImageViewSetterListener(){
-        return new OnCompleteListener<byte[]>() {
-            @Override
-            public void onComplete(@NonNull Task<byte[]> uploadMediaTask) {
-                if(uploadMediaTask.getException()!=null){
-                    throw new Error("Uploading media failed");
-                }else{
-                    Bitmap obtainedImage = BitmapFactory.decodeByteArray(uploadMediaTask.getResult(), 0, uploadMediaTask.getResult().length);
-                    mViewToSet.setImageBitmap(obtainedImage);
-                }
-            }
-        };
-    }
-
     public void recordUpvote(View view) {
         mFullScreenImageAdapter.recordUpvote(view);
     }
