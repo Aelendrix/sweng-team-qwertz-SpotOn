@@ -90,7 +90,7 @@ public class MapFragmentTest {
     public void clickingOnMarkerTest() throws Exception {
 //        goToMapFragment();
         if(withId(R.id.viewpager)==null){
-            throw new AssertionError("Could not find viewPager");   
+            throw new AssertionError("Could not find viewPager");
         }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
@@ -100,6 +100,9 @@ public class MapFragmentTest {
             throw new AssertionError("the \"my position\" pin should exist");
         }
         UiObject pin = mDevice.findObject(myPositionUiSelecter);
+        if(pin==null){
+            throw new AssertionError("pin should exist");
+        }
         pin.click();
         Thread.sleep(1000);
     }
