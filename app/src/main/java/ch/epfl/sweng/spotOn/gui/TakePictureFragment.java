@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -68,7 +69,16 @@ public class TakePictureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_picture, container, false);
+        final View view = inflater.inflate(R.layout.activity_picture, container, false);
+
+        // DIRTY HACK TO GET SEND BUTTON TO WORK
+        Button sendButton = (Button) view.findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendPictureToServer(view);
+            }
+        });
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
         return view;
@@ -136,11 +146,13 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    /**
+     * Uploads picture to our database/file server
+     */
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
                 mActualPhotoObject.upload(false, null); // no onCOmplete listener
-                //TODO: Design something rather than displaying a message
                 mActualPhotoObject.setSentToServerStatus(true);
                 Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
             } else {

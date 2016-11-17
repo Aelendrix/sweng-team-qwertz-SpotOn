@@ -165,31 +165,36 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     public void addDBMarkers()
     {
-        LatLng currLoc = ConcreteLocationTracker.getInstance().getLatLng();
-        listPhoto = new ArrayList<>(LocalDatabase.getInstance().getAllNearbyMediasMap().values());
-        // old if(mMap!=null && currLoc!=null) {
-        if(mMap!=null) {
-            //empty the cluster manager
-            mClusterManager.clearItems();
-            //add the new markers on the Cluster Manager
-            for (PhotoObject photo : listPhoto) {
-                boolean canActivateIt = photo.isInPictureCircle(currLoc);
-                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                BitmapDescriptor color;
-                //add a GREEN pin to the cluster manager if the photo can be seen
-                if(canActivateIt) {
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        if(ConcreteLocationTracker.instanceExists() && ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng currLoc = ConcreteLocationTracker.getInstance().getLatLng();
+            listPhoto = new ArrayList<>(LocalDatabase.getInstance().getAllNearbyMediasMap().values());
+            // old if(mMap!=null && currLoc!=null) {
+            if(mMap!=null) {
+                //empty the cluster manager
+                mClusterManager.clearItems();
+                //add the new markers on the Cluster Manager
+                for (PhotoObject photo : listPhoto) {
+                    boolean canActivateIt = photo.isInPictureCircle(currLoc);
+                    LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
+                    BitmapDescriptor color;
+                    //add a GREEN pin to the cluster manager if the photo can be seen
+                    if(canActivateIt) {
+                        color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                    }
+                    //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
+                    else{
+                        color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                    }
+                    Pin pinForPicture = new Pin(photo, canActivateIt);
+                    //add the marker to the cluster manager
+                    mClusterManager.addItem(pinForPicture);
+                    mClusterManager.cluster();
                 }
-                //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
-                else{
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-                }
-                Pin pinForPicture = new Pin(photo, canActivateIt);
-                //add the marker to the cluster manager
-                mClusterManager.addItem(pinForPicture);
-                mClusterManager.cluster();
+            }else{
+                Log.d("MapFragment","No valid instance of LocationTracker, or no valid Location");
             }
         }
+
     }
 
     /**

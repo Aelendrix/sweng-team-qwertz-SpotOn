@@ -25,7 +25,6 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 public class TabActivity extends AppCompatActivity implements TabHost.OnTabChangeListener {
 
 
-    public LocationTracker mLocationTracker;
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
     private TakePictureFragment mCameraFragment = new TakePictureFragment();
     private MapFragment mMapFragment = new MapFragment();

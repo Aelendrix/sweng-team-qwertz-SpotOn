@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -107,6 +108,13 @@ public final class ConcreteLocationTracker implements LocationTracker {
             throw new IllegalStateException("object has not been initialized");
         }
         return mSingleInstance;
+    }
+
+    //for testing only !
+    public static void setMockLocationTracker(LocationTracker mlt){
+        if(mSingleInstance==null){
+            mSingleInstance=mlt;
+        }
     }
 
     public boolean hasValidLocation(){
