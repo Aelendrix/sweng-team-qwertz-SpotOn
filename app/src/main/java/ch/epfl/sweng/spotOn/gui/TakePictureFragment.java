@@ -42,6 +42,8 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserId;
 
@@ -52,15 +54,8 @@ import ch.epfl.sweng.spotOn.user.UserId;
  */
 public class TakePictureFragment extends Fragment {
 
-    //objet representing the phone localisation
-    Location mPhoneLocation;
-
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
-
-    //latitude and longitude, not always assigned
-    private static double mLatitude;
-    private static double mLongitude;
 
     private ImageView mPic;
     private Uri mImageToUploadUri;
@@ -84,11 +79,12 @@ public class TakePictureFragment extends Fragment {
         return view;
     }
 
-    //function called when the locationListener see a location change
-    public void refreshLocation(Location mPhoneLocation) {
-        mLatitude = mPhoneLocation.getLatitude();
-        mLongitude = mPhoneLocation.getLongitude();
-    }
+// fields are no longer used
+//    //function called when the locationListener see a location change
+//    public void refreshLocation(Location mPhoneLocation) {
+//        mLatitude = mPhoneLocation.getLatitude();
+//        mLongitude = mPhoneLocation.getLongitude();
+//    }
 
     /**
      * Method that checks if the app has the permission to use the camera
@@ -299,7 +295,15 @@ public class TakePictureFragment extends Fragment {
         String imageName = "PIC_" + timestamp + ".jpeg";
 
         String userId = UserId.getInstance().getUserId();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude);
+
+        if(!ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("Location tracker should be started");
+        }
+        if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
+            // todo pop toast message
+        }
+        Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
         return picObject;
     }
