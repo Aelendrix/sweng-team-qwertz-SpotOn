@@ -93,7 +93,7 @@ public class MapFragmentTest {
             throw new AssertionError("Could not find viewPager");
         }
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        //onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
         UiSelector myPositionUiSelecter = new UiSelector().descriptionContains("My Position");
         if(myPositionUiSelecter==null){
