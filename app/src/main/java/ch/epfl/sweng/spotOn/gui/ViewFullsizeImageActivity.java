@@ -43,8 +43,9 @@ public class ViewFullsizeImageActivity extends Activity {
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
         Intent displayImageIntent = getIntent();
-        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mPosition);
+        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
+
     }
 
 

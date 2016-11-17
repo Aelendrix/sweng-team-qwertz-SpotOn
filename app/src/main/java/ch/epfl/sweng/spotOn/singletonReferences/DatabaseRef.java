@@ -1,15 +1,18 @@
 package ch.epfl.sweng.spotOn.singletonReferences;
 
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.BuildConfig;
 
 /** Singleton that provides references to the database
  * Created by quentin on 03.11.16.
  */
 
 public class DatabaseRef{
-    //TODO:Need to put MediaDirectory instead of mediaDirectory_alex
-    private final static String mMediaDirectoryString = "MediaDirectory_mlb";
+
+    private final static String mMediaDirectoryString = "MediaDirectory";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";
@@ -19,6 +22,9 @@ public class DatabaseRef{
 // PUBLIC METHODS
 
     public static DatabaseReference getMediaDirectory(){
+        if(BuildConfig.DEBUG){
+
+        }
         return mMediaDirectory;
     }
 
@@ -27,7 +33,13 @@ public class DatabaseRef{
     }
 
     public static void deletePhotoObjectFromDB(String pictureID){
-        mMediaDirectory.child(pictureID).removeValue();
+        if(pictureID == null)
+        {
+            Log.e("Error in DatabaseRed","deletePhotoObjectFromDB pictureId is null");
+        }
+        else {
+            mMediaDirectory.child(pictureID).removeValue();
+        }
     }
 
     public static void deleteUserFromDB(String userID){

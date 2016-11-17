@@ -4,10 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -15,6 +19,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,6 +32,7 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -41,6 +47,8 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserId;
 
@@ -51,34 +59,40 @@ import ch.epfl.sweng.spotOn.user.UserId;
  */
 public class TakePictureFragment extends Fragment {
 
-    //objet representing the phone localisation
-    Location mPhoneLocation;
-
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
-
-    //latitude and longitude, not always assigned
-    private static double mLatitude;
-    private static double mLongitude;
 
     private ImageView mPic;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
+    public String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_picture, container, false);
+        final View view = inflater.inflate(R.layout.activity_picture, container, false);
+
+        // DIRTY HACK TO GET SEND BUTTON TO WORK
+        Button sendButton = (Button) view.findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendPictureToServer(view);
+            }
+        });
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
+
+
         return view;
     }
 
-    //function called when the locationListener see a location change
-    public void refreshLocation(Location mPhoneLocation) {
-        mLatitude = mPhoneLocation.getLatitude();
-        mLongitude = mPhoneLocation.getLongitude();
-    }
+// fields are no longer used
+//    //function called when the locationListener see a location change
+//    public void refreshLocation(Location mPhoneLocation) {
+//        mLatitude = mPhoneLocation.getLatitude();
+//        mLongitude = mPhoneLocation.getLongitude();
+//    }
 
     /**
      * Method that checks if the app has the permission to use the camera
@@ -86,6 +100,8 @@ public class TakePictureFragment extends Fragment {
      */
 
     public void dispatchTakePictureIntent(View view){
+        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mTextToDraw = bb.getString("TD", "");
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -136,11 +152,13 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    /**
+     * Uploads picture to our database/file server
+     */
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
                 mActualPhotoObject.upload(false, null); // no onCOmplete listener
-                //TODO: Design something rather than displaying a message
                 mActualPhotoObject.setSentToServerStatus(true);
                 Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
             } else {
@@ -287,7 +305,15 @@ public class TakePictureFragment extends Fragment {
         String imageName = "PIC_" + timestamp + ".jpeg";
 
         String userId = UserId.getInstance().getUserId();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, mLatitude, mLongitude);
+
+        if(!ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("Location tracker should be started");
+        }
+        if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
+            throw new IllegalStateException("can't create new object withou a valid location (should be tested before calling createPhotoObject");
+        }
+        Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
+        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
         return picObject;
     }
@@ -314,9 +340,31 @@ public class TakePictureFragment extends Fragment {
             getContext().getContentResolver().notifyChange(selectedImage, null);
             Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
-                mPic.setImageBitmap(HQPicture);
+                //Creates a mutable copy of the bitmap.
+                Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
+                if(mTextToDraw != null) {
+                    //Edits the bitmap in a canvas
+                    Canvas canvas = new Canvas(modifiedPicture);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    paint.setTextSize(50);
+                    float x = 50;
+                    float y = modifiedPicture.getHeight() - 200;
+                    paint.setFakeBoldText(true);
+                    canvas.drawText(mTextToDraw, x, y, paint);
+                    //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.remove("TD");
+                    edit.apply();
+                }
+                mPic.setImageBitmap(modifiedPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
-                mActualPhotoObject = createPhotoObject(HQPicture);
+                if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
+                    Toast.makeText(getContext(), "Can't create post without proposer Location data", Toast.LENGTH_LONG);
+                }else {
+                    mActualPhotoObject = createPhotoObject(HQPicture);
+                }
             }
             else {
                 Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
@@ -384,5 +432,10 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    public void goToDrawTextActivity(View view) {
+        Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);
+        startActivity(intent);
     }
 }

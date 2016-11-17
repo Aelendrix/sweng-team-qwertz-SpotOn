@@ -6,7 +6,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
@@ -16,16 +15,15 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 
-import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
-import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
-import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.areEquals;
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getAllPO;
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getRandomPhotoObject;
 
 
 /** test the behaviour of photoObjects when sent/received from database and fileserver

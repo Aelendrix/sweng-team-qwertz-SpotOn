@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -31,34 +31,27 @@ import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback,
-        ClusterManager.OnClusterItemClickListener<Pin>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin>{
+
+public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
+        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
+        ClusterManager.OnClusterClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
-    /*
 
-    //fake Data
-    //esplanade epfl (under one roof)
-    private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
-    //moutons Unil
-    private static final LatLng FAKE_SPOT_2 = new LatLng(46.521002, 6.575986);
-    //centre sportif
-    private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
-    //Flon
-    private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
-     */
-    //local location variable
-    private LatLng mPhoneLatLng;
     //marker representing our location on the map
     private Marker mLocationMarker;
+
     //list of photoObject
     private List<PhotoObject> listPhoto;
     private ClusterManager<Pin> mClusterManager;
+    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -66,8 +59,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
+        // add as listener
+        if(!LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists()){
+            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instanciated"));
+        }
+        ConcreteLocationTracker.getInstance().addListener(this);
+        LocalDatabase.getInstance().addListener(this);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /*super.onCreateView(inflater, container, savedInstanceState);
@@ -93,6 +92,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return mView;
 
     }
+
     /*
     @Override
     public void onDestroyView() {
@@ -103,35 +103,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onProviderDisabled(String provider) {}
         };
     */
-    /**
-     * function used to refresh the local location variable
-     * and apply it to our special marker on the map
-     *  @param phoneLatLng the location of the user using the GPS
-     */
-    public void refreshMapLocation(LatLng phoneLatLng) {
 
-        if (phoneLatLng != null) {
-            //now apply the location to the map
-            mPhoneLatLng = new LatLng(phoneLatLng.latitude,phoneLatLng.longitude);
-
-            if (mMap != null) {
-                //change the localisation cursor, if null, create one instead
-                if (mLocationMarker == null) {
+    /** function used to refresh the local location variable
+     *  and apply it to our special marker on the map   */
+    public void refreshMapLocation() {
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
+            if(mMap!=null){
+                if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
-                                        .position(mPhoneLatLng)
-                                        .title("My position")
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
-                } else {
-                    mLocationMarker.setPosition(mPhoneLatLng);
+                            .position(newLocation)
+                            .title("My position")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
+                }else{
+                    mLocationMarker.setPosition(newLocation);
                 }
-                addDBMarkers();
+                mLocationMarker.setVisible(true);
             }
         }
     }
-     /*Manipulates the map once available.
-     * Create the fake markers and mark my position
-     */
+
+    /*Manipulates the map once available.
+    * Create the fake markers and mark my position
+    */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -139,6 +134,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
         setUpCluster();
+        refreshMapLocation();
         //This will call the method onMarkerClick when clicking a marker
     }
 
@@ -149,29 +145,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        if(mPhoneLatLng == null && LocalDatabase.getLocation() != null){
-            mPhoneLatLng = new LatLng(LocalDatabase.getLocation().getLatitude(),LocalDatabase.getLocation().getLongitude());
-        }
         if (mMap == null) {
             ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment)).getMapAsync(this);
         }
     }
 
     /**
-     * Set up the cluster manager of the map
+     * Set up the cluster manager
      */
     private void setUpCluster(){
-        mClusterManager = new ClusterManager<>(getContext(), mMap);
-        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        //Displays the right color to the markers (green or yellow)
-        mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        addDBMarkers();
+            mClusterManager = new ClusterManager<>(getContext(), mMap);
+            //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+            mMap.setOnCameraIdleListener(mClusterManager);
+            mMap.setOnMarkerClickListener(mClusterManager);
+            mMap.setOnInfoWindowClickListener(mClusterManager);
+            //Displays the right color to the markers (green or yellow)
+            mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+            mClusterManager.setOnClusterItemClickListener(this);
+            mClusterManager.setOnClusterClickListener(this);
+            mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+            addDBMarkers();
     }
 
     /**
@@ -179,21 +172,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     public void addDBMarkers()
     {
-        listPhoto = new ArrayList<>(LocalDatabase.getMap().values());
-        if(mMap!=null && mPhoneLatLng!=null) {
-            //empty the cluster manager
-            mClusterManager.clearItems();
-            //add the new markers on the Cluster Manager
-            for (PhotoObject photo : listPhoto) {
-                boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
-                LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
-                Pin pinForPicture = new Pin(photo, canActivateIt);
-                //add the marker to the cluster manager
-                mClusterManager.addItem(pinForPicture);
-                //Re-cluster the cluster at each addition of a pin
-                mClusterManager.cluster();
+        if(ConcreteLocationTracker.instanceExists() && ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng currLoc = ConcreteLocationTracker.getInstance().getLatLng();
+            listPhoto = new ArrayList<>(LocalDatabase.getInstance().getAllNearbyMediasMap().values());
+            // old if(mMap!=null && currLoc!=null) {
+            if(mMap!=null) {
+                //empty the cluster manager
+                mClusterManager.clearItems();
+                //add the new markers on the Cluster Manager
+                for (PhotoObject photo : listPhoto) {
+                    boolean canActivateIt = photo.isInPictureCircle(currLoc);
+                    LatLng photoPosition = new LatLng(photo.getLatitude(),photo.getLongitude());
+                    BitmapDescriptor color;
+                    //add a GREEN pin to the cluster manager if the photo can be seen
+                    if(canActivateIt) {
+                        color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                    }
+                    //add a YELLOW pin to the cluster manager if it can't be activated to see the picture
+                    else{
+                        color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                    }
+                    Pin pinForPicture = new Pin(photo, canActivateIt);
+                    //add the marker to the cluster manager
+                    mClusterManager.addItem(pinForPicture);
+                    mClusterManager.cluster();
+                }
+            }else{
+                Log.d("MapFragment","No valid instance of LocationTracker, or no valid Location");
             }
         }
+
     }
 
     /**
@@ -203,12 +211,50 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
+        mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
         if(!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
         }
         return false;
+    }
+
+    /**
+     * Display a circle around each marker on the map representing the radius
+     * where the picture is visible
+     * @param picture the photoObject on which the circle will be set
+     */
+    public void displayCircleForPicture(PhotoObject picture){
+        if (picture != null) {
+            if(mMap!=null) {
+                mMap.addCircle(new CircleOptions()
+                        .center(new LatLng(picture.getLatitude(), picture.getLongitude()))
+                        .radius(picture.getRadius())
+                        .strokeColor(Color.RED));
+            }
+        }
+    }
+
+    // LISTENER METHODS
+    @Override
+    public void updateLocation(Location newLocation) {
+        refreshMapLocation();
+    }
+
+    @Override
+    public void locationTimedOut() {
+        Log.d("MapFragment","Listener says location timed out");
+    }
+
+    @Override
+    public void databaseUpdated() {
+        addDBMarkers();
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster) {
+        return true;
     }
 
     /**
@@ -222,14 +268,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pin.getPhotoObject().getPictureId());
         startActivity(displayFullSizeImageIntent);
     }
-
-    /**
-     * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
-     * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
-     * cluster displayed the info window of the pin.
-     * @param cluster the cluster that is clicked on
-     * @return true -> clicking on a cluster does nothing
-     */
-    @Override
-    public boolean onClusterClick(Cluster<Pin> cluster){return true;}
 }
