@@ -89,7 +89,7 @@ public class TestPhotoObjectUtils {
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.52890355757567, 6.569420238493345);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.520308, 6.561914);
     }
 
     public static PhotoObject germaynDeryckePO(){

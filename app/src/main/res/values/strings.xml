@@ -38,5 +38,10 @@
     <string name="userProfileBackButton">Back</string>
 
     <string name="fullSizeImage">Thumbnail in full size</string>
+
+    <string name="noPictureViewable">There is maybe some picture around, look at the map! :)</string>
+    <string name="goToMap">Go to the Map</string>
+
+
 </resources>
 

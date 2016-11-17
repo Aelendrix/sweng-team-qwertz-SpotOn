@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import ch.epfl.sweng.spotOn.R;
 
@@ -44,6 +45,15 @@ public class SeePicturesFragment extends Fragment {
                     mImageAdapter= new ImageAdapter(mView.getContext());
                     mGridView.invalidateViews();
                     mGridView.setAdapter(mImageAdapter);
+                    LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                    if(mImageAdapter.getCount()==0){
+                        mGridView.setVisibility(View.GONE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        linearLayout.setVisibility(View.GONE);
+                        mGridView.setVisibility(View.VISIBLE);
+                    }
 
         }
 

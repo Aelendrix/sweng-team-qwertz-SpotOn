@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DatabaseRef{
     //TODO:Need to put MediaDirectory instead of mediaDirectory_alex
-    private final static String mMediaDirectoryString = "mediaDirectory_alex";
+    private final static String mMediaDirectoryString = "MediaDirectory";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";
@@ -26,11 +26,17 @@ public class DatabaseRef{
         return mUsersDirectory;
     }
 
+    public static void deletePhotoObjectFromDB(String pictureID){
+        mMediaDirectory.child(pictureID).removeValue();
+    }
+
+    public static void deleteUserFromDB(String userID){
+        mUsersDirectory.child(userID).removeValue();
+    }
 
 // CONSTRUCTOR FOR SINGLETON
     private DatabaseRef(){
         //empty
     }
-
 }
 

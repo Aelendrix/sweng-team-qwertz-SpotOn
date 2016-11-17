@@ -10,14 +10,19 @@ import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -25,7 +30,6 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
 /**
  * Created by olivi on 09.11.2016.
  */
@@ -35,10 +39,10 @@ public class MapFragmentTest {
 
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<>(TabActivity.class);
-
-    UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     //Get the pictureID associated to the first picture of the Local DB (also the title of the marker)
-    String pictureID = ViewFullSizeImageActivityTest.initLocalDatabase().get(0);
+    public List<String> pictureIDs = ViewFullSizeImageActivityTest.initLocalDatabase();
+    public String pictureID1 = pictureIDs.get(0);
+    public String pictureID2 = pictureIDs.get(1);
 
     public void goToMapFragment() throws Exception {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
@@ -57,8 +61,20 @@ public class MapFragmentTest {
     @Test
     public void clickingOnMarkerTest() throws Exception {
         goToMapFragment();
-        UiObject pin = mDevice.findObject(new UiSelector().descriptionContains(pictureID));
+        UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiObject pin = mDevice.findObject(new UiSelector().descriptionContains(pictureID1));
         pin.click();
         Thread.sleep(1000);
     }
+
+    @After
+    public void deletePhotoObject(){
+        DatabaseRef.deletePhotoObjectFromDB(pictureID1);
+        DatabaseRef.deletePhotoObjectFromDB(pictureID2);
+        StorageRef.deletePictureFromStorage(pictureID1);
+        StorageRef.deletePictureFromStorage(pictureID2);
+        LocalDatabase.deletePhotoObject(pictureID1);
+        LocalDatabase.deletePhotoObject(pictureID2);
+    }
+
 }

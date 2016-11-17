@@ -21,6 +21,7 @@ import java.util.List;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.areEquals;
 import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
@@ -59,8 +60,11 @@ public class DatabaseIOTest {
         }
 
         if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
+            DatabaseRef.deletePhotoObjectFromDB(testObject1.getPictureId());
+            StorageRef.deletePictureFromStorage(testObject1.getPictureId());
             throw new AssertionError("Test made it this far - test succeeded !");
         }
+
     }
 
     @Test
@@ -92,6 +96,12 @@ public class DatabaseIOTest {
                     PhotoObject retrievedPo = databaseRetrievedObject.convertToPhotoObject();
                     if (!areEquals(po, retrievedPo)) {
                         throw new AssertionError("expected : \n" + po.toString() + "\nReceived : \n" + retrievedPo.toString());
+                    }
+                    else{
+                        //delete the PO after the test from the firebaseDB
+                        DatabaseRef.deletePhotoObjectFromDB(poId);
+                        StorageRef.deletePictureFromStorage(poId);
+
                     }
                     synchronized (lock) {
                         lock.notify();
@@ -169,6 +179,10 @@ public class DatabaseIOTest {
             if (!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()) {
                 throw new AssertionError("retrieved object should have fullsizeimage :\n" +
                         retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            }
+            else{
+                DatabaseRef.deletePhotoObjectFromDB(poId);
+                StorageRef.deletePictureFromStorage(poId);
             }
         }
     }
