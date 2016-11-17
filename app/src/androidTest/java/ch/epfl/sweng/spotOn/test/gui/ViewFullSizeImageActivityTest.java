@@ -18,7 +18,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -51,7 +51,7 @@ public class ViewFullSizeImageActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
+        PhotoObject po1 = PhotoObjectTestUtils.paulVanDykPO();
         po1.upload();
         LocalDatabase.getInstance().addPhotoObject(po1);
         pictureID1 = po1.getPictureId();
@@ -59,7 +59,7 @@ public class ViewFullSizeImageActivityTest {
         displayFullSizeImageIntent = new Intent();
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID1);
 
-        PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
+        PhotoObject po2 = PhotoObjectTestUtils.germaynDeryckePO();
         po2.upload();
         LocalDatabase.getInstance().addPhotoObject(po2);
         pictureID2 = po2.getPictureId();

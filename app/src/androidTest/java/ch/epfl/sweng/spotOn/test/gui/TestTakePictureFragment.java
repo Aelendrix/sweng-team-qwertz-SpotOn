@@ -1,8 +1,5 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -11,24 +8,20 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.net.URI;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.gui.MainActivity;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -47,7 +40,7 @@ public class TestTakePictureFragment {
     public void StoreFunctionWorking() throws Exception{
         onView(withId(R.id.viewpager)).perform(swipeRight());
         onView(withId(R.id.viewpager)).perform(swipeRight());
-        PhotoObject po = TestPhotoObjectUtils.paulVanDykPO();
+        PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();

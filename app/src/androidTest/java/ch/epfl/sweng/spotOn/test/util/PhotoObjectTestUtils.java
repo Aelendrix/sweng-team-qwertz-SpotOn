@@ -21,14 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import ch.epfl.sweng.spotOn.BitmapUtils;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
 
 /** Provides several static methods constructing premade PhotoObjects
  *  Created by quentin on 26.10.16.
  */
 
-public class TestPhotoObjectUtils {
+public class PhotoObjectTestUtils {
 
     public final static int NB_PO_AVAILABLE = 3;
 
@@ -53,6 +55,13 @@ public class TestPhotoObjectUtils {
                 p1.getLongitude() == p2.getLongitude() &&
                 // radius can be mutated via votes
                 p1.getAuthorId().equals(p2.getAuthorId());
+    }
+
+    public static PhotoObjectStoredInDatabase convertToStoredInDatabase(PhotoObject po){
+        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(), BitmapUtils.encodeBitmapAsString(po.getThumbnail()),
+                po.getPictureId(), po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(), po.getLatitude(), po.getLongitude(),
+                po.getUpvotes(), po.getDownvotes(), po.getUpvotersList(), po.getDownvotersList());
+        return posd;
     }
 
 
@@ -102,9 +111,6 @@ public class TestPhotoObjectUtils {
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
         return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757999, 6.569420238493999);
     }
-
-
-
 
 // HELPERS
 

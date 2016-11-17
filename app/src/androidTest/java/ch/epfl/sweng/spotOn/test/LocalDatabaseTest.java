@@ -12,7 +12,7 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 /**
  * Created by nico on 27.10.16.
@@ -20,9 +20,9 @@ import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
 @RunWith(AndroidJUnit4.class)
 public class LocalDatabaseTest {
 
-    PhotoObject photo1 = TestPhotoObjectUtils.paulVanDykPO();
-    PhotoObject photo2 = TestPhotoObjectUtils.iceDivingPO();
-    PhotoObject photo3 = TestPhotoObjectUtils.germaynDeryckePO();
+    PhotoObject photo1 = PhotoObjectTestUtils.paulVanDykPO();
+    PhotoObject photo2 = PhotoObjectTestUtils.iceDivingPO();
+    PhotoObject photo3 = PhotoObjectTestUtils.germaynDeryckePO();
 
 
     @Before
@@ -65,7 +65,7 @@ public class LocalDatabaseTest {
             LocalDatabase.getInstance().removePhotoObject(photo1.getPictureId());
         }
         LocalDatabase.getInstance().addPhotoObject(photo1);
-        if(!TestPhotoObjectUtils.areEquals(photo1,LocalDatabase.getInstance().get(photo1.getPictureId()))) {
+        if(!PhotoObjectTestUtils.areEquals(photo1,LocalDatabase.getInstance().get(photo1.getPictureId()))) {
             throw new AssertionError("LocalDB give wrong photo");
         }
         LocalDatabase.getInstance().clear();

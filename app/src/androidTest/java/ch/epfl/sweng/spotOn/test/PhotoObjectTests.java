@@ -3,23 +3,16 @@ package ch.epfl.sweng.spotOn.test;
 import android.graphics.Bitmap;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_LIFETIME;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_VIEW_RADIUS;
@@ -27,8 +20,8 @@ import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_LIFETIME;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_VIEW_RADIUS;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_LIFETIME;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_VIEW_RADIUS;
-import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getAllPO;
-import static ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils.getRandomPhotoObject;
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getAllPO;
+import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getRandomPhotoObject;
 
 /** Tests all aspects of PhotoObjects (upload / download / changing radius / changing lifetime / votes / ...)
  *  Created by quentin on 26.10.16.
@@ -216,7 +209,7 @@ public class PhotoObjectTests {
     @Test
     public void photoOBjectInstantiatesCorrectly(){
         Bitmap fullSizePic = null;
-        fullSizePic = TestPhotoObjectUtils.getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
+        fullSizePic = PhotoObjectTestUtils.getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
         String authorID = "author";
         String photoName = "photoName";
         Timestamp createdDate = new Timestamp(9001);
@@ -228,9 +221,12 @@ public class PhotoObjectTests {
 
     @Test
     public void toStringIsCorrect(){
-        PhotoObject p = TestPhotoObjectUtils.getRandomPhotoObject();
+        PhotoObject p = PhotoObjectTestUtils.getRandomPhotoObject();
         if(!p.toString().contains(p.getPictureId())){
             throw new AssertionError(" toString() should at least contain the pictureId");
+        }
+        if(!PhotoObjectTestUtils.convertToStoredInDatabase(p).toString().contains(p.getPictureId())){
+            throw new AssertionError(" toString() should at least contain the pictureId after conversion");
         }
     }
 

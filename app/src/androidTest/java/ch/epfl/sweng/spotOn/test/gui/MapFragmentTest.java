@@ -24,7 +24,7 @@
 //import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 //import ch.epfl.sweng.spotOn.media.PhotoObject;
 //import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
-//import ch.epfl.sweng.spotOn.test.util.TestPhotoObjectUtils;
+//import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 //
 //import static android.support.test.espresso.Espresso.onView;
 //import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -64,7 +64,7 @@
 //
 //    @Test
 //    public void displayClusterTest() throws Exception {
-//        PhotoObject picToAdd = TestPhotoObjectUtils.iceDivingPO();
+//        PhotoObject picToAdd = PhotoObjectTestUtils.iceDivingPO();
 //        LocalDatabase.getInstance().addPhotoObject(picToAdd);
 //
 //        onView(withId(R.id.viewpager)).perform(swipeLeft());
@@ -104,12 +104,12 @@
 //
 //        LocalDatabase.getInstance().clear();
 //
-//        PhotoObject po3 = TestPhotoObjectUtils.paulVanDykPO();
+//        PhotoObject po3 = PhotoObjectTestUtils.paulVanDykPO();
 //        String pictureID3 = po3.getPictureId();
 //        picIDs.add(pictureID3);
 //        po3.upload();
 //
-//        PhotoObject po4 = TestPhotoObjectUtils.germaynDeryckePO();
+//        PhotoObject po4 = PhotoObjectTestUtils.germaynDeryckePO();
 //        String pictureID4 = po4.getPictureId();
 //        picIDs.add(pictureID4);
 //        po4.upload();
