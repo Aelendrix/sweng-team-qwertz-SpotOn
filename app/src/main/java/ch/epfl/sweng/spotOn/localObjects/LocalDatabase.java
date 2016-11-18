@@ -34,8 +34,8 @@ public class LocalDatabase implements LocationTrackerListener{
 
     private LocationTracker refToLocationTracker;
 
-    // these settings help to avoid unnecessary refreshes of the database due to location changes, which are costly in bandwidth, ect
-    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE = 1*1000; // refresh the localdatabase at most every 1 seconds on position changes
+    // these settings help to avoid unnecessary refreshes of the database
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE = 2*1000; // refresh the localdatabase at most every 1 seconds on position changes
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 2*60*1000; // refresh at least every 2 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
@@ -190,7 +190,7 @@ public class LocalDatabase implements LocationTrackerListener{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(!refToLocationTracker.hasValidLocation()){
                     Log.d("LocalDatabase","can't refresh, LocationProvider has no valid Location");
-                }else {
+                }else if(refreshingDBisWorthIt(refToLocationTracker.getLocation())){
                     LocalDatabase.getInstance().clear();
                     for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                         PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
@@ -200,6 +200,8 @@ public class LocalDatabase implements LocationTrackerListener{
                     Log.d("LocalDB", LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
                     LocalDatabase.getInstance().refreshViewablePhotos();
                     LocalDatabase.getInstance().notifyListeners();
+                }else{
+                    Log.d("LocalDatabase"," prevented from refreeshing too often");
                 }
             }
             @Override
@@ -209,6 +211,14 @@ public class LocalDatabase implements LocationTrackerListener{
                 // todo - handle exceptional behavior
             }
         };
+    }
+
+    private boolean refreshingDBisWorthIt(Location newLocation){
+        boolean tooLongWithoutRefreshing = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
+        boolean refreshingTooOften = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE;
+        boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
+
+        return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);
     }
 
 
@@ -221,10 +231,7 @@ public class LocalDatabase implements LocationTrackerListener{
             mCachedLocation = newLocation;
             forceSingleRefresh();
         } else {
-            boolean tooLongWithoutRefreshing = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
-            boolean refreshingTooOften = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE;
-            boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
-            if (tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh)) {
+            if(refreshingDBisWorthIt(newLocation)){
                 Log.d("Localdatabase", "location updated, forcing single refresh");
                 mCachedLocation = newLocation;
                 forceSingleRefresh();
