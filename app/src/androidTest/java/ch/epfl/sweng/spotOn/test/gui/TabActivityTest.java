@@ -42,8 +42,9 @@ import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 @SmallTest
 public class TabActivityTest {
 
+
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -77,7 +78,6 @@ public class TabActivityTest {
         onView(withText("Profile")).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
         onView(withText("Back")).perform(click());
-        intended(hasComponent(TabActivity.class.getName()));
         Intents.release();
     }
 

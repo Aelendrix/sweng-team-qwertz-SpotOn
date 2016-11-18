@@ -12,13 +12,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
-import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -28,7 +26,6 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 
 import android.view.View;
@@ -39,6 +36,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,13 +48,12 @@ import java.io.IOException;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserId;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
@@ -64,9 +64,13 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
  */
 public class TakePictureFragment extends Fragment {
 
+    private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
+    private final String USER_ID = UserId.getInstance().getUserId();
+
+    private static long mRemainingPhotos;
+
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
-
     private ImageView mPic;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
@@ -87,7 +91,7 @@ public class TakePictureFragment extends Fragment {
         });
 
         mPic = (ImageView) view.findViewById(R.id.image_view);
-
+        getRemainingPhotoInDay();
 
         return view;
     }
@@ -99,6 +103,7 @@ public class TakePictureFragment extends Fragment {
     public void dispatchTakePictureIntent(View view){
         SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         mTextToDraw = bb.getString("TD", "");
+
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -141,6 +146,7 @@ public class TakePictureFragment extends Fragment {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
                 Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
+
             } else {
                 Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
             }
@@ -155,17 +161,25 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
-                mActualPhotoObject.upload(true, new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.getException()!=null){
-                            ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
-                        }else{
-                            ToastProvider.printOverCurrent("Your pic is online !", Toast.LENGTH_LONG);
+
+                if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
+                    --mRemainingPhotos;
+                    UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
+                    mActualPhotoObject.upload(true, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if(task.getException()!=null){
+                                ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                            }else{
+                                ToastProvider.printAfterCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
+                            }
                         }
-                    }
-                });
-                mActualPhotoObject.setSentToServerStatus(true);
+                    });
+                    mActualPhotoObject.setSentToServerStatus(true);
+                } else {
+                    ToastProvider.printAfterCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
+                }
+
             } else {
                 Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
             }
@@ -439,6 +453,31 @@ public class TakePictureFragment extends Fragment {
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
     }
+
+
+    private void getRemainingPhotoInDay(){
+
+        UserRef.orderByChild("userId").equalTo(USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    if(dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null){
+                        mRemainingPhotos = ((long)dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                    }
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void setRemainingPhotos(long remainingPhotos) {
+        mRemainingPhotos = remainingPhotos;
+    }
+
 
     public void goToDrawTextActivity(View view) {
         Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);

@@ -36,7 +36,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class TestTakePictureFragment {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -92,8 +92,6 @@ public class TestTakePictureFragment {
         Thread.sleep(1000);
 
         /*
-
-
 
         // Mock up an ActivityResult:
         Intent returnIntent = new Intent();

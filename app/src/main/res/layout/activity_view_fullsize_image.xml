@@ -13,27 +13,6 @@
         android:layout_height="fill_parent">
     </android.support.v4.view.ViewPager>
 
-    <!--<RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/fullSizeImageActivityLayout">-->
-
-    <!--
-
-        <ImageView
-            android:contentDescription="@string/fullSizeImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:srcCompat="@color/cardview_shadow_start_color"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/fullSizeImageView"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="false" />
--->
-
     <Button
         android:text="@string/upvoteButtonText"
         android:layout_width="wrap_content"
@@ -60,5 +39,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <!-- </RelativeLayout>-->
+    <Button
+        android:text="@string/reportButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="reportOffensivePicture"
+        android:id="@+id/reportButton"
+        android:layout_alignBaseline="@+id/downVoteButton"
+        android:layout_alignBottom="@+id/downVoteButton" />
+
 </RelativeLayout>

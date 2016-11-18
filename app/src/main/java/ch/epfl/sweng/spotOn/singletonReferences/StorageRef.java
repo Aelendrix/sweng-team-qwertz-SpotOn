@@ -1,11 +1,15 @@
 package ch.epfl.sweng.spotOn.singletonReferences;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
 
 /** Singleton the provides references to file server
  * Created by quentin on 04.11.16.
@@ -13,7 +17,7 @@ import com.google.firebase.storage.StorageReference;
 
 public class StorageRef {
 
-    private final static String mMediaDirectoryString = "Images";;
+    private final static String mMediaDirectoryString = "Images";
     private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
 
@@ -23,7 +27,13 @@ public class StorageRef {
     }
 
     public static void deletePictureFromStorage(String pictureID){
-        mMediaDirectory.child(pictureID+".jpg").delete();
+        if(pictureID == null)
+        {
+            Log.e("Error in StorageRef","deletePictureFromStorage pictureId is null");
+        }
+        else {
+            mMediaDirectory.child(pictureID + ".jpg").delete();
+        }
     }
 
 // CONSTUCTOR FOR SINGLETON

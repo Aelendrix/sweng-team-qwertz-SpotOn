@@ -20,6 +20,7 @@
      <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
+    <string name="reportButton">Report</string>
     <string name="sendButton">Send</string>
     <string name="storeButton">Save to gallery</string>
     <string name="about_text">
@@ -36,13 +37,14 @@
     <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
     <string name="userProfileKarma">Karma:</string>
     <string name="userProfileBackButton">Back</string>
-    <string name="addTextButton">Add Text</string>
-    <string name="textToBeDrawn">Text to be drawn into the picture</string>
-    <string name="okButton">Ok !</string>
+
     <string name="fullSizeImage">Thumbnail in full size</string>
 
     <string name="noPictureViewable">There is maybe some picture around, look at the map! :)</string>
     <string name="goToMap">Go to the Map</string>
+    <string name="addTextButton">Add text</string>
+    <string name="okButton">OK !</string>
+    <string name="textToBeDrawn"> Text to be drawn</string>
 
 
 </resources>

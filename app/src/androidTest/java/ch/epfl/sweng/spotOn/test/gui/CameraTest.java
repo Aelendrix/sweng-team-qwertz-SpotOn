@@ -62,7 +62,7 @@ public class CameraTest{
     }
 
     @Test
-        public void testTakePhoto() {
+    public void testTakePhoto() {
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }

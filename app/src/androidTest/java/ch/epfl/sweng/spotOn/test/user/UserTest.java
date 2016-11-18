@@ -3,11 +3,13 @@ package ch.epfl.sweng.spotOn.test.user;
 import android.support.test.runner.AndroidJUnit4;
 
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
 
 @RunWith(AndroidJUnit4.class)
@@ -15,6 +17,14 @@ public class UserTest {
 
     private User testUser = null;
     private User mlbTest = null;
+
+
+    @After
+    public void removeTestUser(){
+        User user1 = new User("mlb","test","12");
+
+        DatabaseRef.deleteUserFromDB(user1.getUserId());
+    }
 
 
     @Test
@@ -50,7 +60,7 @@ public class UserTest {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.print(e);
         }
 
         Assert.assertEquals(mlbTest.getFirstName(), "Marie-Laure");

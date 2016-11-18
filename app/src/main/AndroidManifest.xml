@@ -49,6 +49,8 @@
 
 
         <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
+        <receiver android:name="ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver" />
+
 
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"
@@ -77,17 +79,18 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
+            android:name="ch.epfl.sweng.spotOn.gui.DrawTextActivity"
+            android:theme="@style/AppTheme.TextPopupWindow"/>
+
+
+        <activity
             android:name="ch.epfl.sweng.spotOn.gui.AboutPage"
-            android:theme="@style/AppTheme.AboutPopupWindow"/>
+            android:theme="@style/AppTheme.PopupWindow"/>
 
         <activity
             android:name="ch.epfl.sweng.spotOn.gui.UserProfileActivity"/>
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity"/>
-
-        <activity
-            android:name="ch.epfl.sweng.spotOn.gui.DrawTextActivity"
-            android:theme="@style/AppTheme.TextPopupWindow"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

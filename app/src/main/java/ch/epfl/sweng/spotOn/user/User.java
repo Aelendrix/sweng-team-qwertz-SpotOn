@@ -19,12 +19,15 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class User {
 
-    private final int INITIAL_KARMA = 0;
+    public static final int INITIAL_KARMA = 100;
+    private static final long MIN_POST_PER_DAY = 1;
+    private static final long MAX_POST_PER_DAY = 10;
 
     private String mFirstName;
     private String mLastName;
     private String mUserId;
     private long mKarma;
+    private long mRemainingPhotos;
 
 
     public User(){} // needed for use of firebase database
@@ -60,6 +63,7 @@ public class User {
     private void createUserInDB(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         mKarma = INITIAL_KARMA;
+        mRemainingPhotos = computeMaxPhotoInDay(mKarma);
         DBRef.child(mUserId).setValue(this);
     }
 
@@ -86,6 +90,7 @@ public class User {
                         mFirstName = retrievedUser.getFirstName();
                         mLastName = retrievedUser.getLastName();
                         mKarma = retrievedUser.getKarma();
+                        mRemainingPhotos = retrievedUser.getRemainingPhotos();
                     }
                 }
             }
@@ -149,12 +154,18 @@ public class User {
 
     }
 
+    public static long computeMaxPhotoInDay(long karma){
+        int computed = Math.round((float)Math.sqrt(karma)/10);
+        return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
+    }
+
 
     //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
+    public long getRemainingPhotos() { return mRemainingPhotos; }
 
 
     //PUBLIC SETTERS
@@ -162,6 +173,7 @@ public class User {
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
     public void setKarma(long karma){ mKarma = karma; }
+    public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
 
     @Override
     public boolean equals(Object o) {
@@ -173,6 +185,7 @@ public class User {
         if (!mFirstName.equals(user.mFirstName)) return false;
         if (!mLastName.equals(user.mLastName)) return false;
         if (mKarma != user.getKarma()) return false;
+        if (mRemainingPhotos != user.getRemainingPhotos()) return false;
         return mUserId.equals(user.mUserId);
 
     }
