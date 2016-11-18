@@ -61,7 +61,7 @@ public class ViewFullSizeImageActivityTest {
         LocalDatabase.initialize(mlt);
 
         PhotoObject po1 = PhotoObjectTestUtils.paulVanDykPO();
-        po1.upload();
+        // po1.upload();
         LocalDatabase.getInstance().addPhotoObject(po1);
         pictureID1 = po1.getPictureId();
 
@@ -69,7 +69,7 @@ public class ViewFullSizeImageActivityTest {
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID1);
 
         PhotoObject po2 = PhotoObjectTestUtils.germaynDeryckePO();
-        po2.upload();
+        // po2.upload();
         LocalDatabase.getInstance().addPhotoObject(po2);
         pictureID2 = po2.getPictureId();
     }
