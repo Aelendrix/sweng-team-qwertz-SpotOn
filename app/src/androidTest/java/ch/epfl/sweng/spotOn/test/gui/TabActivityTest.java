@@ -78,7 +78,6 @@ public class TabActivityTest {
         onView(withText("Profile")).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
         onView(withText("Back")).perform(click());
-        intended(hasComponent(TabActivity.class.getName()));
         Intents.release();
     }
 

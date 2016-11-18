@@ -76,9 +76,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     private void goBackToTabActivity(){
-        //start the TabActivity
-        Intent intent = new Intent(this, TabActivity.class);
-        startActivity(intent);
+        finish();
     }
 
 }

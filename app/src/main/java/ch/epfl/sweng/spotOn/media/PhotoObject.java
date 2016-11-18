@@ -33,7 +33,6 @@ import java.util.NoSuchElementException;
 import ch.epfl.sweng.spotOn.BitmapUtils;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.user.User;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
@@ -56,6 +55,9 @@ public class PhotoObject {
     private final int DOWNVOTE_KARMA_GIVEN = -5;
     private final int UPVOTE_KARMA_GIVEN = 10;
 
+    private final int MAX_NB_REPORTS = 2;
+    private final int REPORT_DECREASE_KARMA = -20;
+
     private Bitmap mFullsizeImage;
     private String mFullsizeImageLink;   // needed for the "cache-like" behaviour of getFullsizeImage()
     private boolean mHasFullsizeImage;   // false -> no Image, but has link; true -> has image, can't access link (don't need it => no getter)
@@ -72,8 +74,10 @@ public class PhotoObject {
     private boolean mStoredInServer;
     private int mNbUpvotes;
     private int mNbDownvotes;
+    private int mNbReports;
     private ArrayList<String> mDownvotersList;
     private ArrayList<String> mUpvotersList;
+    private ArrayList<String> mReportersList;
 
 
     /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
@@ -94,16 +98,19 @@ public class PhotoObject {
         mStoredInServer = false;
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
         mNbDownvotes = 1;
+        mNbReports = 0;
         mDownvotersList = new ArrayList<String>();
         mUpvotersList = new ArrayList<String>();
+        mReportersList = new ArrayList<String>();
         this.computeRadius();
         this.computeExpireDate();
     }
 
     /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
-    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID, String photoName, long createdDate,
-                       double latitude, double longitude, int nbUpvotes, int nbDownvotes, List<String> upvoters,
-                       List<String> downvoters){
+    public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID,
+                       String photoName, long createdDate, double latitude, double longitude,
+                       int nbUpvotes, int nbDownvotes, int nbReports, List<String> upvoters,
+                       List<String> downvoters, List<String> reporters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
         mFullsizeImageLink=fullSizeImageLink;
@@ -118,8 +125,10 @@ public class PhotoObject {
         mStoredInServer = false;
         mNbUpvotes = nbUpvotes;
         mNbDownvotes = nbDownvotes;
+        mNbReports = nbReports;
         mUpvotersList = new ArrayList<>(upvoters);
         mDownvotersList = new ArrayList<>(downvoters);
+        mReportersList = new ArrayList<>(reporters);
         this.computeRadius();
         this.computeExpireDate();
     }
@@ -210,6 +219,40 @@ public class PhotoObject {
         return toastText;
     }
 
+
+    public String processReport(String reporterID){
+        String resultProcess = "";
+
+        if(mReportersList.contains(reporterID)){
+            resultProcess = "You have already reported this picture !";
+        }
+        else {
+            mNbReports ++;
+            mReportersList.add(reporterID);
+
+            if(mFullsizeImageLink != null) {
+                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).child("reports").setValue(mNbReports);
+                DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+            }
+
+            if(mNbReports >= MAX_NB_REPORTS){
+                if(mFullsizeImageLink != null) {
+                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                    //remove picture from database
+                    java.util.Date date= new java.util.Date();
+                    DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
+                    //decrease the karma of the picture author
+                    giveAuthorHisKarma(REPORT_DECREASE_KARMA);
+                }
+            }
+
+            resultProcess = "Thank you for reporting this picture.";
+        }
+        return resultProcess;
+    }
+
+
     /** retrieves the fullsizeimage from the fileserver and caches it in the object.
      *  Offers the caller to pass some listeners to trigger custom actions on download success or failure.
      *  Booleans
@@ -296,8 +339,10 @@ public class PhotoObject {
     }
     public int getUpvotes(){return mNbUpvotes;}
     public int getDownvotes(){return mNbDownvotes;}
+    public int getReports(){return mNbReports;}
     public List<String> getUpvotersList(){ return Collections.unmodifiableList(mUpvotersList); }
     public List<String> getDownvotersList(){ return Collections.unmodifiableList(mDownvotersList); }
+    public List<String> getReportersList(){ return Collections.unmodifiableList(mReportersList);}
 
 
 //SETTER FUNCTIONS
@@ -397,9 +442,11 @@ public class PhotoObject {
             throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
         }
         String linkToFullsizeImage = mFullsizeImageLink;
+
         String thumbnailAsString = BitmapUtils.encodeBitmapAsString(mThumbnail);
-        return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,mAuthorID, mPhotoName,
-                mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mUpvotersList, mDownvotersList);
+        return new PhotoObjectStoredInDatabase(linkToFullsizeImage, thumbnailAsString, mPictureId,
+                mAuthorID, mPhotoName, mCreatedDate, mExpireDate, mLatitude, mLongitude, mNbUpvotes,
+                mNbDownvotes, mNbReports, mUpvotersList, mDownvotersList, mReportersList);
     }
 
     @Override
@@ -409,6 +456,7 @@ public class PhotoObject {
                 "\n  ---  name : "+mPhotoName+
                 "\n  ---  pos : ("+mLatitude+","+mLongitude+")"+
                 "\n  ---  up/down votes : "+mNbUpvotes+", "+mNbDownvotes+
+                "\n  ---  reports : "+mNbReports+
                 "\n  ---  radius : "+mRadius
                 ;
     }

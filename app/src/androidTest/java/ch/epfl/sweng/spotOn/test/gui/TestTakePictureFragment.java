@@ -93,8 +93,6 @@ public class TestTakePictureFragment {
 
         /*
 
-
-
         // Mock up an ActivityResult:
         Intent returnIntent = new Intent();
         returnIntent.putExtra(10,10,mImageToUploadUri);
