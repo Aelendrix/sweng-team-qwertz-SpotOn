@@ -80,12 +80,12 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     }
 
     public String provideErrorMessage(){
-        String errorMessage= "";
-        if( !mLocationTrackerRef.hasValidLocation() ){
-            errorMessage += "no valid Location ";
+        String errorMessage= "App may malfunction : \n";
+        if( !validLocationStatus ){
+            errorMessage += "Can't find your gps location\n";
         }
         if( !databaseConnectionStatus ){
-            errorMessage += "no database connection";
+            errorMessage += "Can't connect to the database\n";
         }
         return errorMessage;
     }
@@ -119,7 +119,6 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
 // LISTENER PATTERN METHODS
     public void notifyListeners(){
-        Log.d("ServicesChecker","updating listeners");
         for( ServicesCheckerListener l : mListeners){
             l.servicesAvailabilityUpdated();
         }
@@ -133,19 +132,21 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
     @Override
     public void updateLocation(Location newLocation) {
-        if( ! validLocationStatus){
-            // change in services status
-            validLocationStatus = true;
+        Log.d("ServicesChecker","location changed");
+        if( !validLocationStatus){            // change in services status
+            Log.d("ServicesChecker","listeners notified");
             notifyListeners();
-        } // else, no change in status
+        }
+        validLocationStatus = true;
     }
 
     @Override
     public void locationTimedOut() {
-        if(validLocationStatus){
-            // change in services status
-            validLocationStatus = false;
+        Log.d("ServicesChecker","location timeout");
+        if(validLocationStatus){           // change in services status
+            Log.d("ServicesChecker","listeners notified");
             notifyListeners();
-        } // else, no change in status
+        }
+        validLocationStatus = false;
     }
 }

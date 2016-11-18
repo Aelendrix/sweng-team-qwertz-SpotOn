@@ -31,7 +31,6 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     private List<LocationTrackerListener> mListenersList;
     private Location mLocation;
-    private boolean mAlreadyTimedOut;
 
 
     // INITIALIZE AND CONSTRUCTOR
@@ -39,32 +38,35 @@ public final class ConcreteLocationTracker implements LocationTracker {
         if(mSingleInstance==null){
             mSingleInstance = new ConcreteLocationTracker(c);
         }
+
     }
 
     private ConcreteLocationTracker(Context c) {
-
+        // for listeners
         mListenersList = new ArrayList<>();
+        // runnable that will take care of timeout-ing the location after a given time
         mLocationTimeoutHandler = new Handler();
         mRunOnTimeout  = new Runnable() {
             @Override
             public void run() {
-                if(!mAlreadyTimedOut) {
-                    mAlreadyTimedOut = true;
+                Log.d("LocationTracker", "loop finished");
+                // synchronized, to prevent race conditions with another thread setting mLocation to a new location while we're notifying the listeners
+                synchronized (ConcreteLocationTracker.getInstance()){
                     notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
                 }
+                // no need to restart here, once timeout, we wait for a new location to start countdownagain
             }
         };
-        mAlreadyTimedOut=false;
-
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
         // Define a listener that responds to location updates
         LocationListener currentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {
                 if(LocalizationUtils.isBetterLocation(newLocation ,mLocation)){
-                    mAlreadyTimedOut = false;
+                    Log.d("LocationTracker","location updated");
                     mLocation = newLocation;
                     notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
+                    mLocationTimeoutHandler.removeCallbacks(mRunOnTimeout);
                     mLocationTimeoutHandler.postDelayed(mRunOnTimeout, TIMEOUT_LOCATION);
                 }
             }
