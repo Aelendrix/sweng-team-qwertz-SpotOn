@@ -33,6 +33,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
 /**
@@ -57,6 +58,7 @@ public final class MainActivity extends AppCompatActivity {
         Log.d("MainActivity","initializing singletons");
         ConcreteLocationTracker.initialize(getApplicationContext());
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        ToastProvider.update(getApplicationContext());
         Log.d("MainActivity","done initializing");
 
         // Initialize the SDK before executing any other operations,

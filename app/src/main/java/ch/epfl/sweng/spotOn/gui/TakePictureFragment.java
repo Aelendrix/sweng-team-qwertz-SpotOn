@@ -46,6 +46,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserId;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
 /**
@@ -79,18 +80,10 @@ public class TakePictureFragment extends Fragment {
         return view;
     }
 
-// fields are no longer used
-//    //function called when the locationListener see a location change
-//    public void refreshLocation(Location mPhoneLocation) {
-//        mLatitude = mPhoneLocation.getLatitude();
-//        mLongitude = mPhoneLocation.getLongitude();
-//    }
-
     /**
      * Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
-
     public void dispatchTakePictureIntent(View view){
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
@@ -330,6 +323,7 @@ public class TakePictureFragment extends Fragment {
             getContext().getContentResolver().notifyChange(selectedImage, null);
             Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
+
                 mPic.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
@@ -337,13 +331,14 @@ public class TakePictureFragment extends Fragment {
                 }else {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
-            }
-            else {
-                Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+            } else {
+                // Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
             }
         }
         else {
-            Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
+            // Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("Internal error while creating your post : URI null", Toast.LENGTH_SHORT);
         }
     }
 

@@ -3,9 +3,7 @@ package ch.epfl.sweng.spotOn.media;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,10 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import ch.epfl.sweng.spotOn.BitmapUtils;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.user.User;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
