@@ -39,6 +39,8 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     public static void initialize(LocationTracker ltref, LocalDatabase ldbref){
         mSingleInstance = new ServicesChecker(ltref, ldbref);
         mSingleInstance.listenForDatabaseConnectivity();
+        ltref.addListener(mSingleInstance);
+        ldbref.addListener(mSingleInstance);
     }
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref){
         if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() ){

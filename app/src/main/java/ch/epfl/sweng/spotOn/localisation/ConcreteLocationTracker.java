@@ -69,14 +69,9 @@ public final class ConcreteLocationTracker implements LocationTracker {
                 }
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) {         }
+            public void onProviderEnabled(String provider) {            }
+            public void onProviderDisabled(String provider) {            }
         };
 
         // Register the listener with the Location Manager to receive location updates

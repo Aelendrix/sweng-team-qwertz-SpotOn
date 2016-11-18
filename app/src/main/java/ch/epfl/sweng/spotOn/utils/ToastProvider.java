@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,7 +9,7 @@ import android.widget.Toast;
  *   how several toasts are displayed simultaneously
  *   Downside : need to call update() when changing activity
  */
-public class ToastProvider {
+public class ToastProvider extends Application {
 
     public static int LONG = Toast.LENGTH_LONG;
     public static int SHORT = Toast.LENGTH_SHORT;
@@ -82,5 +83,7 @@ public class ToastProvider {
         mCurrentlyDisplayedToast = newToast;
         newToast.show();
     }
+
+
 
 }
