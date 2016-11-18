@@ -19,16 +19,21 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private Map<String,Bitmap> mThumbnailMap = LocalDatabase.getViewableThumbnail();
-    private List<String> mThumbId = new ArrayList<>(mThumbnailMap.keySet());
-    private List<Bitmap> mThumbnail = new ArrayList<>();
+
+    private Map<String,Bitmap> mThumbnailMap;
+    private List<String> mThumbId;
+    private List<Bitmap> mThumbnail;
 
 
     public ImageAdapter(Context c) {
+        mThumbnailMap = LocalDatabase.getInstance().getViewableThumbnails();
+        mThumbId = new ArrayList<>(mThumbnailMap.keySet());
+        mThumbnail = new ArrayList<>();
         mContext = c;
         for(String s: mThumbId){
             mThumbnail.add(mThumbnailMap.get(s));
         }
+
     }
 
     public int getCount() {

@@ -11,6 +11,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
+import android.location.Location;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -37,38 +39,26 @@ import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
-public class MapFragment extends Fragment implements OnMapReadyCallback,
-        //GoogleMap.OnMarkerClickListener,
-        ClusterManager.OnClusterItemClickListener<Pin>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin>{
+public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
+        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
+        ClusterManager.OnClusterClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
-    /*
 
-    //fake Data
-    //esplanade epfl (under one roof)
-    private static final LatLng FAKE_SPOT_1 = new LatLng(46.519241, 6.565911);
-    //moutons Unil
-    private static final LatLng FAKE_SPOT_2 = new LatLng(46.521002, 6.575986);
-    //centre sportif
-    private static final LatLng FAKE_SPOT_3 = new LatLng(46.519403, 6.579841);
-    //Flon
-    private static final LatLng FAKE_SPOT_4 = new LatLng(46.520844, 6.630718);
-     */
-    //local location variable
-    private LatLng mPhoneLatLng;
     //marker representing our location on the map
     private Marker mLocationMarker;
+
     //list of photoObject
     private List<PhotoObject> mListPhoto;
     private List<String> mThumbIDs;
     private ClusterManager<Pin> mClusterManager;
+    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -76,7 +66,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
+        // add as listener
+        if(!LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists()){
+            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instanciated"));
+        }
+        ConcreteLocationTracker.getInstance().addListener(this);
+        LocalDatabase.getInstance().addListener(this);
     }
 
     @Override
@@ -104,6 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return mView;
 
     }
+
     /*
     @Override
     public void onDestroyView() {
@@ -114,35 +110,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onProviderDisabled(String provider) {}
         };
     */
-    /**
-     * function used to refresh the local location variable
-     * and apply it to our special marker on the map
-     *  @param phoneLatLng the location of the user using the GPS
-     */
-    public void refreshMapLocation(LatLng phoneLatLng) {
 
-        if (phoneLatLng != null) {
-            //now apply the location to the map
-            mPhoneLatLng = new LatLng(phoneLatLng.latitude,phoneLatLng.longitude);
-
-            if (mMap != null) {
-                //change the localisation cursor, if null, create one instead
-                if (mLocationMarker == null) {
+    /** function used to refresh the local location variable
+     *  and apply it to our special marker on the map   */
+    public void refreshMapLocation() {
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
+            if(mMap!=null){
+                if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
-                                        .position(mPhoneLatLng)
-                                        .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
-                                                R.drawable.ic_position_marker_30dp))));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(mPhoneLatLng));
-                } else {
-                    mLocationMarker.setPosition(mPhoneLatLng);
+                                          .position(newLocation)
+                                          .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
+                                           R.drawable.ic_position_marker_30dp))));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
+                }else{
+                    mLocationMarker.setPosition(newLocation);
                 }
-                addDBMarkers();
+                mLocationMarker.setVisible(true);
             }
         }
     }
-     /*Manipulates the map once available.
-     * Create the fake markers and mark my position
-     */
+
+    /*Manipulates the map once available.
+    * Create the fake markers and mark my position
+    */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -150,7 +141,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setMinZoomPreference(5.0f);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
         setUpCluster();
-        //mMap.setOnMarkerClickListener(this);
+        refreshMapLocation();
     }
 
     @Override
@@ -160,29 +151,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        if(mPhoneLatLng == null && LocalDatabase.getLocation() != null){
-            mPhoneLatLng = new LatLng(LocalDatabase.getLocation().getLatitude(),LocalDatabase.getLocation().getLongitude());
-        }
         if (mMap == null) {
             ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment)).getMapAsync(this);
         }
     }
 
     /**
-     * Set up the cluster manager of the map
+     * Set up the cluster manager
      */
     private void setUpCluster(){
-        mClusterManager = new ClusterManager<>(getContext(), mMap);
-        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        //Displays the right color to the markers (green or yellow)
-        mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        addDBMarkers();
+            mClusterManager = new ClusterManager<>(getContext(), mMap);
+            //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+            mMap.setOnCameraIdleListener(mClusterManager);
+            mMap.setOnMarkerClickListener(mClusterManager);
+            mMap.setOnInfoWindowClickListener(mClusterManager);
+            //Displays the right color to the markers (green or yellow)
+            mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+            mClusterManager.setOnClusterItemClickListener(this);
+            mClusterManager.setOnClusterClickListener(this);
+            mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+            addDBMarkers();
     }
 
     /**
@@ -190,21 +178,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     public void addDBMarkers()
     {
-        mListPhoto = new ArrayList<>(LocalDatabase.getMap().values());
-        mThumbIDs = new ArrayList<>(LocalDatabase.getViewableThumbnail().keySet());
-        if(mMap!=null && mPhoneLatLng!=null) {
-            //empty the cluster manager
-            mClusterManager.clearItems();
-            //add the new markers on the Cluster Manager
-            for (PhotoObject photo : mListPhoto) {
-                boolean canActivateIt = photo.isInPictureCircle(mPhoneLatLng);
-                Pin pinForPicture = new Pin(photo, canActivateIt);
-                //add the marker to the cluster manager
-                mClusterManager.addItem(pinForPicture);
-                //Re-cluster the cluster at each addition of a pin
-                mClusterManager.cluster();
+        if(ConcreteLocationTracker.instanceExists() && ConcreteLocationTracker.getInstance().hasValidLocation()){
+            LatLng currLoc = ConcreteLocationTracker.getInstance().getLatLng();
+            mListPhoto = new ArrayList<>(LocalDatabase.getInstance().getAllNearbyMediasMap().values());
+            mThumbIDs = new ArrayList<>(LocalDatabase.getViewableThumbnails().keySet());
+            // old if(mMap!=null && currLoc!=null) {
+            if(mMap!=null) {
+                //empty the cluster manager
+                mClusterManager.clearItems();
+                //add the new markers on the Cluster Manager
+                for (PhotoObject photo : mListPhoto) {
+                    boolean canActivateIt = photo.isInPictureCircle(currLoc);
+                    Pin pinForPicture = new Pin(photo, canActivateIt);
+                    //add the marker to the cluster manager
+                    mClusterManager.addItem(pinForPicture);
+                    //Re-cluster the cluster at each addition of a pin
+                    mClusterManager.cluster();
+                }
+            }else{
+                Log.d("MapFragment","No valid instance of LocationTracker, or no valid Location");
             }
         }
+
     }
 
     /**
@@ -214,13 +209,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
+        mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
-        if(!pin.getAccessibility()) {
+        if (!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
+    }
+
+    // LISTENER METHODS
+    @Override
+    public void updateLocation(Location newLocation) {
+        refreshMapLocation();
+    }
+
+    @Override
+    public void locationTimedOut() {
+        Log.d("MapFragment","Listener says location timed out");
+    }
+
+    @Override
+    public void databaseUpdated() {
+        addDBMarkers();
     }
 
     /**
@@ -232,7 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onClusterItemInfoWindowClick(Pin pin){
         String thumbID = pin.getPhotoObject().getPictureId();
         if(mThumbIDs.contains(thumbID)) {
-            SeePicturesFragment.mPosition = mThumbIDs.indexOf(thumbID);
+            SeePicturesFragment.mDefaultItemPosition = mThumbIDs.indexOf(thumbID);
         } else {
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }

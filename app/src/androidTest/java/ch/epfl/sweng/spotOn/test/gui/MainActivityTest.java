@@ -27,7 +27,7 @@ public class MainActivityTest {
     @Test
     public void launchFullPictureActivity() throws Exception{
         Thread.sleep(2000);
-        onView(withId(R.id.mainLoginButton)).perform(click());
+         onView(withId(R.id.mainLoginButton)).perform(click());
         Thread.sleep(2000);
 
     }

@@ -11,7 +11,7 @@
     <ImageView
         android:contentDescription="@string/pictureTaken"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/image_view"
         android:layout_gravity="center_horizontal"
         android:scaleType="fitXY"
@@ -65,5 +65,14 @@
         android:background="@drawable/button_shape_take_picture"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/addTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/captureButton"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/addTextButton"
+        android:onClick="goToDrawTextActivity"/>
 
 </RelativeLayout>

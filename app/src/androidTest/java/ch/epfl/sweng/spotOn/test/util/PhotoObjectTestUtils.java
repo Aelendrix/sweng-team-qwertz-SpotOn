@@ -21,14 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import ch.epfl.sweng.spotOn.BitmapUtils;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
 
 /** Provides several static methods constructing premade PhotoObjects
  *  Created by quentin on 26.10.16.
  */
 
-public class TestPhotoObjectUtils {
+public class PhotoObjectTestUtils {
 
     public final static int NB_PO_AVAILABLE = 3;
 
@@ -53,6 +55,13 @@ public class TestPhotoObjectUtils {
                 p1.getLongitude() == p2.getLongitude() &&
                 // radius can be mutated via votes
                 p1.getAuthorId().equals(p2.getAuthorId());
+    }
+
+    public static PhotoObjectStoredInDatabase convertToStoredInDatabase(PhotoObject po){
+        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(), BitmapUtils.encodeBitmapAsString(po.getThumbnail()),
+                po.getPictureId(), po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(), po.getLatitude(), po.getLongitude(),
+                po.getUpvotes(), po.getDownvotes(), po.getUpvotersList(), po.getDownvotersList());
+        return posd;
     }
 
 
@@ -86,24 +95,22 @@ public class TestPhotoObjectUtils {
 
 
 // PHOTOOBJECTS INDIVIDUAL CONSTRUCTORS
+    // feel free to add some, but don't modify the existing ones
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.520308, 6.561914);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.52890355757777, 6.569420238493777);
     }
 
     public static PhotoObject germaynDeryckePO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 46.52890355757765, 6.569420238493765);
+        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 46.52890355757888, 6.569420238493888);
     }
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.520013, 6.566721);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757999, 6.569420238493999);
     }
-
-
-
 
 // HELPERS
 
