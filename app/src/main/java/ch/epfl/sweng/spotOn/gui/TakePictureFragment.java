@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +31,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -141,9 +145,17 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
-                mActualPhotoObject.upload(false, null); // no onCOmplete listener
+                mActualPhotoObject.upload(true, new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.getException()!=null){
+                            ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                        }else{
+                            ToastProvider.printOverCurrent("Your pic is online !", Toast.LENGTH_LONG);
+                        }
+                    }
+                });
                 mActualPhotoObject.setSentToServerStatus(true);
-                Toast.makeText(this.getActivity(), "Picture sent to server", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
             }
@@ -293,7 +305,8 @@ public class TakePictureFragment extends Fragment {
             throw new AssertionError("Location tracker should be started");
         }
         if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
-            throw new IllegalStateException("can't create new object withou a valid location (should be tested before calling createPhotoObject");
+            // was checked for in the calling method
+            throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
         PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -327,7 +340,7 @@ public class TakePictureFragment extends Fragment {
                 mPic.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-                    Toast.makeText(getContext(), "Can't create post without proposer Location data", Toast.LENGTH_LONG);
+                    Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
                 }else {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
@@ -347,7 +360,6 @@ public class TakePictureFragment extends Fragment {
      *
      * @param photo a PhotoObject to get its full size picture to store in Pictures file
      */
-
     private void storeImage(PhotoObject photo){
         if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);

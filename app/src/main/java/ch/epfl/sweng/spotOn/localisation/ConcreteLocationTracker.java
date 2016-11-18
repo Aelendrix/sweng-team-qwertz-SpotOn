@@ -136,7 +136,11 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     public void addListener(LocationTrackerListener l){
         mListenersList.add(l);
-        Log.d("LocationTracker","Added listener"+l.toString());
+        if(hasValidLocation()){
+            l.updateLocation(mLocation);
+        }else{
+            l.locationTimedOut();
+        }
     }
 
 

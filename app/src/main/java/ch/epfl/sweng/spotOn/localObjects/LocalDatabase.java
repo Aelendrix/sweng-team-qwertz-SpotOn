@@ -135,12 +135,12 @@ public class LocalDatabase implements LocationTrackerListener{
 
     public void addListener(LocalDatabaseListener l){
         mListeners.add(l);
+        l.databaseUpdated();
     }
 
 
 
 // PRIVATE METHODS
-
     /** notifies all listeners of a change of the database content */
     private void notifyListeners(){
         for(LocalDatabaseListener l : mListeners){

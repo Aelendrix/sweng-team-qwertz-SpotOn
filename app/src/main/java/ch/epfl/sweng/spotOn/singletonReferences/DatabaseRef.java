@@ -30,6 +30,13 @@ public class DatabaseRef{
         return mUsersDirectory;
     }
 
+    public static DatabaseReference getRootDirectory() {
+        return FirebaseDatabase.getInstance().getReference();
+    }
+
+
+    /* methods for deletion */
+
     public static void deletePhotoObjectFromDB(String pictureID){
         mMediaDirectory.child(pictureID).removeValue();
     }

@@ -53,6 +53,7 @@ public class TabActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int pageNb) {
                 ToastProvider.printOverCurrent("tab "+pageNb, Toast.LENGTH_SHORT);
+
             }
         });
 
