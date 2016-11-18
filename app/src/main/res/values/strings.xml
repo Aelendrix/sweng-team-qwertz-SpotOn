@@ -42,7 +42,8 @@
     <string name="noPictureViewable">There is maybe some picture around, look at the map! :)</string>
     <string name="goToMap">Go to the Map</string>
     <string name="addTextButton">Add text</string>
-
+    <string name="okButton">OK !</string>
+    <string name="textToBeDrawn"> Text to be drawn</string>
 
 </resources>
 
