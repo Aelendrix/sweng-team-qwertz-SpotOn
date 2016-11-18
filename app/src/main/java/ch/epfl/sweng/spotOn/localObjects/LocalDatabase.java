@@ -36,7 +36,7 @@ public class LocalDatabase implements LocationTrackerListener{
 
     // these settings help to avoid unnecessary refreshes of the database due to location changes, which are costly in bandwidth, ect
     private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE = 1*1000; // refresh the localdatabase at most every 1 seconds on position changes
-    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 2*60*1000; // refresh at lest every 2 minutes
+    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 2*60*1000; // refresh at least every 2 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
     private final static double FETCH_RADIUS = 0.1; // the radius in which we fetch pictures, in degrees

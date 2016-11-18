@@ -31,6 +31,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     private List<LocationTrackerListener> mListenersList;
     private Location mLocation;
+    private boolean mAlreadyTimedOut;
 
 
     // INITIALIZE AND CONSTRUCTOR
@@ -47,9 +48,13 @@ public final class ConcreteLocationTracker implements LocationTracker {
         mRunOnTimeout  = new Runnable() {
             @Override
             public void run() {
-                notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+                if(!mAlreadyTimedOut) {
+                    mAlreadyTimedOut = true;
+                    notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+                }
             }
         };
+        mAlreadyTimedOut=false;
 
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
@@ -57,6 +62,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         LocationListener currentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {
                 if(LocalizationUtils.isBetterLocation(newLocation ,mLocation)){
+                    mAlreadyTimedOut = false;
                     mLocation = newLocation;
                     notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
                     mLocationTimeoutHandler.postDelayed(mRunOnTimeout, TIMEOUT_LOCATION);

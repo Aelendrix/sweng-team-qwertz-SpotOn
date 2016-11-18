@@ -250,7 +250,7 @@ public class PhotoObject {
     }
     public Bitmap getFullSizeImage(){
         if(mHasFullsizeImage){
-            return mFullsizeImage.copy(mFullsizeImage.getConfig(), true);
+            return mFullsizeImage;
         }else{
             throw new NoSuchElementException("PhotoObject doesn't have a fullsizeImage - you need to retrieve it with the retrieveFullSizeImage - hint : use asFullSizeImage to avoid this problem");
         }
