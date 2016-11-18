@@ -80,6 +80,10 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         mCameraFragment.storePictureOnInternalStorage(view);
     }
 
+    public void sendPictureToServer(View view){
+        mCameraFragment.sendPictureToServer(view);
+    }
+
     /*
      * Rotates the picture by 90°
      */

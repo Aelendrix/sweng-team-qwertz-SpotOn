@@ -66,16 +66,6 @@ public class TakePictureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
-
-        // DIRTY HACK TO GET SEND BUTTON TO WORK
-        ImageButton sendButton = (ImageButton) view.findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendPictureToServer(view);
-            }
-        });
-
         mPic = (ImageView) view.findViewById(R.id.image_view);
         return view;
     }
