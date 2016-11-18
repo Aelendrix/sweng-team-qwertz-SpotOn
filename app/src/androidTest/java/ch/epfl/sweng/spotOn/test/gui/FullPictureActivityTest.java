@@ -42,7 +42,7 @@ public class FullPictureActivityTest {
     public Intent displayFullsizeImageIntent;
 
     @Before
-    public void initLocalDatabase(){
+    public void initLocalDatabase() throws InterruptedException {
         Location location = new Location("testLocationProvider");
         location.setLatitude(46.52890355757567);
         location.setLongitude(6.569420238493345);
@@ -59,6 +59,7 @@ public class FullPictureActivityTest {
 
         displayFullsizeImageIntent = new Intent();
         displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
+        Thread.sleep(1000);
 
     }
 
