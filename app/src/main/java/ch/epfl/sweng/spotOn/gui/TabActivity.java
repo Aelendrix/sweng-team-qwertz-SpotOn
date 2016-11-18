@@ -142,8 +142,6 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         mCameraFragment.goToDrawTextActivity(view);
     }
 
-<<<<<<< HEAD
-
 // PRIVATE HELPERS
     /** displays the error message if need be    */
     public void checkAndDisplayServicesError(){
@@ -164,6 +162,4 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
     }
 
 
-=======
->>>>>>> 80a2ce985231261af19232997c6bff4bdd4e191f
 }
