@@ -6,7 +6,10 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
 
 /** Singleton the provides references to file server
  * Created by quentin on 04.11.16.

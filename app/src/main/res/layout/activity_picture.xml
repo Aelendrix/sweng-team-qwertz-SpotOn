@@ -43,14 +43,13 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="@string/rotate"
-        android:layout_width="147dp"
+        android:text="@string/addTextButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="rotatePicture"
-        android:id="@+id/rotateButton"
         android:layout_below="@+id/captureButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true"
+        android:id="@+id/addTextButton"
+        android:onClick="goToDrawTextActivity"/>
 
     <ImageView
         android:contentDescription="@string/pictureTaken"
@@ -64,5 +63,16 @@
         android:adjustViewBounds="false"
         android:layout_below="@+id/rotateButton"
         android:layout_above="@+id/storeButton" />
+
+    <Button
+        android:text="@string/rotate"
+        android:layout_width="147dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="rotatePicture"
+        android:id="@+id/rotateButton"
+        android:layout_below="@+id/captureButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp" />
 
 </RelativeLayout>
