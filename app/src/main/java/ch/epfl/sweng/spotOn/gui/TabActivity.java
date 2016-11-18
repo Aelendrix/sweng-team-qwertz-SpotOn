@@ -138,6 +138,10 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         mTabLayout.getTabAt(2).select();
     }
 
+    public void goToDrawTextActivity(View view) {
+        mCameraFragment.goToDrawTextActivity(view);
+    }
+
 
 // PRIVATE HELPERS
     /** displays the error message if need be    */
