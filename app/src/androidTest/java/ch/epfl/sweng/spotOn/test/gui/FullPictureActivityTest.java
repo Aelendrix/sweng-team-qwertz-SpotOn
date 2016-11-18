@@ -25,7 +25,6 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by nico on 09.11.16.

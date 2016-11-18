@@ -54,7 +54,8 @@ public class ViewFullSizeImageActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
+        //PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
+        PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
         pictureID = po.getPictureId();
         po.upload();
         LocalDatabase.getInstance().addPhotoObject(po);
