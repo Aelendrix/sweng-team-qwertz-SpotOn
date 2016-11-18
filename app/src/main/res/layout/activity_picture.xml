@@ -23,6 +23,15 @@
         android:layout_alignParentStart="true" />
 
     <Button
+        android:text="@string/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/rotateButton"
+        android:id="@+id/sendButton"
+        android:onClick="sendPictureToServer" />
+
+    <Button
         android:text="@string/storeButton"
         android:layout_width="147dp"
         android:layout_height="wrap_content"
@@ -33,6 +42,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:text="@string/rotate"
+        android:layout_width="147dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="rotatePicture"
+        android:id="@+id/rotateButton"
+        android:layout_below="@+id/captureButton"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:contentDescription="@string/pictureTaken"
@@ -46,33 +64,5 @@
         android:adjustViewBounds="false"
         android:layout_below="@+id/rotateButton"
         android:layout_above="@+id/storeButton" />
-
-    <Button
-        android:text="@string/rotate"
-        android:layout_width="147dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="rotatePicture"
-        android:id="@+id/rotateButton"
-        android:layout_below="@+id/captureButton"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="@string/addTextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/captureButton"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/addTextButton"
-        android:onClick="goToDrawTextActivity"/>
-
-    <Button
-        android:text="@string/sendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sendButton"
-        android:onClick="sendPictureToServer"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/addTextButton" />
 
 </RelativeLayout>
