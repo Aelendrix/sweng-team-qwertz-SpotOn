@@ -16,46 +16,19 @@ import ch.epfl.sweng.spotOn.user.User;
 public class UserTest {
 
     private User testUser = null;
-    private User mlbTest = null;
-
 
     @After
-    public void removeTestUser(){
-        User user1 = new User("mlb","test","12");
-
-        DatabaseRef.deleteUserFromDB(user1.getUserId());
+    public void removeTestUser() {
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
     }
-
-
-    @Test
-    public void setUser(){
-        User user1 = new User("mlb","test","12");
-
-        testUser = new User();
-        testUser.setFirstName("mlb");
-        testUser.setLastName("test");
-        testUser.setUserId("12");
-
-        Assert.assertEquals(user1,testUser);
-    }
-
-
-    @Test
-    public void getUser(){
-        testUser = new User("mlb","test","12");
-
-        Assert.assertEquals(testUser.getFirstName(), "mlb");
-        Assert.assertEquals(testUser.getLastName(), "test");
-        Assert.assertEquals(testUser.getUserId(), "12");
-
-    }
-
 
     // This method tests the User method getUser()
     @Test
-    public void testGetUser(){
-        UserProfileActivity userProfile = null;
-        mlbTest = new User("10209394363510335",userProfile);
+    public void testSetAndGetUser(){
+        testUser = User.getInstance();
+        testUser.setFirstName("firstname");
+        testUser.setLastName("lastname");
+        testUser.setUserId("12");
 
         try {
             Thread.sleep(3000);
@@ -63,9 +36,17 @@ public class UserTest {
             System.err.print(e);
         }
 
-        Assert.assertEquals(mlbTest.getFirstName(), "Marie-Laure");
-        Assert.assertEquals(mlbTest.getLastName(), "Barbier");
-        Assert.assertEquals(mlbTest.getUserId(), "10209394363510335");
-
+        Assert.assertEquals(testUser.getFirstName(), "firstname");
+        Assert.assertEquals(testUser.getLastName(), "lastname");
+        Assert.assertEquals(testUser.getUserId(), "12");
     }
+
+    public void testComputeRemainingPictures(){
+        testUser.setKarma(500);
+        testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
+
+        Assert.assertEquals(testUser.getRemainingPhotos(), 5);
+    }
+
+
 }

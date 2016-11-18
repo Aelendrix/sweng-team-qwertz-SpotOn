@@ -49,7 +49,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
             Context context = getApplicationContext();
             String toastMessage = "Please wait a little bit while your info are updating";
-            int duration = Toast.LENGTH_LONG;
+            int duration = Toast.LENGTH_SHORT;
 
             Toast toast = Toast.makeText(context, toastMessage, duration);
             toast.show();
