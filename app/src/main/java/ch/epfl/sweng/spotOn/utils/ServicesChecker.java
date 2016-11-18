@@ -80,13 +80,14 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     }
 
     public String provideErrorMessage(){
-        String errorMessage= "App may malfunction : \n";
+        String errorMessage = "";
         if( !validLocationStatus ){
             errorMessage += "Can't find your gps location\n";
         }
         if( !databaseConnectionStatus ){
             errorMessage += "Can't connect to the database\n";
         }
+        errorMessage += "--  App may malfunction  --";
         return errorMessage;
     }
 
@@ -99,7 +100,7 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean connected = dataSnapshot.getValue(Boolean.class);
-                Log.d("ServicesChecker", " database connection statue : "+connected);
+                Log.d("ServicesChecker", " database connection status : "+connected);
                 if(connected){
                     databaseConnectionStatus = true;
                 }else{
@@ -132,9 +133,8 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
     @Override
     public void updateLocation(Location newLocation) {
-        Log.d("ServicesChecker","location changed");
         if( !validLocationStatus){            // change in services status
-            Log.d("ServicesChecker","listeners notified");
+            Log.d("ServicesChecker","location status changed : listeners notified");
             notifyListeners();
         }
         validLocationStatus = true;
@@ -142,9 +142,8 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
     @Override
     public void locationTimedOut() {
-        Log.d("ServicesChecker","location timeout");
         if(validLocationStatus){           // change in services status
-            Log.d("ServicesChecker","listeners notified");
+            Log.d("ServicesChecker","location timedout : listeners notified");
             notifyListeners();
         }
         validLocationStatus = false;

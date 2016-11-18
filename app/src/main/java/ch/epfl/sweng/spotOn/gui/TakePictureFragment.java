@@ -162,7 +162,8 @@ public class TakePictureFragment extends Fragment {
                             if(task.getException()!=null){
                                 ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
                             }else{
-                                ToastProvider.printAfterCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
+                                Log.d("TakePictureActivity","uploaded picture");
+                                ToastProvider.printOverCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
                             }
                         }
                     });
