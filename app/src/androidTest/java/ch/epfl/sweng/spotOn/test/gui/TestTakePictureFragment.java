@@ -84,11 +84,11 @@ public class TestTakePictureFragment {
         });
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
-        onView(withText("Rotate")).perform(click());
+        onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Save to gallery")).perform(click());
+        onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Send")).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
         Thread.sleep(1000);
 
         /*
