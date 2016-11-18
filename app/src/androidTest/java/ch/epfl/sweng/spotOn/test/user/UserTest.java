@@ -68,5 +68,4 @@ public class UserTest {
         Assert.assertEquals(mlbTest.getUserId(), "10209394363510335");
 
     }
-
 }

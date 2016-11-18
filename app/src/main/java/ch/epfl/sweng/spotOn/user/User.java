@@ -30,21 +30,6 @@ public class User {
     }
 
 
-
-/*
-    //constructor only used from UserProfile
-    public UserStoredInDatabase(String userId, UserProfileActivity userProfile){
-        mUserId = userId;
-
-        try {
-            getUser(userProfile);
-        } catch(AssertionError a){
-            a.printStackTrace();
-        }
-    }
-
-*/
-
     // constructor used from MainActivity during the login phase
     public void setUserAttributesFromFb(String firstName, String lastName, String userId) {
 
@@ -59,14 +44,15 @@ public class User {
 
 
     public void getUserAttributesFromDB() {
-        UserStoredInDatabase userInDB = new UserStoredInDatabase(mInstance);
-        //mInstance = userInDB.checkUser();
+        UserStoredInDatabase userInDB = new UserStoredInDatabase(this);
     }
+
 
     public static long computeMaxPhotoInDay(long karma){
         int computed = Math.round((float)Math.sqrt(karma)/10);
         return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
     }
+
 
     //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }

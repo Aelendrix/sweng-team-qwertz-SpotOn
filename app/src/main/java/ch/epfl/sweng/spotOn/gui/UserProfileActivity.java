@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.user.UserStoredInDatabase;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -32,17 +31,12 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
 
         mUser = User.getInstance();
-
-        Log.e("UserProfileActivity", mUser.getUserId());
-        Log.e("UserProfileActivity", String.valueOf(mUser.getKarma()));
+        mUser.getUserAttributesFromDB();
 
         if(mUser.getUserId() == null){
             Log.e("UserProfileActivity", "UserId is null");
         }
         else {
-            Log.e("UserProfileActivity", mUser.getUserId());
-            Log.e("UserProfileActivity", String.valueOf(mUser.getKarma()));
-            UserStoredInDatabase userInDB = new UserStoredInDatabase(mUser);
 
             mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
             mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
