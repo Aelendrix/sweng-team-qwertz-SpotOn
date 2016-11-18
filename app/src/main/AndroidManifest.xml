@@ -49,6 +49,8 @@
 
 
         <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
+        <receiver android:name="ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver" />
+
 
 
         <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"
@@ -75,6 +77,11 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="ch.epfl.sweng.spotOn.gui.DrawTextActivity"
+            android:theme="@style/AppTheme.TextPopupWindow"/>
+
 
         <activity
             android:name="ch.epfl.sweng.spotOn.gui.AboutPage"

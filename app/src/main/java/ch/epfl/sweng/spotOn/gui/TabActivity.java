@@ -146,4 +146,8 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         mTabLayout.getTabAt(2).select();
     }
 
+    public void goToDrawTextActivity(View view) {
+        mCameraFragment.goToDrawTextActivity(view);
+    }
+
 }
