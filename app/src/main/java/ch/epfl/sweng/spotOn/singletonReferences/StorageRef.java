@@ -5,7 +5,10 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
 
 /** Singleton the provides references to file server
  * Created by quentin on 04.11.16.
@@ -23,7 +26,7 @@ public class StorageRef {
     }
 
     public static void deletePictureFromStorage(String pictureID){
-        mMediaDirectory.child(pictureID+".jpg").delete();
+        mMediaDirectory.child(pictureID + ".jpg").delete();
     }
 
 // CONSTUCTOR FOR SINGLETON
