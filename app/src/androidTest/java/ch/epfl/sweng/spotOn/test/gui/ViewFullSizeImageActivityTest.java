@@ -56,7 +56,7 @@ public class ViewFullSizeImageActivityTest {
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         pictureID = po.getPictureId();
-        // po.upload(); not  usefull in this test
+        po.upload();
         LocalDatabase.getInstance().addPhotoObject(po);
 
         displayFullSizeImageIntent = new Intent();
