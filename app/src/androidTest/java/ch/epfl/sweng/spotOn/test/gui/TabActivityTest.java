@@ -28,9 +28,6 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.AboutPage;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 
 
 /**
@@ -43,14 +40,7 @@ import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 public class TabActivityTest {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
-        @Override
-        public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-        }
-    };
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class);
 
     @Test
     public void swipe_between_fragments() {
