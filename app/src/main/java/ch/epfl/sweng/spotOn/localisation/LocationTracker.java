@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public interface LocationTracker {
 
-    int TIMEOUT_LOCATION = 3*60*1000;  // 3 minutes
+    int TIMEOUT_LOCATION = 1*60*1000;  // 3 minutes
 
     int LISTENERS_NOTIFICATION_NEW_LOCATION = 0;
     int LISTENERS_NOTIFICATION_LOCATION_TIMEOUT = 1;
