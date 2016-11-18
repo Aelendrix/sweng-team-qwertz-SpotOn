@@ -133,12 +133,24 @@ public class FullScreenImageAdapter extends PagerAdapter {
         vote(-1);
     }
 
+
     private void vote(int vote){
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserId.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
+            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void reportOffensivePicture(View view){
+        if(mDisplayedMedia == null) {
+            Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
+        }else{
+            String userId = UserId.getInstance().getUserId();
+            String toastMessage = mDisplayedMedia.processReport(userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
     }

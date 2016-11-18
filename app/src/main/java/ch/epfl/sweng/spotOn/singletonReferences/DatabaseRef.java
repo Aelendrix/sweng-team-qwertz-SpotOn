@@ -1,5 +1,7 @@
 package ch.epfl.sweng.spotOn.singletonReferences;
 
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.BuildConfig;
@@ -10,7 +12,7 @@ import com.google.maps.android.BuildConfig;
 
 public class DatabaseRef{
 
-    private final static String mMediaDirectoryString = "MediaDirectory_quentin";
+    private final static String mMediaDirectoryString = "MediaDirectory";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";
@@ -31,7 +33,12 @@ public class DatabaseRef{
     }
 
     public static void deletePhotoObjectFromDB(String pictureID){
-        if(pictureID != null) {
+
+        if(pictureID == null)
+        {
+            Log.e("Error in DatabaseRef","deletePhotoObjectFromDB pictureId is null");
+        }
+        else {
             mMediaDirectory.child(pictureID).removeValue();
         }
     }

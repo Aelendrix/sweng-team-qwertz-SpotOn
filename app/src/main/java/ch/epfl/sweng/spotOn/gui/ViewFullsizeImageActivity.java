@@ -74,31 +74,18 @@ public class ViewFullsizeImageActivity extends Activity {
         }*/
     }
 
+
     public void recordUpvote(View view) {
         mFullScreenImageAdapter.recordUpvote(view);
     }
+
 
     public void recordDownvote(View view) {
         mFullScreenImageAdapter.recordDownvote(view);
     }
 
-/*
-    public void recordUpvote(View view){
-        vote(1);
-    }
 
-    public void recordDownvote(View view){
-        vote(-1);
+    public void reportOffensivePicture(View view) {
+        mFullScreenImageAdapter.reportOffensivePicture(view);
     }
-
-    private void vote(int vote){
-        if(mDisplayedMedia==null) {
-            throw new NullPointerException();
-        }else{
-            String userId = UserId.getInstance().getUserId();
-            String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
-        }
-    }
-    */
 }
