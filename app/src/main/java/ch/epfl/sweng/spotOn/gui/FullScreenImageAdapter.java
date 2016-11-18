@@ -146,8 +146,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     public void reportOffensivePicture(View view){
-        if(mDisplayedMedia==null) {
-            throw new NullPointerException();
+        if(mDisplayedMedia == null) {
+            Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = UserId.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processReport(userId);
