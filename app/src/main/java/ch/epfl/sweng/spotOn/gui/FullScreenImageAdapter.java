@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +25,7 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.user.UserId;
+import ch.epfl.sweng.spotOn.user.User;
 
 /**
  * Created by Alexis Dewaele on 08/11/2016.
@@ -107,7 +104,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     /** Factory method that returns a listener that
      * sets the imageView with the result of its query
-     * or deals with errorsif need be
+     * or deals with errors if need be
      */
     private OnCompleteListener<byte[]> newImageViewSetterListener(){
         return new OnCompleteListener<byte[]>() {
@@ -138,7 +135,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
-            String userId = UserId.getInstance().getUserId();
+            String userId = User.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
@@ -149,7 +146,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            String userId = UserId.getInstance().getUserId();
+            String userId = User.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processReport(userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }

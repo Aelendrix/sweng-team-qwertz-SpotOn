@@ -12,13 +12,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
-import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +25,6 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 
 import android.view.View;
@@ -48,15 +45,13 @@ import java.io.IOException;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.user.UserId;
+import ch.epfl.sweng.spotOn.user.User;
 
 
 /**
@@ -66,7 +61,7 @@ import ch.epfl.sweng.spotOn.user.UserId;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = UserId.getInstance().getUserId();
+    private final String USER_ID = User.getInstance().getUserId();
 
     private static long mRemainingPhotos;
 
@@ -97,12 +92,6 @@ public class TakePictureFragment extends Fragment {
         return view;
     }
 
-// fields are no longer used
-//    //function called when the locationListener see a location change
-//    public void refreshLocation(Location mPhoneLocation) {
-//        mLatitude = mPhoneLocation.getLatitude();
-//        mLongitude = mPhoneLocation.getLongitude();
-//    }
 
     /**
      * Method that checks if the app has the permission to use the camera
@@ -325,7 +314,7 @@ public class TakePictureFragment extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
 
-        String userId = UserId.getInstance().getUserId();
+        String userId = User.getInstance().getUserId();
 
         if(!ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("Location tracker should be started");
