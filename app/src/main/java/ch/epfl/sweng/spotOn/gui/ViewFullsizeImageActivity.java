@@ -43,35 +43,9 @@ public class ViewFullsizeImageActivity extends Activity {
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
         Intent displayImageIntent = getIntent();
-        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mPosition);
+        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
 
-        /*mViewToSet = (ImageView) findViewById(R.id.fullSizeImageView);
-        mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
-
-        Intent displayImageIntent = getIntent();
-        final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
-
-        if(!LocalDatabase.hasKey(wantedImagePictureId)){
-            Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
-            mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-        }else {
-            mDisplayedMedia = LocalDatabase.getPhoto(wantedImagePictureId);
-            Bitmap imageToDisplay = null;
-            if (mDisplayedMedia.hasFullSizeImage()) {
-                imageToDisplay = mDisplayedMedia.getFullSizeImage();
-                mViewToSet.setImageBitmap(imageToDisplay);
-            } else {
-                // retrieveFullsizeImage throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
-                try {
-                    // add a listener that will set the image when it is retrieved
-                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
-                }catch (IllegalArgumentException e){
-                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
-                }
-            }
-        }*/
     }
 
     public void recordUpvote(View view) {
@@ -82,23 +56,4 @@ public class ViewFullsizeImageActivity extends Activity {
         mFullScreenImageAdapter.recordDownvote(view);
     }
 
-/*
-    public void recordUpvote(View view){
-        vote(1);
-    }
-
-    public void recordDownvote(View view){
-        vote(-1);
-    }
-
-    private void vote(int vote){
-        if(mDisplayedMedia==null) {
-            throw new NullPointerException();
-        }else{
-            String userId = UserId.getInstance().getUserId();
-            String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
-        }
-    }
-    */
 }

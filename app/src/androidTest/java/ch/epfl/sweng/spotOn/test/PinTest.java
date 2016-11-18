@@ -15,8 +15,8 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 @RunWith(AndroidJUnit4.class)
 public class PinTest {
 
-    private PhotoObject photo1 = TestPhotoObjectUtils.paulVanDykPO();
-    private PhotoObject photo2 = TestPhotoObjectUtils.iceDivingPO();
+    private PhotoObject photo1 = PhotoObjectTestUtils.paulVanDykPO();
+    private PhotoObject photo2 = PhotoObjectTestUtils.iceDivingPO();
 
     private Pin pin1 = new Pin(photo1, true);
     private Pin pin2 = new Pin(photo2, false);
@@ -34,6 +34,6 @@ public class PinTest {
 
     public static boolean areEquals(Pin onePin, Pin anotherPin){
         return onePin.getAccessibility() == anotherPin.getAccessibility() &&
-                TestPhotoObjectUtils.areEquals(onePin.getPhotoObject(), anotherPin.getPhotoObject());
+                PhotoObjectTestUtils.areEquals(onePin.getPhotoObject(), anotherPin.getPhotoObject());
     }
 }

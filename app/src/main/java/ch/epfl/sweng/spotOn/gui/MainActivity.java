@@ -30,6 +30,9 @@ import android.widget.Toast;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 import ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
 
 
@@ -52,6 +55,12 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // initialize LocationTracker and LocalDatabase
+        Log.d("MainActivity","initializing singletons");
+        ConcreteLocationTracker.initialize(getApplicationContext());
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        Log.d("MainActivity","done initializing");
+
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
@@ -70,7 +79,7 @@ public final class MainActivity extends AppCompatActivity {
         Intent refreshRemainingPhotosIntent = new Intent(this, RefreshRemainingPhotosReceiver.class);
         PendingIntent refreshRemainingPhotosPendingIntent = PendingIntent.getBroadcast(this, 0, refreshRemainingPhotosIntent, 0);
         long nextMidnight = ((System.currentTimeMillis()/ONE_DAY) + 1)*ONE_DAY;
-        refreshRemainingPhotosAlarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()/*nextMidnight*/, 60000, refreshRemainingPhotosPendingIntent);
+        refreshRemainingPhotosAlarm.setRepeating(AlarmManager.RTC_WAKEUP, nextMidnight, ONE_DAY, refreshRemainingPhotosPendingIntent);
 
         setContentView(R.layout.activity_main);
 

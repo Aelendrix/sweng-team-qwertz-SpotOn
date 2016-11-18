@@ -28,22 +28,27 @@ public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (userID != null) {
-            Query query = DBRef.child(userID);
+
+            Query query = DBRef;
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        long karma = User.INITIAL_KARMA;
-                        if (dataSnapshot.child(KARMA).getValue() != null) {
-                            karma = ((long) dataSnapshot.child(KARMA).getValue());
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            long karma = User.INITIAL_KARMA;
+                            String user = ((String)child.child("userId").getValue());
+                            if (child.child(KARMA).getValue() != null) {
+                                karma = ((long) child.child(KARMA).getValue());
 
-                        } else {
-                            DBRef.child(userID).child(KARMA).setValue(karma);
+                            } else {
+                                DBRef.child(user).child(KARMA).setValue(karma);
+                            }
+                            long remainingPhotos = User.computeMaxPhotoInDay(karma);
+                            DBRef.child(user).child("RemainingPhotos").setValue(remainingPhotos);
+                            if(user.equals(userID)) {
+                                TakePictureFragment.setRemainingPhotos(remainingPhotos);
+                            }
                         }
-                        long remainingPhotos = User.computeMaxPhotoInDay(karma);
-                        DBRef.child(userID).child("RemainingPhotos").setValue(remainingPhotos);
-                        TakePictureFragment.setRemainingPhotos(remainingPhotos);
                     }
                 }
 
@@ -52,6 +57,6 @@ public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
 
                 }
             });
-        }
+
     }
 }
