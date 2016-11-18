@@ -19,11 +19,14 @@ import com.facebook.login.LoginManager;
 import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
-public class TabActivity extends AppCompatActivity {
+public class TabActivity extends AppCompatActivity implements ServicesCheckerListener{
 
 
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
@@ -52,8 +55,7 @@ public class TabActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout){
             @Override
             public void onPageSelected(int pageNb) {
-                ToastProvider.printOverCurrent("tab "+pageNb, Toast.LENGTH_SHORT);
-
+                checkAndDisplayServicesError();
             }
         });
 
@@ -135,5 +137,26 @@ public class TabActivity extends AppCompatActivity {
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
     }
+
+
+// PRIVATE HELPERS
+    /** displays the error message if need be    */
+    public void checkAndDisplayServicesError(){
+        if( ! ServicesChecker.getInstance().statusIsOk() ){
+            String errorMessage = ServicesChecker.getInstance().provideErrorMessage();
+            if( errorMessage.isEmpty() ){
+                throw new IllegalStateException("incoherent state : error message can't be empty if status isn't good");
+            }
+            ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
+        }
+    }
+
+
+// LISTENER METHODS
+    @Override
+    public void servicesAvailabilityUpdated() {
+        checkAndDisplayServicesError();
+    }
+
 
 }
