@@ -182,7 +182,10 @@ public class LocalDatabase implements LocationTrackerListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate()){
-                    final Location mLocationTempCopy = new Location(mCachedLocation);
+                    Location mLocationTempCopy;
+                    synchronized (this) {
+                        mLocationTempCopy = new Location(mCachedLocation);
+                    }
                     LocalDatabase.getInstance().clear();
                     for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                         PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
@@ -211,7 +214,10 @@ public class LocalDatabase implements LocationTrackerListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 LocalDatabase.getInstance().clear();
-                final Location mLocationTempCopy = new Location(mCachedLocation);
+                Location mLocationTempCopy;
+                synchronized (this) {
+                    mLocationTempCopy = new Location(mCachedLocation);
+                }
                 for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                     PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
                     LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
@@ -256,7 +262,9 @@ public class LocalDatabase implements LocationTrackerListener{
     @Override
     public void updateLocation(Location newLocation) {
         if(allowRefreshAccordingToNewLocation(newLocation)){
-            mCachedLocation = newLocation;
+            synchronized (this) {
+                mCachedLocation = newLocation;
+            }
             Log.d("Localdatabase", "location updated, forcing single refresh");
             forceSingleRefresh();
         }// otherwise, it's not worth it to refresh the database
@@ -265,6 +273,8 @@ public class LocalDatabase implements LocationTrackerListener{
     @Override
     public void locationTimedOut(){
         Log.d("Localdatabase","listener notifed that location timed out");
-        mCachedLocation=null;
+        synchronized (this) {
+            mCachedLocation = null;
+        }
     }
 }
