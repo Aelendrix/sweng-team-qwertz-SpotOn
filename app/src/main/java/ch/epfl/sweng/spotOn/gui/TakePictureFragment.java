@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -80,16 +81,6 @@ public class TakePictureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
-
-        // DIRTY HACK TO GET SEND BUTTON TO WORK
-        Button sendButton = (Button) view.findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendPictureToServer(view);
-            }
-        });
-
         mPic = (ImageView) view.findViewById(R.id.image_view);
         getRemainingPhotoInDay();
 

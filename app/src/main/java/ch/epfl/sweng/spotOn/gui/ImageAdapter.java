@@ -26,7 +26,7 @@ public class ImageAdapter extends BaseAdapter {
 
 
     public ImageAdapter(Context c) {
-        mThumbnailMap = LocalDatabase.getInstance().getViewableThumbmails();
+        mThumbnailMap = LocalDatabase.getInstance().getViewableThumbnails();
         mThumbId = new ArrayList<>(mThumbnailMap.keySet());
         mThumbnail = new ArrayList<>();
         mContext = c;

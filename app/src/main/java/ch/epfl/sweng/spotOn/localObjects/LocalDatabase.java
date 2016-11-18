@@ -29,7 +29,7 @@ public class LocalDatabase implements LocationTrackerListener{
     private static LocalDatabase mSingleInstance = null;
 
     private Map<String,PhotoObject> mediaDataMap;
-    private Map<String, PhotoObject> mViewableMediaDataMap;
+    private static Map<String, PhotoObject> mViewableMediaDataMap;
     private List<LocalDatabaseListener> mListeners;
 
     private Location mCachedLocation;
@@ -119,7 +119,7 @@ public class LocalDatabase implements LocationTrackerListener{
         return mViewableMediaDataMap;
     }
 
-    public Map<String, Bitmap> getViewableThumbmails() {
+    public static Map<String, Bitmap> getViewableThumbnails() {
         HashMap<String, Bitmap> resultMap = new HashMap<>();
         for(PhotoObject p : mViewableMediaDataMap.values()){
             resultMap.put(p.getPictureId(), p.getThumbnail());

@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn.test.util;
+package ch.epfl.sweng.spotOn.test;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.gui.Pin;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 /**
  * Created by olivi on 05.11.2016.
