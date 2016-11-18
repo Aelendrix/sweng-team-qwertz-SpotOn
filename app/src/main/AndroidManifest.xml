@@ -79,6 +79,11 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
+            android:name="ch.epfl.sweng.spotOn.gui.DrawTextActivity"
+            android:theme="@style/AppTheme.TextPopupWindow"/>
+
+
+        <activity
             android:name="ch.epfl.sweng.spotOn.gui.AboutPage"
             android:theme="@style/AppTheme.PopupWindow"/>
 
