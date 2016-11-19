@@ -75,7 +75,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(!mPhotoMap.containsKey(wantedImagePictureId)){
             Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-            if(LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
+            if(!LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
                 Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
                 throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
             }
