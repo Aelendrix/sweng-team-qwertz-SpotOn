@@ -66,7 +66,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         LocationListener currentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {
                 if(LocalizationUtils.isBetterLocation(newLocation ,mLocation)){
-                    Log.d("LocationTracker","location updated");
+                    Log.d("LocationTracker","location updated by provider : "+newLocation.getProvider());
                     mLocation = newLocation;
                     notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
                     mLocationTimeoutHandler.removeCallbacks(mRunOnTimeout);
