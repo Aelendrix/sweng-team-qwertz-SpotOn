@@ -239,8 +239,10 @@ public class LocalDatabase implements LocationTrackerListener{
         if(mCachedLocation==null){
             return true;
         }else {
-            boolean tooLongWithoutRefreshing = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
-            boolean refreshingTooOften = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
+            long timeDiffBetweenCurrenAndNewLocations = Math.abs(newLocation.getTime() - mCachedLocation.getTime());
+
+            boolean tooLongWithoutRefreshing = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
+            boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
             boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
 
             return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);
@@ -252,7 +254,8 @@ public class LocalDatabase implements LocationTrackerListener{
             Log.d("LocalDatabase","Refresh based on maximum refresh rate couldn't be allowed : no Location avaible");
             return false;
         }else {
-            return Math.abs(mLastRefreshDate - Calendar.getInstance().getTimeInMillis()) > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE;
+            long timeDiffSinceLastRefresh = Math.abs(mLastRefreshDate - Calendar.getInstance().getTimeInMillis());
+            return timeDiffSinceLastRefresh > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE;
         }
     }
 
