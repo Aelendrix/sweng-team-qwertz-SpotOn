@@ -28,7 +28,16 @@ public class SingletonsTests {
         if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory")))){
             throw new AssertionError();
         }
+        if(!(DatabaseRef.getRootDirectory().equals(FirebaseDatabase.getInstance().getReference()))){
+            throw new AssertionError();
+        }
+
+
+        // these classes should probably get deleted soon
         if(!(DatabaseRef_Test.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory_test")))){
+            throw new AssertionError();
+        }
+        if(!(DatabaseRef_Test.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_test")))){
             throw new AssertionError();
         }
         if(!(DatabaseRef_Test.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_test")))){
