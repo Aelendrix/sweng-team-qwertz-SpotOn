@@ -27,6 +27,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
+
 /**
  * Created by nico on 09.11.16.
  */
@@ -71,7 +72,7 @@ public class FullPictureActivityTest {
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
-        onView(withId(R.id.downVoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
         Thread.sleep(10000);
     }
 

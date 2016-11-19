@@ -355,6 +355,13 @@ public class PhotoObject {
         mStoredInServer = alreadySent;
     }
 
+    /**
+     * Needed for tests
+     */
+    public void setRadiusMax(){
+        mRadius = MAX_VIEW_RADIUS;
+    }
+
 
 // PRIVATE HELPERS USED IN THE CLASS ONLY
 

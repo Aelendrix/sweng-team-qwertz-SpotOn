@@ -20,7 +20,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
 
     View mView;
     GridView mGridView;
-    private ImageAdapter mImageAdapter;
+    private static ImageAdapter mImageAdapter;
     protected static int mDefaultItemPosition = 0;
 
     @Override
