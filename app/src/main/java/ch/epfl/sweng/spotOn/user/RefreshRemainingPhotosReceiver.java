@@ -46,7 +46,7 @@ public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
                         long remainingPhotos = User.getInstance().computeMaxPhotoInDay(karma);
                         DBRef.child(retrievedUserId).child("RemainingPhotos").setValue(remainingPhotos);
                         if(retrievedUserId.equals(userID)) {
-                            TakePictureFragment.setRemainingPhotos(remainingPhotos);
+                            User.getInstance().setRemainingPhotos(remainingPhotos);
                         }
                     }
                 }

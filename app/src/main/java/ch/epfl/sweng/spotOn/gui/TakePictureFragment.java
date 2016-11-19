@@ -62,7 +62,7 @@ public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
     private final String USER_ID = User.getInstance().getUserId();
-    private static long mRemainingPhotos = User.getInstance().getRemainingPhotos();
+    private long mRemainingPhotos = User.getInstance().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -168,7 +168,7 @@ public class TakePictureFragment extends Fragment {
                     Toast.makeText(this.getActivity(), "Picture sent to server, You have "+mRemainingPhotos+" left today!", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Toast.makeText(this.getActivity(), "You have 0 remaining photos you can post today", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this.getActivity(), "You have 0 remaining photos you can't post today", Toast.LENGTH_LONG).show();
                 }
 
             } else {
@@ -453,6 +453,7 @@ public class TakePictureFragment extends Fragment {
                 if(dataSnapshot.exists()) {
                     if(dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null){
                         mRemainingPhotos = ((long)dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                        User.getInstance().setRemainingPhotos(mRemainingPhotos);
                     }
                 }
 
@@ -462,10 +463,6 @@ public class TakePictureFragment extends Fragment {
 
             }
         });
-    }
-
-    public static void setRemainingPhotos(long remainingPhotos) {
-        mRemainingPhotos = remainingPhotos;
     }
 
 
