@@ -17,21 +17,17 @@ public class User {
     private long mKarma;
     private long mRemainingPhotos;
 
-    private User(){
 
+// INITIALIZE AND CONSTRUCTOR
+    private User(String firstName, String lastName, String userId){
+        mFirstName = firstName;
+        mLastName = lastName;
+        mUserId = userId;
+        mKarma = INITIAL_KARMA;
+        mRemainingPhotos = computeMaxPhotoInDay(mKarma);
     }
 
-    public static User getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new User();
-        }
-        return mInstance;
-    }
-
-
-    // constructor used from MainActivity during the login phase
-    public void setUserAttributesFromFb(String firstName, String lastName, String userId) {
+    public void initializeFromFacebook(String firstName, String lastName, String userId) {
 
         mFirstName = firstName;
         mLastName = lastName;
@@ -42,6 +38,19 @@ public class User {
         this.getUserAttributesFromDB();
     }
 
+
+// PUBLIC METHODS
+
+    public static boolean hasInstance(){
+        return mInstance!=null;
+    }
+
+    public static User getInstance(){
+        if(mInstance == null){
+            throw new IllegalStateException(" User not initialized");
+        }
+        return mInstance;
+    }
 
     public void getUserAttributesFromDB() {
         UserStoredInDatabase userInDB = new UserStoredInDatabase(this);
