@@ -29,7 +29,7 @@ public class StorageRef {
     public static void deletePictureFromStorage(String pictureID){
         if(pictureID == null)
         {
-            Log.e("Error in StorageRef","deletePictureFromStorage pictureId is null");
+            throw new IllegalArgumentException("Error in StorageRef: deletePictureFromStorage, pictureId is null");
         }
         else {
             mMediaDirectory.child(pictureID + ".jpg").delete();
