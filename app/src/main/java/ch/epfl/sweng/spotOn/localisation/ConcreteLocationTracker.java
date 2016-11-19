@@ -34,14 +34,14 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
 
     // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(Context c){
+    public static void initialize(LocationManager locManager){
         if(mSingleInstance==null){
-            mSingleInstance = new ConcreteLocationTracker(c);
+            mSingleInstance = new ConcreteLocationTracker(locManager);
         }
 
     }
 
-    private ConcreteLocationTracker(Context c) {
+    private ConcreteLocationTracker(LocationManager locManager) {
         // for listeners
         mListenersList = new ArrayList<>();
         // runnable that will take care of timeout-ing the location after a given time
@@ -58,7 +58,10 @@ public final class ConcreteLocationTracker implements LocationTracker {
             }
         };
         // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+        // no point in passing the context only to extract something else from it
+        // let's make our testing easier and pass locationManager directly
+        // mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = locManager;
         // Define a listener that responds to location updates
         LocationListener currentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {

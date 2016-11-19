@@ -1,17 +1,30 @@
 package ch.epfl.sweng.spotOn.test.location;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
+import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 
@@ -20,16 +33,25 @@ import ch.epfl.sweng.spotOn.localisation.LocationTracker;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class LocationTrackerTest {
+public class LocationTrackerTest extends AndroidTestCase{
 
-    private Location location0 = new Location("testLocationProvider");
-    private Location location1 = new Location("testLocationProvider");
+    private Location location0 = new Location(LocationManager.GPS_PROVIDER);
+    private Location location1 = new Location(LocationManager.GPS_PROVIDER);
     private Location location2 = new Location("testLocationProvider");
     private Location location3 = new Location("testLocationProvider");
 
+    private LocationTracker refToLocationTracker;
+
+
+
+//    @Rule
+//    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class);
+
+
+// INITIALIZATION
 
     @Before
-    public void initLocation() {
+    public void init() {
 
         location3.setLatitude(0);
         location3.setLongitude(0);
@@ -47,15 +69,94 @@ public class LocationTrackerTest {
         location1.setLongitude(1);
         location1.setAltitude(0);
         location1.setAccuracy(2);
-        location1.setTime(2*60*1000);
+        location1.setTime(System.currentTimeMillis());
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            location1.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }else{
+            throw new IllegalStateException("Tests need api 17 to work");
+        }
 
         location0.setLatitude(1);
         location0.setLongitude(1);
         location0.setAltitude(0);
         location0.setAccuracy(1);
-        location0.setTime(2*60*1000);
+        location0.setTime(System.currentTimeMillis());
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }else{
+            throw new IllegalStateException("Tests need api 17 to work");
+        }
 
     }
+
+
+
+    @Test
+    public void testMockProvider(){
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+                // obtain context
+                Context c = InstrumentationRegistry.getContext();
+                LocationManager locMan = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+
+                // verify existing providers
+                List<String> listOfProviders = locMan.getAllProviders();
+                if( !listOfProviders.contains(LocationManager.GPS_PROVIDER) ){
+                    throw new AssertionError("GPS provider not contained");
+                }
+                if( !listOfProviders.contains(LocationManager.NETWORK_PROVIDER) ){
+                    throw new AssertionError("Network Provider not contained");
+                }
+
+                locMan.addTestProvider(LocationManager.GPS_PROVIDER, false, false, false, false, true, true, true, 0, 5);
+
+                // set mock location for providers
+                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location0);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+
+                ConcreteLocationTracker.initialize(locMan);
+                if( ! ConcreteLocationTracker.instanceExists() ){
+                    throw new AssertionError("ConcreteLocationTracker should have initialized");
+                }
+
+                refToLocationTracker=ConcreteLocationTracker.getInstance();
+
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new AssertionError("couldn't sleep");
+                }
+
+                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location1);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new AssertionError("couldn't sleep");
+                }
+
+                if( ! refToLocationTracker.hasValidLocation() ){
+                    throw new AssertionError("failed");
+                }
+
+                // test actually fails...
+                // https://developer.android.com/reference/android/location/LocationManager.html#setTestProviderStatus(java.lang.String, int, android.os.Bundle, long)
+
+            }
+        });
+    }
+
+
+
 
     @Test
     public void testIsBestLocation(){

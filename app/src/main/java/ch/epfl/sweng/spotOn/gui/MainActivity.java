@@ -18,6 +18,7 @@ import android.app.PendingIntent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -59,7 +60,7 @@ public final class MainActivity extends AppCompatActivity {
 
         // initialize LocationTracker and LocalDatabase
         Log.d("MainActivity","initializing singletons");
-        ConcreteLocationTracker.initialize(getApplicationContext());
+        ConcreteLocationTracker.initialize((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE));
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
         ToastProvider.update(getApplicationContext());
