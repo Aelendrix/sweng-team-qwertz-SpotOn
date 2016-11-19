@@ -48,5 +48,4 @@ public class UserTest {
         Assert.assertEquals(testUser.getRemainingPhotos(), 5);
     }
 
-
 }

@@ -60,7 +60,7 @@ public class UserStoredInDatabase {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(mUserId == null)
                 {
-                    throw new AssertionError("User.mUserId is null");
+                    Log.e("UserStoredInDB","User.mUserId is null");
                 }
                 else {
                     DataSnapshot userToRetrieve = dataSnapshot.child(mUserId);

@@ -62,8 +62,7 @@ public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
     private final String USER_ID = User.getInstance().getUserId();
-
-    private static long mRemainingPhotos;
+    private static long mRemainingPhotos = User.getInstance().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -163,6 +162,7 @@ public class TakePictureFragment extends Fragment {
                 if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
+                    User.getInstance().setRemainingPhotos(mRemainingPhotos);
                     mActualPhotoObject.upload(false, null); // no onCOmplete listener
                     mActualPhotoObject.setSentToServerStatus(true);
                     Toast.makeText(this.getActivity(), "Picture sent to server, You have "+mRemainingPhotos+" left today!", Toast.LENGTH_LONG).show();

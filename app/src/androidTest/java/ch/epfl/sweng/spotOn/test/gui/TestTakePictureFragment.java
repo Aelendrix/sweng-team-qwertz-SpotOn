@@ -24,6 +24,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,6 +43,8 @@ public class TestTakePictureFragment {
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+            User user = User.getInstance();
+            user.setUserId("test");
         }
     };
     Uri mImageToUploadUri;
@@ -84,11 +87,11 @@ public class TestTakePictureFragment {
         });
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
-        onView(withText("Rotate")).perform(click());
+        onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Save to gallery")).perform(click());
+        onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Send")).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
         Thread.sleep(1000);
 
         /*

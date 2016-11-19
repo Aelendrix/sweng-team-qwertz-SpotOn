@@ -1,18 +1,18 @@
-package ch.epfl.sweng.spotOn.test;
-
-import android.support.test.runner.AndroidJUnit4;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import ch.epfl.sweng.spotOn.user.User;
-
-
-@RunWith(AndroidJUnit4.class)
-public class UsersTest {
-
-    @Test
-    public void testUserSetGet() throws Exception{
+//package ch.epfl.sweng.spotOn.test;
+//
+//import android.support.test.runner.AndroidJUnit4;
+//
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//
+//import ch.epfl.sweng.spotOn.user.User;
+//
+//
+//@RunWith(AndroidJUnit4.class)
+//public class UsersTest {
+//
+//    @Test
+//    public void testUserSetGet() throws Exception{
 //        String firstName = "aaa";
 //        String lastName = "bbb";
 //        String userId = "123456789";
@@ -41,5 +41,5 @@ public class UsersTest {
 //        if(!u.getUserId().equals(userId2)) {
 //            throw new AssertionError("userId setter Error");
 //        }
-    }
-}
+//    }
+//}

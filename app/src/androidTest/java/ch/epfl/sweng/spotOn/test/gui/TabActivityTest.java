@@ -77,7 +77,7 @@ public class TabActivityTest {
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Profile")).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
-        onView(withText("Back")).perform(click());
+        onView(withId(R.id.profileBackButton)).perform(click());
         Intents.release();
     }
 
