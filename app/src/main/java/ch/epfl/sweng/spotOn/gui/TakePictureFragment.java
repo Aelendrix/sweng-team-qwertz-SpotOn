@@ -449,9 +449,14 @@ public class TakePictureFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    if(dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null){
-                        mRemainingPhotos = ((long)dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
-                        User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                    if(USER_ID == null){
+                        Log.e("TakePictureFragment","getRemainingPhotoInDay: USER_ID is null");
+                    }
+                    else {
+                        if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
+                            mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                        }
                     }
                 }
 

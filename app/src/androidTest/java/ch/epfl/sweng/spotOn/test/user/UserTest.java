@@ -22,13 +22,15 @@ public class UserTest {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
     }
 
-    // This method tests the User method getUser()
+
     @Test
     public void testSetAndGetUser(){
         testUser = User.getInstance();
         testUser.setFirstName("firstname");
         testUser.setLastName("lastname");
-        testUser.setUserId("12");
+        testUser.setUserId("mlb");
+        testUser.setKarma(500);
+        testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
 
         try {
             Thread.sleep(3000);
@@ -38,14 +40,8 @@ public class UserTest {
 
         Assert.assertEquals(testUser.getFirstName(), "firstname");
         Assert.assertEquals(testUser.getLastName(), "lastname");
-        Assert.assertEquals(testUser.getUserId(), "12");
+        Assert.assertEquals(testUser.getUserId(), "mlb");
+        Assert.assertEquals(testUser.getKarma(), 500);
+        Assert.assertEquals(testUser.getRemainingPhotos(), User.computeMaxPhotoInDay(500));
     }
-
-    public void testComputeRemainingPictures(){
-        testUser.setKarma(500);
-        testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
-
-        Assert.assertEquals(testUser.getRemainingPhotos(), 5);
-    }
-
 }
