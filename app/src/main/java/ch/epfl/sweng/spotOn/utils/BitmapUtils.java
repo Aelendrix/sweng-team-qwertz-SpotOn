@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn;
+package ch.epfl.sweng.spotOn.utils;
 
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;

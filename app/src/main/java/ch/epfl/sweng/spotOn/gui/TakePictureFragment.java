@@ -12,22 +12,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
-import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 
 import android.view.View;
@@ -37,6 +35,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,15 +49,14 @@ import java.io.IOException;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserId;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
 /**
@@ -88,18 +87,10 @@ public class TakePictureFragment extends Fragment {
         return view;
     }
 
-// fields are no longer used
-//    //function called when the locationListener see a location change
-//    public void refreshLocation(Location mPhoneLocation) {
-//        mLatitude = mPhoneLocation.getLatitude();
-//        mLongitude = mPhoneLocation.getLongitude();
-//    }
-
     /**
      * Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
-
     public void dispatchTakePictureIntent(View view){
         SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         mTextToDraw = bb.getString("TD", "");
@@ -165,12 +156,21 @@ public class TakePictureFragment extends Fragment {
                 if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
-                    mActualPhotoObject.upload(false, null); // no onCOmplete listener
+                    mActualPhotoObject.upload(true, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if(task.getException()!=null){
+                                ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                            }else{
+                                Log.d("TakePictureActivity","uploaded picture");
+                                ToastProvider.printOverCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
+                            }
+                        }
+                    });
                     mActualPhotoObject.setSentToServerStatus(true);
-                    Toast.makeText(this.getActivity(), "Picture sent to server, You have "+mRemainingPhotos+" left today!", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    Toast.makeText(this.getActivity(), "You have 0 remaining photos you can post today", Toast.LENGTH_LONG).show();
+                } else {
+                    ToastProvider.printAfterCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
+                    Log.d("TakePictureFragment","User "+USER_ID+" can't post photo anymore");
                 }
 
             } else {
@@ -322,7 +322,8 @@ public class TakePictureFragment extends Fragment {
             throw new AssertionError("Location tracker should be started");
         }
         if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
-            throw new IllegalStateException("can't create new object withou a valid location (should be tested before calling createPhotoObject");
+            // was checked for in the calling method
+            throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
         PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -373,17 +374,18 @@ public class TakePictureFragment extends Fragment {
                 mPic.setImageBitmap(modifiedPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-                    Toast.makeText(getContext(), "Can't create post without proposer Location data", Toast.LENGTH_LONG);
+                    Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
                 }else {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
-            }
-            else {
-                Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+            } else {
+                // Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
             }
         }
         else {
-            Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
+            // Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("Internal error while creating your post : URI null", Toast.LENGTH_SHORT);
         }
     }
 
@@ -392,7 +394,6 @@ public class TakePictureFragment extends Fragment {
      *
      * @param photo a PhotoObject to get its full size picture to store in Pictures file
      */
-
     private void storeImage(PhotoObject photo){
         if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);

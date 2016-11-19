@@ -40,17 +40,11 @@ public class ViewFullSizeImageActivityTest {
 
     @Rule
     public ActivityTestRule<ViewFullsizeImageActivity> mActivityTestRule = new ActivityTestRule<>(ViewFullsizeImageActivity.class,true,false);
-    private List<String> picsIds;
-    public String pictureID1;
-    public String pictureID2;
+    public String pictureID;
     public Intent displayFullSizeImageIntent;
 
     @Before
-    public void getPictureID(){
-        /*picsIds = initLocalDatabase();
-        pictureID1 = picsIds.get(0);
-        pictureID2 = picsIds.get(1);*/
-
+    public void initLocalDatabase() throws InterruptedException {
         Location location = new Location("testLocationProvider");
         location.setLatitude(46.52890355757567);
         location.setLongitude(6.569420238493345);
@@ -60,27 +54,26 @@ public class ViewFullSizeImageActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        PhotoObject po1 = PhotoObjectTestUtils.paulVanDykPO();
-        po1.upload();
-        LocalDatabase.getInstance().addPhotoObject(po1);
-        pictureID1 = po1.getPictureId();
+        //PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
+        PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
+        pictureID = po.getPictureId();
+        po.upload();
+        LocalDatabase.getInstance().addPhotoObject(po);
 
         displayFullSizeImageIntent = new Intent();
-        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID1);
+        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
 
-        PhotoObject po2 = PhotoObjectTestUtils.germaynDeryckePO();
-        po2.upload();
-        LocalDatabase.getInstance().addPhotoObject(po2);
-        pictureID2 = po2.getPictureId();
     }
 
     @Test
-    public void launchFullPictureActivity() throws InterruptedException{
+    public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.downvoteButton)).perform(click());
+
+        Thread.sleep(10000);
     }
 
     @Test
@@ -92,12 +85,9 @@ public class ViewFullSizeImageActivityTest {
 
     @After
     public void deletePhotoObject(){
-        DatabaseRef.deletePhotoObjectFromDB(pictureID1);
-        DatabaseRef.deletePhotoObjectFromDB(pictureID2);
-        StorageRef.deletePictureFromStorage(pictureID1);
-        StorageRef.deletePictureFromStorage(pictureID2);
-        LocalDatabase.getInstance().removePhotoObject(pictureID1);
-        LocalDatabase.getInstance().removePhotoObject(pictureID2);
+        DatabaseRef.deletePhotoObjectFromDB(pictureID);
+        StorageRef.deletePictureFromStorage(pictureID);
+        LocalDatabase.getInstance().removePhotoObject(pictureID);
     }
 
     /**

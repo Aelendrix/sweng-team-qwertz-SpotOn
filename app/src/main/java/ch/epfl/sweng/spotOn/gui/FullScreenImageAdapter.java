@@ -75,9 +75,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
         Intent displayImageIntent = mActivity.getIntent();
         final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
-        if(!LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
-            Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
+        if(!mPhotoMap.containsKey(wantedImagePictureId)){
+            Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+            if(LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
+                Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
+                throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
+            }
+            throw new IllegalStateException("Wanted object not in local copy of database (and not in localdatabase)");
         }else {
             mDisplayedMedia = mPhotos.get(position);
             Bitmap imageToDisplay = null;
