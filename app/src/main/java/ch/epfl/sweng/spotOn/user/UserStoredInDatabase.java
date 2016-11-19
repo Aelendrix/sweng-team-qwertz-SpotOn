@@ -82,7 +82,7 @@ public class UserStoredInDatabase {
                             User.getInstance().setLastName(mLastName);
                             User.getInstance().setKarma(mKarma);
                             User.getInstance().setRemainingPhotos(mRemainingPhotos);
-                        }
+                    }
                     }
                 }
             }
