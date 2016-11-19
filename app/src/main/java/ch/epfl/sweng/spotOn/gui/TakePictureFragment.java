@@ -314,8 +314,6 @@ public class TakePictureFragment extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
 
-        String userId = User.getInstance().getUserId();
-
         if(!ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("Location tracker should be started");
         }
@@ -323,7 +321,7 @@ public class TakePictureFragment extends Fragment {
             throw new IllegalStateException("can't create new object withou a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
+        PhotoObject picObject = new PhotoObject(imageBitmap, USER_ID, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
         return picObject;
     }

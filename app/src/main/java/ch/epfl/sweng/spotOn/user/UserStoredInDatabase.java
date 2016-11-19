@@ -38,7 +38,7 @@ public class UserStoredInDatabase {
 
         User.getInstance().setFirstName(mFirstName);
         User.getInstance().setLastName(mLastName);
-        user.setKarma(mKarma);
+        User.getInstance().setKarma(mKarma);
         User.getInstance().setRemainingPhotos(mRemainingPhotos);
     }
 
@@ -76,13 +76,13 @@ public class UserStoredInDatabase {
                             mFirstName = retrievedUser.getFirstName();
                             mLastName = retrievedUser.getLastName();
                             mKarma = retrievedUser.getKarma();
-                            mRemainingPhotos = retrievedUser.getRemainingPhotos();
+                            mRemainingPhotos = retrievedUser.getKarma();
 
                             User.getInstance().setFirstName(mFirstName);
                             User.getInstance().setLastName(mLastName);
                             User.getInstance().setKarma(mKarma);
                             User.getInstance().setRemainingPhotos(mRemainingPhotos);
-                        }
+                    }
                     }
                 }
             }
