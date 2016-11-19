@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
 
@@ -20,15 +19,14 @@ public class UserTest {
     @After
     public void removeTestUser() {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
+        testUser.destroy();
     }
 
 
     @Test
     public void testSetAndGetUser(){
+        User.initializeFromFb("firstname", "lastname", "mlb");
         testUser = User.getInstance();
-        testUser.setFirstName("firstname");
-        testUser.setLastName("lastname");
-        testUser.setUserId("mlb");
         testUser.setKarma(500);
         testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
 
@@ -43,5 +41,7 @@ public class UserTest {
         Assert.assertEquals(testUser.getUserId(), "mlb");
         Assert.assertEquals(testUser.getKarma(), 500);
         Assert.assertEquals(testUser.getRemainingPhotos(), User.computeMaxPhotoInDay(500));
+        Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
+        Assert.assertEquals(User.hasInstance(), true);
     }
 }

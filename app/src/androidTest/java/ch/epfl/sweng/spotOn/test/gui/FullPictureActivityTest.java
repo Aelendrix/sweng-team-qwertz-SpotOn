@@ -53,8 +53,7 @@ public class FullPictureActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        User user = User.getInstance();
-        user.setUserId("test");
+        User.initializeFromFb("","","test");
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         pictureID = po.getPictureId();

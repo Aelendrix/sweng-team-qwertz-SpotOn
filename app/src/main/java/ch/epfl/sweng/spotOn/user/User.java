@@ -1,7 +1,9 @@
 package ch.epfl.sweng.spotOn.user;
 
+import android.util.Log;
+
 /**
- *
+ * User class as a singleton so we have only one instance of this object
  */
 
 public class User {
@@ -17,33 +19,46 @@ public class User {
     private long mKarma;
     private long mRemainingPhotos;
 
-    private User(){
+    private static boolean mIsRetrievedFromDB;
 
-    }
-
-    public static User getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new User();
-        }
-        return mInstance;
-    }
-
-
-    // constructor used from MainActivity during the login phase
-    public void setUserAttributesFromFb(String firstName, String lastName, String userId) {
-
+    private User(String firstName, String lastName, String userId){
         mFirstName = firstName;
         mLastName = lastName;
         mUserId = userId;
         mKarma = INITIAL_KARMA;
         mRemainingPhotos = computeMaxPhotoInDay(mKarma);
+        mIsRetrievedFromDB = false;
+    }
 
-        this.getUserAttributesFromDB();
+    public void destroy(){
+        mInstance = null;
+    }
+
+    public static User getInstance(){
+        if(mInstance == null)
+        {
+            throw new IllegalStateException("User not initialized");
+        }
+        else {
+            return mInstance;
+        }
+    }
+
+
+    // constructor used from MainActivity during the login phase
+    public static void initializeFromFb(String firstName, String lastName, String userId) {
+        if(mInstance == null){
+            mInstance = new User(firstName,lastName, userId);
+            mInstance.getUserAttributesFromDB();
+        }
+        else{
+            Log.e("User","someone tried to create a new user, but an instance already exists");
+        }
     }
 
 
     public void getUserAttributesFromDB() {
+        mIsRetrievedFromDB = false;
         UserStoredInDatabase userInDB = new UserStoredInDatabase(this);
     }
 
@@ -53,6 +68,11 @@ public class User {
         return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
     }
 
+    public static boolean hasInstance(){
+        return mInstance != null;
+    }
+
+
 
     //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }
@@ -60,13 +80,13 @@ public class User {
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
     public long getRemainingPhotos() { return mRemainingPhotos; }
+    public boolean getIsRetrievedFromDB() { return mIsRetrievedFromDB; }
 
 
     //PUBLIC SETTERS
-    public void setFirstName(String firstName){ mFirstName = firstName; }
-    public void setLastName(String lastName){ mLastName = lastName; }
-    public void setUserId(String userId){ mUserId = userId; }
     public void setKarma(long karma){ mKarma = karma; }
     public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
-
+    public void setIsRetrievedFromDB(boolean retrievedFromDB) {
+        mIsRetrievedFromDB = retrievedFromDB;
+    }
 }

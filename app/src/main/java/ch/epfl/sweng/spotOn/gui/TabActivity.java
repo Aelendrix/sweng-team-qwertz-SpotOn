@@ -15,10 +15,8 @@ import android.widget.TabHost;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 
-import java.util.ArrayList;
-
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.User;
 
 
 public class TabActivity extends AppCompatActivity implements TabHost.OnTabChangeListener {
@@ -117,6 +115,8 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         switch (item.getItemId()) {
             case R.id.log_out:
                 disconnectFacebook();
+                User user = User.getInstance();
+                user.destroy();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);

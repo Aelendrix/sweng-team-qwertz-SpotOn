@@ -143,8 +143,8 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToTabActivity() {
         // create the user
-        User user = User.getInstance();
-        user.setUserAttributesFromFb(mFbProfile.getFirstName(), mFbProfile.getLastName(),
+        //User user = User.getInstance();
+        User.initializeFromFb(mFbProfile.getFirstName(), mFbProfile.getLastName(),
                 mFbProfile.getId());
 
         //start the TabActivity

@@ -35,11 +35,6 @@ public class UserStoredInDatabase {
         mRemainingPhotos = user.getRemainingPhotos();
 
         checkUser();
-
-        User.getInstance().setFirstName(mFirstName);
-        User.getInstance().setLastName(mLastName);
-        User.getInstance().setKarma(mKarma);
-        User.getInstance().setRemainingPhotos(mRemainingPhotos);
     }
 
 
@@ -60,29 +55,26 @@ public class UserStoredInDatabase {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(mUserId == null)
                 {
-                    Log.e("UserStoredInDB","User.mUserId is null");
+                    throw new IllegalArgumentException("UserStoredInDB in User.mUserId is null");
                 }
                 else {
                     DataSnapshot userToRetrieve = dataSnapshot.child(mUserId);
                     if (!userToRetrieve.exists()) {
                         createUserInDB();
                     } else {
-                        User retrievedUser = userToRetrieve.getValue(User.class);
+                        UserStoredInDatabase retrievedUser = userToRetrieve.getValue(UserStoredInDatabase.class);
 
                         if (retrievedUser == null) {
-                            Log.e("UserProfile Error", "retrievedUser is null");
+                            throw new IllegalStateException("UserStoredInDatabase retrievedUser is null");
                         } else {
                             // We can set the fields of User
-                            mFirstName = retrievedUser.getFirstName();
-                            mLastName = retrievedUser.getLastName();
                             mKarma = retrievedUser.getKarma();
-                            mRemainingPhotos = retrievedUser.getKarma();
+                            mRemainingPhotos = retrievedUser.getRemainingPhotos();
 
-                            User.getInstance().setFirstName(mFirstName);
-                            User.getInstance().setLastName(mLastName);
                             User.getInstance().setKarma(mKarma);
                             User.getInstance().setRemainingPhotos(mRemainingPhotos);
-                    }
+                            User.getInstance().setIsRetrievedFromDB(true);
+                        }
                     }
                 }
             }
@@ -112,20 +104,4 @@ public class UserStoredInDatabase {
     public void setUserId(String userId){ mUserId = userId; }
     public void setKarma(long karma){ mKarma = karma; }
     public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        User user = (User) o;
-
-        if (!mFirstName.equals(user.getFirstName())) return false;
-        if (!mLastName.equals(user.getLastName())) return false;
-        if (mKarma != user.getKarma()) return false;
-        if (mRemainingPhotos != user.getRemainingPhotos()) return false;
-        return mUserId.equals(user.getUserId());
-
-    }
 }

@@ -43,8 +43,7 @@ public class TestTakePictureFragment {
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
-            User user = User.getInstance();
-            user.setUserId("test");
+            User.initializeFromFb("","","test");
         }
     };
     Uri mImageToUploadUri;
