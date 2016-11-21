@@ -4,7 +4,7 @@
     android:shape="oval">
     <stroke
         android:width="2dp"
-        android:color="@color/white"/>
+        android:color="@color/colorBlack"/>
 
     <padding
         android:left="20dp"
@@ -12,6 +12,6 @@
         android:top="20dp"
         android:bottom="20dp"/>
 
-    <solid android:color="@color/downvote"/>
+    <solid android:color="@color/colorPrimary"/>
 
 </shape>

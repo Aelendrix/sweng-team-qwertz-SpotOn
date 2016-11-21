@@ -11,18 +11,19 @@
     <string name="captureButton">Capture</string>
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
-    <string name="rotate">Rotate</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
     <!-- <string name="queryDatabase">Query Database</string>
      <string name="title_activity_DBquery">Query Database</string>
      <string name="launchQueryButton">Search database</string>
      <string name="queryTextFieldHint">Enter a key to lookup</string>
      <string name="blankQueryResult">...</string>-->
-    <string name="upvoteButtonText">Up !!</string>
-    <string name="downvoteButtonText">Down</string>
-    <string name="reportButton">Report</string>
-    <string name="sendButton">Send</string>
-    <string name="storeButton">Save to gallery</string>
+    <string name="upvoteButtonText">Upvote Picture</string>
+    <string name="downvoteButtonText">Downvote Picture</string>
+    <string name="reportButton">Report the picture</string>
+    <string name="sendButton">Send the photo to the server</string>
+    <string name="storeButton">Save the photo to your gallery</string>
+    <string name="addTextButton">Add text to the picture</string>
+    <string name="rotateButton">Rotate the picture</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.
     </string>
@@ -42,7 +43,6 @@
 
     <string name="noPictureViewable">There is maybe some picture around, look at the map! :)</string>
     <string name="goToMap">Go to the Map</string>
-    <string name="addTextButton">Add text</string>
     <string name="okButton">OK !</string>
     <string name="textToBeDrawn"> Text to be drawn</string>
 

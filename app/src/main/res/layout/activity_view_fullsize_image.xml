@@ -18,20 +18,6 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="18dp"
-        android:layout_marginEnd="18dp"
-        android:onClick="recordUpvote"
-        android:id="@+id/upvoteButton"
-        android:src="@drawable/ic_thumb_up_30dp"
-        android:background="@drawable/button_shape_upvote"
-        android:layout_alignBaseline="@+id/downvoteButton"
-        android:layout_alignBottom="@+id/downvoteButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginLeft="19dp"
         android:layout_marginStart="19dp"
         android:layout_marginBottom="16dp"
@@ -40,7 +26,6 @@
         android:src="@drawable/ic_thumb_down_30dp"
         android:background="@drawable/button_shape_downvote"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
@@ -55,5 +40,17 @@
         android:id="@+id/reportButton"
         android:layout_alignBaseline="@+id/downvoteButton"
         android:layout_alignBottom="@+id/downvoteButton" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="18dp"
+        android:layout_marginEnd="18dp"
+        android:onClick="recordUpvote"
+        android:id="@+id/upvoteButton"
+        android:src="@drawable/ic_thumb_up_30dp"
+        android:background="@drawable/button_shape_upvote"
+        android:layout_alignTop="@+id/downvoteButton"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
