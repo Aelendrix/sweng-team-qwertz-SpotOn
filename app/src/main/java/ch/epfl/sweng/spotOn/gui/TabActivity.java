@@ -16,11 +16,10 @@ import android.widget.Toast;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 
-import java.util.ArrayList;
-
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
+
+import ch.epfl.sweng.spotOn.user.User;
+
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -115,6 +114,8 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         switch (item.getItemId()) {
             case R.id.log_out:
                 disconnectFacebook();
+                User user = User.getInstance();
+                user.destroy();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);

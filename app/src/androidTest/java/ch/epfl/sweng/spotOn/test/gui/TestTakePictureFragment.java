@@ -24,6 +24,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,6 +43,7 @@ public class TestTakePictureFragment {
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+            User.initializeFromFb("","","test");
         }
     };
     Uri mImageToUploadUri;

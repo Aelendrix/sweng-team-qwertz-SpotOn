@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,6 +92,7 @@ public class PhotoObjectStoredInDatabase {
                 mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mNbReports, upvotersList, downvotersList,
                 reportersList);
     }
+
 
     // rather meant to be used for debug
     public String toString(){

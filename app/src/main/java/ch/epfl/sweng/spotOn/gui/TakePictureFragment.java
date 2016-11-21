@@ -30,8 +30,6 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -55,7 +53,8 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.user.UserId;
+
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -66,9 +65,8 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = UserId.getInstance().getUserId();
-
-    private static long mRemainingPhotos;
+    private final String USER_ID = User.getInstance().getUserId();
+    private long mRemainingPhotos = User.getInstance().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -86,6 +84,7 @@ public class TakePictureFragment extends Fragment {
 
         return view;
     }
+
 
     /**
      * Method that checks if the app has the permission to use the camera
@@ -156,6 +155,7 @@ public class TakePictureFragment extends Fragment {
                 if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
+                    User.getInstance().setRemainingPhotos(mRemainingPhotos);
                     mActualPhotoObject.upload(true, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
@@ -316,8 +316,6 @@ public class TakePictureFragment extends Fragment {
         long timestamp = System.currentTimeMillis();
         String imageName = "PIC_" + timestamp + ".jpeg";
 
-        String userId = UserId.getInstance().getUserId();
-
         if(!ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("Location tracker should be started");
         }
@@ -326,7 +324,7 @@ public class TakePictureFragment extends Fragment {
             throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
-        PhotoObject picObject = new PhotoObject(imageBitmap, userId, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
+        PhotoObject picObject = new PhotoObject(imageBitmap, USER_ID, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
         return picObject;
     }
@@ -454,8 +452,14 @@ public class TakePictureFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    if(dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null){
-                        mRemainingPhotos = ((long)dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                    if(USER_ID == null){
+                        Log.e("TakePictureFragment","getRemainingPhotoInDay: USER_ID is null");
+                    }
+                    else {
+                        if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
+                            mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                        }
                     }
                 }
 
@@ -465,10 +469,6 @@ public class TakePictureFragment extends Fragment {
 
             }
         });
-    }
-
-    public static void setRemainingPhotos(long remainingPhotos) {
-        mRemainingPhotos = remainingPhotos;
     }
 
 
