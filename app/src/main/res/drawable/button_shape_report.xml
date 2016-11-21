@@ -7,10 +7,10 @@
         android:color="@color/colorBlack"/>
 
     <padding
-        android:left="30dp"
-        android:right="30dp"
-        android:top="15dp"
-        android:bottom="15dp"/>
+        android:left="20dp"
+        android:right="20dp"
+        android:top="10dp"
+        android:bottom="10dp"/>
 
     <solid android:color="@color/colorPrimary"/>
 

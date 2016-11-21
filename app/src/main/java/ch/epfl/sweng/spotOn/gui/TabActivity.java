@@ -88,6 +88,10 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         mCameraFragment.rotatePicture(view);
     }
 
+    public void editPicture(View view){
+        mCameraFragment.editPicture(view);
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mPicturesFragment, getResources().getString(R.string.tab_aroundme));

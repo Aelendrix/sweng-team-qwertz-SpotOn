@@ -8,5 +8,7 @@
     <color name="colorAccent">#FFF4E6</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="upvote">#2ac903</color>
+    <color name="colorReport">#f20408</color>
     <color name="position">#021fd7</color>
 </resources>

@@ -24,6 +24,7 @@
     <string name="storeButton">Save the photo to your gallery</string>
     <string name="addTextButton">Add text to the picture</string>
     <string name="rotateButton">Rotate the picture</string>
+    <string name="editButton">Edit the picture</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.
     </string>

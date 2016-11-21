@@ -70,7 +70,8 @@ public class TakePictureFragment extends Fragment {
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
-    private ImageView mPic;
+    private ImageView mImageView;
+    private Bitmap mBitmapPicture;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
     public String mTextToDraw;
@@ -79,9 +80,8 @@ public class TakePictureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
-        mPic = (ImageView) view.findViewById(R.id.image_view);
+        mImageView = (ImageView) view.findViewById(R.id.image_view);
         getRemainingPhotoInDay();
-
         return view;
     }
 
@@ -111,7 +111,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void rotatePicture(View view) {
         if(mActualPhotoObject != null){
-            mPic.setRotation(mPic.getRotation() + 90);
+            mImageView.setRotation(mImageView.getRotation() + 90);
             Bitmap original = mActualPhotoObject.getFullSizeImage();
             boolean alreadySentToServer = mActualPhotoObject.isStoredInServer();
             boolean alreadyStoredInternally = mActualPhotoObject.isStoredInternally();
@@ -178,6 +178,20 @@ public class TakePictureFragment extends Fragment {
             }
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Method called when clicking the "Edit" Button, it goes to the EditPicture activity
+     * @param view
+     */
+    public void editPicture(View view){
+        if(mActualPhotoObject != null){
+            Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
+            editPictureIntent.putExtra("bitmapToEdit", mImageToUploadUri.toString());
+            startActivity(editPictureIntent);
+        } else {
+            Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -252,7 +266,7 @@ public class TakePictureFragment extends Fragment {
      * @param photoUri  Uri of where the picture is stored
      * @return The bitmap of the high quality picture
      */
-    private static Bitmap getBitmap(Uri photoUri,Context context){
+    public static Bitmap getBitmap(Uri photoUri,Context context){
         Uri uri = photoUri;
         InputStream in;
         try {
@@ -369,7 +383,8 @@ public class TakePictureFragment extends Fragment {
                     edit.remove("TD");
                     edit.apply();
                 }
-                mPic.setImageBitmap(modifiedPicture);
+                mImageView.setImageBitmap(modifiedPicture);
+                mBitmapPicture = modifiedPicture;
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
                     Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
