@@ -59,6 +59,7 @@ public class TestTakePictureFragment {
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
+        pictureFragment.refreshTextToDraw("xD");
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
