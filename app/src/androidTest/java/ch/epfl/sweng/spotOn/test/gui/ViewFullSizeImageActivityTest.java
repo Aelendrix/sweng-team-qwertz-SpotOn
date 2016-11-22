@@ -8,6 +8,7 @@ import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
+import android.support.test.espresso.core.deps.guava.util.concurrent.ExecutionError;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -79,20 +80,29 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws Exception{
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
-        onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
-        onView(withId(R.id.downvoteButton)).perform(click());
-        Thread.sleep(500);
-        onView(withId(R.id.reportButton)).perform(click());
-        Thread.sleep(500);
-        //come back an reperform the action with an already downloaded picture
-        mActivityTestRule.getActivity().onBackPressed();
-        Thread.sleep(500);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            public void run(){
+                try {
+                    Thread.sleep(1000);
+                    onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+                    Thread.sleep(500);
+                    onView(withId(R.id.upvoteButton)).perform(click());
+                    Thread.sleep(500);
+                    onView(withId(R.id.downvoteButton)).perform(click());
+                    Thread.sleep(500);
+                    onView(withId(R.id.reportButton)).perform(click());
+                    Thread.sleep(500);
+                    //come back an reperform the action with an already downloaded picture
+                    mActivityTestRule.getActivity().onBackPressed();
+                    Thread.sleep(500);
+                    onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+                    Thread.sleep(500);
+                }
+                catch(Exception e)
+                {
+                }
+            }
+        });
     }
 
     @Test
