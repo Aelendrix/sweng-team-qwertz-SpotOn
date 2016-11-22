@@ -38,23 +38,16 @@ public class UserTest {
         Assert.assertEquals(User.hasInstance(), true);
     }
 
-    /*
-    @Test
-    public void ExceptionUserTest() throws IllegalArgumentException{
+    @After
+    public void removeTestUser() throws Exception{
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
         testUser.destroy();
+
         try{
             testUser.getInstance();
             throw new AssertionError("IllegalArgumentException not detected");
         }
         catch(IllegalArgumentException e){
         }
-
-    }
-    */
-
-    @After
-    public void removeTestUser() {
-        DatabaseRef.deleteUserFromDB(testUser.getUserId());
-        testUser.destroy();
     }
 }
