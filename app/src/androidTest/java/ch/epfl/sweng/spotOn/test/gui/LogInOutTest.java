@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
@@ -17,10 +18,15 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
+import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by nico on 22.11.16.
@@ -45,15 +51,21 @@ public class LogInOutTest {
         Thread.sleep(1000);
         UiObject input = mDevice.findObject(new UiSelector().instance(0).className(EditText.class));
         input.setText("swengqwertz@gmail.com");
-        Thread.sleep(2000);
+        Thread.sleep(100);
 
         UiObject input2 = mDevice.findObject(new UiSelector().instance(1).className(EditText.class));
         input2.setText("123swengisfun321");
-        Thread.sleep(2000);
+        Thread.sleep(100);
 
         UiObject buttonInput = mDevice.findObject(new UiSelector().instance(0).className(Button.class));
         buttonInput.click();
-        Thread.sleep(5000);
+        Thread.sleep(6000);
+        buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
+        buttonInput.click();
+        Thread.sleep(500);
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
+        onView(withText("Log out")).perform(click());
+        Thread.sleep(1000);
 
     }
 }
