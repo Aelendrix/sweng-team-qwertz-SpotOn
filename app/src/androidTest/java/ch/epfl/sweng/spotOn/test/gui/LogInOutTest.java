@@ -32,7 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by nico on 22.11.16.
  */
-//TODO: NOTE: This test only work on a phone whitout Facebook app on it and in the current facebook login interface
+// NOTE: This test only work on a phone without Facebook app installed on it and in the current facebook login interface
 @RunWith(AndroidJUnit4.class)
 public class LogInOutTest {
 

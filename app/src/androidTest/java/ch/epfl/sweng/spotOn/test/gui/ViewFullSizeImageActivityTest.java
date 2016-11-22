@@ -50,7 +50,8 @@ public class ViewFullSizeImageActivityTest {
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
     private Intent displayFullSizeImageIntent;
-
+    private PhotoObject po;
+    private PhotoObject secondPo;
     @Before
     public void initLocalDatabase() throws InterruptedException {
         Location location = new Location("testLocationProvider");
@@ -64,10 +65,10 @@ public class ViewFullSizeImageActivityTest {
 
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
-        PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
+        po = PhotoObjectTestUtils.germaynDeryckePO();
         LocalDatabase.getInstance().addPhotoObject(po);
 
-        PhotoObject secondPo = PhotoObjectTestUtils.paulVanDykPO();
+        secondPo = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(secondPo);
 
         displayFullSizeImageIntent = new Intent();
@@ -115,5 +116,19 @@ public class ViewFullSizeImageActivityTest {
                     }
                 },
                 Press.FINGER);
+    }
+
+    @Test
+    public void reViewFullSizeImage() throws Exception{
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(1000);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(500);
+    }
+
+    @After
+    public void clearPO(){
+        LocalDatabase.getInstance().removePhotoObject(po.getPictureId());
+        LocalDatabase.getInstance().removePhotoObject(secondPo.getPictureId());
     }
 }
