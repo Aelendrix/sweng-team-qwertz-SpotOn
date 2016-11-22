@@ -38,14 +38,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     private ImageAdapter mRefToImageAdapter;
 
-//    private Map<String, PhotoObject> mPhotoMap;
-//    private List<String> mPhotosId;
-//    private List<PhotoObject> mPhotos;
-
     private ImageView mViewToSet;
     private PhotoObject mDisplayedMedia;
 
-    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
@@ -53,15 +48,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
-//        mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
-//        mPhotosId = new ArrayList<>(mPhotoMap.keySet());
-//        mPhotos = new ArrayList<>(mPhotoMap.values());
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
     }
 
     @Override
     public int getCount() {
-//        return mPhotos.size();
         return mRefToImageAdapter.getCount();
     }
 
@@ -92,7 +83,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
             mViewToSet.setImageBitmap(imageToDisplay);
         } else {
-            // add a listener that will set the image when it is retrieved
             // want these final variable, because the fields of the class may change if we swipe
             final ImageView currentView = mViewToSet;
             final String currentPicId = new String(wantedPicId);
@@ -101,7 +91,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                     if(retrieveFullSizePicTask.getException()!=null){
                         currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                        // can recover from this ? maybe a a log is enough
+                        // maybe it's better if we recover from this, and use only a log. Tell me in the Pull Request Comments (also, I left it as is to proove it passes tests
                         throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureid : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
                         //Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
                     }else{
@@ -111,33 +101,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             });
         }
-
-//
-//        if(mPhotoMap.containsKey(wantedImagePictureId)){
-//            Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
-//            mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-//            if(LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
-//                Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
-//                throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
-//            }
-//            throw new IllegalStateException("Wanted object not in local copy of database (and not in localdatabase)");
-//        }else {
-//            mDisplayedMedia = mPhotos.get(position);
-//            Bitmap imageToDisplay = null;
-//            if (mDisplayedMedia.hasFullSizeImage()) {
-//                imageToDisplay = mDisplayedMedia.getFullSizeImage();
-//                mViewToSet.setImageBitmap(imageToDisplay);
-//            } else {
-//                // retrieveFullsizeImage throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
-//                try {
-//                    // add a listener that will set the image when it is retrieved
-//                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
-//                }catch (IllegalArgumentException e){
-//                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-//                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
-//                }
-//            }
-//        }
 
         container.addView(viewLayout);
         return viewLayout;

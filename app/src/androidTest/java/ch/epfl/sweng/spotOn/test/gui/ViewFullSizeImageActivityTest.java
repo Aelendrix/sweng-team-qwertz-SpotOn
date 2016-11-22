@@ -65,16 +65,12 @@ public class ViewFullSizeImageActivityTest {
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
         PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
-        //po.upload();
         LocalDatabase.getInstance().addPhotoObject(po);
 
         PhotoObject secondPo = PhotoObjectTestUtils.paulVanDykPO();
-        //secondPo.upload();
         LocalDatabase.getInstance().addPhotoObject(secondPo);
 
         displayFullSizeImageIntent = new Intent();
-// no longer needed
-//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
 
     }
 
@@ -101,18 +97,6 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
 
-    // no longer needed since no PhotoObject uploaded
-//    @After
-//    public void deletePhotoObject(){
-//        DatabaseRef.deletePhotoObjectFromDB(pictureID);
-//        StorageRef.deletePictureFromStorage(pictureID);
-//        LocalDatabase.getInstance().removePhotoObject(pictureID);
-//
-//        DatabaseRef.deletePhotoObjectFromDB(secondPictureID);
-//        StorageRef.deletePictureFromStorage(secondPictureID);
-//        LocalDatabase.getInstance().removePhotoObject(secondPictureID);
-//    }
-
     public static ViewAction clickXY(final int x, final int y){
         return new GeneralClickAction(
                 Tap.SINGLE,
@@ -132,41 +116,4 @@ public class ViewFullSizeImageActivityTest {
                 },
                 Press.FINGER);
     }
-    /**
-     * Initialize the local database with 2 sample pictures (useful for testing)
-     * @return the list of picture IDs pictures added in the local database
-     */
-    /*public static List<String> initLocalDatabase() {
-        List<String> picIDs = new ArrayList<>();
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-        LocalDatabase.clearData();
-        LocalDatabase.setLocation(location);
-
-        PhotoObject po1 = TestPhotoObjectUtils.paulVanDykPO();
-        po1.setRadiusMax();
-        String pictureID3 = po1.getPictureId();
-        picIDs.add(pictureID3);
-        po1.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
-        PhotoObject po2 = TestPhotoObjectUtils.germaynDeryckePO();
-        po1.setRadiusMax();
-        String pictureID4 = po2.getPictureId();
-        picIDs.add(pictureID4);
-        po2.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
-        });
-
-        LocalDatabase.addPhotoObject(po1);
-        LocalDatabase.addPhotoObject(po2);
-        return picIDs;
-    }*/
 }
