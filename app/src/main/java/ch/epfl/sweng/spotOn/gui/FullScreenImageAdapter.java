@@ -45,6 +45,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
+
+
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
@@ -69,8 +71,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
         mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
-        Intent displayImageIntent = mActivity.getIntent();
-        final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
+        String wantedImagePictureId = mPhotosId.get(position);
 
         if(!mPhotoMap.containsKey(wantedImagePictureId)){
             Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
