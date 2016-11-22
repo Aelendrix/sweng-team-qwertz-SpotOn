@@ -91,8 +91,8 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.downvoteButton)).perform(click());
-
-        Thread.sleep(10000);
+        Thread.sleep(1000);
+        onView(withId(R.id.reportButton)).perform(click());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ViewFullSizeImageActivityTest {
         // This test does not pass on Jenkins
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(2000);
-        onView(withId(R.id.viewpager)).perform(clickXY(100, 100));
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
