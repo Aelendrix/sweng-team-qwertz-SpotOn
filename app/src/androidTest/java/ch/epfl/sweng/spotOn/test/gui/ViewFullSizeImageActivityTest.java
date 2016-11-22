@@ -84,35 +84,40 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.downvoteButton)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.reportButton)).perform(click());
+
+        Thread.sleep(5000);
     }
 
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(2000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(500);
         onView(withId(R.id.pager)).perform(swipeLeft());
+
+        Thread.sleep(5000);
     }
 
-    @After
-    public void deletePhotoObject(){
-        DatabaseRef.deletePhotoObjectFromDB(pictureID);
-        StorageRef.deletePictureFromStorage(pictureID);
-        LocalDatabase.getInstance().removePhotoObject(pictureID);
-
-        DatabaseRef.deletePhotoObjectFromDB(secondPictureID);
-        StorageRef.deletePictureFromStorage(secondPictureID);
-        LocalDatabase.getInstance().removePhotoObject(secondPictureID);
-    }
+    // wan to look at them during debug
+//    @After
+//    public void deletePhotoObject(){
+//        DatabaseRef.deletePhotoObjectFromDB(pictureID);
+//        StorageRef.deletePictureFromStorage(pictureID);
+//        LocalDatabase.getInstance().removePhotoObject(pictureID);
+//
+//        DatabaseRef.deletePhotoObjectFromDB(secondPictureID);
+//        StorageRef.deletePictureFromStorage(secondPictureID);
+//        LocalDatabase.getInstance().removePhotoObject(secondPictureID);
+//    }
 
     public static ViewAction clickXY(final int x, final int y){
         return new GeneralClickAction(
