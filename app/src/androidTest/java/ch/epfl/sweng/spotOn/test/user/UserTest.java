@@ -16,13 +16,6 @@ public class UserTest {
 
     private User testUser = null;
 
-    @After
-    public void removeTestUser() {
-        DatabaseRef.deleteUserFromDB(testUser.getUserId());
-        testUser.destroy();
-    }
-
-
     @Test
     public void testSetAndGetUser(){
         User.initializeFromFb("firstname", "lastname", "mlb");
@@ -54,5 +47,14 @@ public class UserTest {
         }
         catch(IllegalArgumentException e){
         }
+        User.initializeFromFb("firstname", "lastname", "mlb");
+        testUser = User.getInstance();
+    }
+
+
+    @After
+    public void removeTestUser() {
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
+        testUser.destroy();
     }
 }
