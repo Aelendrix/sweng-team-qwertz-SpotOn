@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
+import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -42,10 +43,11 @@ public class LogInOutTest {
     @Before
     public void setUp() throws Exception{
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        User.getInstance().destroy();
     }
 
     @Test
-    public void launchFullPictureActivity() throws Exception{
+    public void logInAndOut() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());
         Thread.sleep(1000);
