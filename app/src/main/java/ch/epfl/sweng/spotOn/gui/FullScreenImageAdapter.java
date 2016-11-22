@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -34,6 +35,8 @@ import ch.epfl.sweng.spotOn.user.User;
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
 
+    private ImageAdapter mRefToImageAdapter;
+
     private Map<String, PhotoObject> mPhotoMap;
     private List<String> mPhotosId;
     private List<PhotoObject> mPhotos;
@@ -50,6 +53,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
         mPhotosId = new ArrayList<>(mPhotoMap.keySet());
         mPhotos = new ArrayList<>(mPhotoMap.values());
+        mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
     }
 
     @Override
@@ -64,39 +68,53 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
         mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
         mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
-        Intent displayImageIntent = mActivity.getIntent();
-        final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
-
-        if(!mPhotoMap.containsKey(wantedImagePictureId)){
-            Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
-            mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-            if(LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
-                Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
-                throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
-            }
-            throw new IllegalStateException("Wanted object not in local copy of database (and not in localdatabase)");
-        }else {
-            mDisplayedMedia = mPhotos.get(position);
-            Bitmap imageToDisplay = null;
-            if (mDisplayedMedia.hasFullSizeImage()) {
-                imageToDisplay = mDisplayedMedia.getFullSizeImage();
-                mViewToSet.setImageBitmap(imageToDisplay);
-            } else {
-                // retrieveFullsizeImage throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
-                try {
-                    // add a listener that will set the image when it is retrieved
-                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
-                }catch (IllegalArgumentException e){
-                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
-                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
-                }
-            }
+        if(position >= mRefToImageAdapter.size()){
+            throw new ArrayIndexOutOfBoundsException();
         }
+
+        mDisplayedMedia = (PhotoObject) mRefToImageAdapter.getItem(position);
+
+        Bitmap imageToDisplay = null;
+        if (mDisplayedMedia.hasFullSizeImage()) {
+            imageToDisplay = mDisplayedMedia.getFullSizeImage();
+            mViewToSet.setImageBitmap(imageToDisplay);
+        } else {
+            // add a listener that will set the image when it is retrieved
+            mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
+        }
+
+//
+//        if(mPhotoMap.containsKey(wantedImagePictureId)){
+//            Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
+//            mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+//            if(LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
+//                Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
+//                throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
+//            }
+//            throw new IllegalStateException("Wanted object not in local copy of database (and not in localdatabase)");
+//        }else {
+//            mDisplayedMedia = mPhotos.get(position);
+//            Bitmap imageToDisplay = null;
+//            if (mDisplayedMedia.hasFullSizeImage()) {
+//                imageToDisplay = mDisplayedMedia.getFullSizeImage();
+//                mViewToSet.setImageBitmap(imageToDisplay);
+//            } else {
+//                // retrieveFullsizeImage throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
+//                try {
+//                    // add a listener that will set the image when it is retrieved
+//                    mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
+//                }catch (IllegalArgumentException e){
+//                    mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+//                    Log.d("Error", "couldn't retrieve fullsizeImage from fileserver for Object with ID"+wantedImagePictureId);
+//                }
+//            }
+//        }
 
         container.addView(viewLayout);
         return viewLayout;
