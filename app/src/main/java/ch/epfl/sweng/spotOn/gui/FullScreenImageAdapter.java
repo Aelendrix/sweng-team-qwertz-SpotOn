@@ -93,7 +93,17 @@ public class FullScreenImageAdapter extends PagerAdapter {
             mViewToSet.setImageBitmap(imageToDisplay);
         } else {
             // add a listener that will set the image when it is retrieved
-            mDisplayedMedia.retrieveFullsizeImage(true, newImageViewSetterListener());
+            mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
+                @Override
+                public void onComplete(@NonNull Task<byte[]> retrieveFullSIzePicTask) {
+                    if(retrieveFullSIzePicTask.getException()!=null){
+                        throw new Error("Retrieving fullSizePicture failed due to :\n "+retrieveFullSIzePicTask.getException());
+                    }else{
+                        Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSIzePicTask.getResult(), 0, retrieveFullSIzePicTask.getResult().length);
+                        mViewToSet.setImageBitmap(obtainedImage);
+                    }
+                }
+            });
         }
 
 //
@@ -131,25 +141,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((RelativeLayout) object);
     }
-
-    /** Factory method that returns a listener that
-     * sets the imageView with the result of its query
-     * or deals with errors if need be
-     */
-    private OnCompleteListener<byte[]> newImageViewSetterListener(){
-        return new OnCompleteListener<byte[]>() {
-            @Override
-            public void onComplete(@NonNull Task<byte[]> uploadMediaTask) {
-                if(uploadMediaTask.getException()!=null){
-                    throw new Error("Uploading media failed");
-                }else{
-                    Bitmap obtainedImage = BitmapFactory.decodeByteArray(uploadMediaTask.getResult(), 0, uploadMediaTask.getResult().length);
-                    mViewToSet.setImageBitmap(obtainedImage);
-                }
-            }
-        };
-    }
-
 
 
     public void recordUpvote(View view){
