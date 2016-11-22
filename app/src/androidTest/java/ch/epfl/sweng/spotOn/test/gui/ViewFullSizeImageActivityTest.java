@@ -108,7 +108,7 @@ public class ViewFullSizeImageActivityTest {
         Thread.sleep(5000);
     }
 
-    // wan to look at them during debug
+    // no longer needed since not uploaded
 //    @After
 //    public void deletePhotoObject(){
 //        DatabaseRef.deletePhotoObjectFromDB(pictureID);
@@ -139,13 +139,6 @@ public class ViewFullSizeImageActivityTest {
                 },
                 Press.FINGER);
     }
-
-    public void checkLocalDatabaseFilled(){
-        if( ! LocalDatabase.getInstance().hasKey(pictureID) ){
-
-        }
-    }
-
     /**
      * Initialize the local database with 2 sample pictures (useful for testing)
      * @return the list of picture IDs pictures added in the local database
