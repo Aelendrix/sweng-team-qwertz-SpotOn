@@ -3,9 +3,15 @@
 
 import android.content.Intent;
 import android.location.Location;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.CoordinatesProvider;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +45,6 @@ public class FullPictureActivityTest {
 
 
     @Rule
-//    public ActivityTestRule<ViewFullsizeImageActivity> mActivityTestRule = new ActivityTestRule<>(ViewFullsizeImageActivity.class,true,false);
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
     public Intent displayFullsizeImageIntent;
 
@@ -67,10 +72,32 @@ public class FullPictureActivityTest {
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullsizeImageIntent);
         Thread.sleep(1000);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.downvoteButton)).perform(click());
+    }
+
+    public static ViewAction clickXY(final int x, final int y){
+        return new GeneralClickAction(
+                Tap.SINGLE,
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + x;
+                        final float screenY = screenPos[1] + y;
+                        float[] coordinates = {screenX, screenY};
+
+                        return coordinates;
+                    }
+                },
+                Press.FINGER);
     }
 }
