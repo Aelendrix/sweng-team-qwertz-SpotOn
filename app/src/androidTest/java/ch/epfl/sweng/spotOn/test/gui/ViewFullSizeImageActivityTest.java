@@ -3,9 +3,15 @@ package ch.epfl.sweng.spotOn.test.gui;
 import android.content.Intent;
 import android.location.Location;
 import android.provider.ContactsContract;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.CoordinatesProvider;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.ImageAdapter;
+import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -40,7 +48,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class ViewFullSizeImageActivityTest {
 
     @Rule
-    public ActivityTestRule<ViewFullsizeImageActivity> mActivityTestRule = new ActivityTestRule<>(ViewFullsizeImageActivity.class,true,false);
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
     public String pictureID;
     public Intent displayFullSizeImageIntent;
     private String secondPictureID;
@@ -77,6 +85,8 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(2000);
+        onView(withId(R.id.viewpager)).perform(clickXY(100, 100));
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
@@ -89,6 +99,8 @@ public class ViewFullSizeImageActivityTest {
     public void swipeBetweenPicturesTest() throws InterruptedException{
         // This test does not pass on Jenkins
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(2000);
+        onView(withId(R.id.viewpager)).perform(clickXY(100, 100));
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
@@ -104,6 +116,25 @@ public class ViewFullSizeImageActivityTest {
         LocalDatabase.getInstance().removePhotoObject(secondPictureID);
     }
 
+    public static ViewAction clickXY(final int x, final int y){
+        return new GeneralClickAction(
+                Tap.SINGLE,
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + x;
+                        final float screenY = screenPos[1] + y;
+                        float[] coordinates = {screenX, screenY};
+
+                        return coordinates;
+                    }
+                },
+                Press.FINGER);
+    }
     /**
      * Initialize the local database with 2 sample pictures (useful for testing)
      * @return the list of picture IDs pictures added in the local database
