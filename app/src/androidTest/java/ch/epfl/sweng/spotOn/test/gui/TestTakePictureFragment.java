@@ -28,8 +28,10 @@ import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -50,8 +52,10 @@ public class TestTakePictureFragment {
 
     @Test
     public void StoreFunctionWorking() throws Exception{
-        onView(withId(R.id.viewpager)).perform(swipeRight());
-        onView(withId(R.id.viewpager)).perform(swipeRight());
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
+        onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
@@ -84,8 +88,6 @@ public class TestTakePictureFragment {
 
             }
         });
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
         onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.storeButton)).perform(click());
