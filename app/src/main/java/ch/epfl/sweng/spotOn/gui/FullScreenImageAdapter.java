@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -78,7 +79,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new ArrayIndexOutOfBoundsException();
         }
 
-        mDisplayedMedia = (PhotoObject) mRefToImageAdapter.getItem(position);
+        String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
+        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
+            throw new NoSuchElementException("Localdatabase does not contains wanted picture");
+        }
+        mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
         Bitmap imageToDisplay = null;
         if (mDisplayedMedia.hasFullSizeImage()) {
