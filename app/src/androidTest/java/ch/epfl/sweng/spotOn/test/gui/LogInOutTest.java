@@ -64,7 +64,7 @@ public class LogInOutTest {
         Thread.sleep(6000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
-        Thread.sleep(500);
+        Thread.sleep(6000);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);
