@@ -86,7 +86,7 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(2000);
-        onView(withId(R.id.viewpager)).perform(clickXY(100, 100));
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
