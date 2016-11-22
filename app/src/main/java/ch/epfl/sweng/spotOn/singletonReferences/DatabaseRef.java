@@ -22,9 +22,6 @@ public class DatabaseRef{
 // PUBLIC METHODS
 
     public static DatabaseReference getMediaDirectory(){
-        if(BuildConfig.DEBUG){
-
-        }
         return mMediaDirectory;
     }
 
