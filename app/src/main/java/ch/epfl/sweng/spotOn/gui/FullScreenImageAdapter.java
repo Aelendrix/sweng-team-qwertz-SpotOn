@@ -93,13 +93,17 @@ public class FullScreenImageAdapter extends PagerAdapter {
             mViewToSet.setImageBitmap(imageToDisplay);
         } else {
             // add a listener that will set the image when it is retrieved
+            // want these final variable, because the fields of the class may change if we swipe
             final ImageView currentView = mViewToSet;
             final String currentPicId = new String(wantedPicId);
             mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
                 @Override
                 public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                     if(retrieveFullSizePicTask.getException()!=null){
+                        currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
+                        // can recover from this ? maybe a a log is enough
                         throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureid : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+                        //Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
                     }else{
                         Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
                         currentView.setImageBitmap(obtainedImage);

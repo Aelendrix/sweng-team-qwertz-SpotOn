@@ -49,9 +49,7 @@ public class ViewFullSizeImageActivityTest {
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
-    private String pictureID;
     private Intent displayFullSizeImageIntent;
-    private String secondPictureID;
 
     @Before
     public void initLocalDatabase() throws InterruptedException {
@@ -67,16 +65,15 @@ public class ViewFullSizeImageActivityTest {
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
         PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
-        pictureID = po.getPictureId();
         //po.upload();
         LocalDatabase.getInstance().addPhotoObject(po);
 
         PhotoObject secondPo = PhotoObjectTestUtils.paulVanDykPO();
-        secondPictureID = secondPo.getPictureId();
         //secondPo.upload();
         LocalDatabase.getInstance().addPhotoObject(secondPo);
 
         displayFullSizeImageIntent = new Intent();
+// no longer needed
 //        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
 
     }
@@ -93,8 +90,6 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.downvoteButton)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.reportButton)).perform(click());
-
-        Thread.sleep(5000);
     }
 
     @Test
@@ -104,11 +99,9 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(500);
         onView(withId(R.id.pager)).perform(swipeLeft());
-
-        Thread.sleep(5000);
     }
 
-    // no longer needed since not uploaded
+    // no longer needed since no PhotoObject uploaded
 //    @After
 //    public void deletePhotoObject(){
 //        DatabaseRef.deletePhotoObjectFromDB(pictureID);
