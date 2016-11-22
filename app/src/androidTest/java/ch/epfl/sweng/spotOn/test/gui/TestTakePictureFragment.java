@@ -52,9 +52,9 @@ public class TestTakePictureFragment {
 
     @Test
     public void StoreFunctionWorking() throws Exception{
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
-        onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
+        onView(withText("Camera")).perform(click());
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("xD")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
