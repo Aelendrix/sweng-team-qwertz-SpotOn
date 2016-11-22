@@ -49,8 +49,8 @@ public class ViewFullSizeImageActivityTest {
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
-    public String pictureID;
-    public Intent displayFullSizeImageIntent;
+    private String pictureID;
+    private Intent displayFullSizeImageIntent;
     private String secondPictureID;
 
     @Before
@@ -83,6 +83,7 @@ public class ViewFullSizeImageActivityTest {
 
     @Test
     public void launchFullPictureActivity() throws Exception{
+
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
@@ -137,6 +138,12 @@ public class ViewFullSizeImageActivityTest {
                     }
                 },
                 Press.FINGER);
+    }
+
+    public void checkLocalDatabaseFilled(){
+        if( ! LocalDatabase.getInstance().hasKey(pictureID) ){
+
+        }
     }
 
     /**
