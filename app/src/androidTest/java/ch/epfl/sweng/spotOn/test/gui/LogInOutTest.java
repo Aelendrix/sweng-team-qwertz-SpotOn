@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.test.gui;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
@@ -24,6 +26,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  * Created by nico on 22.11.16.
  */
 //TODO: NOTE: This test only work on a phone whitout Facebook app on it and in the current facebook login interface
+@RunWith(AndroidJUnit4.class)
 public class LogInOutTest {
 
     @Rule

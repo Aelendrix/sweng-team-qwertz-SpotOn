@@ -38,6 +38,7 @@ public class UserTest {
         Assert.assertEquals(User.hasInstance(), true);
     }
 
+    /*
     @Test
     public void ExceptionUserTest() throws IllegalArgumentException{
         testUser.destroy();
@@ -49,12 +50,10 @@ public class UserTest {
         }
 
     }
-
+    */
 
     @After
     public void removeTestUser() {
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        testUser = User.getInstance();
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
         testUser.destroy();
     }
