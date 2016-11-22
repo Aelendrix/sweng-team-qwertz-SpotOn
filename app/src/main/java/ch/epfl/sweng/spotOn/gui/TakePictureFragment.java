@@ -70,11 +70,11 @@ public class TakePictureFragment extends Fragment {
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
+    private static final int REQUEST_EDITION = 20;
     private ImageView mImageView;
-    private Bitmap mBitmapPicture;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
-    public String mTextToDraw;
+    private String mTextToDraw;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -189,7 +189,7 @@ public class TakePictureFragment extends Fragment {
         if(mActualPhotoObject != null){
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", mImageToUploadUri.toString());
-            startActivity(editPictureIntent);
+            startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
         }
@@ -356,6 +356,10 @@ public class TakePictureFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             processResult(mImageToUploadUri);
         }
+        if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
+            Log.d("edition", data.getExtras().getString("editedBitmap"));
+            processResult(Uri.parse(data.getExtras().getString("editedBitmap")));
+        }
     }
 
     public void processResult(Uri imageToUploadUri){
@@ -384,7 +388,6 @@ public class TakePictureFragment extends Fragment {
                     edit.apply();
                 }
                 mImageView.setImageBitmap(modifiedPicture);
-                mBitmapPicture = modifiedPicture;
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
                     Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
@@ -446,7 +449,7 @@ public class TakePictureFragment extends Fragment {
      */
     private File getOutputMediaFile(PhotoObject photo){
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "/SpotOn/Pictures");
+                "/SpotOn");
         Log.v("getOutputMediaFile", "accessed this one");
 
         //Create storage directory if it does not exist
@@ -484,11 +487,5 @@ public class TakePictureFragment extends Fragment {
 
             }
         });
-    }
-
-
-    public void goToDrawTextActivity(View view) {
-        Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);
-        startActivity(intent);
     }
 }

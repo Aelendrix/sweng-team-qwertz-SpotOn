@@ -25,6 +25,8 @@
     <string name="addTextButton">Add text to the picture</string>
     <string name="rotateButton">Rotate the picture</string>
     <string name="editButton">Edit the picture</string>
+    <string name="confirmButton">Confirm the changes</string>
+    <string name="tryButton">Try Rotation</string>
     <string name="about_text">
         This page will tell you more about us. Please be patient.
     </string>
