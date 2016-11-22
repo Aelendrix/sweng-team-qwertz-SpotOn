@@ -1,7 +1,11 @@
 package ch.epfl.sweng.spotOn.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,12 +13,13 @@ import android.widget.Toast;
  *   how several toasts are displayed simultaneously
  *   Downside : need to call update() when changing activity
  */
-public class ToastProvider extends Application {
+public class ToastProvider {
 
     public static int LONG = Toast.LENGTH_LONG;
     public static int SHORT = Toast.LENGTH_SHORT;
 
-    private static Context mCurrentContext = null;
+//    private static Context mCurrentContext = null;
+    private static Activity currentActivity;
     private static Toast mCurrentlyDisplayedToast = null;
 
     private ToastProvider(){
@@ -23,15 +28,17 @@ public class ToastProvider extends Application {
 
 
 // PUBLIC METHODS
-    public static void update(Context c){
-        if(c==null){
+    public static void update(Activity activity){
+        if(activity==null){
             throw new IllegalArgumentException();
         }
-        mCurrentContext=c;
+//        mCurrentContext=c;
+        currentActivity=activity;
     }
 
     public static void printOverCurrent(String message, int duration){
-        if(mCurrentContext==null){
+//        if(mCurrentContext==null){
+        if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
         }
@@ -45,7 +52,8 @@ public class ToastProvider extends Application {
     }
 
     public static void printAfterCurrent(String message, int duration){
-        if(mCurrentContext==null){
+//        if(mCurrentContext==null){
+        if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
         }
@@ -56,7 +64,8 @@ public class ToastProvider extends Application {
     }
 
     public static void printIfNoCurrent(String message, int duration){
-        if(mCurrentContext==null){
+//        if(mCurrentContext==null){
+        if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
         }
@@ -78,10 +87,25 @@ public class ToastProvider extends Application {
 
 
 // PRIVATE HELPERS
-    private static void displayToast(String message, int duration){
-        Toast newToast = Toast.makeText(mCurrentContext,message,duration);
-        mCurrentlyDisplayedToast = newToast;
-        newToast.show();
+    private static void displayToast(final String message, final int duration){
+// Handler way
+//        Handler mHandler = new Handler(Looper.getMainLooper()){
+//            @Override
+//            public void handleMessage(Message message) {
+//                String text = (String) message.obj;
+//                Toast newToast = Toast.makeText(mCurrentContext, text, duration);
+//                mCurrentlyDisplayedToast = newToast;
+//                newToast.show();
+//            }
+//        };
+
+        currentActivity.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast newToast = Toast.makeText(currentActivity, message, duration);
+                mCurrentlyDisplayedToast = newToast;
+                newToast.show();
+            }
+        });
     }
 
 

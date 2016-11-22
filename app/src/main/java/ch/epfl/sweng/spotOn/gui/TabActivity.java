@@ -39,7 +39,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-        ToastProvider.update(getApplicationContext());
+        ToastProvider.update(this);
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

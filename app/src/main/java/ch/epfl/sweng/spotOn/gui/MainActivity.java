@@ -61,7 +61,7 @@ public final class MainActivity extends AppCompatActivity {
         ConcreteLocationTracker.initialize(getApplicationContext());
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        ToastProvider.update(getApplicationContext());
+        ToastProvider.update(this);
         Log.d("MainActivity","done initializing");
 
         // Initialize the SDK before executing any other operations,
