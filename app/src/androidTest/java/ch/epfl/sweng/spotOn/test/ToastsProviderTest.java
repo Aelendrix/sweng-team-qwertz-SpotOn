@@ -53,7 +53,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class ToastsProviderTest {
 
     private final static long sec1 = 1000;
+    private final static long sec2 = 2*1000;
+    private final static long sec3 = 3*1000;
     private final static long sec5 = 5*1000;
+    private final static long sec10 = 10*1000;
+    private final static long shortD = 2000;
+    private final static long longD = 3500;
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class, true, false) {
@@ -77,26 +82,38 @@ public class ToastsProviderTest {
     public void launchFullPictureActivity() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
+        assertNoDisplayedToast();
+
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         ToastProvider.printAfterCurrent("toastAfterCurrent",Toast.LENGTH_LONG);
+        assertSomeDisplayedToast();
         Thread.sleep(sec5);
+        assertNoDisplayedToast();
+
 
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         Thread.sleep(sec1);
         ToastProvider.printOverCurrent("ToastOverCurrent",Toast.LENGTH_LONG);
+        assertSomeDisplayedToast();
         Thread.sleep(sec5);
+        assertNoDisplayedToast();
 
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         Thread.sleep(sec1);
         ToastProvider.printIfNoCurrent("ToastIfNoCurrent",Toast.LENGTH_LONG);
-        Thread.sleep(sec5);
+        assertSomeDisplayedToast();
+        Thread.sleep(longD-sec1+50);
+        assertNoDisplayedToast();
 
-        ToastProvider.printAfterCurrent("(There should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
+        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'basetoast')",Toast.LENGTH_LONG);
         Thread.sleep(sec5);
-
+        assertNoDisplayedToast();
 
         ToastProvider.printIfNoCurrent("ToastIfNoCurrent",Toast.LENGTH_LONG);
+        Thread.sleep(sec1);
+        assertSomeDisplayedToast();
         Thread.sleep(sec5);
+        assertNoDisplayedToast();
 
         ToastProvider.printIfNoCurrent("finished", Toast.LENGTH_LONG);
 
@@ -104,5 +121,24 @@ public class ToastsProviderTest {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(sec1);
         onView(withId(R.id.viewpager)).perform(swipeRight());
+    }
+
+
+    private void assertNoDisplayedToast(String message){
+        if(ToastProvider.toastBeingDisplayed()){
+            throw new AssertionError(message);
+        }
+    }
+    private void assertNoDisplayedToast(){
+        assertNoDisplayedToast("Expected no toast displayed, found some");
+    }
+
+    private void assertSomeDisplayedToast(String message){
+        if(!ToastProvider.toastBeingDisplayed()){
+            throw new AssertionError(message);
+        }
+    }
+    private void assertSomeDisplayedToast(){
+        assertNoDisplayedToast("Expected some toast displayed, found none");
     }
 }
