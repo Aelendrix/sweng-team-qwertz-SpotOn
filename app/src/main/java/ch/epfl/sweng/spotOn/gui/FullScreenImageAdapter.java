@@ -38,9 +38,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     private ImageAdapter mRefToImageAdapter;
 
-    private Map<String, PhotoObject> mPhotoMap;
-    private List<String> mPhotosId;
-    private List<PhotoObject> mPhotos;
+//    private Map<String, PhotoObject> mPhotoMap;
+//    private List<String> mPhotosId;
+//    private List<PhotoObject> mPhotos;
 
     private ImageView mViewToSet;
     private PhotoObject mDisplayedMedia;
@@ -53,15 +53,16 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
-        mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
-        mPhotosId = new ArrayList<>(mPhotoMap.keySet());
-        mPhotos = new ArrayList<>(mPhotoMap.values());
+//        mPhotoMap = LocalDatabase.getInstance().getViewableMedias();
+//        mPhotosId = new ArrayList<>(mPhotoMap.keySet());
+//        mPhotos = new ArrayList<>(mPhotoMap.values());
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
     }
 
     @Override
     public int getCount() {
-        return mPhotos.size();
+//        return mPhotos.size();
+        return mRefToImageAdapter.getCount();
     }
 
     @Override
@@ -87,9 +88,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
         mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
-        Bitmap imageToDisplay = null;
         if (mDisplayedMedia.hasFullSizeImage()) {
-            imageToDisplay = mDisplayedMedia.getFullSizeImage();
+            Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
             mViewToSet.setImageBitmap(imageToDisplay);
         } else {
             // add a listener that will set the image when it is retrieved
