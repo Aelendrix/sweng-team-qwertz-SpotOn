@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongToDoubleFunction;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.ImageAdapter;
