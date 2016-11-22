@@ -87,6 +87,12 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.downvoteButton)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.reportButton)).perform(click());
+        Thread.sleep(500);
+        //come back an reperform the action with an already downloaded picture
+        mActivityTestRule.getActivity().onBackPressed();
+        Thread.sleep(500);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(500);
     }
 
     @Test
@@ -116,14 +122,6 @@ public class ViewFullSizeImageActivityTest {
                     }
                 },
                 Press.FINGER);
-    }
-
-    @Test
-    public void reViewFullSizeImage() throws Exception{
-        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
     }
 
     @After
