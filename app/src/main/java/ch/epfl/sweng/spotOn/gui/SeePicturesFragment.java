@@ -76,4 +76,10 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
         refreshGrid();
     }
 
+    public static ImageAdapter getImageAdapter(){
+        if(mImageAdapter==null){
+            throw new IllegalStateException("Activity doesn't have an imageAdapter yet");
+        }
+        return mImageAdapter;
+    }
 }
