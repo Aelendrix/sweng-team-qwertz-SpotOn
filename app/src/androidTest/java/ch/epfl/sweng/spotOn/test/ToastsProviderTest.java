@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongToDoubleFunction;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.ImageAdapter;
@@ -37,17 +38,22 @@ import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ToastsProviderTest {
+
+    private final static long sec1 = 1000;
+    private final static long sec5 = 5*1000;
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class, true, false) {
@@ -57,6 +63,7 @@ public class ToastsProviderTest {
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
             User.initializeFromFb("René", "Coty", "cestDoncTonAmi");
+            ServicesChecker.initialize(mlt, LocalDatabase.getInstance());
         }
     };
     private Intent displayFullSizeImageIntent;
@@ -70,17 +77,32 @@ public class ToastsProviderTest {
     public void launchFullPictureActivity() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
-        ToastProvider.printOverCurrent("zboub",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
+        ToastProvider.printAfterCurrent("toastAfterCurrent",Toast.LENGTH_LONG);
+        Thread.sleep(sec5);
 
-        Thread.sleep(1000);
+        ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
+        Thread.sleep(sec1);
+        ToastProvider.printOverCurrent("ToastOverCurrent",Toast.LENGTH_LONG);
+        Thread.sleep(sec5);
+
+        ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
+        Thread.sleep(sec1);
+        ToastProvider.printIfNoCurrent("ToastIfNoCurrent",Toast.LENGTH_LONG);
+        Thread.sleep(sec5);
+
+        ToastProvider.printAfterCurrent("(There should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
+        Thread.sleep(sec5);
 
 
-//        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-//        Thread.sleep(500);
-//        onView(withId(R.id.upvoteButton)).perform(click());
-//        Thread.sleep(500);
-//        onView(withId(R.id.downvoteButton)).perform(click());
-//        Thread.sleep(500);
-//        onView(withId(R.id.reportButton)).perform(click());
+        ToastProvider.printIfNoCurrent("ToastIfNoCurrent",Toast.LENGTH_LONG);
+        Thread.sleep(sec5);
+
+        ToastProvider.printIfNoCurrent("finished", Toast.LENGTH_LONG);
+
+        Thread.sleep(sec1);
+        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(sec1);
+        onView(withId(R.id.viewpager)).perform(swipeRight());
     }
 }

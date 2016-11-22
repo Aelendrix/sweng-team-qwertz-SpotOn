@@ -85,6 +85,10 @@ public class ToastProvider {
         }
     }
 
+    public static void setDisplayedToast(Toast t){
+        mCurrentlyDisplayedToast = t;
+    }
+
 
 // PRIVATE HELPERS
     private static void displayToast(final String message, final int duration){
@@ -102,7 +106,7 @@ public class ToastProvider {
         currentActivity.runOnUiThread(new Runnable() {
             public void run() {
                 Toast newToast = Toast.makeText(currentActivity, message, duration);
-                mCurrentlyDisplayedToast = newToast;
+                ToastProvider.setDisplayedToast(newToast);
                 newToast.show();
             }
         });
