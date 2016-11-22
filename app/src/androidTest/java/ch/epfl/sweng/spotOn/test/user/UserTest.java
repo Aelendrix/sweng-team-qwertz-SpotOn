@@ -44,4 +44,15 @@ public class UserTest {
         Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
         Assert.assertEquals(User.hasInstance(), true);
     }
+
+    @Test
+    public void ExceptionUserTest() throws IllegalArgumentException{
+        testUser.destroy();
+        try{
+            testUser.getInstance();
+            throw new AssertionError("IllegalArgumentException not detected");
+        }
+        catch(IllegalArgumentException e){
+        }
+    }
 }
