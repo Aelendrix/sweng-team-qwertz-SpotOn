@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -42,6 +43,7 @@ public class ViewFullSizeImageActivityTest {
     public ActivityTestRule<ViewFullsizeImageActivity> mActivityTestRule = new ActivityTestRule<>(ViewFullsizeImageActivity.class,true,false);
     public String pictureID;
     public Intent displayFullSizeImageIntent;
+    private String secondPictureID;
 
     @Before
     public void initLocalDatabase() throws InterruptedException {
@@ -62,6 +64,11 @@ public class ViewFullSizeImageActivityTest {
         po.upload();
         LocalDatabase.getInstance().addPhotoObject(po);
 
+        PhotoObject secondPo = PhotoObjectTestUtils.paulVanDykPO();
+        secondPictureID = secondPo.getPictureId();
+        secondPo.upload();
+        LocalDatabase.getInstance().addPhotoObject(secondPo);
+
         displayFullSizeImageIntent = new Intent();
         displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
 
@@ -81,9 +88,9 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
         // This test does not pass on Jenkins
-//        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-//        Thread.sleep(1000);
-//        onView(withId(R.id.pager)).perform(swipeLeft());
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(1000);
+        onView(withId(R.id.pager)).perform(swipeLeft());
     }
 
     @After
@@ -91,6 +98,10 @@ public class ViewFullSizeImageActivityTest {
         DatabaseRef.deletePhotoObjectFromDB(pictureID);
         StorageRef.deletePictureFromStorage(pictureID);
         LocalDatabase.getInstance().removePhotoObject(pictureID);
+
+        DatabaseRef.deletePhotoObjectFromDB(secondPictureID);
+        StorageRef.deletePictureFromStorage(secondPictureID);
+        LocalDatabase.getInstance().removePhotoObject(secondPictureID);
     }
 
     /**
