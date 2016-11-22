@@ -45,9 +45,9 @@ public class UserTest {
 
         try{
             testUser.getInstance();
-            throw new AssertionError("IllegalArgumentException not detected");
+            throw new AssertionError("IllegalStateException not detected");
         }
-        catch(IllegalArgumentException e){
+        catch(IllegalStateException e){
         }
     }
 }
