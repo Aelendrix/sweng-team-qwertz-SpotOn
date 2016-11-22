@@ -67,4 +67,8 @@ public class ImageAdapter extends BaseAdapter {
     public String getIdAtPosition(int pos){
         return mThumbId.get(pos);
     }
+
+    public int size(){
+        return mThumbId.size();
+    }
 }
