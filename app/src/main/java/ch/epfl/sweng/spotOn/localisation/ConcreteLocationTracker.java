@@ -134,7 +134,12 @@ public final class ConcreteLocationTracker implements LocationTracker {
     }
 
     public LatLng getLatLng(){
-        return new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        if(hasValidLocation()) {
+            return new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        }
+        else {
+            throw new IllegalStateException("The LocationTracker holds no valid position at the moment - check locationIsValid before calling getLocation");
+        }
     }
 
     public void addListener(LocationTrackerListener l){

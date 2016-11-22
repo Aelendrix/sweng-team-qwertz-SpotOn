@@ -47,13 +47,14 @@ public class UserTest {
         }
         catch(IllegalArgumentException e){
         }
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        testUser = User.getInstance();
+
     }
 
 
     @After
     public void removeTestUser() {
+        User.initializeFromFb("firstname", "lastname", "mlb");
+        testUser = User.getInstance();
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
         testUser.destroy();
     }
