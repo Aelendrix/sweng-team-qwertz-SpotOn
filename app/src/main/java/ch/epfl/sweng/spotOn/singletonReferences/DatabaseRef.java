@@ -12,7 +12,7 @@ import com.google.maps.android.BuildConfig;
 
 public class DatabaseRef{
 
-    private final static String mMediaDirectoryString = "MediaDirectory";
+    private final static String mMediaDirectoryString = "MediaDirectory_bugfix";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";

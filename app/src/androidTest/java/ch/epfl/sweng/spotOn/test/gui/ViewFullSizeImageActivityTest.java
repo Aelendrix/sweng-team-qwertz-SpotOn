@@ -64,9 +64,8 @@ public class ViewFullSizeImageActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
-        User.initializeFromFb("", "", "test");
+        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
-        //PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
         pictureID = po.getPictureId();
         po.upload();
@@ -78,7 +77,7 @@ public class ViewFullSizeImageActivityTest {
         LocalDatabase.getInstance().addPhotoObject(secondPo);
 
         displayFullSizeImageIntent = new Intent();
-        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
+//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, pictureID);
 
     }
 
@@ -97,7 +96,6 @@ public class ViewFullSizeImageActivityTest {
 
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
-        // This test does not pass on Jenkins
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(2000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
@@ -135,6 +133,7 @@ public class ViewFullSizeImageActivityTest {
                 },
                 Press.FINGER);
     }
+
     /**
      * Initialize the local database with 2 sample pictures (useful for testing)
      * @return the list of picture IDs pictures added in the local database
