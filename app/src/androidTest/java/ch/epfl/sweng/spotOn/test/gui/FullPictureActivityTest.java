@@ -25,6 +25,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.InitUtils;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -44,33 +45,30 @@ public class FullPictureActivityTest {
 
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
-    public Intent displayFullsizeImageIntent;
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class,true,false){
+        @Override
+        public void beforeActivityLaunched(){
+            Location location = new Location("testLocationProvider");
+            location.setLatitude(46.52890355757567);
+            location.setLongitude(6.569420238493345);
+            location.setAltitude(0);
+            location.setTime(System.currentTimeMillis());
+
+            InitUtils.initContext(location);
+        }
+    };
 
     @Before
     public void initLocalDatabase(){
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
-        ConcreteLocationTracker.setMockLocationTracker(mlt);
-        LocalDatabase.initialize(mlt);
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(po);
-
-        displayFullsizeImageIntent = new Intent();
 
     }
 
     @Test
     public void launchFullPictureActivity() throws Exception{
-        mActivityTestRule.launchActivity(displayFullsizeImageIntent);
+        mActivityTestRule.launchActivity(new Intent());
         Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(500);
@@ -105,7 +103,7 @@ public class FullPictureActivityTest {
     public void after(){
         ConcreteLocationTracker.destroyInstance();
         if( ConcreteLocationTracker.instanceExists()){
-            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+            throw new AssertionError("FullPictureActivityTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
         }
     }
 }

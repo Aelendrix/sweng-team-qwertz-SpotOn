@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -20,7 +21,12 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.InitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -38,7 +44,19 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class LogInOutTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class, false, false){
+        @Override
+        public void beforeActivityLaunched(){
+            Location location = new Location("testLocationProvider");
+            location.setLatitude(46.52890355757567);
+            location.setLongitude(6.569420238493345);
+            location.setAltitude(0);
+            location.setTime(System.currentTimeMillis());
+
+            InitUtils.initContextNoUser(location);
+        }
+    };
+
     UiDevice mDevice;
 
     @Before

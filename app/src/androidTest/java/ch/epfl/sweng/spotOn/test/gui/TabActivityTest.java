@@ -40,9 +40,7 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
  */
 
 @RunWith(AndroidJUnit4.class)
-@SmallTest
 public class TabActivityTest {
-
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
