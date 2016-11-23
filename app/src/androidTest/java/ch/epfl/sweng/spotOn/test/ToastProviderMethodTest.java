@@ -53,7 +53,7 @@ public class ToastProviderMethodTest {
                     ToastProvider.printAfterCurrent("yolo", ToastProvider.SHORT);
                     //Thread.sleep(ToastProvider.SHORT);
                     ToastProvider.printIfNoCurrent("yoloxD", ToastProvider.SHORT);
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                     ToastProvider.printOverCurrent("finished", ToastProvider.SHORT);
 
                 }
