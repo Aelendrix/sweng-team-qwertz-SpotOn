@@ -17,6 +17,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 @RunWith(AndroidJUnit4.class)
@@ -45,6 +46,7 @@ public class LocationTrackerTest extends AndroidTestCase{
         ConcreteLocationTracker.initialize(mlm);
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
     }
 
