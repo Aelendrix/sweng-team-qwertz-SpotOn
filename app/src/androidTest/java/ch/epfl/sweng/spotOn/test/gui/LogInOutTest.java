@@ -65,7 +65,7 @@ public class LogInOutTest {
     public void logInAndOut() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());
-        Thread.sleep(5000); // sorry... my phone is slow
+        Thread.sleep(4000); // sorry... my phone is slow
         UiObject input = mDevice.findObject(new UiSelector().instance(0).className(EditText.class));
         input.setText("swengqwertz@gmail.com");
         Thread.sleep(100);
@@ -80,7 +80,7 @@ public class LogInOutTest {
         Thread.sleep(10000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
-        mDevice.waitForWindowUpdate(null,15000);
+        mDevice.waitForWindowUpdate(null,10000);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);

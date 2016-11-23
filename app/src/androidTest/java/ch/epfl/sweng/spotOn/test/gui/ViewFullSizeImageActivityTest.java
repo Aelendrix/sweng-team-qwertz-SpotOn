@@ -82,7 +82,7 @@ public class ViewFullSizeImageActivityTest {
             onView(withId(R.id.upvoteButton)).perform(click());
             Thread.sleep(500);
             onView(withId(R.id.downvoteButton)).perform(click());
-            Thread.sleep(500);
+            Thread.sleep(5000); // should permit to explore the "Karma" code
             onView(withId(R.id.reportButton)).perform(click());
             Thread.sleep(500);
             /*

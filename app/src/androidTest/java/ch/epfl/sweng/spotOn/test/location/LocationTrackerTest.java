@@ -127,7 +127,8 @@ public class LocationTrackerTest{
         synchronized (lock){
             lock.wait();
         }
-        
+
+        Thread.sleep(500);
         if(ConcreteLocationTracker.getInstance().hasValidLocation()){
             throw new AssertionError("Should be timedout");
         }

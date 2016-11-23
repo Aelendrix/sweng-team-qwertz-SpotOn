@@ -10,7 +10,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 
 public class LocationTrackerTest_failureCases {
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = IllegalStateException .class)
     public void ExceptionWhenNotInitialized(){
         ConcreteLocationTracker.getInstance();
     }
