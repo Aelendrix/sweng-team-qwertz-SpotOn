@@ -1,4 +1,5 @@
- package ch.epfl.sweng.spotOn.test.gui;
+/*
+package ch.epfl.sweng.spotOn.test.gui;
 
 
 import android.content.Intent;
@@ -35,9 +36,11 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
+*/
 /**
  * Created by nico on 09.11.16.
- */
+ *//*
+
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -100,4 +103,4 @@ public class FullPictureActivityTest {
                 },
                 Press.FINGER);
     }
-}
+}*/

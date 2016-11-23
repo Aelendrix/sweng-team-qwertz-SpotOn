@@ -86,8 +86,8 @@ public class TestTakePictureFragment {
         });
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(1000);
-        onView(withId(R.id.rotateButton)).perform(click());
-        Thread.sleep(1000);
+        /*onView(withId(R.id.rotateButton)).perform(click());
+        Thread.sleep(1000);*/
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
