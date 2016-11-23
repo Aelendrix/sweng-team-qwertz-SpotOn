@@ -243,7 +243,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     @Override
-    public void locationTimedOut() {
+    public void locationTimedOut(Location old) {
         Log.d("MapFragment","Listener says location timed out");
     }
 

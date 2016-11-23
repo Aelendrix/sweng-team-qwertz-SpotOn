@@ -82,7 +82,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
             throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : listeners){
-                listener.locationTimedOut();
+                listener.locationTimedOut(mockLocation);
             }
         }else{
             for(LocationTrackerListener listener : listeners){

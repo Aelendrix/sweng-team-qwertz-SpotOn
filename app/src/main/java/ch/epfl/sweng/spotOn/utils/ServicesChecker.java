@@ -141,7 +141,7 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     }
 
     @Override
-    public void locationTimedOut() {
+    public void locationTimedOut(Location old) {
         if(validLocationStatus){           // change in services status
             Log.d("ServicesChecker","location timedout : listeners notified");
             notifyListeners();

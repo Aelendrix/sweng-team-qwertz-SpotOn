@@ -48,6 +48,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
                 // synchronized, to prevent race conditions with another thread setting mLocation to a new location while we're notifying the listeners
                 synchronized (ConcreteLocationTracker.getInstance()){
                     notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+                    mLocation=null;
                 }
                 // no need to restart here, once timeout, we wait for a new location to start countdownagain
             }
@@ -142,7 +143,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         if(hasValidLocation()){
             l.updateLocation(mLocation);
         }else{
-            l.locationTimedOut();
+            l.locationTimedOut(null);
         }
     }
 
@@ -159,7 +160,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
             throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : mListenersList){
-                listener.locationTimedOut();
+                listener.locationTimedOut(mLocation);
             }
         }else{
             for(LocationTrackerListener listener : mListenersList){

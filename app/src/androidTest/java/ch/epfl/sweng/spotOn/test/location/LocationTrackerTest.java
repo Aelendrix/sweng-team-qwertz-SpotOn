@@ -115,7 +115,7 @@ public class LocationTrackerTest{
                 // nothing
             }
             @Override
-            public void locationTimedOut() {
+            public void locationTimedOut(Location old) {
                 synchronized (lock){
                     lock.notify();
                 }

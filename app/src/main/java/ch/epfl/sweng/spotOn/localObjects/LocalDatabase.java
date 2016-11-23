@@ -276,7 +276,7 @@ public class LocalDatabase implements LocationTrackerListener{
     }
 
     @Override
-    public void locationTimedOut(){
+    public void locationTimedOut(Location old){
         Log.d("Localdatabase","listener notifed that location timed out");
         synchronized (this) {
             mCachedLocation = null;
