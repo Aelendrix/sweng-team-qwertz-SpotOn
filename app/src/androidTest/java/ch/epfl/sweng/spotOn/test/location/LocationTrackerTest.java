@@ -2,9 +2,11 @@ package ch.epfl.sweng.spotOn.test.location;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -27,6 +29,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 
 /**
  * Created by nico on 16.11.16.
@@ -40,7 +43,8 @@ public class LocationTrackerTest extends AndroidTestCase{
     private Location location2 = new Location("testLocationProvider");
     private Location location3 = new Location("testLocationProvider");
 
-    private LocationTracker refToLocationTracker;
+    private Object mLock = new Object();
+    private boolean mFlag = false;
 
 
 
@@ -69,6 +73,7 @@ public class LocationTrackerTest extends AndroidTestCase{
         location1.setLongitude(1);
         location1.setAltitude(0);
         location1.setAccuracy(2);
+        location1.setProvider(LocationManager.GPS_PROVIDER);
         location1.setTime(System.currentTimeMillis());
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             location1.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
@@ -81,6 +86,7 @@ public class LocationTrackerTest extends AndroidTestCase{
         location0.setAltitude(0);
         location0.setAccuracy(1);
         location0.setTime(System.currentTimeMillis());
+        location0.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
@@ -98,6 +104,7 @@ public class LocationTrackerTest extends AndroidTestCase{
             public void run() {
 
                 // obtain context
+//                Context c = getContext(); -> .getSystemService gives a nullPointerException
                 Context c = InstrumentationRegistry.getContext();
                 LocationManager locMan = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
 
@@ -110,41 +117,36 @@ public class LocationTrackerTest extends AndroidTestCase{
                     throw new AssertionError("Network Provider not contained");
                 }
 
+                locMan.removeTestProvider(LocationManager.GPS_PROVIDER);
                 locMan.addTestProvider(LocationManager.GPS_PROVIDER, false, false, false, false, true, true, true, 0, 5);
+                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
 
                 // set mock location for providers
-                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
                 locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location0);
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
-                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
 
                 ConcreteLocationTracker.initialize(locMan);
+
                 if( ! ConcreteLocationTracker.instanceExists() ){
                     throw new AssertionError("ConcreteLocationTracker should have initialized");
                 }
 
-                refToLocationTracker=ConcreteLocationTracker.getInstance();
-
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     throw new AssertionError("couldn't sleep");
                 }
 
-                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
+                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+1500);
                 locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location1);
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+500);
-                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
 
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     throw new AssertionError("couldn't sleep");
                 }
 
-                if( ! refToLocationTracker.hasValidLocation() ){
+                if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
                     throw new AssertionError("failed");
                 }
 
@@ -153,6 +155,24 @@ public class LocationTrackerTest extends AndroidTestCase{
 
             }
         });
+    }
+
+
+    private LocationListener testLocationTracker(final boolean flag){
+        return new LocationListener(){
+            @Override
+            public void onLocationChanged(Location location) {
+                synchronized (mLock){
+                    mFlag = true;
+                }
+            }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            @Override
+            public void onProviderEnabled(String provider) {}
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
     }
 
 

@@ -58,9 +58,6 @@ public final class ConcreteLocationTracker implements LocationTracker {
             }
         };
         // Acquire a reference to the system Location Manager
-        // no point in passing the context only to extract something else from it
-        // let's make our testing easier and pass locationManager directly
-        // mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
         mLocationManager = locManager;
         // Define a listener that responds to location updates
         LocationListener currentLocationListener = new LocationListener() {
