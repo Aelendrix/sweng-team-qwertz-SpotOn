@@ -18,7 +18,7 @@ public class ToastProvider {
     public static int LONG = Toast.LENGTH_LONG;
     public static int SHORT = Toast.LENGTH_SHORT;
 
-//    private static Context mCurrentContext = null;
+    //    private static Context mCurrentContext = null;
     private static Activity currentActivity;
     private static Toast mCurrentlyDisplayedToast = null;
 
@@ -27,17 +27,15 @@ public class ToastProvider {
     }
 
 
-// PUBLIC METHODS
+    // PUBLIC METHODS
     public static void update(Activity activity){
         if(activity==null){
             throw new IllegalArgumentException();
         }
-//        mCurrentContext=c;
         currentActivity=activity;
     }
 
     public static void printOverCurrent(String message, int duration){
-//        if(mCurrentContext==null){
         if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
@@ -51,20 +49,19 @@ public class ToastProvider {
         displayToast(message, duration);
     }
 
-    public static void printAfterCurrent(String message, int duration){
-//        if(mCurrentContext==null){
-        if(currentActivity==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==LONG || duration==SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
-        displayToast(message, duration);
-    }
+// this methods has issues I need to solve later (todo)
+//    public static void printAfterCurrent(String message, int duration){
+//        if(currentActivity==null){
+//            Log.d("ToastProvider", "ToastProvider has no current context");
+//            return;
+//        }
+//        if(!(duration==LONG || duration==SHORT)){
+//            throw new IllegalArgumentException("Invalid duration");
+//        }
+//        displayToast(message, duration);
+//    }
 
     public static void printIfNoCurrent(String message, int duration){
-//        if(mCurrentContext==null){
         if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
@@ -90,20 +87,9 @@ public class ToastProvider {
     }
 
 
-// PRIVATE HELPERS
+    // PRIVATE HELPERS
     private static void displayToast(final String message, final int duration){
-// Handler way
-//        Handler mHandler = new Handler(Looper.getMainLooper()){
-//            @Override
-//            public void handleMessage(Message message) {
-//                String text = (String) message.obj;
-//                Toast newToast = Toast.makeText(mCurrentContext, text, duration);
-//                mCurrentlyDisplayedToast = newToast;
-//                newToast.show();
-//            }
-//        };
-
-        currentActivity.runOnUiThread(new Runnable() {
+        currentActivity.runOnUiThread( new Runnable() {
             public void run() {
                 Toast newToast = Toast.makeText(currentActivity, message, duration);
                 ToastProvider.setDisplayedToast(newToast);
