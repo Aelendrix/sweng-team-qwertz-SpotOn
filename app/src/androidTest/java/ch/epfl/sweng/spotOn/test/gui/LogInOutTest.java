@@ -3,13 +3,11 @@ package ch.epfl.sweng.spotOn.test.gui;
 import android.content.Intent;
 import android.location.Location;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -20,13 +18,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
-import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.InitUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -53,7 +46,7 @@ public class LogInOutTest {
             location.setAltitude(0);
             location.setTime(System.currentTimeMillis());
 
-            InitUtils.initContextNoUser(location);
+            TestInitUtils.initContextNoUser(location);
         }
     };
 
@@ -72,7 +65,7 @@ public class LogInOutTest {
     public void logInAndOut() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());
-        Thread.sleep(5000); // sorry... my phone is slow
+        Thread.sleep(3000); // sorry... my phone is slow
         UiObject input = mDevice.findObject(new UiSelector().instance(0).className(EditText.class));
         input.setText("swengqwertz@gmail.com");
         Thread.sleep(100);

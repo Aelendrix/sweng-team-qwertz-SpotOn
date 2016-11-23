@@ -12,7 +12,7 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
  * Created by quentin on 23.11.16.
  */
 
-public class InitUtils {
+public class TestInitUtils {
 
 
 

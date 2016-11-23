@@ -33,10 +33,8 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.InitUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -51,7 +49,7 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            InitUtils.initContext();
+            TestInitUtils.initContext();
         }
     };
 

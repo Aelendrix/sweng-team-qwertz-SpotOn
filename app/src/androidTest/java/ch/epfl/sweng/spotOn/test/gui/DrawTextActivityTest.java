@@ -12,12 +12,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.InitUtils;
-import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -39,7 +35,7 @@ public class DrawTextActivityTest {
     public ActivityTestRule<TabActivity> mActivityRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
         @Override
         public void beforeActivityLaunched(){
-            InitUtils.initContext();
+            TestInitUtils.initContext();
         }
     };
 
