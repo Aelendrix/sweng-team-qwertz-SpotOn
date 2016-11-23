@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.filters.SmallTest;
@@ -32,6 +31,7 @@ import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.user.User;
 
 
 /**
@@ -51,6 +51,7 @@ public class TabActivityTest {
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };
 
@@ -65,12 +66,14 @@ public class TabActivityTest {
     @Test
     public void press_back_button() {
         //proc a toast
-        mActivityTestRule.launchActivity(new Intent());
-        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+        Intents.init();
+        final TabActivity tabActivity = mActivityTestRule.getActivity();
+        tabActivity.runOnUiThread(new Runnable() {
             public void run() {
-                mActivityTestRule.getActivity().onBackPressed();
+               tabActivity.onBackPressed();
             }
         });
+        Intents.release();
     }
 
     @Test
