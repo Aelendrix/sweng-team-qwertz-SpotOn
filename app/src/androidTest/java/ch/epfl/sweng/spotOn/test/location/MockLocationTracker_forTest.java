@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn.test.util;
+package ch.epfl.sweng.spotOn.test.location;
 
 import android.location.Location;
 
@@ -60,6 +60,11 @@ public class MockLocationTracker_forTest implements LocationTracker {
     public void addListener(LocationTrackerListener l) {
         listeners.add(l);
         l.updateLocation(mockLocation);
+    }
+
+    @Override
+    public void destroyInstance() {
+        // nothing to do, it's not bound to the singleton ConcreteLocationTracker
     }
 
     public void forceLocationChange(Location newLoc){

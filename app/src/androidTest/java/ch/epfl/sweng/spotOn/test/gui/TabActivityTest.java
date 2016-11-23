@@ -18,8 +18,6 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -30,7 +28,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.User;
 
 
@@ -48,9 +46,16 @@ public class TabActivityTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
+
+            // destroy LocationTrackerSingleton if need be
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.getInstance().destroyInstance();
+            }
+
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+            LocalDatabase.initialize(mlt);
             User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };

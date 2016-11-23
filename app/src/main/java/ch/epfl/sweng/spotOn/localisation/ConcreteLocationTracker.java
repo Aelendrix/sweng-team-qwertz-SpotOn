@@ -33,7 +33,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
     private Location mLocation;
 
 
-    // INITIALIZE AND CONSTRUCTOR
+    // INITIALIZE AND CONSTRUCTOR AND DESTROY
     public static void initialize(LocationManagerWrapper locManager){
         if(mSingleInstance==null){
             mSingleInstance = new ConcreteLocationTracker(locManager);
@@ -91,6 +91,15 @@ public final class ConcreteLocationTracker implements LocationTracker {
         catch (SecurityException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /** very needed for tests, since appearently, the singleton is not initialized once per test file, but once for ALL test files
+     *  And we want to have a mockLocationTracker sometimes, and sometimes test the concreteLocationTracker to which we input mock arguments
+     */
+    @Override
+    public void destroyInstance() {
+        mSingleInstance = null;
     }
 
 

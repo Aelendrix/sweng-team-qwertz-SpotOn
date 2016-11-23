@@ -13,7 +13,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -37,9 +37,16 @@ public class DrawTextActivityTest {
     public ActivityTestRule<TabActivity> mActivityRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
         @Override
         public void beforeActivityLaunched(){
+
+            // destroy LocationTrackerSingleton if need be
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.getInstance().destroyInstance();
+            }
+
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+            LocalDatabase.initialize(mlt);
             ServicesChecker.initialize(mlt,LocalDatabase.getInstance());
             User.initializeFromFb("firstname","lastname","test");
             User user = User.getInstance();

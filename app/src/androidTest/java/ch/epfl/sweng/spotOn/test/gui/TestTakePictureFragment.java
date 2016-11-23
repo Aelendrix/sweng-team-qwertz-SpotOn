@@ -22,15 +22,13 @@ import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -42,9 +40,16 @@ public class TestTakePictureFragment {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
+
+            // destroy LocationTrackerSingleton if need be
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.getInstance().destroyInstance();
+            }
+
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+            LocalDatabase.initialize(mlt);
             User.initializeFromFb("","","test");
         }
     };

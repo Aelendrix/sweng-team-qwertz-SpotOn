@@ -11,7 +11,7 @@ import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 /**

@@ -23,7 +23,6 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,8 +32,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -51,9 +49,16 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
+
+            // destroy LocationTrackerSingleton if need be
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.getInstance().destroyInstance();
+            }
+
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+            LocalDatabase.initialize(mlt);
             ServicesChecker.initialize(mlt,LocalDatabase.getInstance());
             User.initializeFromFb("firstname","lastname","test");
             User user = User.getInstance();

@@ -17,16 +17,17 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 @RunWith(AndroidJUnit4.class)
-public class LocationTrackerTest extends AndroidTestCase{
+public class LocationTrackerTest{
 
-    private Location location0 = new Location(LocationManager.GPS_PROVIDER);
-    private Location location1 = new Location(LocationManager.GPS_PROVIDER);
-    private Location location2 = new Location("testLocationProvider");
-    private Location location3 = new Location("testLocationProvider");
+    private Location location0;
+    private Location location1;
+    private Location location2;
+    private Location location3;
 
     private MockLocationManagerWrapper_forTests mlm;
 
@@ -40,7 +41,12 @@ public class LocationTrackerTest extends AndroidTestCase{
     @Before
     public void init() {
 
-        initFieldLocations();;
+        initFieldLocations();
+
+        // destroy LocationTrackerSingleton if need be
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.getInstance().destroyInstance();
+        }
 
         mlm = new MockLocationManagerWrapper_forTests(location0);
         ConcreteLocationTracker.initialize(mlm);
@@ -130,6 +136,11 @@ public class LocationTrackerTest extends AndroidTestCase{
     }
 
     private void initFieldLocations(){
+        location3 = new Location("LTT_mockProvider");
+        location2 = new Location("LTT_mockProvider");
+        location1 = new Location("LTT_mockProvider");
+        location0 = new Location("LTT_mockProvider");
+
         location3.setLatitude(0);
         location3.setLongitude(0);
         location3.setAltitude(0);

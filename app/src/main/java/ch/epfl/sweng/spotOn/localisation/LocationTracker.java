@@ -25,4 +25,6 @@ public interface LocationTracker {
 
     void addListener(LocationTrackerListener l);
 
+    void destroyInstance();
+
 }

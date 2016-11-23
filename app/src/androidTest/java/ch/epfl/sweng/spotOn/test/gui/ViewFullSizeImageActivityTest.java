@@ -2,13 +2,11 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.location.Location;
-import android.provider.ContactsContract;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
-import android.support.test.espresso.core.deps.guava.util.concurrent.ExecutionError;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -20,18 +18,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.gui.ImageAdapter;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
 
