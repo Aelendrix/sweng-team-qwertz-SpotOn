@@ -20,6 +20,7 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by nico on 23.11.16.
+ * Those tests are just for the line coverage, real tests will come later when @sg.pepper finish his feature
  */
 
 @RunWith(AndroidJUnit4.class)
@@ -59,9 +60,52 @@ public class ToastProviderMethodTest {
                 }
             }
         });
+    }
 
+    @Test
+    public void IllegalArgumentExceptionToast1() throws Exception{
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    ToastProvider.printOverCurrent("yolo", 100);
+                    throw new AssertionError("Toast try to print with a wrong dudration");
+                }
+                catch(IllegalArgumentException e)
+                {
 
+                }
+            }
+        });
+    }
+    @Test
+    public void IllegalArgumentExceptionToast2() throws Exception{
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    ToastProvider.printAfterCurrent("yolo", 100);
+                    throw new AssertionError("Toast try to print with a wrong dudration");
+                }
+                catch(IllegalArgumentException e)
+                {
 
+                }
+            }
+        });
+    }
+    @Test
+    public void IllegalArgumentExceptionToast3() throws Exception{
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    ToastProvider.printIfNoCurrent("yolo", 100);
+                    throw new AssertionError("Toast try to print with a wrong dudration");
+                }
+                catch(IllegalArgumentException e)
+                {
+
+                }
+            }
+        });
     }
 
 }
