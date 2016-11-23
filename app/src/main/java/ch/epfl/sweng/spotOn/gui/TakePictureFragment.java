@@ -91,38 +91,14 @@ public class TakePictureFragment extends Fragment {
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
     public void dispatchTakePictureIntent(View view){
-        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");
+        /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mTextToDraw = bb.getString("TD", "");*/
 
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
             String[] permissionRequested = {Manifest.permission.CAMERA};
             ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    /**
-     * Method that will be called when clicking on the Rotate button. It will rotate the image view
-     * and create a new PhotoObject from the rotatedPicture, but it will keep from the previous picture
-     * the alreadyStored status and alreadySentToServer status in order for the user to avoid sending
-     * the rotated picture if he already sent the non rotated picture before
-     * @param view
-     */
-    public void rotatePicture(View view) {
-        if(mActualPhotoObject != null){
-            mImageView.setRotation(mImageView.getRotation() + 90);
-            Bitmap original = mActualPhotoObject.getFullSizeImage();
-            boolean alreadySentToServer = mActualPhotoObject.isStoredInServer();
-            boolean alreadyStoredInternally = mActualPhotoObject.isStoredInternally();
-            Matrix rotationMatrix = new Matrix();
-            rotationMatrix.postRotate(90);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(original, 0, 0, original.getWidth(),
-                    original.getHeight(), rotationMatrix, true);
-            //Bitmap rotatedBitmap = ((BitmapDrawable)mPic.getDrawable()).getBitmap();
-            mActualPhotoObject = createPhotoObject(rotatedBitmap);
-            mActualPhotoObject.setSentToServerStatus(alreadySentToServer);
-            mActualPhotoObject.setStoredInternallyStatus(alreadyStoredInternally);
         }
     }
 
@@ -344,12 +320,11 @@ public class TakePictureFragment extends Fragment {
     }
 
     /**
-     * Method that will put the captured photo in an image view
-     * in the app if the user agreed so
+     * Method that will be called after the user took/edited a picture
      *
-     * @param requestCode the request code to access the camera
-     * @param resultCode  the result of whether the user kept the photo or canceled it
-     * @param data        contains the image
+     * @param requestCode the request code of another activity
+     * @param resultCode  the result of whether the user accept the captured/edited picture
+     * @param data        the intent that was used to go to this activity
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -357,11 +332,15 @@ public class TakePictureFragment extends Fragment {
             processResult(mImageToUploadUri);
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
-            Log.d("edition", data.getExtras().getString("editedBitmap"));
             processResult(Uri.parse(data.getExtras().getString("editedBitmap")));
         }
     }
 
+    /**
+     * Method that will fetch the bitmap image from the Uri in parameter, set the image view with
+     * the fetched bitmap and create a photo object from it
+     * @param imageToUploadUri the Uri of where is stored the picture
+     */
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
             //Get our saved picture from the file in a bitmap image and display it on the image view
@@ -370,7 +349,7 @@ public class TakePictureFragment extends Fragment {
             Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
                 //Creates a mutable copy of the bitmap.
-                Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
+                /*Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
                 if(mTextToDraw != null) {
                     //Edits the bitmap in a canvas
                     Canvas canvas = new Canvas(modifiedPicture);
@@ -386,12 +365,12 @@ public class TakePictureFragment extends Fragment {
                     SharedPreferences.Editor edit = preferences.edit();
                     edit.remove("TD");
                     edit.apply();
-                }
-                mImageView.setImageBitmap(modifiedPicture);
+                }*/
+                mImageView.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
                     Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
-                }else {
+                } else {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
             } else {

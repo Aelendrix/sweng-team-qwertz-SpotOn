@@ -1,14 +1,20 @@
 package ch.epfl.sweng.spotOn.gui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -28,9 +34,9 @@ import ch.epfl.sweng.spotOn.R;
 
 public class EditPictureActivity extends AppCompatActivity {
 
-    //This Uri should not be modified: tells where is stored, on the phone, the picture the user is editing
-    private Uri mURIofBitmap;
+    private final static int REQUEST_TEXT_DRAWING = 30;
 
+    private Uri mURIofBitmap;
     private Bitmap mEditedBitmap;
     private ImageView mEditedImageView;
     public String mTextToDraw;
@@ -49,8 +55,8 @@ public class EditPictureActivity extends AppCompatActivity {
     }
 
     /**
-     * Method that will be called when clicking on the Rotate button. It will rotate the image view
-     * and rotate the bitmap image
+     * Method that will be called when clicking on the Rotate button. It will rotate the bitmap image
+     * and set the image view with the rotated bitmap
      * @param view
      */
     public void rotatePicture(View view){
@@ -68,7 +74,7 @@ public class EditPictureActivity extends AppCompatActivity {
      */
     public void goToDrawTextActivity(View view){
         Intent intent = new Intent(this, DrawTextActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_TEXT_DRAWING);
     }
 
     /**
@@ -78,41 +84,72 @@ public class EditPictureActivity extends AppCompatActivity {
      */
     public void confirmChanges(View view){
         Intent intent = new Intent();
-        mURIofBitmap = getImageUri(mEditedBitmap);
+        mURIofBitmap = storeAndGetImageUri(mEditedBitmap);
+        //Give the Uri as a string in extras ! Just giving the Uri is not working
         intent.putExtra("editedBitmap", mURIofBitmap.toString());
         setResult(RESULT_OK, intent);
         finish();
     }
 
-    public void tryingRotation(View view){
-        mEditedImageView.setImageBitmap(mEditedBitmap);
+    /**
+     * Method that will be used when the user adds text to the picture through the DrawTextActivity
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_TEXT_DRAWING && resultCode == Activity.RESULT_OK){
+            //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            mTextToDraw = data.getStringExtra("textToDraw");//preferences.getString("TD", "");
+            Log.d("TextToDraw", mTextToDraw);
+            if(mTextToDraw != null){
+                //Edits the bitmap in a canvas
+                Log.d("TextToDraw", "entered the loop");
+                Canvas canvas = new Canvas(mEditedBitmap);
+                Paint paint = new Paint();
+                paint.setColor(Color.RED);
+                paint.setTextSize(50);
+                float x = 50;
+                float y = mEditedBitmap.getHeight() - 200;
+                paint.setFakeBoldText(true);
+                canvas.drawText(mTextToDraw, x, y, paint);
+                //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
+                //SharedPreferences.Editor edit = preferences.edit();
+                //edit.remove("TD");
+                //edit.apply();
+                mEditedImageView.setImageBitmap(mEditedBitmap);
+            }
+        }
     }
 
     /**
-     * Method that will write the edited bitmap on the internal storage and return the uri of
+     * Method that will store the edited bitmap on the internal storage and return the uri of
      * where is stored the image
      * @param bitmap the bitmap image we want to store
      * @return the uri of where is stored the image
      */
-    public Uri getImageUri(Bitmap bitmap) {
+    private Uri storeAndGetImageUri(Bitmap bitmap) {
         Uri resUri;
+        //Define the Uri (same directory where is stored the temporal image we are editing)
         File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/EDITED_PICTURE.jpg");
         if(Build.VERSION.SDK_INT <= 23) {
             resUri = Uri.fromFile(storageForEdition);
-            Log.d("URI ImageUpload", resUri.toString());
+            Log.d("UriEditedImage", resUri.toString());
         } else {
             //For API >= 24 (was the cause of the crash)
             resUri = FileProvider.getUriForFile(this,
                     BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
-            Log.d("URI ImageUpload", resUri.toString());
+            Log.d("UriEditedImage", resUri.toString());
         }
 
+        //Store the picture at the directory defined above
         try {
             FileOutputStream pictureOutputFile = new FileOutputStream(storageForEdition);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, pictureOutputFile);
             pictureOutputFile.close();
-            Log.d("Storage Permission", "accessed");
 
             //Allow the Pictures file to load directly after the image is stored
             MediaScannerConnection.scanFile(this, new String[]{storageForEdition.toString()}, null,
