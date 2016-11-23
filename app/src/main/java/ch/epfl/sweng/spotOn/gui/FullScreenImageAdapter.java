@@ -78,7 +78,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contains wanted picture");
+            throw new NoSuchElementException("Localdatabase does not contains wanted picture : "+wantedPicId);
         }
         mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
