@@ -14,6 +14,8 @@ import android.os.Build;
 import android.location.Location;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -115,8 +117,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      *  and apply it to our special marker on the map   */
     public void refreshMapLocation() {
         if(ConcreteLocationTracker.getInstance().hasValidLocation()){
-            LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
+            final LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
             if(mMap!=null){
+                Handler tempHandler = new Handler(Looper.getMainLooper());
                 if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
                             .title("position")
@@ -127,9 +130,19 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
                                     R.drawable.ic_position_marker_30dp))));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
                 }else{
-                    mLocationMarker.setPosition(newLocation);
+                    tempHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLocationMarker.setPosition(newLocation);
+                        }
+                    });
                 }
-                mLocationMarker.setVisible(true);
+                tempHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLocationMarker.setVisible(true);
+                    }
+                });
             }
         }
     }

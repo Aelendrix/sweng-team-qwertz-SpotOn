@@ -20,6 +20,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -50,6 +51,7 @@ public class MapTest {
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
 
             LocalDatabase.initialize(mMockLocationTracker);
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
             User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };
@@ -59,22 +61,29 @@ public class MapTest {
         onView(withId(R.id.viewpager)).perform(swipeRight());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(5000);
+        Thread.sleep(2000);
 
         final MapFragment mapFragment = (MapFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(2);
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                mMockLocationTracker.forceLocationChange(createLocation0());
+         mMockLocationTracker.forceLocationChange(createLocation0());
                 ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
                 mapFragment.refreshMapLocation();
                 mMockLocationTracker.forceLocationChange(createLocation1());
                 ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
                 mapFragment.refreshMapLocation();
-            }
-
-        });
+// old
+//        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mMockLocationTracker.forceLocationChange(createLocation0());
+//                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
+//                mapFragment.refreshMapLocation();
+//                mMockLocationTracker.forceLocationChange(createLocation1());
+//                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
+//                mapFragment.refreshMapLocation();
+//            }
+//
+//        });
     }
 
     @After
