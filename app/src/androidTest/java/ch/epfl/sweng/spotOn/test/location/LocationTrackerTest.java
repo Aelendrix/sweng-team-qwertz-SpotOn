@@ -37,7 +37,6 @@ public class LocationTrackerTest{
 
 
 // INITIALIZATION
-
     @Before
     public void init() {
 
@@ -48,8 +47,13 @@ public class LocationTrackerTest{
             ConcreteLocationTracker.getInstance().destroyInstance();
         }
 
+        if(ConcreteLocationTracker.instanceExists()){
+            throw new IllegalStateException("Should be deleted");
+        }
+
         mlm = new MockLocationManagerWrapper_forTests(location0);
         ConcreteLocationTracker.initialize(mlm);
+
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
