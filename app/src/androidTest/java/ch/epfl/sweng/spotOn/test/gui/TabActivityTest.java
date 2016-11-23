@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.filters.SmallTest;
@@ -64,6 +65,7 @@ public class TabActivityTest {
     @Test
     public void press_back_button() {
         //proc a toast
+        mActivityTestRule.launchActivity(new Intent());
         mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mActivityTestRule.getActivity().onBackPressed();

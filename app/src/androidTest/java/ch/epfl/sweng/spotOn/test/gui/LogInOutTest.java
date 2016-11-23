@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
+import android.support.test.uiautomator.Until;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -43,10 +44,13 @@ public class LogInOutTest {
     @Before
     public void setUp() throws Exception{
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        User.getInstance().destroy();
+        if(User.hasInstance()) {
+            User.getInstance().destroy();
+        }
     }
 
     @Test
+    //this test can fail randomly cause it depends of retrieving a webview from facebook
     public void logInAndOut() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());
@@ -61,10 +65,10 @@ public class LogInOutTest {
 
         UiObject buttonInput = mDevice.findObject(new UiSelector().instance(0).className(Button.class));
         buttonInput.click();
-        Thread.sleep(12000);
+        mDevice.waitForWindowUpdate(null,15000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
-        Thread.sleep(10000);
+        mDevice.waitForWindowUpdate(null,15000);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);
