@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.test.location;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -9,6 +10,13 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
  */
 
 public class LocationTrackerTest_failureCases {
+
+    @Before
+    public void destroyIfAlreadyExists(){
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+    }
 
     @Test (expected = IllegalStateException .class)
     public void ExceptionWhenNotInitialized(){
