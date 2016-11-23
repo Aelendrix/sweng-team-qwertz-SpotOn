@@ -56,6 +56,7 @@ public class ViewFullSizeImageActivityTest {
         location.setTime(System.currentTimeMillis());
 
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
 
@@ -123,13 +124,20 @@ public class ViewFullSizeImageActivityTest {
     }
 
     @After
-    public void clearPO(){
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
+        // stuff below seems pretty unimportant to me
         if(LocalDatabase.instanceExists()){
             LocalDatabase ldb = LocalDatabase.getInstance();
-            String pictureIdToRemove1 = po.getPictureId();
-            String pictureIdToRemove2 = secondPo.getPictureId();
-            ldb.removePhotoObject(pictureIdToRemove1);
-            ldb.removePhotoObject(pictureIdToRemove2);
+            if(po!=null){
+                ldb.removePhotoObject( po.getPictureId());
+            }
+            if(secondPo!=null){
+                ldb.removePhotoObject(secondPo.getPictureId());
+            }
         }
     }
 }
