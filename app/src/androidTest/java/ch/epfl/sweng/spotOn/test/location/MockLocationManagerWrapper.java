@@ -33,7 +33,7 @@ public class MockLocationManagerWrapper implements LocationManagerWrapper {
 
     public MockLocationManagerWrapper(Location l){
         mLocation = l;
-        fakeNewLocationHandler = new Handler();
+        fakeNewLocationHandler = new Handler(Looper.getMainLooper());
         runForNewLocation = new Runnable() {
             @Override
             public void run() {
@@ -64,6 +64,18 @@ public class MockLocationManagerWrapper implements LocationManagerWrapper {
             }
         };
         fakeNewLocationHandler.post(runForNewLocation);
+    }
+
+
+// PUBLIC METHODS
+
+    public void updateLocation(Location loc){
+        mLocation = loc;
+        if( ! mListeners.isEmpty()){
+            for(LocationListener l : mListeners){
+                l.onLocationChanged(loc);
+            }
+        }
     }
 
 

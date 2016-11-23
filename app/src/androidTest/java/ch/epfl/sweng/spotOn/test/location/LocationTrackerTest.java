@@ -40,6 +40,8 @@ public class LocationTrackerTest extends AndroidTestCase{
     private Location location2 = new Location("testLocationProvider");
     private Location location3 = new Location("testLocationProvider");
 
+    private MockLocationManagerWrapper mlm;
+
 
 //    @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class);
@@ -55,12 +57,23 @@ public class LocationTrackerTest extends AndroidTestCase{
         location3.setAltitude(0);
         location3.setAccuracy(100);
         location3.setTime(100);
-
+        location0.setProvider(LocationManager.GPS_PROVIDER);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }else{
+            throw new IllegalStateException("Tests need api 17 to work");
+        }
         location2.setLatitude(0);
         location2.setLongitude(0);
         location2.setAltitude(0);
         location2.setAccuracy(1);
         location2.setTime(1);
+        location0.setProvider(LocationManager.GPS_PROVIDER);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }else{
+            throw new IllegalStateException("Tests need api 17 to work");
+        }
 
         location1.setLatitude(1);
         location1.setLongitude(1);
@@ -68,8 +81,9 @@ public class LocationTrackerTest extends AndroidTestCase{
         location1.setAccuracy(2);
         location1.setProvider(LocationManager.GPS_PROVIDER);
         location1.setTime(System.currentTimeMillis());
+        location0.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            location1.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }
@@ -80,13 +94,15 @@ public class LocationTrackerTest extends AndroidTestCase{
         location0.setAccuracy(1);
         location0.setTime(System.currentTimeMillis());
         location0.setProvider(LocationManager.GPS_PROVIDER);
+        location0.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }
 
-        ConcreteLocationTracker.initialize(new MockLocationManagerWrapper());
+        mlm = new MockLocationManagerWrapper(location0);
+        ConcreteLocationTracker.initialize(mlm);
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
 
@@ -99,9 +115,23 @@ public class LocationTrackerTest extends AndroidTestCase{
 
         intentsRule.launchActivity(new Intent());
 
-        Thread.sleep(5000);
+        Thread.sleep(2500);
 
-        ConcreteLocationTracker.getInstance().getLocation();
+        if( ! ConcreteLocationTracker.instanceExists() ){
+            throw new AssertionError("LocatinoTracker instance should exist");
+        }
+        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
+            throw new AssertionError("LocatinoTracker instance should have valid Location");
+        }
+
+        Location obtainedLocation = ConcreteLocationTracker.getInstance().getLocation();
+        if( ! cmpFields(obtainedLocation, location0) ){
+            throw new AssertionError("\n"+obtainedLocation+"\n     ---- should be equals to ----\n"+location0);
+        }
+
+        Thread.sleep(1500);
+
+        mlm.updateLocation(location1);
 
 
     }
@@ -139,4 +169,33 @@ public class LocationTrackerTest extends AndroidTestCase{
             throw new AssertionError("should be same provider");
         }
     }
+
+// HELPERS
+
+    // compares latitude, longitude, altitude, accuracy, time, elapsedTime
+    private static boolean cmpFields(Location l1, Location l2){
+        if(l1.getProvider() != l2.getProvider()){
+            return false;
+        }
+        if(l1.getTime() != l2.getTime()){
+            return false;
+        }
+        if(l1.getAccuracy() != l2.getAccuracy()){
+            return false;
+        }
+        if(l1.getAltitude() != l2.getAltitude()){
+            return false;
+        }
+        if(l1.getLongitude() != l2.getLongitude()){
+            return false;
+        }
+        if(l1.getLatitude() != l2.getLatitude()){
+            return false;
+        }
+        if(l1.getElapsedRealtimeNanos() != l2.getElapsedRealtimeNanos()){
+            return false;
+        }
+        return true;
+    }
+
 }
