@@ -43,11 +43,8 @@ public class UserTest {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
         testUser.destroy();
 
-        try{
-            testUser.getInstance();
-            throw new AssertionError("IllegalStateException not detected");
-        }
-        catch(IllegalStateException e){
+        if(User.hasInstance()) {
+            throw new AssertionError(" User should be destroyed");
         }
     }
 }

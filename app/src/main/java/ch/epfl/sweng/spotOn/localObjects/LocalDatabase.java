@@ -183,7 +183,7 @@ public class LocalDatabase implements LocationTrackerListener{
         photoSortedByTime.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate()){
+                if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate() && mCachedLocation!= null){
                     Location mLocationTempCopy;
                     synchronized (this) {
                         mLocationTempCopy = new Location(mCachedLocation);
