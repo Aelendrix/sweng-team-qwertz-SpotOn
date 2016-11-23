@@ -67,23 +67,15 @@ public class LocationTrackerTest extends AndroidTestCase{
         Thread.sleep(2500);
 
         if( ! ConcreteLocationTracker.instanceExists() ){
-            throw new AssertionError("LocatinoTracker instance should exist");
+            throw new AssertionError("LocationTracker instance should exist");
         }
         if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
-            throw new AssertionError("LocatinoTracker instance should have valid Location");
+            throw new AssertionError("LocationTracker instance should have valid Location");
         }
 
         Location obtainedLocation = ConcreteLocationTracker.getInstance().getLocation();
         if( ! locationsAtSamePlace(obtainedLocation, location0) ){
             throw new AssertionError("\n"+obtainedLocation+"\n     ---- should be equals to ----\n"+location0);
-        }
-
-        mlm.updateLocation(location2);
-        Thread.sleep(2500);
-
-        Location obtainedLocation2 = ConcreteLocationTracker.getInstance().getLocation();
-        if( ! locationsAtSamePlace(obtainedLocation2, location2) ){
-            throw new AssertionError("\n"+obtainedLocation2+"\n     ---- should be equals to ----\n"+location2);
         }
 
     }
@@ -150,9 +142,9 @@ public class LocationTrackerTest extends AndroidTestCase{
         location3.setAltitude(0);
         location3.setAccuracy(100);
         location3.setTime(100);
-        location0.setProvider(LocationManager.GPS_PROVIDER);
+        location3.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            location3.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }
@@ -161,9 +153,9 @@ public class LocationTrackerTest extends AndroidTestCase{
         location2.setAltitude(0);
         location2.setAccuracy(1);
         location2.setTime(1);
-        location0.setProvider(LocationManager.GPS_PROVIDER);
+        location2.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            location2.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }
@@ -174,9 +166,9 @@ public class LocationTrackerTest extends AndroidTestCase{
         location1.setAccuracy(2);
         location1.setProvider(LocationManager.GPS_PROVIDER);
         location1.setTime(System.currentTimeMillis());
-        location0.setProvider(LocationManager.GPS_PROVIDER);
+        location1.setProvider(LocationManager.GPS_PROVIDER);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            location0.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            location1.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }

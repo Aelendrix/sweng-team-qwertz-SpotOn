@@ -67,18 +67,6 @@ public class MockLocationManagerWrapper implements LocationManagerWrapper {
     }
 
 
-// PUBLIC METHODS
-
-    public void updateLocation(Location loc){
-        mLocation = loc;
-        if( ! mListeners.isEmpty()){
-            for(LocationListener l : mListeners){
-                l.onLocationChanged(loc);
-            }
-        }
-    }
-
-
 
 // INTERFACE METHODS
 
