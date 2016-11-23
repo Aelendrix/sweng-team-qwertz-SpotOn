@@ -21,6 +21,7 @@ public class DeleteExpirePhotoTest {
 
     String pictureID;
     //add a very old picture, the background service will trigger during the testing (very bad test)
+    //TODO: change this test by finding a way to trigger the broadcast class ServerDeleteExpiredPhoto
     @Test
     public void addVeryOldPictureToDB(){
         PhotoObject po = PhotoObjectTestUtils.veryOldTimestampPicture();

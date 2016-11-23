@@ -63,7 +63,12 @@ public class TabActivityTest {
 
     @Test
     public void press_back_button() {
-        mActivityTestRule.getActivity().onBackPressed();
+        //proc a toast
+        mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                mActivityTestRule.getActivity().onBackPressed();
+            }
+        });
     }
 
     @Test

@@ -61,7 +61,7 @@ public class LogInOutTest {
 
         UiObject buttonInput = mDevice.findObject(new UiSelector().instance(0).className(Button.class));
         buttonInput.click();
-        Thread.sleep(10000);
+        Thread.sleep(12000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
         Thread.sleep(10000);
