@@ -25,7 +25,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     private static LocationTracker mSingleInstance=null;
 
-    private LocationManager mLocationManager;
+    private LocationManagerWrapper mLocationManager;
     private Handler mLocationTimeoutHandler;
     private Runnable mRunOnTimeout;
 
@@ -34,14 +34,14 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
 
     // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationManager locManager){
+    public static void initialize(LocationManagerWrapper locManager){
         if(mSingleInstance==null){
             mSingleInstance = new ConcreteLocationTracker(locManager);
         }
 
     }
 
-    private ConcreteLocationTracker(LocationManager locManager) {
+    private ConcreteLocationTracker(LocationManagerWrapper locManager) {
         // for listeners
         mListenersList = new ArrayList<>();
         // runnable that will take care of timeout-ing the location after a given time
