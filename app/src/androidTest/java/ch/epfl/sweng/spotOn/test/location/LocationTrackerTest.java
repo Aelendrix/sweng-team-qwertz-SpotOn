@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.IllegalFormatCodePointException;
+
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -102,7 +104,7 @@ public class LocationTrackerTest{
         }
     }
 
-    @Test (expected = AssertionError.class)
+    @Test (expected = IllegalStateException.class)
     public void timeOutTest() throws InterruptedException {
         if( !ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
             throw new AssertionError("LocationTrackerTest : testLatLong");
@@ -125,8 +127,13 @@ public class LocationTrackerTest{
         synchronized (lock){
             lock.wait();
         }
-        throw new AssertionError("Test finished ! (not a failure)");
+        
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()){
+            throw new AssertionError("Should be timedout");
+        }
+        ConcreteLocationTracker.getInstance().getLocation(); // should throw a IllegalStateException, indicating that test is complete
     }
+    
 
     @Test
     public void testIsBestLocation(){

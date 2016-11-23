@@ -15,9 +15,4 @@ public class LocationTrackerTest_failureCases {
         ConcreteLocationTracker.getInstance();
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void gettersThrowExceptionsWhenUnitialized(){
-        ConcreteLocationTracker.get();
-    }
-
 }
