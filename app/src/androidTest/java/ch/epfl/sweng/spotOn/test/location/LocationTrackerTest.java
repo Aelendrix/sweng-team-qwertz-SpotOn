@@ -44,7 +44,7 @@ public class LocationTrackerTest{
 
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
-            ConcreteLocationTracker.getInstance().destroyInstance();
+            ConcreteLocationTracker.destroyInstance();
         }
 
         if(ConcreteLocationTracker.instanceExists()){
