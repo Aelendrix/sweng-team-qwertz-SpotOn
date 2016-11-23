@@ -28,10 +28,6 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
-/**
- * Created by nico on 16.11.16.
- */
-
 @RunWith(AndroidJUnit4.class)
 public class LocationTrackerTest extends AndroidTestCase{
 
@@ -52,6 +48,103 @@ public class LocationTrackerTest extends AndroidTestCase{
     @Before
     public void init() {
 
+        initFieldLocations();;
+
+        mlm = new MockLocationManagerWrapper(location0);
+        ConcreteLocationTracker.initialize(mlm);
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+
+    }
+
+
+
+    @Test
+    public void testMockProvider() throws InterruptedException {
+
+        intentsRule.launchActivity(new Intent());
+
+        Thread.sleep(2500);
+
+        if( ! ConcreteLocationTracker.instanceExists() ){
+            throw new AssertionError("LocatinoTracker instance should exist");
+        }
+        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
+            throw new AssertionError("LocatinoTracker instance should have valid Location");
+        }
+
+        Location obtainedLocation = ConcreteLocationTracker.getInstance().getLocation();
+        if( ! locationsAtSamePlace(obtainedLocation, location0) ){
+            throw new AssertionError("\n"+obtainedLocation+"\n     ---- should be equals to ----\n"+location0);
+        }
+
+        mlm.updateLocation(location2);
+        Thread.sleep(2500);
+
+        Location obtainedLocation2 = ConcreteLocationTracker.getInstance().getLocation();
+        if( ! locationsAtSamePlace(obtainedLocation2, location2) ){
+            throw new AssertionError("\n"+obtainedLocation2+"\n     ---- should be equals to ----\n"+location2);
+        }
+
+    }
+
+
+    @Test
+    public void testIsBestLocation(){
+        if (!LocalizationUtils.isBetterLocation(location2, null)) {
+            throw new AssertionError("a location is better that no location at all");
+        }
+        if (!LocalizationUtils.isBetterLocation(location1, location2)) {
+            throw new AssertionError("a very new (+2min) location is better than an old one");
+        }
+        if (LocalizationUtils.isBetterLocation(location2, location1)) {
+            throw new AssertionError("the location compared should be too old to be useful");
+        }
+        if (!LocalizationUtils.isBetterLocation(location0, location1)) {
+            throw new AssertionError("the new location should be more accurate than the old one");
+        }
+        if (LocalizationUtils.isBetterLocation(location1, location0)) {
+            throw new AssertionError("the new location is less accurate");
+        }
+        if (!LocalizationUtils.isBetterLocation(location3, location2)) {
+            throw new AssertionError("the new location is less accurate but is newer from the same locationprovider");
+        }
+    }
+
+    @Test
+    public void testIsSameProvider(){
+        if (!LocalizationUtils.isSameProvider("provider1", "provider1")) {
+            throw new AssertionError("should be same provider");
+        }
+        if (LocalizationUtils.isSameProvider(null, "provider1")) {
+            throw new AssertionError("should be same provider");
+        }
+    }
+
+
+
+
+
+// HELPERS
+
+    // compares latitude, longitude, altitude, accuracy, time, elapsedTime
+    private static boolean locationsAtSamePlace(Location l1, Location l2){
+        if(l1.getProvider() != l2.getProvider()){
+            return false;
+        }  else  if(l1.getAccuracy() != l2.getAccuracy()){
+            return false;
+        } else if(l1.getAltitude() != l2.getAltitude()){
+            return false;
+        } else if(l1.getLongitude() != l2.getLongitude()){
+            return false;
+        } else if(l1.getLatitude() != l2.getLatitude()){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void initFieldLocations(){
         location3.setLatitude(0);
         location3.setLongitude(0);
         location3.setAltitude(0);
@@ -100,102 +193,6 @@ public class LocationTrackerTest extends AndroidTestCase{
         }else{
             throw new IllegalStateException("Tests need api 17 to work");
         }
-
-        mlm = new MockLocationManagerWrapper(location0);
-        ConcreteLocationTracker.initialize(mlm);
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-
-    }
-
-
-
-    @Test
-    public void testMockProvider() throws InterruptedException {
-
-        intentsRule.launchActivity(new Intent());
-
-        Thread.sleep(2500);
-
-        if( ! ConcreteLocationTracker.instanceExists() ){
-            throw new AssertionError("LocatinoTracker instance should exist");
-        }
-        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
-            throw new AssertionError("LocatinoTracker instance should have valid Location");
-        }
-
-        Location obtainedLocation = ConcreteLocationTracker.getInstance().getLocation();
-        if( ! cmpFields(obtainedLocation, location0) ){
-            throw new AssertionError("\n"+obtainedLocation+"\n     ---- should be equals to ----\n"+location0);
-        }
-
-        Thread.sleep(1500);
-
-        mlm.updateLocation(location1);
-
-
-    }
-
-
-
-    @Test
-    public void testIsBestLocation(){
-        if (!LocalizationUtils.isBetterLocation(location2, null)) {
-            throw new AssertionError("a location is better that no location at all");
-        }
-        if (!LocalizationUtils.isBetterLocation(location1, location2)) {
-            throw new AssertionError("a very new (+2min) location is better than an old one");
-        }
-        if (LocalizationUtils.isBetterLocation(location2, location1)) {
-            throw new AssertionError("the location compared should be too old to be useful");
-        }
-        if (!LocalizationUtils.isBetterLocation(location0, location1)) {
-            throw new AssertionError("the new location should be more accurate than the old one");
-        }
-        if (LocalizationUtils.isBetterLocation(location1, location0)) {
-            throw new AssertionError("the new location is less accurate");
-        }
-        if (!LocalizationUtils.isBetterLocation(location3, location2)) {
-            throw new AssertionError("the new location is less accurate but is newer from the same locationprovider");
-        }
-    }
-
-    @Test
-    public void testIsSameProvider(){
-        if (!LocalizationUtils.isSameProvider("provider1", "provider1")) {
-            throw new AssertionError("should be same provider");
-        }
-        if (LocalizationUtils.isSameProvider(null, "provider1")) {
-            throw new AssertionError("should be same provider");
-        }
-    }
-
-// HELPERS
-
-    // compares latitude, longitude, altitude, accuracy, time, elapsedTime
-    private static boolean cmpFields(Location l1, Location l2){
-        if(l1.getProvider() != l2.getProvider()){
-            return false;
-        }
-        if(l1.getTime() != l2.getTime()){
-            return false;
-        }
-        if(l1.getAccuracy() != l2.getAccuracy()){
-            return false;
-        }
-        if(l1.getAltitude() != l2.getAltitude()){
-            return false;
-        }
-        if(l1.getLongitude() != l2.getLongitude()){
-            return false;
-        }
-        if(l1.getLatitude() != l2.getLatitude()){
-            return false;
-        }
-        if(l1.getElapsedRealtimeNanos() != l2.getElapsedRealtimeNanos()){
-            return false;
-        }
-        return true;
     }
 
 }
