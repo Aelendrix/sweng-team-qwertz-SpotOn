@@ -119,9 +119,12 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
             if(mMap!=null){
                 if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
-                                          .position(newLocation)
-                                          .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
-                                           R.drawable.ic_position_marker_30dp))));
+                            .title("position")
+                            .position(newLocation)
+                            .anchor(0.5f,0.5f)
+                            .zIndex(100f)
+                            .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
+                                    R.drawable.ic_position_marker_30dp))));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
                 }else{
                     mLocationMarker.setPosition(newLocation);
