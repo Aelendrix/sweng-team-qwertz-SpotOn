@@ -9,6 +9,8 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +20,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -30,6 +33,8 @@ public class LocationTrackerTest{
     private Location location3;
 
     private MockLocationManagerWrapper_forTests mlm;
+
+    private Object lock = new Object();
 
 
 //    @Rule
@@ -83,6 +88,45 @@ public class LocationTrackerTest{
 
     }
 
+    @Test
+    public void testLatLong(){
+        if( !ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
+            throw new AssertionError("LocationTrackerTest : testLatLong");
+        }
+
+        Location currentLoc = ConcreteLocationTracker.getInstance().getLocation();
+        LatLng ll = ConcreteLocationTracker.getInstance().getLatLng();
+
+        if(currentLoc.getLatitude()!=ll.latitude || currentLoc.getLongitude()!=ll.longitude){
+            throw new AssertionError("locationTracker returned different positional values");
+        }
+    }
+
+    @Test (expected = AssertionError.class)
+    public void timeOutTest() throws InterruptedException {
+        if( !ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
+            throw new AssertionError("LocationTrackerTest : testLatLong");
+        }
+        ConcreteLocationTracker.getInstance().addListener(new LocationTrackerListener() {
+            @Override
+            public void updateLocation(Location newLocation) {
+                // nothing
+            }
+            @Override
+            public void locationTimedOut() {
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+        });
+
+        mlm.triggerTimeout();
+
+        synchronized (lock){
+            lock.wait();
+        }
+        throw new AssertionError("Test finished ! (not a failure)");
+    }
 
     @Test
     public void testIsBestLocation(){

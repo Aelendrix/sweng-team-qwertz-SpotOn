@@ -81,6 +81,10 @@ public class MockLocationManagerWrapper_forTests implements LocationManagerWrapp
         mListeners.remove(l);
     }
 
+    public void triggerTimeout(){   // triggers a location timeout after a while
+        fakeNewLocationHandler.removeCallbacks(runForNewLocation);
+    }
+
 
     // HELPER METHODS
     public Location cookSomeLocation(){
