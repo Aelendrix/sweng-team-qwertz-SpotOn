@@ -45,8 +45,8 @@ public class MapTest {
                 ConcreteLocationTracker.getInstance().destroyInstance();
             }
 
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
+            mMockLocationTracker = new MockLocationTracker_forTest();
+            ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
 
             LocalDatabase.initialize(mMockLocationTracker);
             User.initializeFromFb("Sweng", "Sweng", "114110565725225");
