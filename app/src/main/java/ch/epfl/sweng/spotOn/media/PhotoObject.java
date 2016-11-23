@@ -205,11 +205,14 @@ public class PhotoObject {
             // push changes to Database if the object was uploaded
             if(mFullsizeImageLink!=null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).setValue(this.convertForStorageInDatabase());
+                /*
                 DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
                 DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
                 DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
                 DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
                 DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
+                */
                 giveAuthorHisKarma(karmaAdded);
             }
         }
