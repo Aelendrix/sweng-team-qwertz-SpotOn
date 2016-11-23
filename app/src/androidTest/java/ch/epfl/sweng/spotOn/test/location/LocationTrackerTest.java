@@ -57,7 +57,7 @@ public class LocationTrackerTest extends AndroidTestCase{
 
         intentsRule.launchActivity(new Intent());
 
-        Thread.sleep(2500);
+        Thread.sleep(3500);
 
         if( ! ConcreteLocationTracker.instanceExists() ){
             throw new AssertionError("LocationTracker instance should exist");
