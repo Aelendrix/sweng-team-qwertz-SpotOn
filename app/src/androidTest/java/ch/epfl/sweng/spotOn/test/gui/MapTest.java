@@ -65,12 +65,12 @@ public class MapTest {
 
         final MapFragment mapFragment = (MapFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(2);
 
-         mMockLocationTracker.forceLocationChange(createLocation0());
-                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
-                mapFragment.refreshMapLocation();
-                mMockLocationTracker.forceLocationChange(createLocation1());
-                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
-                mapFragment.refreshMapLocation();
+        mMockLocationTracker.forceLocationChange(createLocation0());
+        ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
+        mapFragment.refreshMapLocation();
+        mMockLocationTracker.forceLocationChange(createLocation1());
+        ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
+        mapFragment.refreshMapLocation();
 // old
 //        new Handler(Looper.getMainLooper()).post(new Runnable() {
 //            @Override

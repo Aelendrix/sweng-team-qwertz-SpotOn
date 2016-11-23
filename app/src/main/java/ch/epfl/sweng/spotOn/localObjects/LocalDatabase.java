@@ -147,8 +147,10 @@ public class LocalDatabase implements LocationTrackerListener{
 // PRIVATE METHODS
     /** notifies all listeners of a change of the database content */
     private void notifyListeners(){
-        for(LocalDatabaseListener l : mListeners){
-            l.databaseUpdated();
+        if( ! mListeners.isEmpty() ){
+            for(LocalDatabaseListener l : mListeners){
+                l.databaseUpdated();
+            }
         }
     }
 
