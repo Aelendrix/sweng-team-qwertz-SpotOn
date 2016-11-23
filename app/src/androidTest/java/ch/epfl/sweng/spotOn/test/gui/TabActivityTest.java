@@ -62,6 +62,11 @@ public class TabActivityTest {
     }
 
     @Test
+    public void press_back_button() {
+        mActivityTestRule.getActivity().onBackPressed();
+    }
+
+    @Test
     public void aboutPagePopsUp() {
         Intents.init();
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
