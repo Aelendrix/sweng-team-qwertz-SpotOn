@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +40,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageAdapter mRefToImageAdapter;
 
     private ImageView mViewToSet;
+    private TextView mTextView;
     private PhotoObject mDisplayedMedia;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
@@ -101,6 +103,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             });
         }
+        //upvotes
+        mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
+        Log.d("xD","UP: "+mDisplayedMedia.getUpvotes()+" DOWN: "+ mDisplayedMedia.getDownvotes());
+        mTextView.setText(Integer.toString(mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes()));
 
         container.addView(viewLayout);
         return viewLayout;
