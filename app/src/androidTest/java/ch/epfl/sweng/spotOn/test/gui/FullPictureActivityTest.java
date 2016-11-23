@@ -13,6 +13,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,10 +22,12 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -53,8 +56,9 @@ public class FullPictureActivityTest {
         location.setTime(System.currentTimeMillis());
 
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
         LocalDatabase.initialize(mlt);
-
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
@@ -95,5 +99,13 @@ public class FullPictureActivityTest {
                     }
                 },
                 Press.FINGER);
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
     }
 }

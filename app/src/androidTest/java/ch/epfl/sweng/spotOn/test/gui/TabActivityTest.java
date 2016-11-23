@@ -31,6 +31,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 
 /**
@@ -55,6 +56,7 @@ public class TabActivityTest {
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
 
             LocalDatabase.initialize(mlt);
             User.initializeFromFb("Sweng", "Sweng", "114110565725225");

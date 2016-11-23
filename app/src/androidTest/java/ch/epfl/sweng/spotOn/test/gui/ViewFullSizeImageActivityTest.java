@@ -21,10 +21,12 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -44,6 +46,7 @@ public class ViewFullSizeImageActivityTest {
     private Intent displayFullSizeImageIntent;
     private PhotoObject po;
     private PhotoObject secondPo;
+
     @Before
     public void initLocalDatabase() throws InterruptedException {
         Location location = new Location("testLocationProvider");
@@ -54,6 +57,7 @@ public class ViewFullSizeImageActivityTest {
 
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
 
         User.initializeFromFb("Sweng", "Sweng", "114110565725225");
 
@@ -120,7 +124,12 @@ public class ViewFullSizeImageActivityTest {
 
     @After
     public void clearPO(){
-        LocalDatabase.getInstance().removePhotoObject(po.getPictureId());
-        LocalDatabase.getInstance().removePhotoObject(secondPo.getPictureId());
+        if(LocalDatabase.instanceExists()){
+            LocalDatabase ldb = LocalDatabase.getInstance();
+            String pictureIdToRemove1 = po.getPictureId();
+            String pictureIdToRemove2 = secondPo.getPictureId();
+            ldb.removePhotoObject(pictureIdToRemove1);
+            ldb.removePhotoObject(pictureIdToRemove2);
+        }
     }
 }
