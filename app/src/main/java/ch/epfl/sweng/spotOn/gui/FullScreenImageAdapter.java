@@ -40,6 +40,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageAdapter mRefToImageAdapter;
 
     private ImageView mViewToSet;
+    private int voteSum=0;
     private TextView mTextView;
     private PhotoObject mDisplayedMedia;
 
@@ -105,8 +106,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
         //upvotes
         mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
-        Log.d("xD","UP: "+mDisplayedMedia.getUpvotes()+" DOWN: "+ mDisplayedMedia.getDownvotes());
-        mTextView.setText(Integer.toString(mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes()));
+        //Log.d("xD","UP: "+mDisplayedMedia.getUpvotes()+" DOWN: "+ mDisplayedMedia.getDownvotes());
+        voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
+        refreshVoteTextView(Integer.toString(voteSum));
 
         container.addView(viewLayout);
         return viewLayout;
@@ -117,6 +119,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
+    public void refreshVoteTextView(String s){
+        mTextView.setText(s);
+    }
 
     public void recordUpvote(View view){
         vote(1);
@@ -132,6 +137,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = User.getInstance().getUserId();
+            //fake vote method to have more responsive interface
+            if(vote==1&&!mDisplayedMedia.getUpvotersList().contains(userId)){
+                voteSum++;
+                if(mDisplayedMedia.getDownvotersList().contains(userId)){
+                    voteSum++;
+                }
+            }
+            if(vote==-1&&!mDisplayedMedia.getDownvotersList().contains(userId)){
+                voteSum--;
+                if(mDisplayedMedia.getUpvotersList().contains(userId)){
+                    voteSum--;
+                }
+            }
+            refreshVoteTextView(Integer.toString(voteSum));
+
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
