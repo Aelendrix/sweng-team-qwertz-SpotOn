@@ -8,6 +8,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -43,7 +44,7 @@ public class TestTakePictureFragment {
 
             // destroy LocationTrackerSingleton if need be
             if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.getInstance().destroyInstance();
+                ConcreteLocationTracker.destroyInstance();
             }
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -112,5 +113,13 @@ public class TestTakePictureFragment {
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(, activityResult , true);
 
         */
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
+        }
     }
 }

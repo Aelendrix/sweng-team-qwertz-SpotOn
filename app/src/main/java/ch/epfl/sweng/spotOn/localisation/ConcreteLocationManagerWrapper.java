@@ -21,4 +21,9 @@ public class ConcreteLocationManagerWrapper implements LocationManagerWrapper {
     public void requestLocationUpdates(String provider, long minTime, float minDistance, LocationListener listener) throws SecurityException {
         mUnderlyingLocationManager.requestLocationUpdates(provider, minTime, minDistance, listener);
     }
+
+    @Override
+    public void removeUpdates(LocationListener l) throws SecurityException {
+        mUnderlyingLocationManager.removeUpdates(l);
+    }
 }

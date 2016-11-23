@@ -62,11 +62,6 @@ public class MockLocationTracker_forTest implements LocationTracker {
         l.updateLocation(mockLocation);
     }
 
-    @Override
-    public void destroyInstance() {
-        // nothing to do, it's not bound to the singleton ConcreteLocationTracker
-    }
-
     public void forceLocationChange(Location newLoc){
         mockLocation=newLoc;
         notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);

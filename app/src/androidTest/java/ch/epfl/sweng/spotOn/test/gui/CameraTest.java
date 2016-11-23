@@ -23,6 +23,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class CameraTest{
 
             // destroy LocationTrackerSingleton if need be
             if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.getInstance().destroyInstance();
+                ConcreteLocationTracker.destroyInstance();
             }
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -121,5 +122,13 @@ public class CameraTest{
         Intent resultData = new Intent();
         resultData.putExtras(bundle);
         return new ActivityResult(Activity.RESULT_OK, resultData);
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
     }
 }

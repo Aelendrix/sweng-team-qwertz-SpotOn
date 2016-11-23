@@ -76,9 +76,13 @@ public class MockLocationManagerWrapper_forTests implements LocationManagerWrapp
         listener.onLocationChanged(mLocation);
     }
 
+    @Override
+    public void removeUpdates(LocationListener l) {
+        mListeners.remove(l);
+    }
 
 
-// HELPER METHODS
+    // HELPER METHODS
     public Location cookSomeLocation(){
         Location location0 = new Location("MLW_FT_MockProvider");
         location0.setLatitude(1);

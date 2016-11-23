@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +43,7 @@ public class MapTest {
 
             // destroy LocationTrackerSingleton if need be
             if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.getInstance().destroyInstance();
+                ConcreteLocationTracker.destroyInstance();
             }
 
             mMockLocationTracker = new MockLocationTracker_forTest();
@@ -74,6 +75,14 @@ public class MapTest {
             }
 
         });
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("MapTest : concreteLocationTracker mock instance not deleted");
+        }
     }
 
 

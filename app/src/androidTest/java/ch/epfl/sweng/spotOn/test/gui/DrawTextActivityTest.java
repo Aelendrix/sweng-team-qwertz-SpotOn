@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +41,7 @@ public class DrawTextActivityTest {
 
             // destroy LocationTrackerSingleton if need be
             if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.getInstance().destroyInstance();
+                ConcreteLocationTracker.destroyInstance();
             }
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -61,5 +62,13 @@ public class DrawTextActivityTest {
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivityRule.getActivity());
         assertThat(preferences.getString("TD", ""), is("Hello !"));
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("DrawTextActivity : concreteLocationTracker mock instance not deleted");
+        }
     }
 }

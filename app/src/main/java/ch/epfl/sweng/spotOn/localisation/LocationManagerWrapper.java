@@ -11,4 +11,6 @@ public interface LocationManagerWrapper{
 
     void requestLocationUpdates(String provider, long minTime, float minDistance, LocationListener listener);
 
+    void removeUpdates(LocationListener l);
+
 }

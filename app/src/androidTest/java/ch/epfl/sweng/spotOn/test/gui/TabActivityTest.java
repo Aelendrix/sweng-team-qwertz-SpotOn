@@ -7,6 +7,7 @@ import android.support.test.filters.SmallTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ public class TabActivityTest {
 
             // destroy LocationTrackerSingleton if need be
             if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.getInstance().destroyInstance();
+                ConcreteLocationTracker.destroyInstance();
             }
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -107,5 +108,13 @@ public class TabActivityTest {
         onView(withText("Camera")).perform(click());
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("TabActivityTest : concreteLocationTracker mock instance not deleted");
+        }
     }
 }
