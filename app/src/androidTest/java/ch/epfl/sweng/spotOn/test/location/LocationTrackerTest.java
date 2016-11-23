@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.location;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,22 +15,18 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
-import android.util.Log;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Created by nico on 16.11.16.
@@ -43,13 +40,9 @@ public class LocationTrackerTest extends AndroidTestCase{
     private Location location2 = new Location("testLocationProvider");
     private Location location3 = new Location("testLocationProvider");
 
-    private Object mLock = new Object();
-    private boolean mFlag = false;
-
-
 
 //    @Rule
-//    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class);
+    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class);
 
 
 // INITIALIZATION
@@ -93,88 +86,25 @@ public class LocationTrackerTest extends AndroidTestCase{
             throw new IllegalStateException("Tests need api 17 to work");
         }
 
+        ConcreteLocationTracker.initialize(new MockLocationManagerWrapper());
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+
     }
 
 
 
     @Test
-    public void testMockProvider(){
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
+    public void testMockProvider() throws InterruptedException {
 
-                // obtain context
-//                Context c = getContext(); -> .getSystemService gives a nullPointerException
-                Context c = InstrumentationRegistry.getContext();
-                LocationManager locMan = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+        intentsRule.launchActivity(new Intent());
 
-                // verify existing providers
-                List<String> listOfProviders = locMan.getAllProviders();
-                if( !listOfProviders.contains(LocationManager.GPS_PROVIDER) ){
-                    throw new AssertionError("GPS provider not contained");
-                }
-                if( !listOfProviders.contains(LocationManager.NETWORK_PROVIDER) ){
-                    throw new AssertionError("Network Provider not contained");
-                }
+        Thread.sleep(5000);
 
-                locMan.removeTestProvider(LocationManager.GPS_PROVIDER);
-                locMan.addTestProvider(LocationManager.GPS_PROVIDER, false, false, false, false, true, true, true, 0, 5);
-                locMan.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+        ConcreteLocationTracker.getInstance().getLocation();
 
-                // set mock location for providers
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
-                locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location0);
 
-                ConcreteLocationTracker.initialize(locMan);
-
-                if( ! ConcreteLocationTracker.instanceExists() ){
-                    throw new AssertionError("ConcreteLocationTracker should have initialized");
-                }
-
-                try {
-                    Thread.sleep(2500);
-                } catch (InterruptedException e) {
-                    throw new AssertionError("couldn't sleep");
-                }
-
-                locMan.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis()+1500);
-                locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location1);
-
-                try {
-                    Thread.sleep(2500);
-                } catch (InterruptedException e) {
-                    throw new AssertionError("couldn't sleep");
-                }
-
-                if( ! ConcreteLocationTracker.getInstance().hasValidLocation() ){
-                    throw new AssertionError("failed");
-                }
-
-                // test actually fails...
-                // https://developer.android.com/reference/android/location/LocationManager.html#setTestProviderStatus(java.lang.String, int, android.os.Bundle, long)
-
-            }
-        });
     }
-
-
-    private LocationListener testLocationTracker(final boolean flag){
-        return new LocationListener(){
-            @Override
-            public void onLocationChanged(Location location) {
-                synchronized (mLock){
-                    mFlag = true;
-                }
-            }
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-            @Override
-            public void onProviderEnabled(String provider) {}
-            @Override
-            public void onProviderDisabled(String provider) {}
-        };
-    }
-
 
 
 

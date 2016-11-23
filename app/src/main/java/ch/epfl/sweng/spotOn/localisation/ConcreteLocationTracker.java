@@ -45,7 +45,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         // for listeners
         mListenersList = new ArrayList<>();
         // runnable that will take care of timeout-ing the location after a given time
-        mLocationTimeoutHandler = new Handler();
+        mLocationTimeoutHandler = new Handler(Looper.getMainLooper());
         mRunOnTimeout  = new Runnable() {
             @Override
             public void run() {

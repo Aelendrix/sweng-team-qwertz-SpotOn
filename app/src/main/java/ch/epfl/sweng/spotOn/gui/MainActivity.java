@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -60,7 +61,7 @@ public final class MainActivity extends AppCompatActivity {
 
         // initialize LocationTracker and LocalDatabase
         Log.d("MainActivity","initializing singletons");
-        ConcreteLocationTracker.initialize((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE));
+        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
         ToastProvider.update(getApplicationContext());

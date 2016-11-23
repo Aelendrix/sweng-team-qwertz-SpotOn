@@ -5,6 +5,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import ch.epfl.sweng.spotOn.localisation.LocationTracker;
  * Created by quentin on 23.11.16.
  */
 
-public class MockLocationManager implements LocationManagerWrapper {
+public class MockLocationManagerWrapper implements LocationManagerWrapper {
 
     private Location mLocation;
 
@@ -30,7 +31,7 @@ public class MockLocationManager implements LocationManagerWrapper {
 
 // CONSTRUCTORS
 
-    public MockLocationManager(Location l){
+    public MockLocationManagerWrapper(Location l){
         mLocation = l;
         fakeNewLocationHandler = new Handler();
         runForNewLocation = new Runnable() {
@@ -48,9 +49,9 @@ public class MockLocationManager implements LocationManagerWrapper {
 
     }
 
-    public MockLocationManager(){
+    public MockLocationManagerWrapper(){
         mLocation = cookSomeLocation();
-        fakeNewLocationHandler = new Handler();
+        fakeNewLocationHandler = new Handler(Looper.getMainLooper());
         runForNewLocation = new Runnable() {
             @Override
             public void run() {
