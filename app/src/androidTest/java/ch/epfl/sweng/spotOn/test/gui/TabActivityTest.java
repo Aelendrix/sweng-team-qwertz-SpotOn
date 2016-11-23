@@ -56,9 +56,9 @@ public class TabActivityTest {
 
             MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
             ConcreteLocationTracker.setMockLocationTracker(mlt);
+            LocalDatabase.initialize(mlt);
             ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
 
-            LocalDatabase.initialize(mlt);
             User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };

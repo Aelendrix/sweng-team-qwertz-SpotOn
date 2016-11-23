@@ -104,7 +104,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     public static LocationTracker getInstance(){
         if(mSingleInstance==null){
-            throw new IllegalStateException("object has not been initialized");
+            throw new IllegalStateException("ConcreteLocationTracker has not been initialized");
         }
         return mSingleInstance;
     }
