@@ -84,9 +84,6 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
     /*
      * Rotates the picture by 90°
      */
-    public void rotatePicture(View view) {
-        mCameraFragment.rotatePicture(view);
-    }
 
     public void editPicture(View view){
         mCameraFragment.editPicture(view);
