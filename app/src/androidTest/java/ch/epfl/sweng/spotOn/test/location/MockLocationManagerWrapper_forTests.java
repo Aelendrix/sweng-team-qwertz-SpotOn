@@ -80,7 +80,7 @@ public class MockLocationManagerWrapper_forTests implements LocationManagerWrapp
 
 // HELPER METHODS
     public Location cookSomeLocation(){
-        Location location0 = new Location("MockProvider");
+        Location location0 = new Location("MLW_FT_MockProvider");
         location0.setLatitude(1);
         location0.setLongitude(1);
         location0.setAltitude(0);

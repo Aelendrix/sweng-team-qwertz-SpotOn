@@ -75,14 +75,14 @@ public class MapTest {
 // PRIVATE HELPERS
 
     private Location createLocation0(){
-        Location l0 = new Location("mockProvider");
+        Location l0 = new Location("MapTest_mockProvider");
         l0.setLatitude(0);
         l0.setLongitude(0);
         l0.setTime(new Date().getTime());
         return l0;
     }
     private Location createLocation1(){
-        Location l1 = new Location("mockProvider");
+        Location l1 = new Location("MapTest_mockProvider");
         l1.setLatitude(1);
         l1.setLongitude(1);
         l1.setTime(new Date().getTime());

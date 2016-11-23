@@ -89,7 +89,7 @@ public class LocalDatabase implements LocationTrackerListener{
     public void addPhotoObject(PhotoObject photo){
         if(!mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
-            Location photoLocation = new Location("mockProvider");
+            Location photoLocation = new Location("LocalDatabase_emptyProvider");
             photoLocation.setLatitude(photo.getLatitude());
             photoLocation.setLongitude(photo.getLongitude());
             if(refToLocationTracker.getLocation().distanceTo(photoLocation) < photo.getRadius()) {
