@@ -25,7 +25,7 @@ public class SingletonsTests {
         if(!(DatabaseRef.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory")))){
             throw new AssertionError();
         }
-        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory")))){
+        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_v2")))){
             throw new AssertionError();
         }
         if(!(DatabaseRef.getRootDirectory().equals(FirebaseDatabase.getInstance().getReference()))){

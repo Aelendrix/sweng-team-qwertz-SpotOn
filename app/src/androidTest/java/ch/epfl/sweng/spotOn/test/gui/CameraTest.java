@@ -2,6 +2,8 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
@@ -87,6 +89,24 @@ public class CameraTest{
         onView(withId(R.id.storeButton)).perform(click());
         // should fix this
         // onView(withId(R.id.sendButton)).perform(click());
+    }
+
+    @Test
+    public void addTextToPhotoTest() {
+        if(!LocalDatabase.instanceExists()){
+            throw new AssertionError("LocalDatabase incorrectly initialized");
+        }
+
+        onView(withText("Camera")).perform(click());
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("Hello")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
+        onView(withId(R.id.captureButton)).perform(click());
+
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("How are you ?")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
+        onView(withId(R.id.captureButton)).perform(click());
     }
 
     private ActivityResult createImageCaptureStub() {

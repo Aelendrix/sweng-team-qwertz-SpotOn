@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 /**
  * This class is the core of the gridView, used to link the data to one of the grid object
@@ -36,19 +37,23 @@ public class ImageAdapter extends BaseAdapter {
 
     }
 
+    @Override
     public int getCount() {
         return mThumbnail.size();
     }
 
+    @Override
     public Object getItem(int position) {
         return mThumbnail.get(position);
     }
 
+    @Override
     public long getItemId(int position) {
         return 0;
     }
 
     // create a new ImageView for each item referenced by the Adapter
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SquareImageView sImageView;
         if (convertView == null) {
@@ -67,4 +72,9 @@ public class ImageAdapter extends BaseAdapter {
     public String getIdAtPosition(int pos){
         return mThumbId.get(pos);
     }
+
+    public int size(){
+        return mThumbId.size();
+    }
+
 }

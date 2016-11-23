@@ -12,7 +12,7 @@ import com.google.maps.android.BuildConfig;
 
 public class DatabaseRef{
 
-    private final static String mMediaDirectoryString = "MediaDirectory";
+    private final static String mMediaDirectoryString = "MediaDirectory_v2";
     private final static DatabaseReference mMediaDirectory = FirebaseDatabase.getInstance().getReference(mMediaDirectoryString);
 
     private final static String mUsersDirectoryString = "UsersDirectory";
@@ -22,9 +22,6 @@ public class DatabaseRef{
 // PUBLIC METHODS
 
     public static DatabaseReference getMediaDirectory(){
-        if(BuildConfig.DEBUG){
-
-        }
         return mMediaDirectory;
     }
 
@@ -44,8 +41,7 @@ public class DatabaseRef{
         if(pictureID == null)
         {
             throw new IllegalArgumentException("Error in DatabaseRef: deletePhotoObjectFromDB, pictureId is null");
-        }
-        else {
+        } else {
             mMediaDirectory.child(pictureID).removeValue();
         }
     }
