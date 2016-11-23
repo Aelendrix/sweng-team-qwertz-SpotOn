@@ -19,6 +19,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -41,18 +42,7 @@ public class MapTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-
-            // destroy LocationTrackerSingleton if need be
-            if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.destroyInstance();
-            }
-
-            mMockLocationTracker = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
-
-            LocalDatabase.initialize(mMockLocationTracker);
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+            TestInitUtils.initContext();
         }
     };
 
@@ -71,19 +61,6 @@ public class MapTest {
         mMockLocationTracker.forceLocationChange(createLocation1());
         ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
         mapFragment.refreshMapLocation();
-// old
-//        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mMockLocationTracker.forceLocationChange(createLocation0());
-//                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
-//                mapFragment.refreshMapLocation();
-//                mMockLocationTracker.forceLocationChange(createLocation1());
-//                ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
-//                mapFragment.refreshMapLocation();
-//            }
-//
-//        });
     }
 
     @After

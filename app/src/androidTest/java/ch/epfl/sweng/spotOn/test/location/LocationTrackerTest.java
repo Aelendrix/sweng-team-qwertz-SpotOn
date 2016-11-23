@@ -23,6 +23,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -40,33 +41,13 @@ public class LocationTrackerTest{
 
 
 //    @Rule
-    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class);
-
-
-// INITIALIZATION
-    @Before
-    public void init() {
-
+    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
+    @Override
+    public void beforeActivityLaunched(){
         initFieldLocations();
-
-        // destroy LocationTrackerSingleton if need be
-        if(ConcreteLocationTracker.instanceExists()){
-            ConcreteLocationTracker.destroyInstance();
-        }
-
-        if(ConcreteLocationTracker.instanceExists()){
-            throw new IllegalStateException("Should be deleted");
-        }
-
-        mlm = new MockLocationManagerWrapper_forTests(location0);
-        ConcreteLocationTracker.initialize(mlm);
-
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
-
+        TestInitUtils.initContext();
     }
-
+};
 
 
     @Test

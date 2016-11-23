@@ -26,9 +26,6 @@ public class DeleteExpirePhotoTest {
     public void addVeryOldPictureToDB(){
         PhotoObject po = PhotoObjectTestUtils.veryOldTimestampPicture();
         pictureID = po.getPictureId();
-        po.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {}
-        });
+        po.upload();
     }
 }

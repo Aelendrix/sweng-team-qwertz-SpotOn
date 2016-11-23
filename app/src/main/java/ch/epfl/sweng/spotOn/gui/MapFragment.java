@@ -266,7 +266,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
         Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
+//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
 

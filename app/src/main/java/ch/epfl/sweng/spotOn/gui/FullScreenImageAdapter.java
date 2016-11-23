@@ -106,7 +106,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
         //upvotes
         mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
-        //Log.d("xD","UP: "+mDisplayedMedia.getUpvotes()+" DOWN: "+ mDisplayedMedia.getDownvotes());
         voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 

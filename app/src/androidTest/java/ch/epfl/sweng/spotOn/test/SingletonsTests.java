@@ -45,25 +45,16 @@ public class SingletonsTests {
         }
     }
 
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testDBIllegalArgumentDelete() throws IllegalArgumentException{
-        try{
-            DatabaseRef.deletePhotoObjectFromDB(null);
-            throw new AssertionError("IllegalArgumentException not detected");
-        }
-        catch(IllegalArgumentException e){
+        DatabaseRef.deletePhotoObjectFromDB(null);
+        throw new AssertionError("IllegalArgumentException not detected");
 
-        }
     }
-    @Test
+    @Test(expected=IllegalArgumentException.class)
     public void testStorageIllegalArgumentDelete() throws IllegalArgumentException{
-        try{
-            StorageRef.deletePictureFromStorage(null);
-            throw new AssertionError("IllegalArgumentException not detected");
-        }
-        catch(IllegalArgumentException e){
-
-        }
+        StorageRef.deletePictureFromStorage(null);
+        throw new AssertionError("IllegalArgumentException not detected");
     }
     @Test
     public void testStorageReferences(){

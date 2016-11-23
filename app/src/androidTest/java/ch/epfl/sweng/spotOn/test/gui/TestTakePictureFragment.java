@@ -25,6 +25,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -42,18 +43,7 @@ public class TestTakePictureFragment {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-
-            // destroy LocationTrackerSingleton if need be
-            if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.destroyInstance();
-            }
-
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-
-            LocalDatabase.initialize(mlt);
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-            User.initializeFromFb("","","test");
+            TestInitUtils.initContext();
         }
     };
     Uri mImageToUploadUri;

@@ -25,6 +25,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -55,12 +56,7 @@ public class ViewFullSizeImageActivityTest {
         location.setAltitude(0);
         location.setTime(System.currentTimeMillis());
 
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
-        ConcreteLocationTracker.setMockLocationTracker(mlt);
-        LocalDatabase.initialize(mlt);
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        TestInitUtils.initContext(location);
 
         po = PhotoObjectTestUtils.germaynDeryckePO();
         LocalDatabase.getInstance().addPhotoObject(po);

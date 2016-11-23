@@ -30,6 +30,7 @@ import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
@@ -46,18 +47,7 @@ public class TabActivityTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-
-            // destroy LocationTrackerSingleton if need be
-            if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.destroyInstance();
-            }
-
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-            LocalDatabase.initialize(mlt);
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-
-            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+            TestInitUtils.initContext();
         }
     };
 
