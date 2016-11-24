@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,12 +34,16 @@ public class DrawTextActivity extends AppCompatActivity{
 
     //Stores the string (limited to 30 characters) typed by user in the shared preferences
     public void sendTextToDraw(View view) {
+        Intent intent = new Intent();
         EditText inputText = (EditText) findViewById(R.id.textToDraw);
         String text = inputText.getText().toString();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        intent.putExtra("textToDraw", text);
+        setResult(RESULT_OK, intent);
+        finish();
+        /**SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor edit = preferences.edit();
         edit.putString("TD", text);
-        edit.apply();
+        edit.apply();*/
 
         super.onBackPressed();
     }
