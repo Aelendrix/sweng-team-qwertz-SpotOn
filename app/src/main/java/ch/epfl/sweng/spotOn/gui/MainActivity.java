@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
-import ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
@@ -47,7 +46,6 @@ public final class MainActivity extends AppCompatActivity {
     private ProfileTracker mFbProfileTracker;
 
     private final long TIME_BETWEEN_TWO_ALARM = 60 * 60 *1000;//one hour for now
-    private final long ONE_DAY = 24 * 60 * 60 * 1000;
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
@@ -78,11 +76,6 @@ public final class MainActivity extends AppCompatActivity {
         PendingIntent serverDataDeletionPendingIntent = PendingIntent.getBroadcast(this, 0, serverDataDeletionIntent, 0);
         serverDataDeletionAlarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), TIME_BETWEEN_TWO_ALARM, serverDataDeletionPendingIntent);
 
-        AlarmManager refreshRemainingPhotosAlarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent refreshRemainingPhotosIntent = new Intent(this, RefreshRemainingPhotosReceiver.class);
-        PendingIntent refreshRemainingPhotosPendingIntent = PendingIntent.getBroadcast(this, 0, refreshRemainingPhotosIntent, 0);
-        long nextMidnight = ((System.currentTimeMillis()/ONE_DAY) + 1)*ONE_DAY;
-        refreshRemainingPhotosAlarm.setRepeating(AlarmManager.RTC_WAKEUP, nextMidnight, ONE_DAY, refreshRemainingPhotosPendingIntent);
 
         setContentView(R.layout.activity_main);
 
