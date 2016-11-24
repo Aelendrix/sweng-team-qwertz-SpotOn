@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.EditPictureActivity;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -97,38 +98,6 @@ public class CameraTest{
         // onView(withId(R.id.sendButton)).perform(click());
         // should fix this
         // onView(withId(R.id.sendButton)).perform(click());
-    }
-
-   /* @Test
-    public void addTextToPhotoTest() {
-        if(!LocalDatabase.instanceExists()){
-            throw new AssertionError("LocalDatabase incorrectly initialized");
-        }
-
-        onView(withText("Camera")).perform(click());
-        onView(withText("Add text")).perform(click());
-        onView(withId(R.id.textToDraw)).perform(typeText("Hello")).perform(closeSoftKeyboard());
-        onView(withId(R.id.sendTextToDrawButton)).perform(click());
-        onView(withId(R.id.captureButton)).perform(click());
-
-        onView(withText("Add text")).perform(click());
-        onView(withId(R.id.textToDraw)).perform(typeText("How are you ?")).perform(closeSoftKeyboard());
-        onView(withId(R.id.sendTextToDrawButton)).perform(click());
-        onView(withId(R.id.captureButton)).perform(click());
-    }*/
-
-    @Test
-    public void editButtonsWorkFine() {
-        onView(withText("Camera")).perform(click());
-        onView(withId(R.id.editButton)).perform(click());
-
-       // onView(withId(R.id.rotateButton)).perform(click());
-
-        onView(withId(R.id.addTextButton)).perform(click());
-        onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
-        onView(withId(R.id.sendTextToDrawButton)).perform(click());
-
-        onView(withId(R.id.confirmButton)).perform(click());
     }
 
     private ActivityResult createImageCaptureStub() {
