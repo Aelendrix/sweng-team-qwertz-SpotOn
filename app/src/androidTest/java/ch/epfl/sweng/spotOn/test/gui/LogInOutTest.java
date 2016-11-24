@@ -87,6 +87,5 @@ public class LogInOutTest {
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);
-
     }
 }
