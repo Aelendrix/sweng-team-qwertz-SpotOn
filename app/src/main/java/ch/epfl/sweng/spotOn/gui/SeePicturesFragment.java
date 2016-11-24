@@ -47,6 +47,12 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
+            if(getActivity()==null){
+                throw new AssertionError("+");
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                     //create a new adapter and refresh the gridView
                     mImageAdapter= new ImageAdapter(mView.getContext());
                     mGridView.invalidateViews();
@@ -59,15 +65,16 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                         linearLayout.setVisibility(View.GONE);
                         mGridView.setVisibility(View.VISIBLE);
                     }
+                }
+            });
         }
-
     }
 
     /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked (method called by a OnClickListener in the gridview
      */
     public void displayFullsizeImage(int positionOfThumbnail){
         Intent displayFullsizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+//        displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullsizeImageIntent);
     }
 

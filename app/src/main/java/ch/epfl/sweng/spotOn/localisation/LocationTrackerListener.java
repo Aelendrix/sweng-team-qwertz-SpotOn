@@ -9,5 +9,5 @@ public abstract interface LocationTrackerListener {
 
     void updateLocation(Location newLocation);
 
-    void locationTimedOut();
+    void locationTimedOut(Location timedOutLocation);
 }

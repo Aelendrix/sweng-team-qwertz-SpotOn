@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +40,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageAdapter mRefToImageAdapter;
 
     private ImageView mViewToSet;
+    private int voteSum=0;
+    private TextView mTextView;
     private PhotoObject mDisplayedMedia;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
@@ -75,7 +78,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contains wanted picture");
+            throw new NoSuchElementException("Localdatabase does not contains wanted picture : "+wantedPicId);
         }
         mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
@@ -101,6 +104,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             });
         }
+        //upvotes
+        mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
+        voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
+        refreshVoteTextView(Integer.toString(voteSum));
 
         container.addView(viewLayout);
         return viewLayout;
@@ -111,6 +118,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
+    public void refreshVoteTextView(String s){
+        mTextView.setText(s);
+    }
 
     public void recordUpvote(View view){
         vote(1);
@@ -126,6 +136,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = User.getInstance().getUserId();
+            //fake vote method to have more responsive interface
+            if(vote==1&&!mDisplayedMedia.getUpvotersList().contains(userId)){
+                voteSum++;
+                if(mDisplayedMedia.getDownvotersList().contains(userId)){
+                    voteSum++;
+                }
+            }
+            if(vote==-1&&!mDisplayedMedia.getDownvotersList().contains(userId)){
+                voteSum--;
+                if(mDisplayedMedia.getUpvotersList().contains(userId)){
+                    voteSum--;
+                }
+            }
+            refreshVoteTextView(Integer.toString(voteSum));
+
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }

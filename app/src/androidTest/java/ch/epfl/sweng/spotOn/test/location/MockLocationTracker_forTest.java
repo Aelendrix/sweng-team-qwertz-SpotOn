@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn.test.util;
+package ch.epfl.sweng.spotOn.test.location;
 
 import android.location.Location;
 
@@ -24,7 +24,8 @@ public class MockLocationTracker_forTest implements LocationTracker {
         mockLocation=loc;
     }
     public MockLocationTracker_forTest(double latitude, double longitude){
-        Location newMockLocation = new Location("mockProvider");
+        Location newMockLocation = new Location("MLT_FT_mockProvider");
+        newMockLocation.setProvider("MLT_FT_mockProvider");
         newMockLocation.setLatitude(latitude);
         newMockLocation.setLongitude(longitude);
         newMockLocation.setAltitude(10);
@@ -33,11 +34,13 @@ public class MockLocationTracker_forTest implements LocationTracker {
         mockLocation=newMockLocation;
     }
     public MockLocationTracker_forTest(){
-        Location newMockLocation = new Location("mockProvider");
+        Location newMockLocation = new Location("MLT_FT_mockProvider");
+        newMockLocation.setProvider("MLT_FT_mockProvider");
         newMockLocation.setLatitude(46.52942111671832);
         newMockLocation.setLongitude(6.569539974900668);
         newMockLocation.setAltitude(10);
         newMockLocation.setAccuracy(new Float(0.90));
+        newMockLocation.setTime(new Date().getTime());
         mockLocation=newMockLocation;
     }
 
@@ -79,7 +82,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
             throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : listeners){
-                listener.locationTimedOut();
+                listener.locationTimedOut(mockLocation);
             }
         }else{
             for(LocationTrackerListener listener : listeners){

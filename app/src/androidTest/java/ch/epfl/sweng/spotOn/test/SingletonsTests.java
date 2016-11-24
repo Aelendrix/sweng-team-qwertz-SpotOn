@@ -45,6 +45,17 @@ public class SingletonsTests {
         }
     }
 
+    @Test (expected=IllegalArgumentException.class)
+    public void testDBIllegalArgumentDelete() throws IllegalArgumentException{
+        DatabaseRef.deletePhotoObjectFromDB(null);
+        throw new AssertionError("IllegalArgumentException not detected");
+
+    }
+    @Test(expected=IllegalArgumentException.class)
+    public void testStorageIllegalArgumentDelete() throws IllegalArgumentException{
+        StorageRef.deletePictureFromStorage(null);
+        throw new AssertionError("IllegalArgumentException not detected");
+    }
     @Test
     public void testStorageReferences(){
         if(!(StorageRef.getMediaDirectory().equals(FirebaseStorage.getInstance().getReference("Images")))){

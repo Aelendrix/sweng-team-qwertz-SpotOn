@@ -38,10 +38,9 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -56,12 +55,7 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-            ServicesChecker.initialize(mlt,LocalDatabase.getInstance());
-            User.initializeFromFb("firstname","lastname","test");
-            User user = User.getInstance();
+            TestInitUtils.initContext();
         }
     };
 
@@ -73,6 +67,7 @@ public class CameraTest{
 
     @Before
     public void stubCameraIntent() {
+        User user = User.getInstance();
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }
@@ -107,5 +102,13 @@ public class CameraTest{
         Intent resultData = new Intent();
         resultData.putExtras(bundle);
         return new ActivityResult(Activity.RESULT_OK, resultData);
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
     }
 }

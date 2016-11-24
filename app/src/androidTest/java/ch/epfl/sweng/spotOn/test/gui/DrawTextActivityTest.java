@@ -5,17 +5,15 @@ import android.preference.PreferenceManager;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -37,12 +35,7 @@ public class DrawTextActivityTest {
     public ActivityTestRule<TabActivity> mActivityRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-            ServicesChecker.initialize(mlt,LocalDatabase.getInstance());
-            User.initializeFromFb("firstname","lastname","test");
-            User user = User.getInstance();
+            TestInitUtils.initContext();
         }
     };
 
@@ -54,5 +47,13 @@ public class DrawTextActivityTest {
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivityRule.getActivity());
         assertThat(preferences.getString("TD", ""), is("Hello !"));
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("DrawTextActivity : concreteLocationTracker mock instance not deleted");
+        }
     }
 }

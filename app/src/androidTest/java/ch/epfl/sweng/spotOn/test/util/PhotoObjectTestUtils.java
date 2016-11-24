@@ -107,6 +107,12 @@ public class PhotoObjectTestUtils {
         return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757999, 6.569420238493999);
     }
 
+    public static PhotoObject veryOldTimestampPicture(){
+        Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(0), 46.520013, 6.566721);
+
+    }
+
 // HELPERS
 
     /* Retrieves a bitmap file from the internet since it's the easiest way to get one consistently across multiple computers */

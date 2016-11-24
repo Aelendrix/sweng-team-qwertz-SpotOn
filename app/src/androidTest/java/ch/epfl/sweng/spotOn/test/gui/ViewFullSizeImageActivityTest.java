@@ -2,7 +2,6 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.location.Location;
-import android.provider.ContactsContract;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -19,20 +18,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.gui.ImageAdapter;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -50,6 +45,8 @@ public class ViewFullSizeImageActivityTest {
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
     private Intent displayFullSizeImageIntent;
+    private PhotoObject po;
+    private PhotoObject secondPo;
 
     @Before
     public void initLocalDatabase() throws InterruptedException {
@@ -59,16 +56,15 @@ public class ViewFullSizeImageActivityTest {
         location.setAltitude(0);
         location.setTime(System.currentTimeMillis());
 
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
-        LocalDatabase.initialize(mlt);
+        TestInitUtils.initContext(location);
 
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
-
-        PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
+        po = PhotoObjectTestUtils.germaynDeryckePO();
         LocalDatabase.getInstance().addPhotoObject(po);
 
-        PhotoObject secondPo = PhotoObjectTestUtils.paulVanDykPO();
+        secondPo = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(secondPo);
+
+        LocalDatabase.getInstance().notifyListeners();
 
         displayFullSizeImageIntent = new Intent();
 
@@ -78,14 +74,22 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws Exception{
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
-        onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
-        onView(withId(R.id.downvoteButton)).perform(click());
-        Thread.sleep(500);
-        onView(withId(R.id.reportButton)).perform(click());
+            Thread.sleep(1000);
+            onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+            Thread.sleep(500);
+            onView(withId(R.id.upvoteButton)).perform(click());
+            Thread.sleep(500);
+            onView(withId(R.id.downvoteButton)).perform(click());
+            Thread.sleep(5000); // should permit to explore the "Karma" code
+            onView(withId(R.id.reportButton)).perform(click());
+            Thread.sleep(500);
+            /*
+            //come back an reperform the action with an already downloaded picture
+            mActivityTestRule.getActivity().onBackPressed();
+            Thread.sleep(500);
+            onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+            Thread.sleep(500);
+            */
     }
 
     @Test
@@ -115,5 +119,23 @@ public class ViewFullSizeImageActivityTest {
                     }
                 },
                 Press.FINGER);
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
+        // stuff below seems pretty unimportant to me
+        if(LocalDatabase.instanceExists()){
+            LocalDatabase ldb = LocalDatabase.getInstance();
+            if(po!=null){
+                ldb.removePhotoObject( po.getPictureId());
+            }
+            if(secondPo!=null){
+                ldb.removePhotoObject(secondPo.getPictureId());
+            }
+        }
     }
 }

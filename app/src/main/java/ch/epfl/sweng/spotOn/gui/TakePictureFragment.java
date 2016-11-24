@@ -102,6 +102,10 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    public void refreshTextToDraw(String s)
+    {
+        mTextToDraw = s;
+    }
     /**
      * Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored
