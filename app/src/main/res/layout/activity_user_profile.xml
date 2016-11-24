@@ -9,40 +9,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".gui.UserProfile">
+    tools:context=".gui.UserProfileActivity">
 
-    <TextView
-        android:text="@string/userProfileEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileImageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:id="@+id/profileEmailAddressTextView"
-        android:textStyle="normal|bold" />
 
-    <TextView
-        android:text="@string/userProfileGender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileEmailAddressTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:id="@+id/profileGenderTextView"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:text="@string/userProfileBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileGenderTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:id="@+id/profileBirthdayTextView"
-        android:textStyle="normal|bold" />
 
     <ImageView
         app:srcCompat="@drawable/img2"
@@ -90,30 +59,10 @@
         android:layout_marginTop="20dp" />
 
     <TextView
-        android:text="@string/userProfileNbVotes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileBirthdayTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:textStyle="normal|bold"
-        android:id="@+id/profileNbVotesTextView" />
-
-    <TextView
-        android:text="@string/userProfileNbPicturesTaken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileNbVotesTextView"
-        android:layout_marginTop="20dp"
-        android:textStyle="normal|bold"
-        android:id="@+id/profileNbPicturesTakenTextView" />
-
-    <TextView
         android:text="@string/userProfileKarma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileNbPicturesTakenTextView"
+        android:layout_below="@+id/profileLastNameTextView"
         android:layout_marginTop="20dp"
         android:textStyle="normal|bold"
         android:id="@+id/profileKarmaTextView" />
@@ -122,7 +71,7 @@
         android:text="@string/userProfileBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileNbPicturesTakenTextView"
+        android:layout_below="@+id/profileKarmaTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
         android:id="@+id/profileBackButton" />
