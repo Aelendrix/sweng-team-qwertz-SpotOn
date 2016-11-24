@@ -17,33 +17,39 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserListener;
 
 /**
  * Created by quentin on 17.11.16.
  */
 
-public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener{
+public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener, UserListener{
 
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
     private LocalDatabase mLocalDatabaseRef;
+    private User mUserRef;
 
     private boolean databaseConnectionStatus;
     private boolean validLocationStatus;
+    private boolean userIsLoggedIn;
 
     private List<ServicesCheckerListener> mListeners;
 
 
+
+
 // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationTracker ltref, LocalDatabase ldbref){
-        mSingleInstance = new ServicesChecker(ltref, ldbref);
+    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, User userRef){
+        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
         mSingleInstance.listenForDatabaseConnectivity();
-        ltref.addListener(mSingleInstance);
-        ldbref.addListener(mSingleInstance);
+        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
+        mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
     }
-    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref){
-        if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() ){
+    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, User userRef){
+        if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() || !userRef.instanceExists()){
             // test just in case
             throw new IllegalStateException("Must initialize LocationTracker and Localdatabase first");
         }
@@ -52,7 +58,12 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
         mLocationTrackerRef = ltref;
         databaseConnectionStatus = false;
         validLocationStatus = ltref.hasValidLocation();
+        mUserRef = userRef;
+        userIsLoggedIn = mUserRef.getIsRetrievedFromDB();
     }
+
+
+
 
 // PUBLIC METHODS
     public static  boolean instanceExists(){
@@ -72,7 +83,7 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     }
 
     public  boolean statusIsOk(){
-        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() || ! databaseConnectionStatus){
+        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() || ! databaseConnectionStatus || !userIsLoggedIn){
             return false;
         }else{
             return true;
@@ -87,9 +98,14 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
         if( !databaseConnectionStatus ){
             errorMessage += "Can't connect to the database\n";
         }
+        if( !userIsLoggedIn ){
+            errorMessage += "You're not logged in\n";
+        }
         errorMessage += "--  App may malfunction  --";
         return errorMessage;
     }
+
+
 
 
 // PRIVATE METHODS
@@ -118,12 +134,17 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     }
 
 
+
+
 // LISTENER PATTERN METHODS
     public void notifyListeners(){
         for( ServicesCheckerListener l : mListeners){
             l.servicesAvailabilityUpdated();
         }
     }
+
+
+
 
 // LISTENER METHODS -- todo
     @Override
@@ -135,17 +156,35 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     public void updateLocation(Location newLocation) {
         if( !validLocationStatus){            // change in services status
             Log.d("ServicesChecker","location status changed : listeners notified");
+            validLocationStatus = true;
             notifyListeners();
         }
-        validLocationStatus = true;
     }
 
     @Override
     public void locationTimedOut(Location old) {
         if(validLocationStatus){           // change in services status
             Log.d("ServicesChecker","location timedout : listeners notified");
+            validLocationStatus = false;
             notifyListeners();
         }
-        validLocationStatus = false;
+    }
+
+    @Override
+    public void userConnected() {
+        if( !userIsLoggedIn ){
+            Log.d("ServicesChecker","user logged in : listeners notified");
+            userIsLoggedIn=true;
+            notifyListeners();
+        }
+    }
+
+    @Override
+    public void userDisconnected() {
+        if( userIsLoggedIn ){
+            Log.d("ServicesChecker","user logged out : listeners notified");
+            userIsLoggedIn=false;
+            notifyListeners();
+        }
     }
 }

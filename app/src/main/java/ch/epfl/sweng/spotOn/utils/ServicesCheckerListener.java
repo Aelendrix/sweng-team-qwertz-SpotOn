@@ -6,5 +6,5 @@ package ch.epfl.sweng.spotOn.utils;
 
 public interface ServicesCheckerListener {
 
-    public void servicesAvailabilityUpdated();
+    void servicesAvailabilityUpdated();
 }

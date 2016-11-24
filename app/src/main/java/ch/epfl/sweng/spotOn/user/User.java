@@ -2,6 +2,9 @@ package ch.epfl.sweng.spotOn.user;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User class as a singleton so we have only one instance of this object
  */
@@ -21,6 +24,10 @@ public class User {
 
     private static boolean mIsRetrievedFromDB;
 
+    private List<UserListener> listeners;
+    private final static int USER_CONNECTED = 1;
+    private final static int USER_DISCONNECTED = 0;
+
     private User(String firstName, String lastName, String userId){
         mFirstName = firstName;
         mLastName = lastName;
@@ -28,18 +35,22 @@ public class User {
         mKarma = INITIAL_KARMA;
         mRemainingPhotos = computeMaxPhotoInDay(mKarma);
         mIsRetrievedFromDB = false;
+        listeners = new ArrayList<>();
     }
 
-    public void destroy(){
+    public static void destroy(){
         mInstance = null;
+        mInstance.notifyListeners(USER_DISCONNECTED);
+    }
+
+    public static boolean instanceExists(){
+        return mInstance!=null;
     }
 
     public static User getInstance(){
-        if(mInstance == null)
-        {
+        if(mInstance == null) {
             throw new IllegalStateException("User not initialized");
-        }
-        else {
+        } else {
             return mInstance;
         }
     }
@@ -50,8 +61,8 @@ public class User {
         if(mInstance == null){
             mInstance = new User(firstName,lastName, userId);
             mInstance.getUserAttributesFromDB();
-        }
-        else{
+            mInstance.notifyListeners(USER_CONNECTED);
+        }else{
             Log.e("User","someone tried to create a new user, but an instance already exists");
         }
     }
@@ -74,7 +85,27 @@ public class User {
 
 
 
-    //PUBLIC GETTERS
+// LISTENER - RELATED METHODS
+    private void notifyListeners(int userState){
+        switch(userState){
+            case USER_CONNECTED : {
+                for (UserListener l : listeners) {
+                    l.userConnected();
+                }
+            }
+            case USER_DISCONNECTED : {
+                for (UserListener l : listeners) {
+                    l.userDisconnected();
+                }
+            }
+            default : throw new IllegalArgumentException("wrong user state");
+        }
+    }
+
+
+
+
+//PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
@@ -83,10 +114,11 @@ public class User {
     public boolean getIsRetrievedFromDB() { return mIsRetrievedFromDB; }
 
 
-    //PUBLIC SETTERS
+//PUBLIC SETTERS
     public void setKarma(long karma){ mKarma = karma; }
     public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
     public void setIsRetrievedFromDB(boolean retrievedFromDB) {
         mIsRetrievedFromDB = retrievedFromDB;
+        mInstance.notifyListeners(USER_CONNECTED);
     }
 }
