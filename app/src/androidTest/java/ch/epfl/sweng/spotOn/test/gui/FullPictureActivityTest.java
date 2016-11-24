@@ -42,21 +42,18 @@ public class FullPictureActivityTest {
 
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class,true,false){
-        @Override
-        public void beforeActivityLaunched(){
-            Location location = new Location("testLocationProvider");
-            location.setLatitude(46.52890355757567);
-            location.setLongitude(6.569420238493345);
-            location.setAltitude(0);
-            location.setTime(System.currentTimeMillis());
-
-            TestInitUtils.initContext(location);
-        }
-    };
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class,true,false);
 
     @Before
     public void initLocalDatabase(){
+
+        Location location = new Location("testLocationProvider");
+        location.setLatitude(46.52890355757567);
+        location.setLongitude(6.569420238493345);
+        location.setAltitude(0);
+        location.setTime(System.currentTimeMillis());
+
+        TestInitUtils.initContext(location);
 
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(po);
