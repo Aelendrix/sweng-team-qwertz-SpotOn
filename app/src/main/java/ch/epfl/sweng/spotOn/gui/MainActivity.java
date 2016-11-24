@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -141,17 +142,23 @@ public final class MainActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void goToTabActivity() {
-        // create the user
-        //UserManager user = UserManager.getInstance();
-        UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(),
-                mFbProfile.getId());
+
+    public void goToTabActivityNotLoggedIn(View view){
+        goToTabActivity(false);
+    }
+
+    public void goToTabActivity(boolean loggedIn) {
+        if(loggedIn) {
+            UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(),
+                    mFbProfile.getId());
+        }else{
+            UserManager.getInstance().setEmptyUser();
+        }
 
         //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
-
 
 
     /* Method to get the Facebook profile of the user */
@@ -165,7 +172,7 @@ public final class MainActivity extends AppCompatActivity {
                     mFbProfile = newProfile;
 
                     //login done so call to goToTabActivity
-                    goToTabActivity();
+                    goToTabActivity(true);
 
                     mFbProfileTracker.stopTracking();
                 }
@@ -176,7 +183,7 @@ public final class MainActivity extends AppCompatActivity {
             mFbProfile = Profile.getCurrentProfile();
 
             //login done so call to goToTabActivity
-            goToTabActivity();
+            goToTabActivity(true);
 
         }
     }

@@ -24,6 +24,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.UserManager;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by Alexis Dewaele on 08/11/2016.
@@ -147,7 +148,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             refreshVoteTextView(Integer.toString(voteSum));
 
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
@@ -158,7 +159,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mDisplayedMedia.processReport(userId);
-            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 }

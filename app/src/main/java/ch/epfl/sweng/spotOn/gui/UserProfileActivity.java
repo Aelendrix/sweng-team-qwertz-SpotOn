@@ -38,10 +38,6 @@ public class UserProfileActivity extends AppCompatActivity {
             mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
 
             Context context = getApplicationContext();
-            String toastMessage = "Please wait a little bit while your info are updating";
-
-            Toast toast = Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT);
-            toast.show();
 
             mFirstNameTextView.setText(mFirstNameTextView.getText() + " " + mUser.getFirstName());
             mLastNameTextView.setText(mLastNameTextView.getText() + " " + mUser.getLastName());

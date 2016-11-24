@@ -13,11 +13,6 @@
     <string name="pictureTaken">Picture Taken</string>
     <string name="rotate">Rotate</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
-    <!-- <string name="queryDatabase">Query Database</string>
-     <string name="title_activity_DBquery">Query Database</string>
-     <string name="launchQueryButton">Search database</string>
-     <string name="queryTextFieldHint">Enter a key to lookup</string>
-     <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Up !!</string>
     <string name="downvoteButtonText">Down</string>
     <string name="reportButton">Report</string>
@@ -45,6 +40,9 @@
     <string name="addTextButton">Add text</string>
     <string name="okButton">OK !</string>
     <string name="textToBeDrawn"> Text to be drawn</string>
+
+
+    <string name="dontLogginButton"> I don\'t want to log in </string>
 
 
 </resources>

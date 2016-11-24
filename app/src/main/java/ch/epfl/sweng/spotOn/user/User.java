@@ -14,6 +14,7 @@ public interface User {
 // PUBLIC METHODS
     boolean isLoggedIn();
     void removeManager();
+    void decrementRemainingphotos();
 
 
 //PUBLIC GETTERS

@@ -15,6 +15,11 @@ public class EmptyUser implements User {
     public void removeManager() {
         unsupported();
     }
+
+    @Override
+    public void decrementRemainingphotos() {
+        throw new UnsupportedOperationException();
+    }
     @Override
     public String getFirstName() {
         throw new UnsupportedOperationException();

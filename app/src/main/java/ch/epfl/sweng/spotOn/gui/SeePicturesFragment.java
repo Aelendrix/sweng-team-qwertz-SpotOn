@@ -48,25 +48,26 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
             if(getActivity()==null){
-                throw new AssertionError("+");
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //create a new adapter and refresh the gridView
-                    mImageAdapter= new ImageAdapter(mView.getContext());
-                    mGridView.invalidateViews();
-                    mGridView.setAdapter(mImageAdapter);
-                    LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
-                    if(mImageAdapter.getCount()==0){
-                        mGridView.setVisibility(View.GONE);
-                        linearLayout.setVisibility(View.VISIBLE);
-                    }else{
-                        linearLayout.setVisibility(View.GONE);
-                        mGridView.setVisibility(View.VISIBLE);
+                Log.d("SeePicturesFragment","Fragment is in background, ");
+                mImageAdapter= new ImageAdapter(mView.getContext());
+            }else {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //create a new adapter and refresh the gridView
+                        mGridView.invalidateViews();
+                        mGridView.setAdapter(mImageAdapter);
+                        LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                        if (mImageAdapter.getCount() == 0) {
+                            mGridView.setVisibility(View.GONE);
+                            linearLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            linearLayout.setVisibility(View.GONE);
+                            mGridView.setVisibility(View.VISIBLE);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 

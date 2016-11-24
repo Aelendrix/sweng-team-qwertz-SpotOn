@@ -56,9 +56,12 @@ public class RealUser implements User {
         mManager = null;
     }
 
+    public void decrementRemainingphotos() {
+        DatabaseRef.getUsersDirectory().child(mUserId).child("RemainingPhotos").setValue(mRemainingPhotos-1);
+    }
 
 
-// STATIC HELPERS
+    // STATIC HELPERS
     public static long computeMaxPhotoInDay(long karma){
         int computed = Math.round((float)Math.sqrt(karma)/10);
         return Math.min(Math.max(computed, User.MIN_POST_PER_DAY), User.MAX_POST_PER_DAY);

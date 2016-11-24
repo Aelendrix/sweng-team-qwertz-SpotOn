@@ -73,6 +73,13 @@ public class UserManager {
         listeners.add(l);
     }
 
+    public void decrementUsersRemainingPhotos(){
+        if( mUser.isLoggedIn() ){
+            throw new IllegalStateException("User not logged in");
+        }
+        mUser.decrementRemainingphotos();
+    }
+
 
 
 

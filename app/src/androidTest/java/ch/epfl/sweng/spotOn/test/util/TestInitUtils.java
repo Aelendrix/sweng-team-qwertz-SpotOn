@@ -26,8 +26,9 @@ public class TestInitUtils {
         ConcreteLocationTracker.setMockLocationTracker(mlt);
 
         LocalDatabase.initialize(mlt);
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        UserManager.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        UserManager.initialize();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContext(){   // same with MockLocationTracker default location
@@ -40,8 +41,9 @@ public class TestInitUtils {
         ConcreteLocationTracker.setMockLocationTracker(mlt);
 
         LocalDatabase.initialize(mlt);
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        UserManager.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        UserManager.initialize();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContextNoUser(Location location){
@@ -54,6 +56,7 @@ public class TestInitUtils {
         ConcreteLocationTracker.setMockLocationTracker(mlt);
 
         LocalDatabase.initialize(mlt);
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+        UserManager.initialize();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
     }
 }

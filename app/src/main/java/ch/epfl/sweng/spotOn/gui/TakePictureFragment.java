@@ -54,7 +54,9 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -65,8 +67,8 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = UserManager.getInstance().getUser().getUserId();
-    private long mRemainingPhotos = UserManager.getInstance().getUser().getRemainingPhotos();
+//    private final String USER_ID = UserManager.getInstance().getUser().getUserId();
+//    private long mRemainingPhotos = UserManager.getInstance().getUser().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -80,7 +82,7 @@ public class TakePictureFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
         mPic = (ImageView) view.findViewById(R.id.image_view);
-        getRemainingPhotoInDay();
+//        getRemainingPhotoInDay();
 
         return view;
     }
@@ -91,19 +93,22 @@ public class TakePictureFragment extends Fragment {
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
     public void dispatchTakePictureIntent(View view){
-        SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        refreshTextToDraw(bb.getString("TD", ""));
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent("You need to be logged in for that", Toast.LENGTH_LONG);
+        }else {
+            SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+            refreshTextToDraw(bb.getString("TD", ""));
 
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            invokeCamera();
-        } else {
-            String[] permissionRequested = {Manifest.permission.CAMERA};
-            ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                invokeCamera();
+            } else {
+                String[] permissionRequested = {Manifest.permission.CAMERA};
+                ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
-    public void refreshTextToDraw(String s)
-    {
+    public void refreshTextToDraw(String s) {
         mTextToDraw = s;
     }
     /**
@@ -127,6 +132,8 @@ public class TakePictureFragment extends Fragment {
             mActualPhotoObject = createPhotoObject(rotatedBitmap);
             mActualPhotoObject.setSentToServerStatus(alreadySentToServer);
             mActualPhotoObject.setStoredInternallyStatus(alreadyStoredInternally);
+        }else{
+            ToastProvider.printOverCurrent("There's no picture to rotate", Toast.LENGTH_SHORT);
         }
     }
 
@@ -139,13 +146,12 @@ public class TakePictureFragment extends Fragment {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
-                Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
-
+                ToastProvider.printOverCurrent("Picture stored in your gallery", Toast.LENGTH_SHORT);
             } else {
-                Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_SHORT);
             }
         } else {
-            Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("Rotate Button : Take a picture first !", Toast.LENGTH_SHORT);
         }
     }
 
@@ -153,35 +159,40 @@ public class TakePictureFragment extends Fragment {
      * Uploads picture to our database/file server
      */
     public void sendPictureToServer(View view){
-        if(mActualPhotoObject != null){
-            if(!mActualPhotoObject.isStoredInServer()){
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent("You need to login to do that", Toast.LENGTH_LONG);
+        }else {
+            final long remainingPhotos = UserManager.getInstance().getUser().getRemainingPhotos();
+            final String userId = UserManager.getInstance().getUser().getUserId();
 
-                if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
-                    --mRemainingPhotos;
-                    UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
-                    UserManager.getInstance().getUser().setRemainingPhotos(mRemainingPhotos);
-                    mActualPhotoObject.upload(true, new OnCompleteListener() {
-                        @Override
-                        public void onComplete(@NonNull Task task) {
-                            if(task.getException()!=null){
-                                ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
-                            }else{
-                                Log.d("TakePictureActivity","uploaded picture");
-                                ToastProvider.printOverCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
+            if (mActualPhotoObject != null) {
+                if (!mActualPhotoObject.isStoredInServer()) {
+
+                    if (remainingPhotos > 0 || userId.equals("test")) {
+                        UserManager.getInstance().decrementUsersRemainingPhotos();
+                        mActualPhotoObject.upload(true, new OnCompleteListener() {
+                            @Override
+                            public void onComplete(@NonNull Task task) {
+                                if (task.getException() != null) {
+                                    ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                                } else {
+                                    Log.d("TakePictureActivity", "uploaded picture");
+                                    ToastProvider.printOverCurrent("Your pic is online !\nYou can post " + remainingPhotos + " more photos today!", Toast.LENGTH_LONG);
+                                }
                             }
-                        }
-                    });
-                    mActualPhotoObject.setSentToServerStatus(true);
-                } else {
-                    ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
-                    Log.d("TakePictureFragment","UserManager "+USER_ID+" can't post photo anymore");
-                }
+                        });
+                        mActualPhotoObject.setSentToServerStatus(true);
+                    } else {
+                        ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
+                        Log.d("TakePictureFragment", "UserManager " + userId + " can't post photo anymore");
+                    }
 
+                } else {
+                    Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
+                }
             } else {
-                Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
+                Toast.makeText(this.getActivity(), "Send Button : Take a picture first", Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -313,6 +324,7 @@ public class TakePictureFragment extends Fragment {
      * @return a PhotoObject instance
      */
     private PhotoObject createPhotoObject(Bitmap imageBitmap){
+        String USER_ID = UserManager.getInstance().getUser().getUserId();
         //Get the creation date for the timestamp
         java.util.Date date= new java.util.Date();
         Timestamp created = new Timestamp(date.getTime());
@@ -381,21 +393,16 @@ public class TakePictureFragment extends Fragment {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
             } else {
-                // Toast.makeText(getContext(),"Error while capturing Image: HQPicture null",Toast.LENGTH_LONG).show();
                 ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
             }
         }
         else {
-            // Toast.makeText(getContext(),"Error while capturing Image: Uri null",Toast.LENGTH_LONG).show();
             ToastProvider.printOverCurrent("Internal error while creating your post : URI null", Toast.LENGTH_SHORT);
         }
     }
 
-    /**
-     * Method that will store the image in the Pictures file in the internal storage
-     *
-     * @param photo a PhotoObject to get its full size picture to store in Pictures file
-     */
+    /** Method that will store the image in the Pictures file in the internal storage
+     * @param photo a PhotoObject to get its full size picture to store in Pictures file   */
     private void storeImage(PhotoObject photo){
         if(isStoragePermissionGranted()) {
             File pictureFile = getOutputMediaFile(photo);
@@ -428,11 +435,8 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
-    /**
-     * Create a file where the pictures will be stored in the Pictures directory
-     *
-     * @return the file where pictures will be stored
-     */
+    /** Create a file where the pictures will be stored in the Pictures directory
+     * @return the file where pictures will be stored   */
     private File getOutputMediaFile(PhotoObject photo){
         File pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/Pictures");
@@ -450,34 +454,38 @@ public class TakePictureFragment extends Fragment {
     }
 
 
-    private void getRemainingPhotoInDay(){
-
-        UserRef.orderByChild("userId").equalTo(USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    if(USER_ID == null){
-                        Log.e("TakePictureFragment","getRemainingPhotoInDay: USER_ID is null");
-                    }
-                    else {
-                        if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
-                            mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
-                            UserManager.getInstance().getUser().setRemainingPhotos(mRemainingPhotos);
-                        }
-                    }
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+// should be handled by UserManager
+//    private void getRemainingPhotoInDay(){
+//        UserRef.orderByChild("userId").equalTo(USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()) {
+//                    if(USER_ID == null){
+//                        Log.e("TakePictureFragment","getRemainingPhotoInDay: USER_ID is null");
+//                    }
+//                    else {
+//                        if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
+//                            mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
+//                            UserManager.getInstance().getUser().setRemainingPhotos(mRemainingPhotos);
+//                        }
+//                    }
+//                }
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
 
     public void goToDrawTextActivity(View view) {
-        Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);
-        startActivity(intent);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent("You need to login to do that", Toast.LENGTH_LONG);
+        }else {
+            Intent intent = new Intent(this.getActivity(), DrawTextActivity.class);
+            startActivity(intent);
+        }
     }
 }
