@@ -12,6 +12,7 @@ import android.test.AndroidTestCase;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,14 +41,14 @@ public class LocationTrackerTest{
     private Object lock = new Object();
 
 
-//    @Rule
+    @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
-    @Override
-    public void beforeActivityLaunched(){
-        initFieldLocations();
-        TestInitUtils.initContext();
-    }
-};
+        @Override
+        public void beforeActivityLaunched(){
+            initFieldLocations();
+            TestInitUtils.initContext();
+        }
+    };
 
 
     @Test
@@ -74,7 +75,7 @@ public class LocationTrackerTest{
     @Test
     public void testLatLong(){
         if( !ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-            throw new AssertionError("LocationTrackerTest : testLatLong");
+            throw new AssertionError("LocationTrackerTest : testLatLong : No ConcreteLocationTracker instance ("+!ConcreteLocationTracker.instanceExists()+") or no valid location ("+!ConcreteLocationTracker.getInstance().hasValidLocation()+")");
         }
 
         Location currentLoc = ConcreteLocationTracker.getInstance().getLocation();
