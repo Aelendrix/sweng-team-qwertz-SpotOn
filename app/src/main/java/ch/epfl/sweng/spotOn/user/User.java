@@ -85,12 +85,12 @@ public class User {
     }
 
 
-    public long computeMaxPhotoInDay(){
+    private long computeMaxPhotoInDay(){
         int computed = Math.round((float)Math.sqrt(mKarma)/10);
         return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
     }
 
-    public void updatePhotosTaken(){
+    private void updatePhotosTaken(){
         long limitTime = System.currentTimeMillis() - ONE_DAY;
         if(mPhotosTaken != null) {
             Set<String> ids = mPhotosTaken.keySet();
