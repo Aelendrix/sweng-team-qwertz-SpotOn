@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -89,26 +90,22 @@ public class LocalDatabase implements LocationTrackerListener{
     public void addPhotoObject(PhotoObject photo){
         if(!mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
-            Location photoLocation = new Location("LocalDatabase_emptyProvider");
-            photoLocation.setLatitude(photo.getLatitude());
-            photoLocation.setLongitude(photo.getLongitude());
-            if(refToLocationTracker.getLocation().distanceTo(photoLocation) < photo.getRadius()) {
-                mViewableMediaDataMap.put(photo.getPictureId(), photo);
-            }
+            addToViewableMediaIfWithinViewableRange(photo);
+            notifyListeners();
         }
     }
 
     /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS
      *  of the current cached location
      */
-    public void addIfWithinFetchRadius(PhotoObject newObject, Location l) {
-        if(l == null){
+    public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
+        if(databaseCachedLocation == null){
             throw new IllegalStateException("caller function should ensure we have a valid location first");
         }
-        if (Math.abs(newObject.getLatitude() - l.getLatitude()) < FETCH_RADIUS
-                && Math.abs(newObject.getLongitude() - l.getLongitude()) < FETCH_RADIUS) {
+        if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
+                && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
             if (!mediaDataMap.containsKey(newObject.getPictureId())) {
-                mediaDataMap.put(newObject.getPictureId(), newObject);
+                addPhotoObject(newObject);
             }
         }
     }
@@ -145,6 +142,13 @@ public class LocalDatabase implements LocationTrackerListener{
 
 
 // PRIVATE METHODS
+    /** adds the media to the list of viewable media if within viewable range */
+    private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
+        if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
+            mViewableMediaDataMap.put(po.getPictureId(), po);
+        }
+    }
+
     /** notifies all listeners of a change of the database content */
     private void notifyListeners(){
         if( ! mListeners.isEmpty() ){

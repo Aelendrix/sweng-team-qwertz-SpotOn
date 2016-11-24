@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.media;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -287,6 +288,12 @@ public class PhotoObject {
         }
     }
 
+    public Location obtainLocation(){
+        Location l = new Location("PhotoObject_Location_generator");
+        l.setLatitude(mLatitude);
+        l.setLongitude(mLongitude);
+        return l;
+    }
 
 
 
