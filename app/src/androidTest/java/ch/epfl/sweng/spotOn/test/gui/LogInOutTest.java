@@ -79,8 +79,11 @@ public class LogInOutTest {
         mDevice.wait(Until.hasObject(By.textContains("Ok")),6000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
+        //wait to come back to mainActivity
         mDevice.waitForWindowUpdate(null,10000);
-        Thread.sleep(5000);
+        //wait the mainActivity to start TabActivity
+        mDevice.waitForWindowUpdate(null,10000);
+        Thread.sleep(2000);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);
