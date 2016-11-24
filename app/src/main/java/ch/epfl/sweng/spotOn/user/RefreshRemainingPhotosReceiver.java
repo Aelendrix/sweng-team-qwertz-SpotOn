@@ -22,41 +22,40 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
 
-    private final String userID = UserId.getInstance().getUserId();
+    private final String userID = User.getInstance().getUserId();
     private final String KARMA = "karma";
     private final DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-            Query query = DBRef;
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            long karma = User.INITIAL_KARMA;
-                            String user = ((String)child.child("userId").getValue());
-                            if (child.child(KARMA).getValue() != null) {
-                                karma = ((long) child.child(KARMA).getValue());
+        Query query = DBRef;
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        long karma = User.INITIAL_KARMA;
+                        String retrievedUserId = ((String)child.child("userId").getValue());
+                        if (child.child(KARMA).getValue() != null) {
+                            karma = ((long) child.child(KARMA).getValue());
 
-                            } else {
-                                DBRef.child(user).child(KARMA).setValue(karma);
-                            }
-                            long remainingPhotos = User.computeMaxPhotoInDay(karma);
-                            DBRef.child(user).child("RemainingPhotos").setValue(remainingPhotos);
-                            if(user.equals(userID)) {
-                                TakePictureFragment.setRemainingPhotos(remainingPhotos);
-                            }
+                        } else {
+                            DBRef.child(retrievedUserId).child(KARMA).setValue(karma);
+                        }
+                        long remainingPhotos = User.getInstance().computeMaxPhotoInDay(karma);
+                        DBRef.child(retrievedUserId).child("RemainingPhotos").setValue(remainingPhotos);
+                        if(retrievedUserId.equals(userID)) {
+                            User.getInstance().setRemainingPhotos(remainingPhotos);
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
-
+            }
+        });
     }
 }

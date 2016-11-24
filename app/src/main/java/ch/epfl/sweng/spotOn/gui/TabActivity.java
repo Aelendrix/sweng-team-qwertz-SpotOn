@@ -11,17 +11,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 
-import java.util.ArrayList;
-
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
+
+import ch.epfl.sweng.spotOn.user.User;
+
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
-public class TabActivity extends AppCompatActivity implements TabHost.OnTabChangeListener {
+public class TabActivity extends AppCompatActivity implements ServicesCheckerListener{
 
 
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
@@ -35,6 +39,8 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
+        ToastProvider.update(getApplicationContext());
+
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,23 +51,13 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setupWithViewPager(viewPager);
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout){
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
+            public void onPageSelected(int pageNb) {
+                checkAndDisplayServicesError();
             }
         });
+
     }
 
 
@@ -70,6 +66,7 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
      */
     @Override
     public void onBackPressed() {
+        ToastProvider.printOverCurrent("THERE IS NO ESCAPE !", Toast.LENGTH_SHORT);
     }
 
     public void dispatchTakePictureIntent(View view) {
@@ -78,6 +75,10 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
 
     public void storePictureOnInternalStorage(View view) {
         mCameraFragment.storePictureOnInternalStorage(view);
+    }
+
+    public void sendPictureToServer(View view){
+        mCameraFragment.sendPictureToServer(view);
     }
 
     /*
@@ -113,6 +114,8 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         switch (item.getItemId()) {
             case R.id.log_out:
                 disconnectFacebook();
+                User user = User.getInstance();
+                user.destroy();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
@@ -136,12 +139,6 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
         }
     }
 
-
-    @Override
-    public void onTabChanged(String tabId) {
-        // needed for my sprint 7 (quentin)
-    }
-
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
     }
@@ -149,5 +146,25 @@ public class TabActivity extends AppCompatActivity implements TabHost.OnTabChang
     public void goToDrawTextActivity(View view) {
         mCameraFragment.goToDrawTextActivity(view);
     }
+
+// PRIVATE HELPERS
+    /** displays the error message if need be    */
+    public void checkAndDisplayServicesError(){
+        if( ! ServicesChecker.getInstance().statusIsOk() ){
+            String errorMessage = ServicesChecker.getInstance().provideErrorMessage();
+            if( errorMessage.isEmpty() ){
+                throw new IllegalStateException("incoherent state : error message can't be empty if status isn't good");
+            }
+            ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
+        }
+    }
+
+
+// LISTENER METHODS
+    @Override
+    public void servicesAvailabilityUpdated() {
+        checkAndDisplayServicesError();
+    }
+
 
 }

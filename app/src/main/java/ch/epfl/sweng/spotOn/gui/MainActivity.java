@@ -32,8 +32,9 @@ import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceive
 import ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
 /**
@@ -59,6 +60,8 @@ public final class MainActivity extends AppCompatActivity {
         Log.d("MainActivity","initializing singletons");
         ConcreteLocationTracker.initialize(getApplicationContext());
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+        ToastProvider.update(getApplicationContext());
         Log.d("MainActivity","done initializing");
 
         // Initialize the SDK before executing any other operations,
@@ -87,7 +90,6 @@ public final class MainActivity extends AppCompatActivity {
 
         // get the mainLoginButton (facebook login button)
         LoginButton mainLoginButton = (LoginButton) findViewById(R.id.mainLoginButton);
-        //mainLoginButton.setReadPermissions("email","birthday","gender");
         mainLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             // Process depending on the result of the authentication
             @Override
@@ -145,7 +147,9 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToTabActivity() {
         // create the user
-        User user = new User(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
+        //User user = User.getInstance();
+        User.initializeFromFb(mFbProfile.getFirstName(), mFbProfile.getLastName(),
+                mFbProfile.getId());
 
         //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);

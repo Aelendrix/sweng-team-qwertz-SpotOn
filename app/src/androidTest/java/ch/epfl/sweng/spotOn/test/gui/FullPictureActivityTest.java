@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.ViewFullsizeImageActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -20,10 +21,12 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.user.User;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
 
 /**
  * Created by nico on 09.11.16.
@@ -50,6 +53,8 @@ public class FullPictureActivityTest {
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(location);
         LocalDatabase.initialize(mlt);
 
+        User.initializeFromFb("","","test");
+
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         pictureID = po.getPictureId();
         po.upload();
@@ -64,10 +69,9 @@ public class FullPictureActivityTest {
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(displayFullsizeImageIntent);
         Thread.sleep(1000);
-        onView(withText("Up !!")).perform(click());
+        onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Down")).perform(click());
-
+        onView(withId(R.id.downvoteButton)).perform(click());
         Thread.sleep(10000);
     }
 

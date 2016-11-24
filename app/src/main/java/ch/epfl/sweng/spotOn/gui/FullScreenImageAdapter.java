@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +25,7 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.user.UserId;
+import ch.epfl.sweng.spotOn.user.User;
 
 /**
  * Created by Alexis Dewaele on 08/11/2016.
@@ -75,9 +72,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
         Intent displayImageIntent = mActivity.getIntent();
         final String wantedImagePictureId = displayImageIntent.getExtras().getString(WANTED_IMAGE_PICTUREID);
 
-        if(!LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
-            Log.d("Error", "ViewFullsizeImageActivity : LocalDatabase has no matching object for ID "+ wantedImagePictureId);
+        if(!mPhotoMap.containsKey(wantedImagePictureId)){
+            Log.d("ViewFullsizeImageAct.", "Error : local copy of database has no matching object for ID "+ wantedImagePictureId);
             mViewToSet.setImageResource(RESOURCE_IMAGE_FAILURE);
+            if(!LocalDatabase.getInstance().hasKey(wantedImagePictureId)){
+                Log.d("ViewFullsizeImageAct.", "Localdatabase does, though");
+                throw new IllegalStateException("Wanted object not in local copy of database (but exists in localdatabase)");
+            }
+            throw new IllegalStateException("Wanted object not in local copy of database (and not in localdatabase)");
         }else {
             mDisplayedMedia = mPhotos.get(position);
             Bitmap imageToDisplay = null;
@@ -107,7 +109,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     /** Factory method that returns a listener that
      * sets the imageView with the result of its query
-     * or deals with errorsif need be
+     * or deals with errors if need be
      */
     private OnCompleteListener<byte[]> newImageViewSetterListener(){
         return new OnCompleteListener<byte[]>() {
@@ -133,12 +135,24 @@ public class FullScreenImageAdapter extends PagerAdapter {
         vote(-1);
     }
 
+
     private void vote(int vote){
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
-            String userId = UserId.getInstance().getUserId();
+            String userId = User.getInstance().getUserId();
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
+            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void reportOffensivePicture(View view){
+        if(mDisplayedMedia == null) {
+            Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
+        }else{
+            String userId = User.getInstance().getUserId();
+            String toastMessage = mDisplayedMedia.processReport(userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
     }

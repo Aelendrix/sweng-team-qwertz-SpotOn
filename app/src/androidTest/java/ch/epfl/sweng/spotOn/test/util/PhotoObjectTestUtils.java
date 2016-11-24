@@ -2,14 +2,6 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import ch.epfl.sweng.spotOn.BitmapUtils;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
@@ -58,9 +50,12 @@ public class PhotoObjectTestUtils {
     }
 
     public static PhotoObjectStoredInDatabase convertToStoredInDatabase(PhotoObject po){
-        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(), BitmapUtils.encodeBitmapAsString(po.getThumbnail()),
-                po.getPictureId(), po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(), po.getLatitude(), po.getLongitude(),
-                po.getUpvotes(), po.getDownvotes(), po.getUpvotersList(), po.getDownvotersList());
+        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(),
+                BitmapUtils.encodeBitmapAsString(po.getThumbnail()), po.getPictureId(),
+                po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(),
+                po.getLatitude(), po.getLongitude(), po.getUpvotes(), po.getDownvotes(),
+                po.getReports(), po.getUpvotersList(), po.getDownvotersList(),
+                po.getReportersList());
         return posd;
     }
 

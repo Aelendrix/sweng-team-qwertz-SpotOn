@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.singletonReferences;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,7 +17,7 @@ import java.io.IOException;
 
 public class StorageRef {
 
-    private final static String mMediaDirectoryString = "Images";;
+    private final static String mMediaDirectoryString = "Images";
     private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
 
@@ -26,7 +27,13 @@ public class StorageRef {
     }
 
     public static void deletePictureFromStorage(String pictureID){
-        mMediaDirectory.child(pictureID + ".jpg").delete();
+        if(pictureID == null)
+        {
+            throw new IllegalArgumentException("Error in StorageRef: deletePictureFromStorage, pictureId is null");
+        }
+        else {
+            mMediaDirectory.child(pictureID + ".jpg").delete();
+        }
     }
 
 // CONSTUCTOR FOR SINGLETON

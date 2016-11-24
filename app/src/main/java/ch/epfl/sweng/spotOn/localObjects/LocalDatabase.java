@@ -10,11 +10,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -27,16 +29,19 @@ public class LocalDatabase implements LocationTrackerListener{
     private static LocalDatabase mSingleInstance = null;
 
     private Map<String,PhotoObject> mediaDataMap;
-    private Map<String, PhotoObject> mViewableMediaDataMap;
+    private static Map<String, PhotoObject> mViewableMediaDataMap;
     private List<LocalDatabaseListener> mListeners;
 
     private Location mCachedLocation;
+    private long mLastRefreshDate;
 
     private LocationTracker refToLocationTracker;
 
-    // these settings help to avoid unnecessary refreshes of the database due to location changes, which are costly in bandwidth, ect
-    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE = 1*1000; // refresh the localdatabase at most every 1 seconds on position changes
-    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 2*60*1000; // refresh at lest every 2 minutes
+    // these settings help to avoid unnecessary refreshes of the database
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE = 1500; // refresh the localdatabase at most every 1.5 seconds
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 5*1000; // refresh the localdatabase at most every 3 seconds
+
+    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 5*60*1000; // refresh at least every 5 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
     private final static double FETCH_RADIUS = 0.1; // the radius in which we fetch pictures, in degrees
@@ -55,6 +60,7 @@ public class LocalDatabase implements LocationTrackerListener{
         mListeners = new ArrayList<>();
         mViewableMediaDataMap = new HashMap<>();
         refToLocationTracker = l;
+        mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
     }
 
 
@@ -95,16 +101,14 @@ public class LocalDatabase implements LocationTrackerListener{
     /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS
      *  of the current cached location
      */
-    public void testAndAddPhotoObject(PhotoObject newObject) {
-        if(!refToLocationTracker.hasValidLocation()){
-            Log.d("LocalDatabase", "No valid location, can't refresh DB");
-        }else {
-            mCachedLocation = refToLocationTracker.getLocation();
-            if (Math.abs(newObject.getLatitude() - mCachedLocation.getLatitude()) < FETCH_RADIUS
-                    && Math.abs(newObject.getLongitude() - mCachedLocation.getLongitude()) < FETCH_RADIUS) {
-                if (!mediaDataMap.containsKey(newObject.getPictureId())) {
-                    mediaDataMap.put(newObject.getPictureId(), newObject);
-                }
+    public void addIfWithinFetchRadius(PhotoObject newObject, Location l) {
+        if(l == null){
+            throw new IllegalStateException("caller function should ensure we have a valid location first");
+        }
+        if (Math.abs(newObject.getLatitude() - l.getLatitude()) < FETCH_RADIUS
+                && Math.abs(newObject.getLongitude() - l.getLongitude()) < FETCH_RADIUS) {
+            if (!mediaDataMap.containsKey(newObject.getPictureId())) {
+                mediaDataMap.put(newObject.getPictureId(), newObject);
             }
         }
     }
@@ -115,7 +119,7 @@ public class LocalDatabase implements LocationTrackerListener{
         return mViewableMediaDataMap;
     }
 
-    public Map<String, Bitmap> getViewableThumbmails() {
+    public static Map<String, Bitmap> getViewableThumbnails() {
         HashMap<String, Bitmap> resultMap = new HashMap<>();
         for(PhotoObject p : mViewableMediaDataMap.values()){
             resultMap.put(p.getPictureId(), p.getThumbnail());
@@ -135,12 +139,12 @@ public class LocalDatabase implements LocationTrackerListener{
 
     public void addListener(LocalDatabaseListener l){
         mListeners.add(l);
+        l.databaseUpdated();
     }
 
 
 
 // PRIVATE METHODS
-
     /** notifies all listeners of a change of the database content */
     private void notifyListeners(){
         for(LocalDatabaseListener l : mListeners){
@@ -174,30 +178,22 @@ public class LocalDatabase implements LocationTrackerListener{
     /** used during initialization, adds a listener to the firebase directory containing the medias */
     private void setAutoRefresh(){
         Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(new Date().getTime());
-        photoSortedByTime.addValueEventListener(getFirebaseValueEventListener());
-    }
-
-    /** adds a single-use listener to the firebase directory containing the medias  */
-    private void forceSingleRefresh(){
-        Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(new Date().getTime());
-        photoSortedByTime.addListenerForSingleValueEvent(getFirebaseValueEventListener());
-    }
-
-    /** a listener that updates the LocalDatabase when firebase data changes    */
-    private ValueEventListener getFirebaseValueEventListener(){
-        return new ValueEventListener() {
+        photoSortedByTime.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!refToLocationTracker.hasValidLocation()){
-                    Log.d("LocalDatabase","can't refresh, LocationProvider has no valid Location");
-                }else {
+                if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate()){
+                    Location mLocationTempCopy;
+                    synchronized (this) {
+                        mLocationTempCopy = new Location(mCachedLocation);
+                    }
                     LocalDatabase.getInstance().clear();
                     for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
-                        PhotoObjectStoredInDatabase photoWithoutPic = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class);
-                        PhotoObject photoObject = photoWithoutPic.convertToPhotoObject();
-                        LocalDatabase.getInstance().testAndAddPhotoObject(photoObject);
+                        PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                     }
-                    Log.d("LocalDB", LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                    // refresh last refresh date
+                    mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
+                    Log.d("LocalDB", "updated via firebase listener : "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
                     LocalDatabase.getInstance().refreshViewablePhotos();
                     LocalDatabase.getInstance().notifyListeners();
                 }
@@ -208,7 +204,59 @@ public class LocalDatabase implements LocationTrackerListener{
                 Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
                 // todo - handle exceptional behavior
             }
-        };
+        });
+    }
+
+    /** adds a single-use listener to the firebase directory containing the medias  */
+    private void forceSingleRefresh(){
+        Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(new Date().getTime());
+        photoSortedByTime.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                LocalDatabase.getInstance().clear();
+                Location mLocationTempCopy;
+                synchronized (this) {
+                    mLocationTempCopy = new Location(mCachedLocation);
+                }
+                for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
+                    PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                }
+                Log.d("LocalDB", "updated via force single refresh, "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                LocalDatabase.getInstance().refreshViewablePhotos();
+                LocalDatabase.getInstance().notifyListeners();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
+                // todo - handle exceptional behavior
+            }
+        });
+    }
+
+    private boolean allowRefreshAccordingToNewLocation(Location newLocation){
+        if(mCachedLocation==null){
+            return true;
+        }else {
+            long timeDiffBetweenCurrenAndNewLocations = Math.abs(newLocation.getTime() - mCachedLocation.getTime());
+
+            boolean tooLongWithoutRefreshing = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
+            boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
+            boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
+
+            return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);
+        }
+    }
+
+    private boolean allowRefreshAccordingToMaxRefreshRate(){
+        if(mCachedLocation==null){
+            Log.d("LocalDatabase","Refresh based on maximum refresh rate couldn't be allowed : no Location avaible");
+            return false;
+        }else {
+            long timeDiffSinceLastRefresh = Math.abs(mLastRefreshDate - Calendar.getInstance().getTimeInMillis());
+            return timeDiffSinceLastRefresh > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE;
+        }
     }
 
 
@@ -216,24 +264,20 @@ public class LocalDatabase implements LocationTrackerListener{
 // LISTENER FUNCTIONS
     @Override
     public void updateLocation(Location newLocation) {
-        if (mCachedLocation == null) {
-            Log.d("Localdatabase", "location updated, forcing single refresh");
-            mCachedLocation = newLocation;
-            forceSingleRefresh();
-        } else {
-            boolean tooLongWithoutRefreshing = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
-            boolean refreshingTooOften = mCachedLocation.getTime() - newLocation.getTime() > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE;
-            boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
-            if (tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh)) {
-                Log.d("Localdatabase", "location updated, forcing single refresh");
+        if(allowRefreshAccordingToNewLocation(newLocation)){
+            synchronized (this) {
                 mCachedLocation = newLocation;
-                forceSingleRefresh();
-            }// otherwise, it's not worth it to refresh the database
-        }
+            }
+            Log.d("Localdatabase", "location updated, forcing single refresh");
+            forceSingleRefresh();
+        }// otherwise, it's not worth it to refresh the database
     }
 
     @Override
     public void locationTimedOut(){
-        Log.d("Localdatabase","location timed out");
+        Log.d("Localdatabase","listener notifed that location timed out");
+        synchronized (this) {
+            mCachedLocation = null;
+        }
     }
 }
