@@ -46,7 +46,18 @@ public class LocationTrackerTest{
         @Override
         public void beforeActivityLaunched(){
             initFieldLocations();
-            TestInitUtils.initContext();
+
+            // DON'T USE TESTINITUTILS since we need to keep the mlm field + we're not using a mockLocationTracker, but a ConcreteLocationTracker with a mock LocationManager
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.destroyInstance();
+            }
+
+            mlm = new MockLocationManagerWrapper_forTests(location0);
+            ConcreteLocationTracker.initialize(mlm);
+
+            LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };
 
