@@ -34,7 +34,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.user.RefreshRemainingPhotosReceiver;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
@@ -58,13 +58,7 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialize LocationTracker and LocalDatabase
-        Log.d("MainActivity","initializing singletons");
-        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        ToastProvider.update(getApplicationContext());
-        Log.d("MainActivity","done initializing");
+        initializeSingletons();
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -149,8 +143,8 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToTabActivity() {
         // create the user
-        //User user = User.getInstance();
-        User.initializeFromFb(mFbProfile.getFirstName(), mFbProfile.getLastName(),
+        //UserManager user = UserManager.getInstance();
+        UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(),
                 mFbProfile.getId());
 
         //start the TabActivity
@@ -213,5 +207,14 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void initializeSingletons(){
+        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        UserManager.initialize();
+        UserManager.getInstance().setEmptyUser();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ToastProvider.update(getApplicationContext());
     }
 }

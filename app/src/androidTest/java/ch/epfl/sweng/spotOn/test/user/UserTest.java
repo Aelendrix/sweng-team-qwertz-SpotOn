@@ -9,19 +9,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 @RunWith(AndroidJUnit4.class)
 public class UserTest {
 
-    private User testUser = null;
+    private UserManager testUser = null;
 
     @Test
     public void testSetAndGetUser(){
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        testUser = User.getInstance();
+        UserManager.initializeFromFb("firstname", "lastname", "mlb");
+        testUser = UserManager.getInstance();
         testUser.setKarma(500);
-        testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
+        testUser.setRemainingPhotos(UserManager.computeMaxPhotoInDay(testUser.getKarma()));
 
         try {
             Thread.sleep(3000);
@@ -33,9 +33,9 @@ public class UserTest {
         Assert.assertEquals(testUser.getLastName(), "lastname");
         Assert.assertEquals(testUser.getUserId(), "mlb");
         Assert.assertEquals(testUser.getKarma(), 500);
-        Assert.assertEquals(testUser.getRemainingPhotos(), User.computeMaxPhotoInDay(500));
+        Assert.assertEquals(testUser.getRemainingPhotos(), UserManager.computeMaxPhotoInDay(500));
         Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
-        Assert.assertEquals(User.hasInstance(), true);
+        Assert.assertEquals(UserManager.hasInstance(), true);
     }
 
     @After
@@ -43,8 +43,8 @@ public class UserTest {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
         testUser.destroy();
 
-        if(User.hasInstance()) {
-            throw new AssertionError(" User should be destroyed");
+        if(UserManager.hasInstance()) {
+            throw new AssertionError(" UserManager should be destroyed");
         }
     }
 }

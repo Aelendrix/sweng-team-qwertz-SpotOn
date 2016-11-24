@@ -54,7 +54,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -65,8 +65,8 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = User.getInstance().getUserId();
-    private long mRemainingPhotos = User.getInstance().getRemainingPhotos();
+    private final String USER_ID = UserManager.getInstance().getUserId();
+    private long mRemainingPhotos = UserManager.getInstance().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -159,7 +159,7 @@ public class TakePictureFragment extends Fragment {
                 if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
-                    User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                    UserManager.getInstance().setRemainingPhotos(mRemainingPhotos);
                     mActualPhotoObject.upload(true, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
@@ -174,7 +174,7 @@ public class TakePictureFragment extends Fragment {
                     mActualPhotoObject.setSentToServerStatus(true);
                 } else {
                     ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
-                    Log.d("TakePictureFragment","User "+USER_ID+" can't post photo anymore");
+                    Log.d("TakePictureFragment","UserManager "+USER_ID+" can't post photo anymore");
                 }
 
             } else {
@@ -462,7 +462,7 @@ public class TakePictureFragment extends Fragment {
                     else {
                         if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
                             mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
-                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                            UserManager.getInstance().setRemainingPhotos(mRemainingPhotos);
                         }
                     }
                 }

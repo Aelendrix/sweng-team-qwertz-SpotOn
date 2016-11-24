@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.user.UserStoredInDatabase;
 
 @RunWith(AndroidJUnit4.class)
@@ -19,15 +19,15 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testGetUserStoredInDB(){
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        User user = User.getInstance();
+        UserManager.initializeFromFb("firstname", "lastname", "mlb");
+        UserManager user = UserManager.getInstance();
         userInDB = new UserStoredInDatabase(user);
 
         Assert.assertEquals(userInDB.getFirstName(), "firstname");
         Assert.assertEquals(userInDB.getLastName(), "lastname");
         Assert.assertEquals(userInDB.getUserId(), "mlb");
-        Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
-        Assert.assertEquals(userInDB.getRemainingPhotos(), User.computeMaxPhotoInDay(User.INITIAL_KARMA));
+        Assert.assertEquals(userInDB.getKarma(), UserManager.INITIAL_KARMA);
+        Assert.assertEquals(userInDB.getRemainingPhotos(), UserManager.computeMaxPhotoInDay(UserManager.INITIAL_KARMA));
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
         user.destroy();
@@ -35,8 +35,8 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testSetUserStoredInDB(){
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        User user = User.getInstance();
+        UserManager.initializeFromFb("firstname", "lastname", "mlb");
+        UserManager user = UserManager.getInstance();
         userInDB = new UserStoredInDatabase(user);
         userInDB.setFirstName("blabla");
         userInDB.setLastName("test");

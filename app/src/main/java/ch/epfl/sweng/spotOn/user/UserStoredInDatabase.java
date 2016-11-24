@@ -11,7 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /*
- * This class corresponds to a User
+ * This class corresponds to a UserManager
  * It contains methods to create the user in the database and get the user from the database
  */
 
@@ -27,67 +27,23 @@ public class UserStoredInDatabase {
     public UserStoredInDatabase(){} // needed for use of firebase database
 
 
-    public UserStoredInDatabase(User user){
+    public UserStoredInDatabase(RealUser user){
         mFirstName = user.getFirstName();
         mLastName = user.getLastName();
         mUserId = user.getUserId();
         mKarma = user.getKarma();
         mRemainingPhotos = user.getRemainingPhotos();
-
-        checkUser();
     }
 
 
     /* Add a new user in the database with its karma instantiated to a arbitrary value*/
-    private void createUserInDB(){
+    public void upload(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         DBRef.child(mUserId).setValue(this);
     }
 
 
-    /* Method to check if the user is already defined in the database and if not it creates it */
-    private void checkUser(){
-        DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
-        Query userQuery = DBRef.orderByChild("userId").equalTo(mUserId);
 
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(mUserId == null)
-                {
-                    throw new IllegalArgumentException("UserStoredInDB in User.mUserId is null");
-                }
-                else {
-                    DataSnapshot userToRetrieve = dataSnapshot.child(mUserId);
-                    if (!userToRetrieve.exists()) {
-                        createUserInDB();
-                    } else {
-                        UserStoredInDatabase retrievedUser = userToRetrieve.getValue(UserStoredInDatabase.class);
-
-                        if (retrievedUser == null) {
-                            throw new IllegalStateException("UserStoredInDatabase retrievedUser is null");
-                        } else {
-                            // We can set the fields of User
-                            mKarma = retrievedUser.getKarma();
-                            mRemainingPhotos = retrievedUser.getRemainingPhotos();
-
-                            User.getInstance().setKarma(mKarma);
-                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
-                            User.getInstance().setIsRetrievedFromDB(true);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //
-                Log.e("Firebase", "error in checkUser", databaseError.toException());
-            }
-        };
-
-        userQuery.addListenerForSingleValueEvent(userListener);
-    }
 
 
     //PUBLIC GETTERS

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -23,14 +23,14 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView mNbVotesTextView = null;
     private TextView mNbPicturesTakenTextView = null;
     private TextView mKarmaTextView = null;
-    private User mUser = null;
+    private UserManager mUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        mUser = User.getInstance();
+        mUser = UserManager.getInstance();
         mUser.getUserAttributesFromDB();
 
         if(mUser.getUserId() == null){

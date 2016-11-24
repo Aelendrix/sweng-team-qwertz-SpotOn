@@ -5,7 +5,7 @@ import android.location.Location;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
@@ -27,7 +27,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        UserManager.initializeFromFb("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContext(){   // same with MockLocationTracker default location
@@ -41,7 +41,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        UserManager.initializeFromFb("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContextNoUser(Location location){

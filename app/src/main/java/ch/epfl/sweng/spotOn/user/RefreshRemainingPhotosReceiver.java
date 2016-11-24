@@ -10,7 +10,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /**
@@ -22,7 +21,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
 
-    private final String userID = User.getInstance().getUserId();
+    private final String userID = UserManager.getInstance().getUserId();
     private final String KARMA = "karma";
     private final DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
 
@@ -35,7 +34,7 @@ public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        long karma = User.INITIAL_KARMA;
+                        long karma = UserManager.INITIAL_KARMA;
                         String retrievedUserId = ((String)child.child("userId").getValue());
                         if (child.child(KARMA).getValue() != null) {
                             karma = ((long) child.child(KARMA).getValue());
@@ -43,10 +42,10 @@ public class RefreshRemainingPhotosReceiver extends BroadcastReceiver {
                         } else {
                             DBRef.child(retrievedUserId).child(KARMA).setValue(karma);
                         }
-                        long remainingPhotos = User.getInstance().computeMaxPhotoInDay(karma);
+                        long remainingPhotos = UserManager.getInstance().computeMaxPhotoInDay(karma);
                         DBRef.child(retrievedUserId).child("RemainingPhotos").setValue(remainingPhotos);
                         if(retrievedUserId.equals(userID)) {
-                            User.getInstance().setRemainingPhotos(remainingPhotos);
+                            UserManager.getInstance().setRemainingPhotos(remainingPhotos);
                         }
                     }
                 }

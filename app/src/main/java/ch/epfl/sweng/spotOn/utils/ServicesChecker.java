@@ -17,7 +17,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.user.UserListener;
 
 /**
@@ -30,7 +30,7 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
     private LocationTracker mLocationTrackerRef;
     private LocalDatabase mLocalDatabaseRef;
-    private User mUserRef;
+    private UserManager mUserRef;
 
     private boolean databaseConnectionStatus;
     private boolean validLocationStatus;
@@ -42,13 +42,13 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
 
 // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, User userRef){
+    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
         mSingleInstance.listenForDatabaseConnectivity();
         mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
         mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
     }
-    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, User userRef){
+    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() || !userRef.instanceExists()){
             // test just in case
             throw new IllegalStateException("Must initialize LocationTracker and Localdatabase first");

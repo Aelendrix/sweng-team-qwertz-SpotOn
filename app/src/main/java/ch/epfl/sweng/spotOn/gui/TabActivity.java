@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -18,7 +17,7 @@ import com.facebook.login.LoginManager;
 
 import ch.epfl.sweng.spotOn.R;
 
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
@@ -114,7 +113,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         switch (item.getItemId()) {
             case R.id.log_out:
                 disconnectFacebook();
-                User user = User.getInstance();
+                UserManager user = UserManager.getInstance();
                 user.destroy();
                 return true;
             case R.id.action_about:
@@ -123,7 +122,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
                 return true;
             case R.id.user_profile:
                 Intent profileIntent = new Intent(this, UserProfileActivity.class);
-                startActivity(profileIntent); // go to the User Profile Activity
+                startActivity(profileIntent); // go to the UserManager Profile Activity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
