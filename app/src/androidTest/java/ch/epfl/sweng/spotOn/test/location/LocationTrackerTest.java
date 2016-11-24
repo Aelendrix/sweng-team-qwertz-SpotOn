@@ -41,33 +41,32 @@ public class LocationTrackerTest{
     private Object lock = new Object();
 
 
-    @Rule
-    public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
-        @Override
-        public void beforeActivityLaunched(){
-            initFieldLocations();
 
-            // DON'T USE TESTINITUTILS since we need to keep the mlm field + we're not using a mockLocationTracker, but a ConcreteLocationTracker with a mock LocationManager
-            if(ConcreteLocationTracker.instanceExists()){
-                ConcreteLocationTracker.destroyInstance();
-            }
+// INITIALIZATION
+    @Before
+    public void initializeForTest(){
+        initFieldLocations();
 
-            mlm = new MockLocationManagerWrapper_forTests(location0);
-            ConcreteLocationTracker.initialize(mlm);
-
-            LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+        // DON'T USE TESTINITUTILS since we need to keep the mlm field + we're not using a mockLocationTracker, but a ConcreteLocationTracker with a mock LocationManager
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
         }
-    };
+
+        mlm = new MockLocationManagerWrapper_forTests(location0);
+        ConcreteLocationTracker.initialize(mlm);
+
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+        User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+    }
 
 
+
+// TESTS
     @Test
     public void testMockProvider() throws InterruptedException {
 
-        intentsRule.launchActivity(new Intent());
-
-        Thread.sleep(3500);
+//        Thread.sleep(3500);
 
         if( ! ConcreteLocationTracker.instanceExists() ){
             throw new AssertionError("LocationTracker instance should exist");
