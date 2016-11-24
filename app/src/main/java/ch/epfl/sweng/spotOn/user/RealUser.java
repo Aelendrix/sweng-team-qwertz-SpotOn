@@ -9,6 +9,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class RealUser implements User {
@@ -17,7 +24,7 @@ public class RealUser implements User {
     private String mLastName;
     private String mUserId;
     private long mKarma;
-    private long mRemainingPhotos;
+    private Map<String, Long> mPhotosTaken;
 
     private static boolean mIsRetrievedFromDB;
 
@@ -32,12 +39,11 @@ public class RealUser implements User {
         mLastName = lastName;
         mUserId = userId;
         mKarma = User.INITIAL_KARMA;
-        mRemainingPhotos = computeMaxPhotoInDay(mKarma);
+        mPhotosTaken = new HashMap<>();
         mIsRetrievedFromDB = false;
         mManager = manager;
         lookUpUserInDatabase();
     }
-
 
 
 
@@ -56,17 +62,28 @@ public class RealUser implements User {
         mManager = null;
     }
 
-    public void decrementRemainingphotos() {
-        DatabaseRef.getUsersDirectory().child(mUserId).child("RemainingPhotos").setValue(mRemainingPhotos-1);
+    public long computeRemainingPhotos(){
+        long maxPhotos = computeMaxPhotoInDay();
+        updatePhotosTaken();
+        long lastPhotosTaken = 0;
+        if(mPhotosTaken != null){
+            lastPhotosTaken = mPhotosTaken.size();
+        }
+        return maxPhotos - lastPhotosTaken;
     }
 
-
-    // STATIC HELPERS
-    public static long computeMaxPhotoInDay(long karma){
-        int computed = Math.round((float)Math.sqrt(karma)/10);
-        return Math.min(Math.max(computed, User.MIN_POST_PER_DAY), User.MAX_POST_PER_DAY);
+    public long computeMaxPhotoInDay(){
+        int computed = Math.round((float)Math.sqrt(mKarma)/10);
+        return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
     }
 
+    public void addPhoto(PhotoObject photo){
+        Long currentTime = photo.getCreatedDate().getTime();
+        if(mPhotosTaken != null) {
+            mPhotosTaken.put(photo.getPictureId(), currentTime);
+        }
+        DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
+    }
 
 
 
@@ -75,7 +92,9 @@ public class RealUser implements User {
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
-    public long getRemainingPhotos() { return mRemainingPhotos; }
+    public Map<String, Long> getPhotosTaken() {
+        return mPhotosTaken;
+    }
     public boolean getIsRetrievedFromDB() { return mIsRetrievedFromDB; }
 
 
@@ -83,7 +102,9 @@ public class RealUser implements User {
 
 //PUBLIC SETTERS
     public void setKarma(long karma){ mKarma = karma; }
-    public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
+    public void setPhotosTaken(Map<String, Long> m) {
+        mPhotosTaken = m;
+    }
     public void setIsRetrievedFromDB(boolean retrievedFromDB) {
         if(mManager!=null) {
             mIsRetrievedFromDB = retrievedFromDB;
@@ -92,7 +113,25 @@ public class RealUser implements User {
     }
 
 
+
+
 // PRIVATE HELPERS
+
+    private void updatePhotosTaken(){
+        long limitTime = System.currentTimeMillis() - User.ONE_DAY;
+        if(mPhotosTaken != null) {
+            Set<String> ids = mPhotosTaken.keySet();
+            List<String> toRemoveIds = new ArrayList<>();
+            for (String id : ids) {
+                if (mPhotosTaken.get(id) < limitTime) {
+                    toRemoveIds.add(id);
+                }
+            }
+            for (String id : toRemoveIds){
+                mPhotosTaken.remove(id);
+            }
+        }
+    }
 
     /* Method to check if the user is already defined in the database and if not it creates it */
     private void lookUpUserInDatabase(){
@@ -118,12 +157,16 @@ public class RealUser implements User {
                         } else {
                             // We can set the fields
                             mKarma = retrievedUser.getKarma();
-                            mRemainingPhotos = retrievedUser.getRemainingPhotos();
+                            mPhotosTaken =  ((HashMap<String, Long>) userToRetrieve.child("photosTaken").getValue());
 
+                            if(mPhotosTaken == null){
+                                refToThis.setPhotosTaken(new HashMap<String, Long>());
+                            }
+                            else {
+                                refToThis.setPhotosTaken(mPhotosTaken);
+                            }
                             refToThis.setKarma(mKarma);
-                            refToThis.setRemainingPhotos(mRemainingPhotos);
                             refToThis.setIsRetrievedFromDB(true);
-
                         }
                     }
                 }

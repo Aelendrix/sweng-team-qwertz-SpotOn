@@ -1,3 +1,4 @@
+
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.SharedPreferences;
@@ -24,9 +25,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 
+
 /**
  * Created by Alexis Dewaele on 21/11/2016.
  */
+
 
 @RunWith(AndroidJUnit4.class)
 public class DrawTextActivityTest {

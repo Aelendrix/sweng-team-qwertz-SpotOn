@@ -17,62 +17,56 @@
         android:scaleType="fitXY"
         tools:ignore="ContentDescription"
         android:adjustViewBounds="false"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
 
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:onClick="storePictureOnInternalStorage"
         android:id="@+id/storeButton"
+        android:contentDescription="@string/storeButton"
+        android:onClick="storePictureOnInternalStorage"
         android:src="@drawable/ic_store_30dp"
         android:background="@drawable/button_shape_take_picture"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:onClick="sendPictureToServer"
         android:id="@+id/sendButton"
+        android:contentDescription="@string/sendButton"
+        android:onClick="sendPictureToServer"
         android:src="@drawable/ic_send_30dp"
         android:background="@drawable/button_shape_take_picture"
         android:layout_alignBaseline="@+id/storeButton"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="rotatePicture"
-        android:id="@+id/rotateButton"
-        android:src="@drawable/ic_rotate_30dp"
-        android:background="@drawable/button_shape_take_picture"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/storeButton" />
 
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:id="@+id/captureButton"
+        android:contentDescription="@string/captureButton"
         android:onClick="dispatchTakePictureIntent"
         android:src="@drawable/ic_camera_30dp"
         android:background="@drawable/button_shape_take_picture"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
-    <Button
-        android:text="@string/addTextButton"
-        android:layout_width="wrap_content"
+    <ImageButton
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/captureButton"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/addTextButton"
-        android:onClick="goToDrawTextActivity"/>
+        android:id="@+id/editButton"
+        android:contentDescription="@string/editButton"
+        android:onClick="editPicture"
+        android:src="@drawable/ic_add_30dp"
+        android:background="@drawable/button_shape_take_picture"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
 
 </RelativeLayout>

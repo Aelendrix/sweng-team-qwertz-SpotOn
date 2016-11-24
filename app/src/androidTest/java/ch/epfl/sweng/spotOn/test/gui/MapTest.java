@@ -48,8 +48,9 @@ public class MapTest {
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
 
             LocalDatabase.initialize(mMockLocationTracker);
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-            UserManager.initializeFromFb("Sweng", "Sweng", "114110565725225");
+            UserManager.initialize();
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+            UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         }
     };
 

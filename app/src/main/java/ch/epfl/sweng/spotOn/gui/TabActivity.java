@@ -83,8 +83,9 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
     /*
      * Rotates the picture by 90°
      */
-    public void rotatePicture(View view) {
-        mCameraFragment.rotatePicture(view);
+
+    public void editPicture(View view){
+        mCameraFragment.editPicture(view);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -147,13 +148,6 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
     }
-
-    public void goToDrawTextActivity(View view) {
-        mCameraFragment.goToDrawTextActivity(view);
-    }
-
-
-
 
 // PRIVATE HELPERS
     /** displays the error message if need be    */

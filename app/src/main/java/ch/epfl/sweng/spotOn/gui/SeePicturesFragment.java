@@ -47,16 +47,18 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
+
+            mImageAdapter= new ImageAdapter(mView.getContext());
+            mGridView.invalidateViews();
+            mGridView.setAdapter(mImageAdapter);
+
             if(getActivity()==null){
                 Log.d("SeePicturesFragment","Fragment is in background, ");
-                mImageAdapter= new ImageAdapter(mView.getContext());
             }else {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //create a new adapter and refresh the gridView
-                        mGridView.invalidateViews();
-                        mGridView.setAdapter(mImageAdapter);
                         LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
                         if (mImageAdapter.getCount() == 0) {
                             mGridView.setVisibility(View.GONE);
