@@ -1,3 +1,4 @@
+/*
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
@@ -32,9 +33,11 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
+*/
 /**
  * Created by nico on 22.11.16.
- */
+ *//*
+
 // NOTE: This test only work on a phone without Facebook app installed on it and in the current facebook login interface
 @RunWith(AndroidJUnit4.class)
 public class LogInOutTest {
@@ -89,3 +92,4 @@ public class LogInOutTest {
         Thread.sleep(1000);
     }
 }
+*/
