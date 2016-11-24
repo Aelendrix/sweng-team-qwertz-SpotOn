@@ -95,9 +95,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         viewPager.setAdapter(adapter);
     }
 
-    /**
-     * This method uses the options menu when this activity is launched
-     */
+    /** This method uses the options menu when this activity is launched     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -105,25 +103,33 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         return true;
     }
 
-    /*
-     * Handles what action to take when the user clicks on a menu item in the options menu
-     */
+    /* Handles what action to take when the user clicks on a menu item in the options menu     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-                disconnectFacebook();
-                UserManager user = UserManager.getInstance();
-                user.destroyUser();
-                return true;
+                if( ! UserManager.getInstance().userIsLoggedIn() ){
+                    ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+                    return false;
+                }else {
+                    disconnectFacebook();
+                    UserManager user = UserManager.getInstance();
+                    user.destroyUser();
+                    return true;
+                }
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
                 return true;
             case R.id.user_profile:
-                Intent profileIntent = new Intent(this, UserProfileActivity.class);
-                startActivity(profileIntent); // go to the UserManager Profile Activity
-                return true;
+                if( ! UserManager.getInstance().userIsLoggedIn() ){
+                    ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+                    return false;
+                }else {
+                    Intent profileIntent = new Intent(this, UserProfileActivity.class);
+                    startActivity(profileIntent); // go to the UserManager Profile Activity
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -146,6 +152,9 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         mCameraFragment.goToDrawTextActivity(view);
     }
 
+
+
+
 // PRIVATE HELPERS
     /** displays the error message if need be    */
     public void checkAndDisplayServicesError(){
@@ -157,6 +166,8 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
             ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
         }
     }
+
+
 
 
 // LISTENER METHODS

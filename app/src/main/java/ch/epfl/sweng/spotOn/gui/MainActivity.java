@@ -66,10 +66,7 @@ public final class MainActivity extends AppCompatActivity {
         AppEventsLogger.activateApp(this);
 
         /*Create an alarm which will go off for sending queries to the Firebase server
-         * to check the expiration time of the files.
-         */
-
-        System.out.println("Hello");
+         * to check the expiration time of the files.        */
         AlarmManager serverDataDeletionAlarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent serverDataDeletionIntent = new Intent(this, ServerDeleteExpiredPhotoReceiver.class);
         PendingIntent serverDataDeletionPendingIntent = PendingIntent.getBroadcast(this, 0, serverDataDeletionIntent, 0);
