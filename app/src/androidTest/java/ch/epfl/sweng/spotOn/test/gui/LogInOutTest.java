@@ -5,9 +5,12 @@ import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
+import android.support.test.uiautomator.Until;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -72,8 +75,8 @@ public class LogInOutTest {
         input2.setText("123swengisfun321");
         UiObject buttonInput = mDevice.findObject(new UiSelector().instance(0).className(Button.class));
         buttonInput.click();
-        mDevice.waitForWindowUpdate(null,15000);
-        Thread.sleep(10000);
+        mDevice.waitForWindowUpdate(null,6000);
+        mDevice.wait(Until.hasObject(By.textContains("Ok")),6000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
         mDevice.waitForWindowUpdate(null,10000);
