@@ -132,6 +132,10 @@ public class LocalDatabase implements LocationTrackerListener{
     /** remove a photoObject from the LocalDatabase */
     public void removePhotoObject(String key){
         mediaDataMap.remove(key);
+        if(mViewableMediaDataMap.containsKey(key)){
+            mViewableMediaDataMap.remove(key);
+        }
+        notifyListeners();
     }
 
     public void addListener(LocalDatabaseListener l){
