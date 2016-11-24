@@ -37,7 +37,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 /**
  * Created by Alexis Dewaele on 09/11/2016.
  */
-
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ViewFullSizeImageActivityTest {
