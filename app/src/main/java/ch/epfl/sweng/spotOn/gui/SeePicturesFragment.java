@@ -47,6 +47,9 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
+            if(getActivity()==null){
+                throw new AssertionError("+");
+            }
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
