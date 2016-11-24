@@ -442,3 +442,4 @@ public class TakePictureFragment extends Fragment {
         return pictureFile;
     }
 }
+

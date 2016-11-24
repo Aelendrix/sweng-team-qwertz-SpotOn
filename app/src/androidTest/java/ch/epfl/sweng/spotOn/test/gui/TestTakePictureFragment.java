@@ -49,6 +49,7 @@ public class TestTakePictureFragment {
         }
     };
     Uri mImageToUploadUri;
+    File file;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
@@ -59,7 +60,7 @@ public class TestTakePictureFragment {
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
-        File file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
         Bitmap pictureBitmap = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888); //po.getThumbnail();
@@ -121,5 +122,7 @@ public class TestTakePictureFragment {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
+        file.delete();
+
     }
 }
