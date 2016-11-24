@@ -221,6 +221,7 @@ public class TakePictureFragment extends Fragment {
         //Needed to store the last picture taken on the user's storage in order to have HQ picture
         if(isStoragePermissionGranted()) {
             Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            //mImageToUploadUri = PhotoUtils.createFileForBitmapAndGetUri("/SpotOn/TEMP_PICTURE.jpg", getContext())
             File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "/SpotOn/TEMP_PICTURE.jpg");
             if(Build.VERSION.SDK_INT <= 23) {

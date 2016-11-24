@@ -132,6 +132,7 @@ public class EditPictureActivity extends AppCompatActivity {
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
         Uri resUri;
+        //resUri = PhotoUtils.createFileForBitmapAndGetUri("/SpotOn/EDITED_PICTURE.jpg" , this);
         //Define the Uri (same directory where is stored the temporal image we are editing)
         File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/EDITED_PICTURE.jpg");
@@ -165,5 +166,23 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("Store Image", "File not closed: " + e.getMessage());
         }
         return resUri;
+    }
+
+
+
+    public static Uri createFileForBitmapAndGetUri(String pathFromMedia, Context context){
+        Uri uriToReturn;
+        File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                pathFromMedia);
+        if(Build.VERSION.SDK_INT <= 23) {
+            uriToReturn = Uri.fromFile(temporalStorage);
+            Log.d("URI ImageUpload", uriToReturn.toString());
+        } else {
+            //For API >= 24 (was the cause of the crash)
+            uriToReturn = FileProvider.getUriForFile(context,
+                    BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
+            Log.d("URI ImageUpload", uriToReturn.toString());
+        }
+        return uriToReturn;
     }
 }
