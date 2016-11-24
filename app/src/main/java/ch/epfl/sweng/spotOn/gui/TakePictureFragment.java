@@ -156,7 +156,7 @@ public class TakePictureFragment extends Fragment {
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
 
-                if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
+                if(mRemainingPhotos > 0 || USER_ID.equals("114110565725225")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
                     User.getInstance().setRemainingPhotos(mRemainingPhotos);
