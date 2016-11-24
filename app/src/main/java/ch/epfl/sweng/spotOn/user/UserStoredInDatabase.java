@@ -8,6 +8,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /*
@@ -21,7 +24,7 @@ public class UserStoredInDatabase {
     private String mLastName;
     private String mUserId;
     private long mKarma;
-    private long mRemainingPhotos;
+    private Map<String, Long> mPhotosTaken;
 
 
     public UserStoredInDatabase(){} // needed for use of firebase database
@@ -32,7 +35,7 @@ public class UserStoredInDatabase {
         mLastName = user.getLastName();
         mUserId = user.getUserId();
         mKarma = user.getKarma();
-        mRemainingPhotos = user.getRemainingPhotos();
+        mPhotosTaken = user.getPhotosTaken();
 
         checkUser();
     }
@@ -69,10 +72,15 @@ public class UserStoredInDatabase {
                         } else {
                             // We can set the fields of User
                             mKarma = retrievedUser.getKarma();
-                            mRemainingPhotos = retrievedUser.getRemainingPhotos();
+                            mPhotosTaken =  ((HashMap<String, Long>) userToRetrieve.child("photosTaken").getValue());
 
+                            if(mPhotosTaken == null){
+                                User.getInstance().setPhotosTaken(new HashMap<String, Long>());
+                            }
+                            else {
+                                User.getInstance().setPhotosTaken(mPhotosTaken);
+                            }
                             User.getInstance().setKarma(mKarma);
-                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
                             User.getInstance().setIsRetrievedFromDB(true);
                         }
                     }
@@ -95,7 +103,7 @@ public class UserStoredInDatabase {
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
-    public long getRemainingPhotos() { return mRemainingPhotos; }
+    public Map<String, Long> getPhotosTaken(){ return mPhotosTaken; }
 
 
     //PUBLIC SETTERS
@@ -103,5 +111,5 @@ public class UserStoredInDatabase {
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
     public void setKarma(long karma){ mKarma = karma; }
-    public void setRemainingPhotos(long remainingPhotos) { mRemainingPhotos = remainingPhotos; }
+    public void setmPhotosTaken(Map<String, Long> photosTaken) { mPhotosTaken = photosTaken; }
 }

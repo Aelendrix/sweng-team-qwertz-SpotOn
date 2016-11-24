@@ -27,7 +27,6 @@ public class UserStoredInDatabaseTest {
         Assert.assertEquals(userInDB.getLastName(), "lastname");
         Assert.assertEquals(userInDB.getUserId(), "mlb");
         Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
-        Assert.assertEquals(userInDB.getRemainingPhotos(), User.computeMaxPhotoInDay(User.INITIAL_KARMA));
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
         user.destroy();
@@ -42,13 +41,11 @@ public class UserStoredInDatabaseTest {
         userInDB.setLastName("test");
         userInDB.setUserId("mlb_test");
         userInDB.setKarma(12);
-        userInDB.setRemainingPhotos(10);
 
         Assert.assertEquals(userInDB.getFirstName(), "blabla");
         Assert.assertEquals(userInDB.getLastName(), "test");
         Assert.assertEquals(userInDB.getUserId(), "mlb_test");
         Assert.assertEquals(userInDB.getKarma(), 12);
-        Assert.assertEquals(userInDB.getRemainingPhotos(), 10);
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
         user.destroy();

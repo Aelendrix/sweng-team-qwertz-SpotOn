@@ -68,10 +68,11 @@ public class LogInOutTest {
 
     @Test
     //this test can fail randomly cause it depends of retrieving a webview from facebook
-    public void logInAndOut() throws Exception{
+    public void logInAndOut() throws Exception {
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());/*
         Thread.sleep(4000); // sorry... my phone is slow
+
         UiObject input = mDevice.findObject(new UiSelector().instance(0).className(EditText.class));
         input.setText("swengqwertz@gmail.com");
         UiObject input2 = mDevice.findObject(new UiSelector().instance(1).className(EditText.class));
@@ -89,6 +90,7 @@ public class LogInOutTest {
         Thread.sleep(2000);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Log out")).perform(click());
+<<<<<<< HEAD
         Thread.sleep(1000);
         */
     }
