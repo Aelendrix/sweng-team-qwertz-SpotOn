@@ -435,7 +435,7 @@ public class TakePictureFragment extends Fragment {
         if (!pictureDirectory.exists()) {
             if (!pictureDirectory.mkdirs()) {
                 return null;
-            } 
+            }
         }
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
