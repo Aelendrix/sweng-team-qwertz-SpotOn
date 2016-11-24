@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -23,17 +24,16 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView mNbVotesTextView = null;
     private TextView mNbPicturesTakenTextView = null;
     private TextView mKarmaTextView = null;
-    private UserManager mUser = null;
+    private User mUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        mUser = UserManager.getInstance();
-        mUser.getUserAttributesFromDB();
+        mUser = UserManager.getInstance().getUser();
 
-        if(mUser.getUserId() == null){
+        if( !mUser.isLoggedIn() || mUser.getUserId()==null){
             Log.e("UserProfileActivity", "UserId is null");
         }
         else {
@@ -49,9 +49,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
             Context context = getApplicationContext();
             String toastMessage = "Please wait a little bit while your info are updating";
-            int duration = Toast.LENGTH_SHORT;
 
-            Toast toast = Toast.makeText(context, toastMessage, duration);
+            Toast toast = Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT);
             toast.show();
 
             mFirstNameTextView.setText(mFirstNameTextView.getText() + " " + mUser.getFirstName());

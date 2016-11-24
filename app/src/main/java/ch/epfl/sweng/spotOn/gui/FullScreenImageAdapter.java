@@ -130,7 +130,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
-            String userId = UserManager.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
             if(vote==1&&!mDisplayedMedia.getUpvotersList().contains(userId)){
                 voteSum++;
@@ -156,7 +156,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            String userId = UserManager.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mDisplayedMedia.processReport(userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }

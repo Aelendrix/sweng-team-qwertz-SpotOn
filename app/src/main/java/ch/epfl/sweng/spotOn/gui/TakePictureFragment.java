@@ -65,8 +65,8 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = UserManager.getInstance().getUserId();
-    private long mRemainingPhotos = UserManager.getInstance().getRemainingPhotos();
+    private final String USER_ID = UserManager.getInstance().getUser().getUserId();
+    private long mRemainingPhotos = UserManager.getInstance().getUser().getRemainingPhotos();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -159,7 +159,7 @@ public class TakePictureFragment extends Fragment {
                 if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
                     --mRemainingPhotos;
                     UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
-                    UserManager.getInstance().setRemainingPhotos(mRemainingPhotos);
+                    UserManager.getInstance().getUser().setRemainingPhotos(mRemainingPhotos);
                     mActualPhotoObject.upload(true, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
@@ -462,7 +462,7 @@ public class TakePictureFragment extends Fragment {
                     else {
                         if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
                             mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
-                            UserManager.getInstance().setRemainingPhotos(mRemainingPhotos);
+                            UserManager.getInstance().getUser().setRemainingPhotos(mRemainingPhotos);
                         }
                     }
                 }

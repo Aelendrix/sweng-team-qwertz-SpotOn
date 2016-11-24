@@ -114,7 +114,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
             case R.id.log_out:
                 disconnectFacebook();
                 UserManager user = UserManager.getInstance();
-                user.destroy();
+                user.destroyUser();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);

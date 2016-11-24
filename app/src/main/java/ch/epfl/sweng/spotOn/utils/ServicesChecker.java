@@ -59,7 +59,7 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
         databaseConnectionStatus = false;
         validLocationStatus = ltref.hasValidLocation();
         mUserRef = userRef;
-        userIsLoggedIn = mUserRef.getIsRetrievedFromDB();
+        userIsLoggedIn = mUserRef.userIsLoggedIn();
     }
 
 
