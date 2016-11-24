@@ -69,6 +69,12 @@ public class UserManager {
         }
     }
 
+    public void addListener(UserListener l){
+        listeners.add(l);
+    }
+
+
+
 
 
 // SET USERS METHODS
@@ -111,13 +117,15 @@ public class UserManager {
                 for (UserListener l : mSingleInstance.listeners) {
                     l.userConnected();
                 }
+                break;
             }
             case USER_DISCONNECTED : {
                 for (UserListener l : mSingleInstance.listeners) {
                     l.userDisconnected();
                 }
+                break;
             }
-            default : throw new IllegalArgumentException("wrong user state");
+            default : throw new IllegalArgumentException("wrong user state argument");
         }
     }
 

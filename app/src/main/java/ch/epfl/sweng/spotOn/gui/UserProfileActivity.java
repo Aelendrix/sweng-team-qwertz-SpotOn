@@ -18,11 +18,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private TextView mFirstNameTextView = null;
     private TextView mLastNameTextView = null;
-    private TextView mEmailAddressTextView = null;
-    private TextView mGenderTextView = null;
-    private TextView mBirthdayTextView = null;
-    private TextView mNbVotesTextView = null;
-    private TextView mNbPicturesTakenTextView = null;
     private TextView mKarmaTextView = null;
     private User mUser = null;
 
@@ -40,11 +35,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
             mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
             mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
-            mEmailAddressTextView = (TextView) findViewById(R.id.profileEmailAddressTextView);
-            mGenderTextView = (TextView) findViewById(R.id.profileGenderTextView);
-            mBirthdayTextView = (TextView) findViewById(R.id.profileBirthdayTextView);
-            mNbVotesTextView = (TextView) findViewById(R.id.profileNbVotesTextView);
-            mNbPicturesTakenTextView = (TextView) findViewById(R.id.profileNbPicturesTakenTextView);
             mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
 
             Context context = getApplicationContext();

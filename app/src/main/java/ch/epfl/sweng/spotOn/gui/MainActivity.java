@@ -215,6 +215,7 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        UserManager.getInstance().addListener(ServicesChecker.getInstance());
         ToastProvider.update(getApplicationContext());
     }
 }
