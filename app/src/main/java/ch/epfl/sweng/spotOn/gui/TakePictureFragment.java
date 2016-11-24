@@ -72,9 +72,10 @@ public class TakePictureFragment extends Fragment {
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     private static final int REQUEST_EDITION = 20;
     private ImageView mImageView;
-    public static Uri mImageToUploadUri;
-    public static PhotoObject mActualPhotoObject;
+    private Uri mImageToUploadUri;
+    private PhotoObject mActualPhotoObject;
     private String mTextToDraw;
+    private Uri editUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,14 +103,12 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
-    public void refreshTextToDraw(String s)
-    {
-        mTextToDraw = s;
-    }
+
     /**
      * Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored
      */
+
     public void storePictureOnInternalStorage(View view){
         if(mActualPhotoObject != null) {
             if(!mActualPhotoObject.isStoredInternally()) {
@@ -168,7 +167,7 @@ public class TakePictureFragment extends Fragment {
     public void editPicture(View view){
         if(mActualPhotoObject != null){
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
-            editPictureIntent.putExtra("bitmapToEdit", mImageToUploadUri.toString());
+            editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
@@ -347,6 +346,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
+            editUri = imageToUploadUri;
             //Get our saved picture from the file in a bitmap image and display it on the image view
             Uri selectedImage = imageToUploadUri;
             getContext().getContentResolver().notifyChange(selectedImage, null);

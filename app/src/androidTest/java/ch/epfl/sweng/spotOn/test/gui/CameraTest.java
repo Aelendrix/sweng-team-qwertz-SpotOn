@@ -60,12 +60,6 @@ public class CameraTest{
     };
 
     @Before
-    public void setPhotoObject() {
-        TakePictureFragment.mActualPhotoObject = PhotoObjectTestUtils.germaynDeryckePO();
-        TakePictureFragment.mImageToUploadUri = Uri.parse("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-    }
-
-    @Before
     public void stubCameraIntent() {
         User user = User.getInstance();
         if(!LocalDatabase.instanceExists()){

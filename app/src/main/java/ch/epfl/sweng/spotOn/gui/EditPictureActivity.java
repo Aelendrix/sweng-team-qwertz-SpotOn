@@ -50,7 +50,8 @@ public class EditPictureActivity extends AppCompatActivity {
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
-        mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         mEditedImageView.setImageBitmap(mEditedBitmap);
     }
 

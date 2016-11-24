@@ -54,14 +54,8 @@ public class TestTakePictureFragment {
     public void StoreFunctionWorking() throws Exception{
         onView(withText("Camera")).perform(click());
 
-        onView(withText("Add text")).perform(click());
-        onView(withId(R.id.textToDraw)).perform(typeText("xD")).perform(closeSoftKeyboard());
-        onView(withId(R.id.sendTextToDrawButton)).perform(click());
-
-        PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
-        pictureFragment.refreshTextToDraw("xD");
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
@@ -91,7 +85,6 @@ public class TestTakePictureFragment {
 
             }
         });
-        //onView(withId(R.id.viewpager)).perform(swipeLeft());
 
         onView(withId(R.id.editButton)).perform(click());
         Thread.sleep(1000);
@@ -100,9 +93,9 @@ public class TestTakePictureFragment {
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
 
         Thread.sleep(1000);
-
-        onView(withId(R.id.confirmButton)).perform(click());
         onView(withId(R.id.rotateButton)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.confirmButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
