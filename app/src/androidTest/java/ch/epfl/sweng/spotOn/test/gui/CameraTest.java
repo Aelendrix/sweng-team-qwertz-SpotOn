@@ -2,6 +2,8 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
@@ -31,10 +33,8 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -49,17 +49,13 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-            ServicesChecker.initialize(mlt,LocalDatabase.getInstance());
-            User.initializeFromFb("firstname","lastname","test");
-            User user = User.getInstance();
+            TestInitUtils.initContext();
         }
     };
 
     @Before
     public void stubCameraIntent() {
+        User user = User.getInstance();
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }
@@ -89,6 +85,24 @@ public class CameraTest{
         // onView(withId(R.id.sendButton)).perform(click());
     }
 
+    @Test
+    public void addTextToPhotoTest() {
+        if(!LocalDatabase.instanceExists()){
+            throw new AssertionError("LocalDatabase incorrectly initialized");
+        }
+
+        onView(withText("Camera")).perform(click());
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("Hello")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
+        onView(withId(R.id.captureButton)).perform(click());
+
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("How are you ?")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
+        onView(withId(R.id.captureButton)).perform(click());
+    }
+
     private ActivityResult createImageCaptureStub() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("data", BitmapFactory.decodeResource(intentsRule.getActivity().getResources(), R.mipmap.ic_launcher));
@@ -96,5 +110,13 @@ public class CameraTest{
         Intent resultData = new Intent();
         resultData.putExtras(bundle);
         return new ActivityResult(Activity.RESULT_OK, resultData);
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -22,14 +23,16 @@ import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -40,29 +43,29 @@ public class TestTakePictureFragment {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
-            User.initializeFromFb("","","test");
+            TestInitUtils.initContext();
         }
     };
     Uri mImageToUploadUri;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
-        onView(withId(R.id.viewpager)).perform(swipeRight());
-        onView(withId(R.id.viewpager)).perform(swipeRight());
+        onView(withText("Camera")).perform(click());
+        onView(withText("Add text")).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("xD")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
+        pictureFragment.refreshTextToDraw("xD");
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
         File file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
-        Bitmap pictureBitmap = po.getThumbnail();
-        pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+        Bitmap pictureBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888); //po.getThumbnail();
+        pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
         fOut.flush(); // Not really required
         fOut.close(); // do not forget to close the stream
 
@@ -84,8 +87,6 @@ public class TestTakePictureFragment {
 
             }
         });
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
         onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.storeButton)).perform(click());
@@ -104,5 +105,13 @@ public class TestTakePictureFragment {
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(, activityResult , true);
 
         */
+    }
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
+        }
     }
 }
