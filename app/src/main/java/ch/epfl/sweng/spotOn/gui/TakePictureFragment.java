@@ -72,8 +72,8 @@ public class TakePictureFragment extends Fragment {
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     private static final int REQUEST_EDITION = 20;
     private ImageView mImageView;
-    private Uri mImageToUploadUri;
-    private PhotoObject mActualPhotoObject;
+    public static Uri mImageToUploadUri;
+    public static PhotoObject mActualPhotoObject;
     private String mTextToDraw;
 
     @Override
