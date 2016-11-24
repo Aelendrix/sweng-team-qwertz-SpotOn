@@ -60,8 +60,8 @@ public class LogInOutTest {
     @Before
     public void setUp() throws Exception{
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        if(UserManager.hasInstance()) {
-            UserManager.getInstance().destroy();
+        if(UserManager.instanceExists()) {
+            UserManager.getInstance().destroyUser();
         }
     }
 
