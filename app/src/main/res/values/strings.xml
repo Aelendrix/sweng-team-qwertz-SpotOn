@@ -48,6 +48,7 @@
     <string name="goToMap">Go to the Map</string>
     <string name="okButton">OK !</string>
     <string name="textToBeDrawn"> Text to be drawn</string>
+    <string name="profilePictureListText">Votes:</string>
 
 
 </resources>
