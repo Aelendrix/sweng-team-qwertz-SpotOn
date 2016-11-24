@@ -58,6 +58,7 @@ public class FullPictureActivityTest {
         PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(po);
 
+        LocalDatabase.getInstance().notifyListeners();
     }
 
     @Test

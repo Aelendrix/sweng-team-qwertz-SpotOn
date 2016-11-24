@@ -64,6 +64,8 @@ public class ViewFullSizeImageActivityTest {
         secondPo = PhotoObjectTestUtils.paulVanDykPO();
         LocalDatabase.getInstance().addPhotoObject(secondPo);
 
+        LocalDatabase.getInstance().notifyListeners();
+
         displayFullSizeImageIntent = new Intent();
 
     }

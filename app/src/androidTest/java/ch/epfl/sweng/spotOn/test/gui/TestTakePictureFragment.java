@@ -64,7 +64,7 @@ public class TestTakePictureFragment {
         File file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
-        Bitmap pictureBitmap = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888); //po.getThumbnail();
+        Bitmap pictureBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888); //po.getThumbnail();
         pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
         fOut.flush(); // Not really required
         fOut.close(); // do not forget to close the stream

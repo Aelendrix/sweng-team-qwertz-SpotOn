@@ -87,17 +87,24 @@ public class LocalDatabase implements LocationTrackerListener{
         return mediaDataMap.get(key);
     }
 
+    /** Adds a photoObject to the database, regardless of its position. NB : listeners need to be updated manually after that  */
     public void addPhotoObject(PhotoObject photo){
         if(!mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
             addToViewableMediaIfWithinViewableRange(photo);
-            notifyListeners();
         }
     }
 
-    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS
-     *  of the current cached location
-     */
+    /** remove a photoObject from the LocalDatabase - NB : listeners need to be updated manually after that  */
+    public void removePhotoObject(String key){
+        mediaDataMap.remove(key);
+        if(mViewableMediaDataMap.containsKey(key)){
+            mViewableMediaDataMap.remove(key);
+        }
+    }
+
+    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
+     *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
         if(databaseCachedLocation == null){
             throw new IllegalStateException("caller function should ensure we have a valid location first");
@@ -106,6 +113,15 @@ public class LocalDatabase implements LocationTrackerListener{
                 && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
             if (!mediaDataMap.containsKey(newObject.getPictureId())) {
                 addPhotoObject(newObject);
+            }
+        }
+    }
+
+    /** notifies all listeners of a change of the database content - public as it needs to be called in tests after manually adding objects*/
+    public void notifyListeners(){
+        if( ! mListeners.isEmpty() ){
+            for(LocalDatabaseListener l : mListeners){
+                l.databaseUpdated();
             }
         }
     }
@@ -129,14 +145,6 @@ public class LocalDatabase implements LocationTrackerListener{
         return mediaDataMap;
     }
 
-    /** remove a photoObject from the LocalDatabase */
-    public void removePhotoObject(String key){
-        mediaDataMap.remove(key);
-        if(mViewableMediaDataMap.containsKey(key)){
-            mViewableMediaDataMap.remove(key);
-        }
-        notifyListeners();
-    }
 
     public void addListener(LocalDatabaseListener l){
         mListeners.add(l);
@@ -150,15 +158,6 @@ public class LocalDatabase implements LocationTrackerListener{
     private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
         if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
             mViewableMediaDataMap.put(po.getPictureId(), po);
-        }
-    }
-
-    /** notifies all listeners of a change of the database content */
-    private void notifyListeners(){
-        if( ! mListeners.isEmpty() ){
-            for(LocalDatabaseListener l : mListeners){
-                l.databaseUpdated();
-            }
         }
     }
 
