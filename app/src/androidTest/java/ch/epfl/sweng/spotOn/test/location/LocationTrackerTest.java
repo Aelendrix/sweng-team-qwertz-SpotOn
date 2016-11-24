@@ -66,8 +66,6 @@ public class LocationTrackerTest{
     @Test
     public void testMockProvider() throws InterruptedException {
 
-//        Thread.sleep(3500);
-
         if( ! ConcreteLocationTracker.instanceExists() ){
             throw new AssertionError("LocationTracker instance should exist");
         }
