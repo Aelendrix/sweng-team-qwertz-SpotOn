@@ -42,7 +42,17 @@ public class MapTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            TestInitUtils.initContext();
+            // DON'T USE TESTUTILS to initialize - here, we need a reference to mlm
+            if(ConcreteLocationTracker.instanceExists()){
+                ConcreteLocationTracker.destroyInstance();
+            }
+
+            mMockLocationTracker = new MockLocationTracker_forTest();
+            ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
+
+            LocalDatabase.initialize(mMockLocationTracker);
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
+            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
         }
     };
 
