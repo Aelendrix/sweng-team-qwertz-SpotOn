@@ -89,5 +89,7 @@ public class LogInOutTest {
         onView(withText("Log out")).perform(click());
         Thread.sleep(1000);
         */
+        Thread.sleep(4000);
+
     }
 }
