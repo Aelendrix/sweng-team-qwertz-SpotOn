@@ -89,7 +89,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void dispatchTakePictureIntent(View view){
         SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");
+        refreshTextToDraw(bb.getString("TD", ""));
 
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
@@ -99,6 +99,10 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    public void refreshTextToDraw(String s)
+    {
+        mTextToDraw = s;
+    }
     /**
      * Method that will be called when clicking on the Rotate button. It will rotate the image view
      * and create a new PhotoObject from the rotatedPicture, but it will keep from the previous picture
@@ -164,8 +168,8 @@ public class TakePictureFragment extends Fragment {
                     });
                     mActualPhotoObject.setSentToServerStatus(true);
                 } else {
-                    ToastProvider.printAfterCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
                     Log.d("TakePictureFragment","User "+USER.getUserId()+" can't post photo anymore");
+                    ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
                 }
 
             } else {

@@ -44,16 +44,17 @@ public class ToastProvider extends Application {
         displayToast(message, duration);
     }
 
-    public static void printAfterCurrent(String message, int duration){
-        if(mCurrentContext==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==LONG || duration==SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
-        displayToast(message, duration);
-    }
+// buggy, waiting for a fix
+//    public static void printAfterCurrent(String message, int duration){
+//        if(mCurrentContext==null){
+//            Log.d("ToastProvider", "ToastProvider has no current context");
+//            return;
+//        }
+//        if(!(duration==LONG || duration==SHORT)){
+//            throw new IllegalArgumentException("Invalid duration");
+//        }
+//        displayToast(message, duration);
+//    }
 
     public static void printIfNoCurrent(String message, int duration){
         if(mCurrentContext==null){

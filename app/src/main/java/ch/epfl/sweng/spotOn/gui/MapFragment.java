@@ -14,6 +14,9 @@ import android.os.Build;
 import android.location.Location;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -35,6 +38,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
@@ -63,6 +67,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     private View mView;
 
+    // limit the number of refreshes per second
+    private long mLastRefresh;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +79,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         }
         ConcreteLocationTracker.getInstance().addListener(this);
         LocalDatabase.getInstance().addListener(this);
+        mLastRefresh= Calendar.getInstance().getTimeInMillis();
     }
 
     @Override
@@ -115,8 +123,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      *  and apply it to our special marker on the map   */
     public void refreshMapLocation() {
         if(ConcreteLocationTracker.getInstance().hasValidLocation()){
-            LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
+            final LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
             if(mMap!=null){
+                Handler tempHandler = new Handler(Looper.getMainLooper());
                 if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
                             .title("position")
@@ -127,9 +136,19 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
                                     R.drawable.ic_position_marker_30dp))));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
                 }else{
-                    mLocationMarker.setPosition(newLocation);
+                    tempHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLocationMarker.setPosition(newLocation);
+                        }
+                    });
                 }
-                mLocationMarker.setVisible(true);
+                tempHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLocationMarker.setVisible(true);
+                    }
+                });
             }
         }
     }
@@ -230,12 +249,13 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     @Override
-    public void locationTimedOut() {
+    public void locationTimedOut(Location old) {
         Log.d("MapFragment","Listener says location timed out");
     }
 
     @Override
     public void databaseUpdated() {
+
         addDBMarkers();
     }
 
@@ -253,7 +273,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
         Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
+//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
 

@@ -16,13 +16,6 @@ public class UserTest {
 
     private User testUser = null;
 
-    @After
-    public void removeTestUser() {
-        DatabaseRef.deleteUserFromDB(testUser.getUserId());
-        testUser.destroy();
-    }
-
-
     @Test
     public void testSetAndGetUser(){
         User.initializeFromFb("firstname", "lastname", "mlb");
@@ -41,5 +34,15 @@ public class UserTest {
         Assert.assertEquals(testUser.getKarma(), 500);
         Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
         Assert.assertEquals(User.hasInstance(), true);
+    }
+
+    @After
+    public void removeTestUser() throws Exception{
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
+        testUser.destroy();
+
+        if(User.hasInstance()) {
+            throw new AssertionError(" User should be destroyed");
+        }
     }
 }

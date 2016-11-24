@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.localisation;
 
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,10 +13,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 
 /** Singleton object providing location data to the app. Needs to be explicitely initialized
  */
@@ -25,7 +20,8 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
     private static LocationTracker mSingleInstance=null;
 
-    private LocationManager mLocationManager;
+    private LocationManagerWrapper mLocationManager;
+    private LocationListener mCurrentLocationListener;
     private Handler mLocationTimeoutHandler;
     private Runnable mRunOnTimeout;
 
@@ -33,19 +29,18 @@ public final class ConcreteLocationTracker implements LocationTracker {
     private Location mLocation;
 
 
-    // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(Context c){
+// INITIALIZE AND CONSTRUCTOR AND DESTROY
+    public static void initialize(LocationManagerWrapper locManager){
         if(mSingleInstance==null){
-            mSingleInstance = new ConcreteLocationTracker(c);
+            mSingleInstance = new ConcreteLocationTracker(locManager);
         }
-
     }
 
-    private ConcreteLocationTracker(Context c) {
+    private ConcreteLocationTracker(LocationManagerWrapper locManager) {
         // for listeners
         mListenersList = new ArrayList<>();
         // runnable that will take care of timeout-ing the location after a given time
-        mLocationTimeoutHandler = new Handler();
+        mLocationTimeoutHandler = new Handler(Looper.getMainLooper());
         mRunOnTimeout  = new Runnable() {
             @Override
             public void run() {
@@ -53,24 +48,24 @@ public final class ConcreteLocationTracker implements LocationTracker {
                 // synchronized, to prevent race conditions with another thread setting mLocation to a new location while we're notifying the listeners
                 synchronized (ConcreteLocationTracker.getInstance()){
                     notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+                    mLocation=null;
                 }
                 // no need to restart here, once timeout, we wait for a new location to start countdownagain
             }
         };
         // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = locManager;
         // Define a listener that responds to location updates
-        LocationListener currentLocationListener = new LocationListener() {
+        mCurrentLocationListener = new LocationListener() {
             public void onLocationChanged(Location newLocation) {
                 if(LocalizationUtils.isBetterLocation(newLocation ,mLocation)){
-                    Log.d("LocationTracker","location updated");
+                    Log.d("LocationTracker","location updated by provider : "+newLocation.getProvider());
                     mLocation = newLocation;
                     notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
                     mLocationTimeoutHandler.removeCallbacks(mRunOnTimeout);
                     mLocationTimeoutHandler.postDelayed(mRunOnTimeout, TIMEOUT_LOCATION);
                 }
             }
-
             public void onStatusChanged(String provider, int status, Bundle extras) {         }
             public void onProviderEnabled(String provider) {            }
             public void onProviderDisabled(String provider) {            }
@@ -80,8 +75,8 @@ public final class ConcreteLocationTracker implements LocationTracker {
         final int TIME_BETWEEN_LOCALISATION = 2 * 1000; //2 Second
         final int MIN_DISTANCE_CHANGE_UPDATE = 0; // 0 Meter
         try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, currentLocationListener);
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, currentLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, mCurrentLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_BETWEEN_LOCALISATION, MIN_DISTANCE_CHANGE_UPDATE, mCurrentLocationListener);
 
         }
 
@@ -94,24 +89,25 @@ public final class ConcreteLocationTracker implements LocationTracker {
     }
 
 
+    /** very needed for tests, since appearently, the singleton is not initialized once per test file, but once for ALL test files
+     *  And we want to have a mockLocationTracker sometimes, and sometimes test the concreteLocationTracker to which we input mock arguments
+     */
+    public static void destroyInstance() {
+        mSingleInstance = null;
+    }
 
-    // PUBLIC METHODS
+
+
+// PUBLIC METHODS
     public static boolean instanceExists(){
         return mSingleInstance!=null;
     }
 
     public static LocationTracker getInstance(){
         if(mSingleInstance==null){
-            throw new IllegalStateException("object has not been initialized");
+            throw new IllegalStateException("ConcreteLocationTracker has not been initialized");
         }
         return mSingleInstance;
-    }
-
-    //for testing only !
-    public static void setMockLocationTracker(LocationTracker mlt){
-        if(mSingleInstance==null){
-            mSingleInstance=mlt;
-        }
     }
 
     public boolean hasValidLocation(){
@@ -134,7 +130,12 @@ public final class ConcreteLocationTracker implements LocationTracker {
     }
 
     public LatLng getLatLng(){
-        return new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        if(hasValidLocation()) {
+            return new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        }
+        else {
+            throw new IllegalStateException("The LocationTracker holds no valid position at the moment - check locationIsValid before calling getLocation");
+        }
     }
 
     public void addListener(LocationTrackerListener l){
@@ -142,18 +143,24 @@ public final class ConcreteLocationTracker implements LocationTracker {
         if(hasValidLocation()){
             l.updateLocation(mLocation);
         }else{
-            l.locationTimedOut();
+            l.locationTimedOut(null);
         }
     }
 
+    //for testing only !
+    public static void setMockLocationTracker(LocationTracker mlt){
+        if(mSingleInstance==null){
+            mSingleInstance=mlt;
+        }
+    }
 
-    // FOR LISTENERS
+// FOR LISTENERS
     private void notifyListeners(int notification){
         if(notification != LISTENERS_NOTIFICATION_LOCATION_TIMEOUT && notification != LISTENERS_NOTIFICATION_NEW_LOCATION){
             throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : mListenersList){
-                listener.locationTimedOut();
+                listener.locationTimedOut(mLocation);
             }
         }else{
             for(LocationTrackerListener listener : mListenersList){
