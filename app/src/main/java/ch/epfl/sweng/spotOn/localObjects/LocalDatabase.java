@@ -89,10 +89,8 @@ public class LocalDatabase implements LocationTrackerListener{
 
     /** Adds a photoObject to the database, regardless of its position. NB : listeners need to be updated manually after that  */
     public void addPhotoObject(PhotoObject photo){
-        if( ConcreteLocationTracker.getInstance().hasValidLocation() && !mediaDataMap.containsKey(photo.getPictureId())) {
-            mediaDataMap.put(photo.getPictureId(), photo);
-            addToViewableMediaIfWithinViewableRange(photo);
-        }
+        mediaDataMap.put(photo.getPictureId(), photo);
+        addToViewableMediaIfWithinViewableRange(photo);
     }
 
     /** remove a photoObject from the LocalDatabase - NB : listeners need to be updated manually after that  */
@@ -106,14 +104,15 @@ public class LocalDatabase implements LocationTrackerListener{
     /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
-        if(databaseCachedLocation == null){
-            throw new IllegalStateException("caller function should ensure we have a valid location first");
-        }
-        if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
-                && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
-            if (!mediaDataMap.containsKey(newObject.getPictureId())) {
-                addPhotoObject(newObject);
+        if( ConcreteLocationTracker.getInstance().hasValidLocation() ) {
+            if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
+                    && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
+                if (!mediaDataMap.containsKey(newObject.getPictureId())) {
+                    addPhotoObject(newObject);
+                }
             }
+        }else{
+            Log.d("LocalDatabase", "WARNING - called addIfWithinFetchRadius(), but LocationTracker had no valid location");
         }
     }
 
