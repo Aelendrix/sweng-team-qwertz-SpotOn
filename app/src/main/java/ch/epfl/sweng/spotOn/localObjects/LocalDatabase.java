@@ -3,7 +3,6 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -104,7 +102,7 @@ public class LocalDatabase implements LocationTrackerListener{
     /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
-        if( ConcreteLocationTracker.getInstance().hasValidLocation() ) {
+        if( refToLocationTracker.hasValidLocation() ) {
             if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
                     && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
                 if (!mediaDataMap.containsKey(newObject.getPictureId())) {
