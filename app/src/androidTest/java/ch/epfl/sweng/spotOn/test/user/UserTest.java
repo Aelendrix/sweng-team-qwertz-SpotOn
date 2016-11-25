@@ -44,8 +44,8 @@ public class UserTest {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
         UserManager.getInstance().destroyUser();
 
-        if(UserManager.instanceExists()) {
-            throw new AssertionError(" UserManager should be destroyed");
+        if(UserManager.getInstance().userIsLoggedIn()) {
+            throw new AssertionError(" User should be destroyed");
         }
     }
 }
