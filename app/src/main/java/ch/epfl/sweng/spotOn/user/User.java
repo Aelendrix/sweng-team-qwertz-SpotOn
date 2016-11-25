@@ -15,6 +15,8 @@ public interface User {
     long MIN_POST_PER_DAY = 1;
     long ONE_DAY = 24 * 60 * 60 * 1000;
 
+    String NOT_LOGGED_in_MESSAGE = "You need to be logged in to use this feature";
+
 
 // PUBLIC METHODS
     boolean isLoggedIn();

@@ -34,6 +34,7 @@ import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceive
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -138,6 +139,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void goToTabActivity(boolean loggedIn) {
+        if( !LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists() || !UserManager.instanceExists()){
+            throw new IllegalStateException("All required singletons need to be initalized before leaving the mainActivity");
+        }
         if(loggedIn) {
             UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(),
                     mFbProfile.getId());
@@ -212,7 +216,6 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
-        UserManager.getInstance().addListener(ServicesChecker.getInstance());
         ToastProvider.update(getApplicationContext());
     }
 }

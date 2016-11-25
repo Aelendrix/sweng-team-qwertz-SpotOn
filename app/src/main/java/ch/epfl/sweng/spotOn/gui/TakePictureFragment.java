@@ -90,8 +90,8 @@ public class TakePictureFragment extends Fragment {
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
     public void dispatchTakePictureIntent(View view){
-        if( ! UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent("You need to be logged in for that", Toast.LENGTH_LONG);
+        if( ! ServicesChecker.getInstance().allowedToPost() ){
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
         }else {
         /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         mTextToDraw = bb.getString("TD", "");*/
@@ -107,7 +107,11 @@ public class TakePictureFragment extends Fragment {
     /** Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored */
     public void storePictureOnInternalStorage(View view){
-        if(mActualPhotoObject != null) {
+        if( ! ServicesChecker.getInstance().allowedToPost() ) {
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+        }else if(mActualPhotoObject == null) {
+            ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
+        } else {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
@@ -115,8 +119,6 @@ public class TakePictureFragment extends Fragment {
             } else {
                 ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_SHORT);
             }
-        } else {
-            ToastProvider.printOverCurrent("Rotate Button : Take a picture first !", Toast.LENGTH_SHORT);
         }
     }
 
@@ -124,58 +126,30 @@ public class TakePictureFragment extends Fragment {
      * Uploads picture to our database/file server
      */
     public void sendPictureToServer(View view){
-//<<<<<<< HEAD
-//        if( ! UserManager.getInstance().userIsLoggedIn() ){
-//            ToastProvider.printOverCurrent("You need to login to do that", Toast.LENGTH_LONG);
-//        }else {
-//            final long remainingPhotos = UserManager.getInstance().getUser().getRemainingPhotos();
-//            final String userId = UserManager.getInstance().getUser().getUserId();
-//
-//            if (mActualPhotoObject != null) {
-//                if (!mActualPhotoObject.isStoredInServer()) {
-//
-//                    if (remainingPhotos > 0 || userId.equals("test")) {
-//                        UserManager.getInstance().decrementUsersRemainingPhotos();
-//                        mActualPhotoObject.upload(true, new OnCompleteListener() {
-//                            @Override
-//                            public void onComplete(@NonNull Task task) {
-//                                if (task.getException() != null) {
-//                                    ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
-//                                } else {
-//                                    Log.d("TakePictureActivity", "uploaded picture");
-//                                    ToastProvider.printOverCurrent("Your pic is online !\nYou can post " + remainingPhotos + " more photos today!", Toast.LENGTH_LONG);
-//                                }
-//=======
-
-        if( ! UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent("You need to login to do that", Toast.LENGTH_LONG);
+        if( ! ServicesChecker.getInstance().allowedToPost() ) {
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+        } else if(mActualPhotoObject == null){
+            ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
+        } else if( mActualPhotoObject.isStoredInServer() ){
+            ToastProvider.printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
         } else {
-            if(mActualPhotoObject != null){
-                if(!mActualPhotoObject.isStoredInServer()){
-                    final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
-                    if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
-                        mActualPhotoObject.upload(true, new OnCompleteListener() {
-                            @Override
-                            public void onComplete(@NonNull Task task) {
-                                if(task.getException()!=null){
-                                    ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
-                                }else {
-                                    UserManager.getInstance().getUser().addPhoto(mActualPhotoObject);
-                                    Log.d("TakePictureActivity", "uploaded picture");
-                                    ToastProvider.printOverCurrent("Your pic is online ! \n You can still post " + (remainingPhotos - 1) + " today", Toast.LENGTH_LONG);
-                                }
-                            }
-                        });
-                        mActualPhotoObject.setSentToServerStatus(true);
-                    }else{
-                        ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
-                        Log.d("TakePictureFragment", "UserManager " + UserManager.getInstance().getUser().getUserId() + " can't post photo anymore");
+            final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
+            if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
+                mActualPhotoObject.upload(true, new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {if(task.getException()!=null){
+                        ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                    }else {
+                        UserManager.getInstance().getUser().addPhoto(mActualPhotoObject);
+                        Log.d("TakePictureActivity", "uploaded picture");
+                        ToastProvider.printOverCurrent("Your pic is online ! \n You can still post " + (remainingPhotos - 1) + " today", Toast.LENGTH_LONG);
                     }
-                } else {
-                    ToastProvider.printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
-                }
-            } else {
-                ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
+                    }
+                });
+                mActualPhotoObject.setSentToServerStatus(true);
+            }else{
+                ToastProvider.printOverCurrent("You can't post anymore photos today\n#FeelsBadMan", Toast.LENGTH_LONG);
+                Log.d("TakePictureFragment", "UserManager " + UserManager.getInstance().getUser().getUserId() + " can't post photo anymore");
             }
         }
     }
@@ -186,12 +160,14 @@ public class TakePictureFragment extends Fragment {
      * @param view
      */
     public void editPicture(View view){
-        if(mActualPhotoObject != null){
+        if( ! ServicesChecker.getInstance().allowedToPost() ) {
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+        } else if(mActualPhotoObject == null){
+            ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
+        } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
-        } else {
-            ToastProvider.printOverCurrent("You need to take a picture in order to edit it", Toast.LENGTH_LONG);
         }
     }
 

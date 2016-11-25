@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
@@ -37,7 +38,7 @@ public class ViewFullsizeImageActivity extends Activity {
 
     public void recordUpvote(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
         }
@@ -46,7 +47,7 @@ public class ViewFullsizeImageActivity extends Activity {
 
     public void recordDownvote(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
         }
@@ -55,7 +56,7 @@ public class ViewFullsizeImageActivity extends Activity {
 
     public void reportOffensivePicture(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
         }

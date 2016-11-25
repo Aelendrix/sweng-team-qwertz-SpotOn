@@ -17,14 +17,14 @@ import com.facebook.login.LoginManager;
 
 import ch.epfl.sweng.spotOn.R;
 
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
-import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
-public class TabActivity extends AppCompatActivity implements ServicesCheckerListener{
+public class TabActivity extends AppCompatActivity{
 
 
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
@@ -110,9 +110,11 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         switch (item.getItemId()) {
             case R.id.log_out:
                 if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
-                    return false;
-                }else {
+                    // to provide a way to log back in - needs to be improved todo
+                    Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                    startActivity(mainActivityIntent);
+                    return true;
+                } else {
                     disconnectFacebook();
                     UserManager user = UserManager.getInstance();
                     user.destroyUser();
@@ -124,7 +126,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
                 return true;
             case R.id.user_profile:
                 if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    ToastProvider.printOverCurrent("You need to be logged in ...", Toast.LENGTH_SHORT);
+                    ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
                     return false;
                 }else {
                     Intent profileIntent = new Intent(this, UserProfileActivity.class);
@@ -152,22 +154,13 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
 // PRIVATE HELPERS
     /** displays the error message if need be    */
     public void checkAndDisplayServicesError(){
-        if( ! ServicesChecker.getInstance().statusIsOk() ){
+        if( ! ServicesChecker.getInstance().allServicesOk() ){
             String errorMessage = ServicesChecker.getInstance().provideErrorMessage();
             if( errorMessage.isEmpty() ){
                 throw new IllegalStateException("incoherent state : error message can't be empty if status isn't good");
             }
             ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
         }
-    }
-
-
-
-
-// LISTENER METHODS
-    @Override
-    public void servicesAvailabilityUpdated() {
-        checkAndDisplayServicesError();
     }
 
 

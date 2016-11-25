@@ -1,24 +1,17 @@
 
 package ch.epfl.sweng.spotOn.utils;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserManager;
-import ch.epfl.sweng.spotOn.user.UserListener;
 
 /**
  * Created by quentin on 17.11.16.
@@ -30,10 +23,10 @@ public class ServicesChecker {
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
-    private LocalDatabase mLocalDatabaseRef;
     private UserManager mUserManagerRef;
 
     private boolean databaseIsConnected;
+
 //    private boolean locationIsValid;
 //    private boolean userIsLoggedIn;
 
@@ -51,12 +44,12 @@ public class ServicesChecker {
     }
 
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
-        if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() || !userRef.instanceExists()){
-            // test just in case
+        if( ltref==null || ldbref==null|| userRef==null){
+            // test to enfore that all required singletons are instanciated
             throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
         }
+        // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
 //        mListeners = new ArrayList<>();
-        mLocalDatabaseRef = ldbref;
         mLocationTrackerRef = ltref;
 //        databaseConnectionStatus = false;
 //        validLocationStatus = ltref.hasValidLocation();
@@ -83,6 +76,11 @@ public class ServicesChecker {
 //        mListeners.add(l);
 //        l.servicesAvailabilityUpdated();
 //    }
+
+    public boolean allServicesOk(){
+        // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && UserManager.getInstance().userIsLoggedIn();
+    }
 
     public boolean allowedToPost(){
         return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && UserManager.getInstance().userIsLoggedIn();
