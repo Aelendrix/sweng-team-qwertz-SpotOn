@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.Instrumentation.ActivityResult;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -30,9 +31,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.EditPictureActivity;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 
@@ -77,13 +83,11 @@ public class CameraTest{
         //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
         //Test all behavior: before and after rotating picture
         onView(withId(R.id.storeButton)).perform(click());
-        onView(withId(R.id.storeButton)).perform(click());
         // should fix this
         // onView(withId(R.id.sendButton)).perform(click());
         // should fix this
         // onView(withId(R.id.sendButton)).perform(click());
     }
-
 
     private ActivityResult createImageCaptureStub() {
         Bundle bundle = new Bundle();

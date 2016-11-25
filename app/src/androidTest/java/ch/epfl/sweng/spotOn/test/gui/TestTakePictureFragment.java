@@ -32,6 +32,8 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -47,19 +49,21 @@ public class TestTakePictureFragment {
         }
     };
     Uri mImageToUploadUri;
+    File file;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
         onView(withText("Camera")).perform(click());
+
         Thread.sleep(1000);
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
-        File file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
-        Bitmap pictureBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888); //po.getThumbnail();
+        Bitmap pictureBitmap = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888); //po.getThumbnail();
         pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
         fOut.flush(); // Not really required
         fOut.close(); // do not forget to close the stream
@@ -83,6 +87,19 @@ public class TestTakePictureFragment {
             }
         });
 
+
+        onView(withId(R.id.editButton)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.addTextButton)).perform(click());
+        onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
+        onView(withId(R.id.sendTextToDrawButton)).perform(click());
+
+        Thread.sleep(1000);
+        onView(withId(R.id.rotateButton)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.confirmButton)).perform(click());
+        Thread.sleep(1000);
+        
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
@@ -107,5 +124,7 @@ public class TestTakePictureFragment {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
+        file.delete();
+
     }
 }

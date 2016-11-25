@@ -47,26 +47,29 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
     //refresh the Grid when called
     public void refreshGrid(){
         if(mGridView!=null&&mView!=null){
+
+            mImageAdapter= new ImageAdapter(mView.getContext());
+            mGridView.invalidateViews();
+            mGridView.setAdapter(mImageAdapter);
             if(getActivity()==null){
-                throw new AssertionError("+");
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //create a new adapter and refresh the gridView
-                    mImageAdapter= new ImageAdapter(mView.getContext());
-                    mGridView.invalidateViews();
-                    mGridView.setAdapter(mImageAdapter);
-                    LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
-                    if(mImageAdapter.getCount()==0){
-                        mGridView.setVisibility(View.GONE);
-                        linearLayout.setVisibility(View.VISIBLE);
-                    }else{
-                        linearLayout.setVisibility(View.GONE);
-                        mGridView.setVisibility(View.VISIBLE);
+                Log.d("Correct tab", "Not on Around me tab");
+            }else {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //create a new adapter and refresh the gridView
+
+                        LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                        if (mImageAdapter.getCount() == 0) {
+                            mGridView.setVisibility(View.GONE);
+                            linearLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            linearLayout.setVisibility(View.GONE);
+                            mGridView.setVisibility(View.VISIBLE);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 

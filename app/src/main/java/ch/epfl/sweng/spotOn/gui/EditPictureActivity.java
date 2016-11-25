@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 
 public class EditPictureActivity extends AppCompatActivity {
 
@@ -50,7 +51,8 @@ public class EditPictureActivity extends AppCompatActivity {
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
-        mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         mEditedImageView.setImageBitmap(mEditedBitmap);
     }
 
@@ -132,20 +134,8 @@ public class EditPictureActivity extends AppCompatActivity {
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
         Uri resUri;
-        //resUri = PhotoUtils.createFileForBitmapAndGetUri("/SpotOn/EDITED_PICTURE.jpg" , this);
-        //Define the Uri (same directory where is stored the temporal image we are editing)
-        File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "/SpotOn/EDITED_PICTURE.jpg");
-        if(Build.VERSION.SDK_INT <= 23) {
-            resUri = Uri.fromFile(storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            resUri = FileProvider.getUriForFile(this,
-                    BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        }
-
+        resUri = BitmapUtils.createFileForBitmapAndGetUri("/SpotOn/EDITED_PICTURE.jpg" , this);
+        File storageForEdition = new File(resUri.getPath());
         //Store the picture at the directory defined above
         try {
             FileOutputStream pictureOutputFile = new FileOutputStream(storageForEdition);
@@ -167,22 +157,4 @@ public class EditPictureActivity extends AppCompatActivity {
         }
         return resUri;
     }
-
-
-
-    /*public static Uri createFileForBitmapAndGetUri(String pathFromMedia, Context context){
-        Uri uriToReturn;
-        File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                pathFromMedia);
-        if(Build.VERSION.SDK_INT <= 23) {
-            uriToReturn = Uri.fromFile(temporalStorage);
-            Log.d("URI ImageUpload", uriToReturn.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            uriToReturn = FileProvider.getUriForFile(context,
-                    BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
-            Log.d("URI ImageUpload", uriToReturn.toString());
-        }
-        return uriToReturn;
-    }*/
 }

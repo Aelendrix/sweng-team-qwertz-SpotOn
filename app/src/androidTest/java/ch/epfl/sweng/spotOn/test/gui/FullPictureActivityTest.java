@@ -1,9 +1,7 @@
+package ch.epfl.sweng.spotOn.test.gui;
 
 /*
 package ch.epfl.sweng.spotOn.test.gui;
-=======
- package ch.epfl.sweng.spotOn.test.gui;
->>>>>>> master
 
 
 import android.content.Intent;
@@ -100,7 +98,6 @@ public class FullPictureActivityTest {
                 },
                 Press.FINGER);
     }
-
     @After
     public void after(){
         ConcreteLocationTracker.destroyInstance();
@@ -108,4 +105,5 @@ public class FullPictureActivityTest {
             throw new AssertionError("FullPictureActivityTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
         }
     }
-}*/
+}
+*/

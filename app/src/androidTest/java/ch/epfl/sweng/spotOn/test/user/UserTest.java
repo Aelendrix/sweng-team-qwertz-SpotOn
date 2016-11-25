@@ -21,7 +21,6 @@ public class UserTest {
         User.initializeFromFb("firstname", "lastname", "mlb");
         testUser = User.getInstance();
         testUser.setKarma(500);
-        testUser.setRemainingPhotos(User.computeMaxPhotoInDay(testUser.getKarma()));
 
         try {
             Thread.sleep(3000);
@@ -33,7 +32,6 @@ public class UserTest {
         Assert.assertEquals(testUser.getLastName(), "lastname");
         Assert.assertEquals(testUser.getUserId(), "mlb");
         Assert.assertEquals(testUser.getKarma(), 500);
-        Assert.assertEquals(testUser.getRemainingPhotos(), User.computeMaxPhotoInDay(500));
         Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
         Assert.assertEquals(User.hasInstance(), true);
     }

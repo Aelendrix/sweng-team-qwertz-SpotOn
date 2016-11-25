@@ -65,8 +65,7 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 public class TakePictureFragment extends Fragment {
 
     private final DatabaseReference UserRef = DatabaseRef.getUsersDirectory();
-    private final String USER_ID = User.getInstance().getUserId();
-    private long mRemainingPhotos = User.getInstance().getRemainingPhotos();
+    private final User USER = User.getInstance();
 
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
@@ -74,13 +73,14 @@ public class TakePictureFragment extends Fragment {
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
+    private String mTextToDraw;
+    private Uri editUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
         mImageView = (ImageView) view.findViewById(R.id.image_view);
-        getRemainingPhotoInDay();
         return view;
     }
 
@@ -105,6 +105,7 @@ public class TakePictureFragment extends Fragment {
      * Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored
      */
+
     public void storePictureOnInternalStorage(View view){
         if(mActualPhotoObject != null) {
             if(!mActualPhotoObject.isStoredInternally()) {
@@ -126,26 +127,24 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(View view){
         if(mActualPhotoObject != null){
             if(!mActualPhotoObject.isStoredInServer()){
-
-                if(mRemainingPhotos > 0 || USER_ID.equals("test")) {
-                    --mRemainingPhotos;
-                    UserRef.child(USER_ID).child("RemainingPhotos").setValue(mRemainingPhotos);
-                    User.getInstance().setRemainingPhotos(mRemainingPhotos);
+                final long remainingPhotos = USER.computeRemainingPhotos();
+                if(remainingPhotos > 0 || USER.getUserId().equals("114110565725225")){
                     mActualPhotoObject.upload(true, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
                             if(task.getException()!=null){
                                 ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
                             }else{
+                                USER.addPhoto(mActualPhotoObject);
                                 Log.d("TakePictureActivity","uploaded picture");
-                                ToastProvider.printOverCurrent("Your pic is online !\nYou can post "+mRemainingPhotos+" more photos today!", Toast.LENGTH_LONG);
+                                ToastProvider.printOverCurrent("Your pic is online ! \n You can still post "+(remainingPhotos-1) + " today", Toast.LENGTH_LONG);
                             }
                         }
                     });
                     mActualPhotoObject.setSentToServerStatus(true);
                 } else {
+                    Log.d("TakePictureFragment","User "+USER.getUserId()+" can't post photo anymore");
                     ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
-                    Log.d("TakePictureFragment","User "+USER_ID+" can't post photo anymore");
                 }
 
             } else {
@@ -163,7 +162,7 @@ public class TakePictureFragment extends Fragment {
     public void editPicture(View view){
         if(mActualPhotoObject != null){
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
-            editPictureIntent.putExtra("bitmapToEdit", mImageToUploadUri.toString());
+            editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
@@ -314,7 +313,7 @@ public class TakePictureFragment extends Fragment {
             throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
-        PhotoObject picObject = new PhotoObject(imageBitmap, USER_ID, imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
+        PhotoObject picObject = new PhotoObject(imageBitmap, USER.getUserId(), imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
         return picObject;
     }
@@ -343,6 +342,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
+            editUri = imageToUploadUri;
             //Get our saved picture from the file in a bitmap image and display it on the image view
             Uri selectedImage = imageToUploadUri;
             getContext().getContentResolver().notifyChange(selectedImage, null);
@@ -441,30 +441,6 @@ public class TakePictureFragment extends Fragment {
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
     }
-
-
-    private void getRemainingPhotoInDay(){
-
-        UserRef.orderByChild("userId").equalTo(USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    if(USER_ID == null){
-                        Log.e("TakePictureFragment","getRemainingPhotoInDay: USER_ID is null");
-                    }
-                    else {
-                        if (dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue() != null) {
-                            mRemainingPhotos = ((long) dataSnapshot.child(USER_ID).child("RemainingPhotos").getValue());
-                            User.getInstance().setRemainingPhotos(mRemainingPhotos);
-                        }
-                    }
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 }
+
+

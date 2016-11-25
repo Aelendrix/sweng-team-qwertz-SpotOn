@@ -98,7 +98,6 @@ public class TabActivityTest {
         onView(withText("Camera")).perform(click());
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
-<<<<<<< HEAD
     }*/
 
     @After

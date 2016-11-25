@@ -2,27 +2,30 @@ package ch.epfl.sweng.spotOn.gui;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.User;
 
 public class UserProfileActivity extends AppCompatActivity {
 
     private TextView mFirstNameTextView = null;
     private TextView mLastNameTextView = null;
-    private TextView mEmailAddressTextView = null;
-    private TextView mGenderTextView = null;
-    private TextView mBirthdayTextView = null;
-    private TextView mNbVotesTextView = null;
-    private TextView mNbPicturesTakenTextView = null;
     private TextView mKarmaTextView = null;
+    private ListView mPicturesListView = null;
     private User mUser = null;
 
     @Override
@@ -40,12 +43,23 @@ public class UserProfileActivity extends AppCompatActivity {
 
             mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
             mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
-            mEmailAddressTextView = (TextView) findViewById(R.id.profileEmailAddressTextView);
-            mGenderTextView = (TextView) findViewById(R.id.profileGenderTextView);
-            mBirthdayTextView = (TextView) findViewById(R.id.profileBirthdayTextView);
-            mNbVotesTextView = (TextView) findViewById(R.id.profileNbVotesTextView);
-            mNbPicturesTakenTextView = (TextView) findViewById(R.id.profileNbPicturesTakenTextView);
             mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
+
+            mPicturesListView = (ListView) findViewById(R.id.profilePicturesListView);
+
+            List<String> pictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
+            List<PhotoObject> photoList = new ArrayList<>();
+
+            for(int i=0; i<pictureIdList.size(); i++){
+                Log.d("pictureIdList", pictureIdList.get(i));
+                Log.d("photoListSize", Integer.toString(photoList.size()));
+                photoList.add(LocalDatabase.getInstance().get(pictureIdList.get(i)));
+                Log.d("photoListSize", Integer.toString(photoList.size()));
+            }
+
+            PictureVoteListAdapter mPictureVoteAdapter = new PictureVoteListAdapter(
+                    UserProfileActivity.this, photoList);
+            mPicturesListView.setAdapter(mPictureVoteAdapter);
 
             Context context = getApplicationContext();
             String toastMessage = "Please wait a little bit while your info are updating";
