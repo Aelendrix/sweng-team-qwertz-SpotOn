@@ -24,19 +24,20 @@ import ch.epfl.sweng.spotOn.user.UserListener;
  * Created by quentin on 17.11.16.
  */
 
-public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener, UserListener{
+//public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener, UserListener{
+public class ServicesChecker {
 
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
     private LocalDatabase mLocalDatabaseRef;
-    private UserManager mUserRef;
+    private UserManager mUserManagerRef;
 
-    private boolean databaseConnectionStatus;
-    private boolean validLocationStatus;
-    private boolean userIsLoggedIn;
+    private boolean databaseIsConnected;
+//    private boolean locationIsValid;
+//    private boolean userIsLoggedIn;
 
-    private List<ServicesCheckerListener> mListeners;
+//    private List<ServicesCheckerListener> mListeners;
 
 
 
@@ -45,21 +46,22 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
     public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
         mSingleInstance.listenForDatabaseConnectivity();
-        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
-        mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
+//        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
+//        mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
     }
+
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() || !userRef.instanceExists()){
             // test just in case
-            throw new IllegalStateException("Must initialize LocationTracker and Localdatabase first");
+            throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
         }
-        mListeners = new ArrayList<>();
+//        mListeners = new ArrayList<>();
         mLocalDatabaseRef = ldbref;
         mLocationTrackerRef = ltref;
-        databaseConnectionStatus = false;
-        validLocationStatus = ltref.hasValidLocation();
-        mUserRef = userRef;
-        userIsLoggedIn = mUserRef.userIsLoggedIn();
+//        databaseConnectionStatus = false;
+//        validLocationStatus = ltref.hasValidLocation();
+        mUserManagerRef = userRef;
+        //userIsLoggedIn = mUserRef.userIsLoggedIn();
     }
 
 
@@ -77,28 +79,28 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
         return mSingleInstance;
     }
 
-    public void addListener(ServicesCheckerListener l ){
-        mListeners.add(l);
-        l.servicesAvailabilityUpdated();
+//    public void addListener(ServicesCheckerListener l ){
+//        mListeners.add(l);
+//        l.servicesAvailabilityUpdated();
+//    }
+
+    public boolean allowedToPost(){
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && UserManager.getInstance().userIsLoggedIn();
     }
 
-    public  boolean statusIsOk(){
-        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() || ! databaseConnectionStatus || !userIsLoggedIn){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean allowedToViewPosts(){
+        return databaseIsConnected && ConcreteLocationTracker.getInstance().hasValidLocation();
     }
 
     public String provideErrorMessage(){
         String errorMessage = "";
-        if( !validLocationStatus ){
-            errorMessage += "Can't find your gps location\n";
+        if( ! mLocationTrackerRef.hasValidLocation() ){
+            errorMessage += "Can't localize your device\n";
         }
-        if( !databaseConnectionStatus ){
+        if( ! databaseIsConnected ){
             errorMessage += "Can't connect to the database\n";
         }
-        if( !userIsLoggedIn ){
+        if( ! mUserManagerRef.getInstance().userIsLoggedIn() ){
             errorMessage += "You're not logged in\n";
         }
         errorMessage += "--  App may malfunction  --";
@@ -118,17 +120,17 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
                 boolean connected = dataSnapshot.getValue(Boolean.class);
                 Log.d("ServicesChecker", " database connection status : "+connected);
                 if(connected){
-                    databaseConnectionStatus = true;
+                    databaseIsConnected = true;
                 }else{
-                    databaseConnectionStatus = false;
+                    databaseIsConnected = false;
                 }
-                notifyListeners();
+//                notifyListeners();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                databaseConnectionStatus = false;
-                notifyListeners();
-                Log.d("ServicesChecker", "cancelled database query");
+                databaseIsConnected = false;
+//                notifyListeners();
+                Log.d("ServicesChecker", "ERROR : cancelled database query");
             }
         });
     }
@@ -137,54 +139,54 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
 
 
 // LISTENER PATTERN METHODS
-    public void notifyListeners(){
-        for( ServicesCheckerListener l : mListeners){
-            l.servicesAvailabilityUpdated();
-        }
-    }
+//    public void notifyListeners(){
+//        for( ServicesCheckerListener l : mListeners){
+//            l.servicesAvailabilityUpdated();
+//        }
+//    }
 
 
 
 
 // LISTENER METHODS -- todo
-    @Override
-    public void databaseUpdated() {
-        // nothing to do, we have another listener for that
-    }
+//    @Override
+//    public void databaseUpdated() {
+//        // nothing to do, we have another listener for that
+//    }
+//
+//    @Override
+//    public void updateLocation(Location newLocation) {
+//        if( ! locationIsValid){            // change in services status
+//            Log.d("ServicesChecker","location status changed : listeners notified");
+//            locationIsValid = true;
+////            notifyListeners();
+//        }
+//    }
+//
+//    @Override
+//    public void locationTimedOut(Location old) {
+//        if(locationIsValid){           // change in services status
+//            Log.d("ServicesChecker","location timedout : listeners notified");
+//            locationIsValid = false;
+////            notifyListeners();
+//        }
+//    }
 
-    @Override
-    public void updateLocation(Location newLocation) {
-        if( !validLocationStatus){            // change in services status
-            Log.d("ServicesChecker","location status changed : listeners notified");
-            validLocationStatus = true;
-            notifyListeners();
-        }
-    }
-
-    @Override
-    public void locationTimedOut(Location old) {
-        if(validLocationStatus){           // change in services status
-            Log.d("ServicesChecker","location timedout : listeners notified");
-            validLocationStatus = false;
-            notifyListeners();
-        }
-    }
-
-    @Override
-    public void userConnected() {
-        if( !userIsLoggedIn ){
-            Log.d("ServicesChecker","user logged in : listeners notified");
-            userIsLoggedIn=true;
-            notifyListeners();
-        }
-    }
-
-    @Override
-    public void userDisconnected() {
-        if( userIsLoggedIn ){
-            Log.d("ServicesChecker","user logged out : listeners notified");
-            userIsLoggedIn=false;
-            notifyListeners();
-        }
-    }
+//    @Override
+//    public void userConnected() {
+//        if( !userIsLoggedIn ){
+//            Log.d("ServicesChecker","user logged in : listeners notified");
+//            userIsLoggedIn=true;
+//            notifyListeners();
+//        }
+//    }
+//
+//    @Override
+//    public void userDisconnected() {
+//        if( userIsLoggedIn ){
+//            Log.d("ServicesChecker","user logged out : listeners notified");
+//            userIsLoggedIn=false;
+//            notifyListeners();
+//        }
+//    }
 }
