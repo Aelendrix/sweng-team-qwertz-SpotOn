@@ -7,6 +7,7 @@ import android.support.test.filters.SmallTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +19,6 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -30,7 +29,10 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
+import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 
 /**
@@ -39,17 +41,13 @@ import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
  */
 
 @RunWith(AndroidJUnit4.class)
-@SmallTest
 public class TabActivityTest {
-
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            LocalDatabase.initialize(mlt);
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
+            TestInitUtils.initContext();
         }
     };
 
@@ -59,6 +57,19 @@ public class TabActivityTest {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.viewpager)).perform(swipeRight());
+    }
+
+    @Test
+    public void press_back_button() {
+        //proc a toast
+        Intents.init();
+        final TabActivity tabActivity = mActivityTestRule.getActivity();
+        tabActivity.runOnUiThread(new Runnable() {
+            public void run() {
+               tabActivity.onBackPressed();
+            }
+        });
+        Intents.release();
     }
 
     @Test
@@ -87,5 +98,14 @@ public class TabActivityTest {
         onView(withText("Camera")).perform(click());
         Thread.sleep(5000);
         onView(withId(R.id.rotateButton)).perform(click());
+<<<<<<< HEAD
     }*/
+
+    @After
+    public void after(){
+        ConcreteLocationTracker.destroyInstance();
+        if( ConcreteLocationTracker.instanceExists()){
+            throw new AssertionError("TabActivityTest : concreteLocationTracker mock instance not deleted");
+        }
+    }
 }

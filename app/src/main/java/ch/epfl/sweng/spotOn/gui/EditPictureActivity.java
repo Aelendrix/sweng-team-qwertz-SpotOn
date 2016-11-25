@@ -170,7 +170,7 @@ public class EditPictureActivity extends AppCompatActivity {
 
 
 
-    public static Uri createFileForBitmapAndGetUri(String pathFromMedia, Context context){
+    /*public static Uri createFileForBitmapAndGetUri(String pathFromMedia, Context context){
         Uri uriToReturn;
         File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 pathFromMedia);
@@ -184,5 +184,5 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("URI ImageUpload", uriToReturn.toString());
         }
         return uriToReturn;
-    }
+    }*/
 }

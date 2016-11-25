@@ -25,7 +25,7 @@ public class SingletonsTests {
         if(!(DatabaseRef.getUsersDirectory().equals(FirebaseDatabase.getInstance().getReference("UsersDirectory")))){
             throw new AssertionError();
         }
-        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory")))){
+        if(!(DatabaseRef.getMediaDirectory().equals(FirebaseDatabase.getInstance().getReference("MediaDirectory_v2")))){
             throw new AssertionError();
         }
         if(!(DatabaseRef.getRootDirectory().equals(FirebaseDatabase.getInstance().getReference()))){
@@ -45,6 +45,17 @@ public class SingletonsTests {
         }
     }
 
+    @Test (expected=IllegalArgumentException.class)
+    public void testDBIllegalArgumentDelete() throws IllegalArgumentException{
+        DatabaseRef.deletePhotoObjectFromDB(null);
+        throw new AssertionError("IllegalArgumentException not detected");
+
+    }
+    @Test(expected=IllegalArgumentException.class)
+    public void testStorageIllegalArgumentDelete() throws IllegalArgumentException{
+        StorageRef.deletePictureFromStorage(null);
+        throw new AssertionError("IllegalArgumentException not detected");
+    }
     @Test
     public void testStorageReferences(){
         if(!(StorageRef.getMediaDirectory().equals(FirebaseStorage.getInstance().getReference("Images")))){

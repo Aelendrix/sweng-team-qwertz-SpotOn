@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.media;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -205,11 +206,14 @@ public class PhotoObject {
             // push changes to Database if the object was uploaded
             if(mFullsizeImageLink!=null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).setValue(this.convertForStorageInDatabase());
+                /*
                 DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
                 DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
                 DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
                 DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
                 DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
+                */
                 giveAuthorHisKarma(karmaAdded);
             }
         }
@@ -284,6 +288,12 @@ public class PhotoObject {
         }
     }
 
+    public Location obtainLocation(){
+        Location l = new Location("PhotoObject_Location_generator");
+        l.setLatitude(mLatitude);
+        l.setLongitude(mLongitude);
+        return l;
+    }
 
 
 
@@ -353,9 +363,7 @@ public class PhotoObject {
         mStoredInServer = alreadySent;
     }
 
-    /**
-     * Needed for tests
-     */
+    /** Needed for tests */
     public void setRadiusMax(){
         mRadius = MAX_VIEW_RADIUS;
     }

@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,9 +40,9 @@ public class LocalDatabase implements LocationTrackerListener{
 
     // these settings help to avoid unnecessary refreshes of the database
     private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE = 1500; // refresh the localdatabase at most every 1.5 seconds
-    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 5*1000; // refresh the localdatabase at most every 3 seconds
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 3*1000; // refresh the localdatabase at most every 3 seconds
 
-    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 5*60*1000; // refresh at least every 5 minutes
+    private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 3*60*1000; // refresh at least every 5 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
     private final static double FETCH_RADIUS = 0.1; // the radius in which we fetch pictures, in degrees
@@ -86,29 +87,41 @@ public class LocalDatabase implements LocationTrackerListener{
         return mediaDataMap.get(key);
     }
 
+    /** Adds a photoObject to the database, regardless of its position. NB : listeners need to be updated manually after that  */
     public void addPhotoObject(PhotoObject photo){
         if(!mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
-            Location photoLocation = new Location("mockProvider");
-            photoLocation.setLatitude(photo.getLatitude());
-            photoLocation.setLongitude(photo.getLongitude());
-            if(refToLocationTracker.getLocation().distanceTo(photoLocation) < photo.getRadius()) {
-                mViewableMediaDataMap.put(photo.getPictureId(), photo);
+            addToViewableMediaIfWithinViewableRange(photo);
+        }
+    }
+
+    /** remove a photoObject from the LocalDatabase - NB : listeners need to be updated manually after that  */
+    public void removePhotoObject(String key){
+        mediaDataMap.remove(key);
+        if(mViewableMediaDataMap.containsKey(key)){
+            mViewableMediaDataMap.remove(key);
+        }
+    }
+
+    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
+     *  NB : listeners need to be updated manually after that  */
+    public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
+        if(databaseCachedLocation == null){
+            throw new IllegalStateException("caller function should ensure we have a valid location first");
+        }
+        if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
+                && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
+            if (!mediaDataMap.containsKey(newObject.getPictureId())) {
+                addPhotoObject(newObject);
             }
         }
     }
 
-    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS
-     *  of the current cached location
-     */
-    public void addIfWithinFetchRadius(PhotoObject newObject, Location l) {
-        if(l == null){
-            throw new IllegalStateException("caller function should ensure we have a valid location first");
-        }
-        if (Math.abs(newObject.getLatitude() - l.getLatitude()) < FETCH_RADIUS
-                && Math.abs(newObject.getLongitude() - l.getLongitude()) < FETCH_RADIUS) {
-            if (!mediaDataMap.containsKey(newObject.getPictureId())) {
-                mediaDataMap.put(newObject.getPictureId(), newObject);
+    /** notifies all listeners of a change of the database content - public as it needs to be called in tests after manually adding objects*/
+    public void notifyListeners(){
+        if( ! mListeners.isEmpty() ){
+            for(LocalDatabaseListener l : mListeners){
+                l.databaseUpdated();
             }
         }
     }
@@ -132,10 +145,6 @@ public class LocalDatabase implements LocationTrackerListener{
         return mediaDataMap;
     }
 
-    /** remove a photoObject from the LocalDatabase */
-    public void removePhotoObject(String key){
-        mediaDataMap.remove(key);
-    }
 
     public void addListener(LocalDatabaseListener l){
         mListeners.add(l);
@@ -145,10 +154,10 @@ public class LocalDatabase implements LocationTrackerListener{
 
 
 // PRIVATE METHODS
-    /** notifies all listeners of a change of the database content */
-    private void notifyListeners(){
-        for(LocalDatabaseListener l : mListeners){
-            l.databaseUpdated();
+    /** adds the media to the list of viewable media if within viewable range */
+    private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
+        if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
+            mViewableMediaDataMap.put(po.getPictureId(), po);
         }
     }
 
@@ -181,7 +190,7 @@ public class LocalDatabase implements LocationTrackerListener{
         photoSortedByTime.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate()){
+                if( mSingleInstance.allowRefreshAccordingToMaxRefreshRate() && mCachedLocation!= null){
                     Location mLocationTempCopy;
                     synchronized (this) {
                         mLocationTempCopy = new Location(mCachedLocation);
@@ -222,6 +231,8 @@ public class LocalDatabase implements LocationTrackerListener{
                     PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
                     LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                 }
+                // refresh last refresh date
+                mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
                 Log.d("LocalDB", "updated via force single refresh, "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
                 LocalDatabase.getInstance().refreshViewablePhotos();
                 LocalDatabase.getInstance().notifyListeners();
@@ -274,7 +285,7 @@ public class LocalDatabase implements LocationTrackerListener{
     }
 
     @Override
-    public void locationTimedOut(){
+    public void locationTimedOut(Location old){
         Log.d("Localdatabase","listener notifed that location timed out");
         synchronized (this) {
             mCachedLocation = null;
