@@ -89,7 +89,7 @@ public class LocalDatabase implements LocationTrackerListener{
 
     /** Adds a photoObject to the database, regardless of its position. NB : listeners need to be updated manually after that  */
     public void addPhotoObject(PhotoObject photo){
-        if(!mediaDataMap.containsKey(photo.getPictureId())) {
+        if( ConcreteLocationTracker.getInstance().hasValidLocation() && !mediaDataMap.containsKey(photo.getPictureId())) {
             mediaDataMap.put(photo.getPictureId(), photo);
             addToViewableMediaIfWithinViewableRange(photo);
         }
