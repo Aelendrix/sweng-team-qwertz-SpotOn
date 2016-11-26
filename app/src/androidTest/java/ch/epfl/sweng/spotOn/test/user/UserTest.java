@@ -5,8 +5,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
@@ -23,7 +26,7 @@ public class UserTest {
         testUser.setKarma(500);
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             System.err.print(e);
         }
@@ -36,13 +39,39 @@ public class UserTest {
         Assert.assertEquals(User.hasInstance(), true);
     }
 
+
+    @Test
+    public void testComputeRemainingPhotos(){
+        User.initializeFromFb("firstname", "lastname", "mlb_test");
+        testUser = User.getInstance();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            System.err.print(e);
+        }
+
+        long remainingPictures = testUser.computeRemainingPhotos();
+
+        Assert.assertEquals(remainingPictures, 1);
+    }
+
+
     @After
     public void removeTestUser() throws Exception{
-        DatabaseRef.deleteUserFromDB(testUser.getUserId());
-        testUser.destroy();
-
         if(User.hasInstance()) {
-            throw new AssertionError(" User should be destroyed");
+            DatabaseRef.deleteUserFromDB(testUser.getUserId());
+            testUser.destroy();
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                System.err.print(e);
+            }
+
+            if(User.hasInstance()) {
+                throw new AssertionError(" User should be destroyed");
+            }
         }
     }
 }

@@ -41,7 +41,7 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
         mUser.getUserAttributesFromDB();
 
         if(mUser.getUserId() == null){
-            Log.e("UserProfileActivity", "UserId is null");
+            throw new IllegalStateException("UserProfileActivity userId is null");
         }
         else {
 
