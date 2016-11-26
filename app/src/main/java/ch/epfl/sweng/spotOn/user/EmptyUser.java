@@ -17,13 +17,13 @@ public class EmptyUser implements User {
 
     @Override
     public void removeManager() {
-        unsupported();
+        throw new UnsupportedOperationException();
     }
 
 
     @Override
     public long computeRemainingPhotos() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
     @Override
     public void addPhoto(PhotoObject photo) {
@@ -49,12 +49,12 @@ public class EmptyUser implements User {
 
     @Override
     public Map<String, Long> getPhotosTaken() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean getIsRetrievedFromDB() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -71,9 +71,4 @@ public class EmptyUser implements User {
         throw new UnsupportedOperationException();
     }
 
-
-    // PRIVATE HELPERS
-    private void unsupported(){
-        throw new UnsupportedOperationException("EmptyUser");
-    }
 }
