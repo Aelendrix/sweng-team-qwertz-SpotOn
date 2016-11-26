@@ -16,16 +16,22 @@ import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.User;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity implements LocalDatabaseListener {
 
     private TextView mFirstNameTextView = null;
     private TextView mLastNameTextView = null;
     private TextView mKarmaTextView = null;
     private ListView mPicturesListView = null;
+
     private User mUser = null;
+
+    private static List<String> mPictureIdList = null;
+    private static List<PhotoObject> mPhotoList = null;
+    private static PictureVoteListAdapter mPictureVoteAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,19 +52,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
             mPicturesListView = (ListView) findViewById(R.id.profilePicturesListView);
 
-            List<String> pictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
-            List<PhotoObject> photoList = new ArrayList<>();
-
-            for(int i=0; i<pictureIdList.size(); i++){
-                Log.d("pictureIdList", pictureIdList.get(i));
-                Log.d("photoListSize", Integer.toString(photoList.size()));
-                photoList.add(LocalDatabase.getInstance().get(pictureIdList.get(i)));
-                Log.d("photoListSize", Integer.toString(photoList.size()));
-            }
-
-            PictureVoteListAdapter mPictureVoteAdapter = new PictureVoteListAdapter(
-                    UserProfileActivity.this, photoList);
-            mPicturesListView.setAdapter(mPictureVoteAdapter);
+            LocalDatabase.getInstance().addListener(this);
+            refreshVoteAndPictureLists();
 
             Context context = getApplicationContext();
             String toastMessage = "Please wait a little bit while your info are updating";
@@ -85,4 +80,42 @@ public class UserProfileActivity extends AppCompatActivity {
         finish();
     }
 
+
+    @Override
+    public void databaseUpdated() {
+        refreshVoteAndPictureLists();
+    }
+
+
+    private void refreshVoteAndPictureLists(){
+        if(mPictureIdList == null) {
+            mPictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
+        }
+        else {
+            mPictureIdList.removeAll(mPictureIdList);
+            mPictureIdList.addAll(mUser.getPhotosTaken().keySet());
+        }
+
+        if(mPhotoList == null) {
+            mPhotoList = new ArrayList<>();
+        }
+        else {
+            mPhotoList.removeAll(mPhotoList);
+        }
+
+        for(int i=0; i<mPictureIdList.size(); i++){
+            Log.d("pictureIdList", mPictureIdList.get(i));
+            Log.d("photoListSize", Integer.toString(mPhotoList.size()));
+            mPhotoList.add(LocalDatabase.getInstance().get(mPictureIdList.get(i)));
+            Log.d("photoListSize", Integer.toString(mPhotoList.size()));
+        }
+
+        if(mPictureVoteAdapter == null) {
+            mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
+        }
+        else {
+            mPictureVoteAdapter.updateList(mPhotoList);
+        }
+        mPicturesListView.setAdapter(mPictureVoteAdapter);
+    }
 }

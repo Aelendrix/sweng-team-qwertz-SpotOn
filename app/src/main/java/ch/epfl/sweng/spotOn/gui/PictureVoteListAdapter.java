@@ -43,4 +43,8 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
         return rowView;
     }
+
+    public void updateList(List<PhotoObject> photoList) {
+        mPhotoList = photoList;
+    }
 }
