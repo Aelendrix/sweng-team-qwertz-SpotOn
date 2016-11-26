@@ -42,7 +42,7 @@ public class UserTest {
 
     @Test
     public void testComputeRemainingPhotos(){
-        User.initializeFromFb("firstname", "lastname", "mlb_test");
+        User.initializeFromFb("firstname", "lastname", "mlb1");
         testUser = User.getInstance();
 
         try {

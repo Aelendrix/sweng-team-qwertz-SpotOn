@@ -111,5 +111,5 @@ public class UserStoredInDatabase {
     public void setLastName(String lastName){ mLastName = lastName; }
     public void setUserId(String userId){ mUserId = userId; }
     public void setKarma(long karma){ mKarma = karma; }
-    public void setmPhotosTaken(Map<String, Long> photosTaken) { mPhotosTaken = photosTaken; }
+    public void setPhotosTaken(Map<String, Long> photosTaken) { mPhotosTaken = photosTaken; }
 }
