@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

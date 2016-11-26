@@ -156,8 +156,12 @@ public class LocalDatabase implements LocationTrackerListener{
 // PRIVATE METHODS
     /** adds the media to the list of viewable media if within viewable range */
     private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
-        if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
-            mViewableMediaDataMap.put(po.getPictureId(), po);
+        if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
+
+        } else {
+            if (refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
+                mViewableMediaDataMap.put(po.getPictureId(), po);
+            }
         }
     }
 
