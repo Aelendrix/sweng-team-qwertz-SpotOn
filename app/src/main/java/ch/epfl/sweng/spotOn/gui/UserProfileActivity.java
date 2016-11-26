@@ -87,20 +87,8 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
 
     private void refreshVoteAndPictureLists(){
-        if(mPictureIdList == null) {
-            mPictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
-        }
-        else {
-            mPictureIdList.removeAll(mPictureIdList);
-            mPictureIdList.addAll(mUser.getPhotosTaken().keySet());
-        }
-
-        if(mPhotoList == null) {
-            mPhotoList = new ArrayList<>();
-        }
-        else {
-            mPhotoList.removeAll(mPhotoList);
-        }
+        mPictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
+        mPhotoList = new ArrayList<>();
 
         for(int i=0; i<mPictureIdList.size(); i++){
             Log.d("pictureIdList", mPictureIdList.get(i));
@@ -109,12 +97,7 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
             Log.d("photoListSize", Integer.toString(mPhotoList.size()));
         }
 
-        if(mPictureVoteAdapter == null) {
-            mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
-        }
-        else {
-            mPictureVoteAdapter.updateList(mPhotoList);
-        }
+        mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
         mPicturesListView.setAdapter(mPictureVoteAdapter);
     }
 }
