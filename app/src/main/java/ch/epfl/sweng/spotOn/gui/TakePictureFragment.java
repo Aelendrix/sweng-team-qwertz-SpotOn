@@ -74,7 +74,8 @@ public class TakePictureFragment extends Fragment {
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
-    private boolean mTextWrittenOnPic; //boolean to make sure the user does not write twice on the picture
+    private boolean mTextWrittenOnPic;//boolean to make sure the user does not write twice on the picture
+    private Uri editUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,9 +91,6 @@ public class TakePictureFragment extends Fragment {
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
     public void dispatchTakePictureIntent(View view){
-        /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");*/
-
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -162,7 +160,7 @@ public class TakePictureFragment extends Fragment {
     public void editPicture(View view){
         if(mActualPhotoObject != null){
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
-            editPictureIntent.putExtra("bitmapToEdit", mImageToUploadUri.toString());
+            editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
             editPictureIntent.putExtra("alreadyWritten", mTextWrittenOnPic);
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
@@ -338,6 +336,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
+            editUri = imageToUploadUri;
             //Get our saved picture from the uri in a bitmap image
             Uri selectedImage = imageToUploadUri;
             getContext().getContentResolver().notifyChange(selectedImage, null);
