@@ -139,18 +139,10 @@ public class EditPictureActivity extends AppCompatActivity {
      * @return the uri of where is stored the image
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
-        Uri resUri;
         File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "/SpotOn/TEMP_PICTURE.jpg");
-        if(Build.VERSION.SDK_INT <= 23) {
-            resUri = Uri.fromFile(storageForEdition);
-            Log.d("UriImageUpload", resUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            resUri = FileProvider.getUriForFile(this,
-                    BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
-            Log.d("UriImageUpload", resUri.toString());
-        }
+        Uri resUri = BitmapUtils.getUriFromFile(this, storageForEdition);
+
         //Store the picture at the directory defined above
         try {
             FileOutputStream pictureOutputFile = new FileOutputStream(storageForEdition);

@@ -37,21 +37,20 @@ public class BitmapUtils {
     }
 
     /**
-     * Creates the file in the internal storage where the image will be stored
+     * Gets the uri from the file given depending on the API of the phone
      * @param context the context of the activity where this method is called
+     * @param file the file for which we want the uri
      * @return the Uri of where is stored the file
      */
-    public static Uri createFileForBitmapAndGetUri(Context context){
+    public static Uri getUriFromFile(Context context, File file){
         Uri uriToReturn;
-        File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "/SpotOn/TEMP_PICTURE.jpg");
         if(Build.VERSION.SDK_INT <= 23) {
-            uriToReturn = Uri.fromFile(temporalStorage);
+            uriToReturn = Uri.fromFile(file);
             Log.d("UriImageUpload", uriToReturn.toString());
         } else {
-            //For API >= 24 (was the cause of the crash)
+            //For API >= 24 (was the cause of the crash when opening the camera)
             uriToReturn = FileProvider.getUriForFile(context,
-                    BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
+                    BuildConfig.APPLICATION_ID + ".provider", file);
             Log.d("UriImageUpload", uriToReturn.toString());
         }
         return uriToReturn;
