@@ -38,22 +38,21 @@ public class BitmapUtils {
 
     /**
      * Creates the file in the internal storage where the image will be stored
-     * @param pathFromMedia the path of the file
      * @param context the context of the activity where this method is called
      * @return the Uri of where is stored the file
      */
-    public static Uri createFileForBitmapAndGetUri(String pathFromMedia, Context context){
+    public static Uri createFileForBitmapAndGetUri(Context context){
         Uri uriToReturn;
         File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                pathFromMedia);
+                "/SpotOn/TEMP_PICTURE.jpg");
         if(Build.VERSION.SDK_INT <= 23) {
             uriToReturn = Uri.fromFile(temporalStorage);
-            Log.d("URI ImageUpload", uriToReturn.toString());
+            Log.d("UriImageUpload", uriToReturn.toString());
         } else {
             //For API >= 24 (was the cause of the crash)
             uriToReturn = FileProvider.getUriForFile(context,
                     BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
-            Log.d("URI ImageUpload", uriToReturn.toString());
+            Log.d("UriImageUpload", uriToReturn.toString());
         }
         return uriToReturn;
     }
