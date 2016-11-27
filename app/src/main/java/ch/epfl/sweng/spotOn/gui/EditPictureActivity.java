@@ -110,7 +110,8 @@ public class EditPictureActivity extends AppCompatActivity {
                 Log.d("TextToDraw", "entered the loop");
                 Canvas canvas = new Canvas(mEditedBitmap);
                 Paint paint = new Paint();
-                paint.setColor(Color.RED);
+                paint.setColor(Color.WHITE);
+                paint.setShadowLayer(10, 0, 0, Color.BLACK);
                 paint.setTextSize(50);
                 float x = 50;
                 float y = mEditedBitmap.getHeight() - 200;
