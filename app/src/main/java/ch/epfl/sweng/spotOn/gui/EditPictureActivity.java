@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class EditPictureActivity extends AppCompatActivity {
 
@@ -41,6 +43,7 @@ public class EditPictureActivity extends AppCompatActivity {
     private Bitmap mEditedBitmap;
     private ImageView mEditedImageView;
     public String mTextToDraw;
+    private boolean mTextWrittenOnPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class EditPictureActivity extends AppCompatActivity {
 
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
+        mTextWrittenOnPic = intent.getExtras().getBoolean("alreadyWritten");
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
         Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
         mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -75,8 +79,12 @@ public class EditPictureActivity extends AppCompatActivity {
      * @param view
      */
     public void goToDrawTextActivity(View view){
-        Intent intent = new Intent(this, DrawTextActivity.class);
-        startActivityForResult(intent, REQUEST_TEXT_DRAWING);
+        if(! mTextWrittenOnPic) {
+            Intent intent = new Intent(this, DrawTextActivity.class);
+            startActivityForResult(intent, REQUEST_TEXT_DRAWING);
+        } else {
+            Toast.makeText(this, "You can't write twice on the same picture", Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -89,6 +97,7 @@ public class EditPictureActivity extends AppCompatActivity {
         mURIofBitmap = storeAndGetImageUri(mEditedBitmap);
         //Give the Uri as a string in extras ! Just giving the Uri is not working
         intent.putExtra("editedBitmap", mURIofBitmap.toString());
+        intent.putExtra("writtenText", mTextWrittenOnPic);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -96,17 +105,17 @@ public class EditPictureActivity extends AppCompatActivity {
     /**
      * Method that will be used when the user adds text to the picture through the DrawTextActivity
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the request code the finished activity gave
+     * @param resultCode the result code the finished activity gave (OK or not)
+     * @param data the intent from the finished activity to this one
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_TEXT_DRAWING && resultCode == Activity.RESULT_OK){
-            //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mTextToDraw = data.getStringExtra("textToDraw");//preferences.getString("TD", "");
+            mTextToDraw = data.getStringExtra("textToDraw");
             Log.d("TextToDraw", mTextToDraw);
             if(mTextToDraw != null){
+                mTextWrittenOnPic = true;
                 //Edits the bitmap in a canvas
                 Log.d("TextToDraw", "entered the loop");
                 Canvas canvas = new Canvas(mEditedBitmap);
@@ -117,10 +126,7 @@ public class EditPictureActivity extends AppCompatActivity {
                 float y = mEditedBitmap.getHeight() - 200;
                 paint.setFakeBoldText(true);
                 canvas.drawText(mTextToDraw, x, y, paint);
-                //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
-                //SharedPreferences.Editor edit = preferences.edit();
-                //edit.remove("TD");
-                //edit.apply();
+
                 mEditedImageView.setImageBitmap(mEditedBitmap);
             }
         }
@@ -134,8 +140,17 @@ public class EditPictureActivity extends AppCompatActivity {
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
         Uri resUri;
-        resUri = BitmapUtils.createFileForBitmapAndGetUri("/SpotOn/EDITED_PICTURE.jpg" , this);
-        File storageForEdition = new File(resUri.getPath());
+        File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "/SpotOn/TEMP_PICTURE.jpg");
+        if(Build.VERSION.SDK_INT <= 23) {
+            resUri = Uri.fromFile(storageForEdition);
+            Log.d("UriImageUpload", resUri.toString());
+        } else {
+            //For API >= 24 (was the cause of the crash)
+            resUri = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
+            Log.d("UriImageUpload", resUri.toString());
+        }
         //Store the picture at the directory defined above
         try {
             FileOutputStream pictureOutputFile = new FileOutputStream(storageForEdition);
