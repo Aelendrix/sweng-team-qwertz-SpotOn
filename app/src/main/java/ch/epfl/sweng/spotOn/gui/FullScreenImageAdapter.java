@@ -44,6 +44,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private TextView mTextView;
     private PhotoObject mDisplayedMedia;
 
+    // Useful to change color of buttons when clicked
+    private boolean upvoted = false;
+    private boolean downvoted = false;
+    private boolean reported = false;
+
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
@@ -78,7 +83,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contains wanted picture : "+wantedPicId);
+            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
         }
         mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
@@ -139,14 +144,18 @@ public class FullScreenImageAdapter extends PagerAdapter {
             //fake vote method to have more responsive interface
             if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getUpvotersList().contains(userId)){
                 voteSum++;
+                upvoted = true;
                 if(mDisplayedMedia.getDownvotersList().contains(userId)){
                     voteSum++;
+                    downvoted = false;
                 }
             }
             if(vote==-1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getDownvotersList().contains(userId)){
                 voteSum--;
+                downvoted = true;
                 if(mDisplayedMedia.getUpvotersList().contains(userId)){
                     voteSum--;
+                    upvoted = false;
                 }
             }
             refreshVoteTextView(Integer.toString(voteSum));
@@ -162,8 +171,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = User.getInstance().getUserId();
+            reported = true;
             String toastMessage = mDisplayedMedia.processReport(userId);
             Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean getUpvoted(){
+        return upvoted;
+    }
+    public boolean getDownvoted(){
+        return downvoted;
+    }
+    public boolean getReported(){
+        return reported;
     }
 }

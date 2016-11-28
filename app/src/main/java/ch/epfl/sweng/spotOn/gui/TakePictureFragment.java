@@ -112,13 +112,15 @@ public class TakePictureFragment extends Fragment {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
-                Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
-
+                ToastProvider.printOverCurrent("Picture stored in your internal storage", Toast.LENGTH_LONG);
+                //Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_LONG);
+                //Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("You need to take a picture in order to store it.", Toast.LENGTH_LONG);
+            //Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -149,10 +151,12 @@ public class TakePictureFragment extends Fragment {
                 }
 
             } else {
-                Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent("This picture is already online", Toast.LENGTH_LONG);
+                //Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("You need to take a picture in order to send it", Toast.LENGTH_LONG);
+            //Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -166,7 +170,8 @@ public class TakePictureFragment extends Fragment {
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
-            Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
+            ToastProvider.printOverCurrent("You need to take a picture in order to edit it", Toast.LENGTH_LONG);
+            //Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -208,7 +213,8 @@ public class TakePictureFragment extends Fragment {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 invokeCamera();
             } else {
-                Toast.makeText(getContext(), getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
+                ToastProvider.printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
+                //Toast.makeText(getContext(), getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -369,7 +375,8 @@ public class TakePictureFragment extends Fragment {
                 mImageView.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-                    Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
+                    ToastProvider.printOverCurrent("Can't create post without proper Location data", Toast.LENGTH_LONG);
+                    //Toast.makeText(getContext(), "Can't create post without proper Location data", Toast.LENGTH_LONG);
                 } else {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
