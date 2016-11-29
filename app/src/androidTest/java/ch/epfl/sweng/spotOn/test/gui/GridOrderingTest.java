@@ -22,7 +22,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 public class GridOrderingTest {
-    PhotoObject po;
+    private PhotoObject po;
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override

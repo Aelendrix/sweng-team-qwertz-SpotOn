@@ -36,7 +36,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
 
         mView = inflater.inflate(R.layout.activity_see_pictures, container, false);
         mGridView = (GridView) mView.findViewById(R.id.gridview);
-        mImageAdapter = new ImageAdapter(mView.getContext(),0);
+        mImageAdapter = new ImageAdapter(mView.getContext(),DEFAULT_ORDER);
         mGridView.setAdapter(mImageAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
