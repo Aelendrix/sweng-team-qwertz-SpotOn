@@ -28,7 +28,7 @@ public class GridOrderingTest {
         @Override
         public void beforeActivityLaunched(){
             po = PhotoObjectTestUtils.iceDivingPO();
-            po.upload();
+            po.uploadWithoutFeedback();
             TestInitUtils.initContext();
 
         }
