@@ -1,3 +1,5 @@
+package ch.epfl.sweng.spotOn.test.gui;
+
 /*
 package ch.epfl.sweng.spotOn.test.gui;
 
