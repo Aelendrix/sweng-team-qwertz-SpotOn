@@ -114,6 +114,18 @@ public class ToastsProviderTest {
         Thread.sleep(sec1);
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void invalidDurationToast_printOverCurrent(){
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        ToastProvider.printOverCurrent("hello",100);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void invalidDurationToast_printIfNoCurrent(){
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        ToastProvider.printIfNoCurrent("hello",100);
+    }
+
 
 
 // PRIVATE HELPERS
