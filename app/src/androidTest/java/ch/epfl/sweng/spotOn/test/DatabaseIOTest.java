@@ -64,7 +64,7 @@ public class DatabaseIOTest {
 
     }
 
-    @Test (timeout=10000)
+    @Test (timeout=30000)
     public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
             final PhotoObject po = p;
@@ -116,7 +116,7 @@ public class DatabaseIOTest {
         }
     }
 
-    @Test (timeout=10000)
+    @Test (timeout=30000)
     public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
 
