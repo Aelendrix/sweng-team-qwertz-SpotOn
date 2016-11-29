@@ -100,7 +100,6 @@ public class TabActivityTest {
         onView(withId(R.id.rotateButton)).perform(click());
     }*/
 
-
     @After
     public void after(){
         ConcreteLocationTracker.destroyInstance();

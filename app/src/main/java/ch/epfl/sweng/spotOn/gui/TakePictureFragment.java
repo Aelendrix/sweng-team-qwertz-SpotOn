@@ -55,6 +55,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -73,7 +74,7 @@ public class TakePictureFragment extends Fragment {
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
-    private String mTextToDraw;
+    private boolean mTextWrittenOnPic;//boolean to make sure the user does not write twice on the picture
     private Uri editUri;
 
     @Override
@@ -90,9 +91,6 @@ public class TakePictureFragment extends Fragment {
      * if not, it asks the permission to use it, else it calls the method invokeCamera()
      */
     public void dispatchTakePictureIntent(View view){
-        /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");*/
-
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             invokeCamera();
         } else {
@@ -100,7 +98,6 @@ public class TakePictureFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
         }
     }
-
 
     /**
      * Method called when clicking the "Store" button, it will store the picture
@@ -164,6 +161,7 @@ public class TakePictureFragment extends Fragment {
         if(mActualPhotoObject != null){
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
+            editPictureIntent.putExtra("alreadyWritten", mTextWrittenOnPic);
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
             Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
@@ -214,7 +212,8 @@ public class TakePictureFragment extends Fragment {
     }
 
     /**
-     * Method that invokes the camera
+     * Method that invokes the camera and create the File of where the picture will be stored on
+     * the internal storage
      */
     private void invokeCamera() {
         //Needed to store the last picture taken on the user's storage in order to have HQ picture
@@ -222,15 +221,7 @@ public class TakePictureFragment extends Fragment {
             Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "/SpotOn/TEMP_PICTURE.jpg");
-            if(Build.VERSION.SDK_INT <= 23) {
-                mImageToUploadUri = Uri.fromFile(temporalStorage);
-                Log.d("URI ImageUpload", mImageToUploadUri.toString());
-            } else {
-                //For API >= 24 (was the cause of the crash)
-                mImageToUploadUri = FileProvider.getUriForFile(getContext(),
-                        BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
-                Log.d("URI ImageUpload", mImageToUploadUri.toString());
-            }
+            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), temporalStorage);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
@@ -328,10 +319,13 @@ public class TakePictureFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            mTextWrittenOnPic = false;
             processResult(mImageToUploadUri);
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
-            processResult(Uri.parse(data.getExtras().getString("editedBitmap")));
+            Bundle dataBundle = data.getExtras();
+            mTextWrittenOnPic = dataBundle.getBoolean("writtenText");
+            processResult(Uri.parse(dataBundle.getString("editedBitmap")));
         }
     }
 
@@ -343,29 +337,11 @@ public class TakePictureFragment extends Fragment {
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
             editUri = imageToUploadUri;
-            //Get our saved picture from the file in a bitmap image and display it on the image view
+            //Get our saved picture from the uri in a bitmap image
             Uri selectedImage = imageToUploadUri;
             getContext().getContentResolver().notifyChange(selectedImage, null);
-            Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
+            Bitmap HQPicture = getBitmap(selectedImage, getContext());
             if(HQPicture != null){
-                //Creates a mutable copy of the bitmap.
-                /*Bitmap modifiedPicture = HQPicture.copy(Bitmap.Config.ARGB_8888, true);
-                if(mTextToDraw != null) {
-                    //Edits the bitmap in a canvas
-                    Canvas canvas = new Canvas(modifiedPicture);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.RED);
-                    paint.setTextSize(50);
-                    float x = 50;
-                    float y = modifiedPicture.getHeight() - 200;
-                    paint.setFakeBoldText(true);
-                    canvas.drawText(mTextToDraw, x, y, paint);
-                    //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-                    SharedPreferences.Editor edit = preferences.edit();
-                    edit.remove("TD");
-                    edit.apply();
-                }*/
                 mImageView.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
                 if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){

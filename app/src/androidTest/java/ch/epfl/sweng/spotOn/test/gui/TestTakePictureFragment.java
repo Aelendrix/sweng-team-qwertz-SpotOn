@@ -27,6 +27,7 @@ import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -69,15 +70,7 @@ public class TestTakePictureFragment {
         fOut.close(); // do not forget to close the stream
 
         //mImageToUploadUri = Uri.fromFile(file);
-        if(Build.VERSION.SDK_INT <= 23) {
-            mImageToUploadUri = Uri.fromFile(file);
-            Log.d("URI ImageUpload", mImageToUploadUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            mImageToUploadUri = FileProvider.getUriForFile(pictureFragment.getContext(),
-                    BuildConfig.APPLICATION_ID + ".provider", file);
-            Log.d("URI ImageUpload", mImageToUploadUri.toString());
-        }
+        mImageToUploadUri = BitmapUtils.getUriFromFile(pictureFragment.getContext(), file);
 
         mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -86,6 +79,7 @@ public class TestTakePictureFragment {
 
             }
         });
+
 
         onView(withId(R.id.editButton)).perform(click());
         Thread.sleep(1000);
@@ -98,6 +92,7 @@ public class TestTakePictureFragment {
         Thread.sleep(1000);
         onView(withId(R.id.confirmButton)).perform(click());
         Thread.sleep(1000);
+        
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
