@@ -61,16 +61,16 @@
             android:layout_height="match_parent">
 
             <Button
-                android:text="Upvote"
+                android:text="@string/upVoteOrderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:id="@+id/order_upvote_button"
                 android:onClick="onUpVoteOrderingClick"/>
 
             <Button
-                android:text="Oldest"
+                android:text="@string/oldestOrderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -79,7 +79,7 @@
                 android:onClick="onOldestOrderingClick"/>
 
             <Button
-                android:text="Newest"
+                android:text="@string/newestOrderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -87,7 +87,7 @@
                 android:id="@+id/order_newest_button"
                 android:onClick="onNewestOrderingClick"/>
             <Button
-                android:text="Hot"
+                android:text="@string/hotOrderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
