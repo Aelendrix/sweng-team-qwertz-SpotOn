@@ -47,7 +47,7 @@ public class ToastsProviderTest {
     private final static long sec3 = 3*1000;
     private final static long sec5 = 5*1000;
     private final static long sec10 = 10*1000;
-    private final static long shortD = 2000;
+    private final static long shortD = 2000;    // duration of Toasts.LENG
     private final static long longD = 3500;
 
     @Rule
@@ -64,6 +64,10 @@ public class ToastsProviderTest {
         displayFullSizeImageIntent = new Intent();
     }
 
+
+
+// TESTS
+
     @Test
     public void launchFullPictureActivity() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
@@ -72,7 +76,7 @@ public class ToastsProviderTest {
 
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
-        Thread.sleep(100);
+        Thread.sleep(200);
         assertSomeDisplayedToast();
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
@@ -108,11 +112,11 @@ public class ToastsProviderTest {
         ToastProvider.printIfNoCurrent("finished", Toast.LENGTH_LONG);
 
         Thread.sleep(sec1);
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(sec1);
-        onView(withId(R.id.viewpager)).perform(swipeRight());
     }
 
+
+
+// PRIVATE HELPERS
 
     private void assertNoDisplayedToast(String message){
         if(ToastProvider.toastBeingDisplayed()){
@@ -129,6 +133,6 @@ public class ToastsProviderTest {
         }
     }
     private void assertSomeDisplayedToast(){
-        assertNoDisplayedToast("Expected some toast displayed, found none");
+        assertSomeDisplayedToast("Expected some toast displayed, found none");
     }
 }

@@ -113,6 +113,12 @@ public final class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        ToastProvider.update(this);
+    }
+
 
     @Override
     protected void onStart() {
@@ -216,6 +222,6 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
-        ToastProvider.update(getApplicationContext());
+        ToastProvider.update(this);
     }
 }

@@ -38,7 +38,6 @@ public class TabActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-        ToastProvider.update(getApplicationContext());
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,6 +56,12 @@ public class TabActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ToastProvider.update(this);
     }
 
 

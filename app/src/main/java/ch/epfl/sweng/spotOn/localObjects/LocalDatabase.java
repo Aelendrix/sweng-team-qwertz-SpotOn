@@ -99,6 +99,7 @@ public class LocalDatabase implements LocationTrackerListener{
         }
     }
 
+    // TODO - this needs to be re-done
     /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
