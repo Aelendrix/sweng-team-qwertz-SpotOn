@@ -45,7 +45,7 @@ public class ServicesChecker {
 
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         if( ltref==null || ldbref==null|| userRef==null){
-            // test to enfore that all required singletons are instanciated
+            // test to enforce that all required singletons are instanciated
             throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
         }
         // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
@@ -79,15 +79,15 @@ public class ServicesChecker {
 
     public boolean allServicesOk(){
         // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
-        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && UserManager.getInstance().userIsLoggedIn();
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
 
     public boolean allowedToPost(){
-        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && UserManager.getInstance().userIsLoggedIn();
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
 
     public boolean allowedToViewPosts(){
-        return databaseIsConnected && ConcreteLocationTracker.getInstance().hasValidLocation();
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation();
     }
 
     public String provideErrorMessage(){
@@ -101,7 +101,9 @@ public class ServicesChecker {
         if( ! mUserManagerRef.getInstance().userIsLoggedIn() ){
             errorMessage += "You're not logged in\n";
         }
-        errorMessage += "--  App may malfunction  --";
+        if(!allServicesOk()) {
+            errorMessage += "--  App may malfunction  --";
+        }
         return errorMessage;
     }
 

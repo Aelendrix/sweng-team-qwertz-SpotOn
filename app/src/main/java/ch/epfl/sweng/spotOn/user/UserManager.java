@@ -73,7 +73,11 @@ public class UserManager {
         listeners.add(l);
     }
 
-
+    /** Set user - for tests only   */
+    public void setMockUser(User u){
+        mUser = u;
+        notifyListeners(USER_CONNECTED);
+    }
 
 
 

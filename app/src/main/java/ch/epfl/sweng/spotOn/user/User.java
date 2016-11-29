@@ -31,7 +31,6 @@ public interface User {
     String getUserId();
     long getKarma();
     Map<String, Long> getPhotosTaken();
-    boolean getIsRetrievedFromDB();
 
 
 //PUBLIC SETTERS

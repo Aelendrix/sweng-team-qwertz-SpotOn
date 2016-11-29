@@ -17,7 +17,7 @@ public class EmptyUser implements User {
 
     @Override
     public void removeManager() {
-        throw new UnsupportedOperationException();
+        // nothing
     }
 
 
@@ -49,11 +49,6 @@ public class EmptyUser implements User {
 
     @Override
     public Map<String, Long> getPhotosTaken() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean getIsRetrievedFromDB() {
         throw new UnsupportedOperationException();
     }
 

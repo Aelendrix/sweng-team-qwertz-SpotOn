@@ -1,40 +1,24 @@
 package ch.epfl.sweng.spotOn.test;
 
 import android.content.Intent;
-import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.ContactsContract;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.action.CoordinatesProvider;
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
 import android.widget.Toast;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
@@ -53,6 +37,7 @@ public class ToastsProviderTest {
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class, true, false);
     private Intent displayFullSizeImageIntent;
+
 
     @Before
     public void initLocalDatabase() throws InterruptedException {MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
@@ -124,6 +109,11 @@ public class ToastsProviderTest {
     public void invalidDurationToast_printIfNoCurrent(){
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         ToastProvider.printIfNoCurrent("hello",100);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void badlyUpdatedToastProviderThrowsException(){
+        ToastProvider.update(null);
     }
 
 

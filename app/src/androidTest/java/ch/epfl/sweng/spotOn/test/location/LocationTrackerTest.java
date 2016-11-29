@@ -16,6 +16,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocalizationUtils;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
+import ch.epfl.sweng.spotOn.test.util.MockLocationManagerWrapper_forTests;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 

@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn.test.location;
+package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
 
@@ -46,23 +46,31 @@ public class MockLocationTracker_forTest implements LocationTracker {
 
     @Override
     public boolean hasValidLocation() {
-        return true;
+        return mockLocation!=null;
     }
 
     @Override
     public Location getLocation() {
+        if(mockLocation==null){
+            throw new IllegalStateException();
+        }
         return mockLocation;
     }
 
     @Override
     public LatLng getLatLng() {
+        if(mockLocation==null){
+            throw new IllegalStateException();
+        }
         return new LatLng(getLocation().getLatitude(), getLocation().getLongitude());
     }
 
     @Override
     public void addListener(LocationTrackerListener l) {
         listeners.add(l);
-        l.updateLocation(mockLocation);
+        if(mockLocation!=null){
+            l.updateLocation(mockLocation);
+        }
     }
 
     public void forceLocationChange(Location newLoc){
@@ -72,6 +80,11 @@ public class MockLocationTracker_forTest implements LocationTracker {
 
     public void forceLocationTimeout(){
         notifyListners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+        mockLocation = null;
+    }
+
+    public void setMockLocation(Location l){
+        mockLocation=l;
     }
 
 
