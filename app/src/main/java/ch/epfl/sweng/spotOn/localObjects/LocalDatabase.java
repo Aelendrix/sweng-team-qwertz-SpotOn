@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -223,11 +224,14 @@ public class LocalDatabase implements LocationTrackerListener{
                 LocalDatabase.getInstance().clear();
                 Location mLocationTempCopy;
                 synchronized (this) {
-                    mLocationTempCopy = new Location(mCachedLocation);
+//                    mLocationTempCopy = new Location(mCachedLocation);
                 }
                 for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                     PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+//                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                    if(ConcreteLocationTracker.getInstance().hasValidLocation()) {
+                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, ConcreteLocationTracker.getInstance().getLocation());
+                    }
                 }
                 // refresh last refresh date
                 mLastRefreshDate = Calendar.getInstance().getTimeInMillis();

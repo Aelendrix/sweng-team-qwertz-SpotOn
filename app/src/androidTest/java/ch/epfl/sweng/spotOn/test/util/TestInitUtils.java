@@ -58,4 +58,18 @@ public class TestInitUtils {
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
     }
+
+    public static void initContextNoUser(){
+        // destroy LocationTrackerSingleton if need be
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+        LocalDatabase.initialize(mlt);
+        UserManager.initialize();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+    }
 }
