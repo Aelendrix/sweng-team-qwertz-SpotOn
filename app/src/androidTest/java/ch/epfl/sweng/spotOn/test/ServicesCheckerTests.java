@@ -6,6 +6,7 @@ import android.location.Location;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -67,11 +68,13 @@ public class ServicesCheckerTests {
         checkExpected(expected);
 
         // no correct Location
-//        mlt.forceLocationTimeout();
-//        expected = "Can't localize your device\n"+"--  App may malfunction  --";
-//        checkExpected(expected);
+        Location tempStoreLocation = mlt.getLocation();
+        mlt.forceLocationTimeout();
+        expected = "Can't localize your device\n"+"--  App may malfunction  --";
+        checkExpected(expected);
 
-
+        // restore location
+        mlt.setMockLocation(tempStoreLocation);
     }
 
     private void checkExpected(String expected){

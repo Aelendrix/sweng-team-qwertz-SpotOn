@@ -229,20 +229,24 @@ public class LocalDatabase implements LocationTrackerListener{
         photoSortedByTime.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                LocalDatabase.getInstance().clear();
-                Location mLocationTempCopy;
-                synchronized (this) {
-                    mLocationTempCopy = new Location(mCachedLocation);
+                if(mCachedLocation==null){
+                    Log.d("LocalDatabase","WARNING : calling forceSingleRefresh() while holding no valid mCachedLocation ");
+                }else {
+                    LocalDatabase.getInstance().clear();
+                    Location mLocationTempCopy;
+                    synchronized (this) {
+                        mLocationTempCopy = new Location(mCachedLocation);
+                    }
+                    for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
+                        PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                    }
+                    // refresh last refresh date
+                    mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
+                    Log.d("LocalDB", "updated via force single refresh, " + LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                    LocalDatabase.getInstance().refreshViewablePhotos();
+                    LocalDatabase.getInstance().notifyListeners();
                 }
-                for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
-                    PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
-                }
-                // refresh last refresh date
-                mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
-                Log.d("LocalDB", "updated via force single refresh, "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
-                LocalDatabase.getInstance().refreshViewablePhotos();
-                LocalDatabase.getInstance().notifyListeners();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

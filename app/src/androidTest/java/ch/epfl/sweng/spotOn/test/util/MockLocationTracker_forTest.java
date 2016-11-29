@@ -69,7 +69,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
     public void addListener(LocationTrackerListener l) {
         listeners.add(l);
         if(mockLocation!=null){
-            notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);
+            l.updateLocation(mockLocation);
         }
     }
 
