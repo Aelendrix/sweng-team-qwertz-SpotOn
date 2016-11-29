@@ -5,7 +5,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,11 +20,6 @@ public class UserTest {
     @After
     public void removeTestUser() {
         DatabaseRef.deleteUserFromDB(testUser.getUserId());
-    }
-
-    @Before
-    public void init(){
-
     }
 
     @Test

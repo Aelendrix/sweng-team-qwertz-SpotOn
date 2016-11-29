@@ -169,15 +169,19 @@ public class LocalDatabase implements LocationTrackerListener{
 
     /** refreshes the map of viewable photo */
     private void refreshViewablePhotos() {
-        for(PhotoObject po : mediaDataMap.values()){
-            // create a "location" object for the photo
-            Location newObjectLocation = new Location("dummyProvider");
-            newObjectLocation.setLatitude(po.getLatitude());
-            newObjectLocation.setLongitude(po.getLongitude());
-            // compare it with the location provided by the LocationTracker
-            if(newObjectLocation.distanceTo(mCachedLocation) < po.getRadius()) {
-                if(!mViewableMediaDataMap.containsKey(po.getPictureId())) {
-                    mViewableMediaDataMap.put(po.getPictureId(), po);
+        if( mCachedLocation == null){
+            Log.d("Localdatabase", "WARNING : called refreshViewablePhotos, but no valid cachedLocation");
+        }else {
+            for (PhotoObject po : mediaDataMap.values()) {
+                // create a "location" object for the photo
+                Location newObjectLocation = new Location("dummyProvider");
+                newObjectLocation.setLatitude(po.getLatitude());
+                newObjectLocation.setLongitude(po.getLongitude());
+                // compare it with the location provided by the LocationTracker
+                if (newObjectLocation.distanceTo(mCachedLocation) < po.getRadius()) {
+                    if (!mViewableMediaDataMap.containsKey(po.getPictureId())) {
+                        mViewableMediaDataMap.put(po.getPictureId(), po);
+                    }
                 }
             }
         }
@@ -216,19 +220,20 @@ public class LocalDatabase implements LocationTrackerListener{
     }
 
     /** adds a single-use listener to the firebase directory containing the medias  */
+    // NB : can't have a null mLocation, since this is only called when location updated
     private void forceSingleRefresh(){
         Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(new Date().getTime());
         photoSortedByTime.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 LocalDatabase.getInstance().clear();
-//                Location mLocationTempCopy;
+                Location mLocationTempCopy;
                 synchronized (this) {
-//                    mLocationTempCopy = new Location(mCachedLocation);
+                    mLocationTempCopy = new Location(mCachedLocation);
                 }
                 for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                     PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-//                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                     if(ConcreteLocationTracker.getInstance().hasValidLocation()) {
                         LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, ConcreteLocationTracker.getInstance().getLocation());
                     }
