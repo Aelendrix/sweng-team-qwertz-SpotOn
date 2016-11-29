@@ -82,7 +82,7 @@ public class LocalDatabaseTest {
         Map<String,Bitmap> thumbList = LocalDatabase.getInstance().getViewableThumbnails();
 
         if(thumbList.size()!=3){ // the 3 pictures are within range, if the MockLocation latitude and longitude aren't changed
-            throw new AssertionError("return a list with a different size ("+thumbList.size()+") than the map");
+            throw new AssertionError("return a list with a different size ("+thumbList.size()+") than expected (3)");
         }
         if( !thumbList.get(photo1.getPictureId()).sameAs(photo1.getThumbnail()) ||
             !thumbList.get(photo2.getPictureId()).sameAs(photo2.getThumbnail()) ||

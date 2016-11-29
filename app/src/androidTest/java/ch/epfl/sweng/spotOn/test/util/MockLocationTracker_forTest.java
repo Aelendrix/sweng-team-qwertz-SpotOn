@@ -68,6 +68,9 @@ public class MockLocationTracker_forTest implements LocationTracker {
     @Override
     public void addListener(LocationTrackerListener l) {
         listeners.add(l);
+        if(mockLocation!=null){
+            notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);
+        }
     }
 
     public void forceLocationChange(Location newLoc){
@@ -82,6 +85,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
 
     public void setMockLocation(Location l){
         mockLocation=l;
+        notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);
     }
 
 
