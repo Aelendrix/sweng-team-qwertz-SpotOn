@@ -7,14 +7,13 @@
     android:id="@+id/empty_grid_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
+    android:visibility="visible"
     android:orientation="vertical"
     android:weightSum="8">
 
-
     <ImageView
         android:layout_height="0dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:gravity="center"
         android:src="@drawable/img1"
         android:adjustViewBounds="false"
@@ -24,33 +23,79 @@
 
     <TextView
         android:text="@string/noPictureViewable"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:id="@+id/empty_grid_textview" />
 
     <Button
         android:text="@string/goToMap"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/empty_grid_button"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:onClick="onEmptyGridButtonClick" />
 
 </LinearLayout>
 
-
-        <GridView
-        android:id="@+id/gridview"
-        android:paddingTop="10dp"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="3"
-        android:verticalSpacing="0dp"
-        android:horizontalSpacing="0dp"
-        android:stretchMode="columnWidth"
-        />
+        android:id="@+id/grid_layout"
+        android:visibility="gone">
+
+        <GridView
+            android:id="@+id/gridview"
+            android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="3"
+            android:verticalSpacing="0dp"
+            android:horizontalSpacing="0dp"
+            android:stretchMode="columnWidth"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:text="@string/upVoteOrderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/order_upvote_button"
+                android:onClick="onUpVoteOrderingClick"/>
+
+            <Button
+                android:text="@string/oldestOrderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/order_upvote_button"
+                android:id="@+id/order_oldest_button"
+                android:onClick="onOldestOrderingClick"/>
+
+            <Button
+                android:text="@string/newestOrderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/order_oldest_button"
+                android:id="@+id/order_newest_button"
+                android:onClick="onNewestOrderingClick"/>
+            <Button
+                android:text="@string/hotOrderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/order_newest_button"
+                android:id="@+id/order_hottest_button"
+                android:onClick="onHottestOrderingClick"/>
+        </RelativeLayout>
+
+    </FrameLayout>
 
 </FrameLayout>
