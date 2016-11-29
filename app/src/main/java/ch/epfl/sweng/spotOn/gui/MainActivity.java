@@ -149,8 +149,7 @@ public final class MainActivity extends AppCompatActivity {
             throw new IllegalStateException("All required singletons need to be initalized before leaving the mainActivity");
         }
         if(loggedIn) {
-            UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(),
-                    mFbProfile.getId());
+            UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
         }else{
             UserManager.getInstance().setEmptyUser();
         }

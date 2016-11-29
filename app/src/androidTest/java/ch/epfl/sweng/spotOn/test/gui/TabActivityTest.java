@@ -7,6 +7,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +40,12 @@ import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 public class TabActivityTest {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
-        @Override
-        public void beforeActivityLaunched(){
-            TestInitUtils.initContext();
-        }
-    };
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class);
+
+    @Before
+    public void setUpContext(){
+        TestInitUtils.initContext();
+    }
 
     @Test
     public void swipe_between_fragments() {
@@ -79,7 +80,7 @@ public class TabActivityTest {
 
     @Test
     public void startUserProfileActivity() {
-        Intents.init();
+//        Intents.init();
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Profile")).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
