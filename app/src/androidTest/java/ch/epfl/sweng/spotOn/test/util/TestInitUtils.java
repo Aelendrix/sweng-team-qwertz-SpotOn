@@ -30,6 +30,20 @@ public class TestInitUtils {
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
+    public static void initContext(double latitude, double longitude){
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(latitude, longitude);
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+        LocalDatabase.initialize(mlt);
+        UserManager.initialize();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
+    }
+
     public static void initContext(){   // same with MockLocationTracker default location
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){

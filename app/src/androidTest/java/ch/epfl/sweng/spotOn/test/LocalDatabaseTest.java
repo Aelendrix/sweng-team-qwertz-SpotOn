@@ -29,13 +29,8 @@ public class LocalDatabaseTest {
 
     @Before
     public void init(){
-        // don't change the MockLocationTracker_forTest latitude and longitude
-//        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
-//        LocalDatabase.initialize(mlt);
-        Location l = new Location("mockProvider_LocalDatabaseTest");
-        l.setLatitude(46.52890355757567);
-        l.setLongitude(6.569420238493345);
-        TestInitUtils.initContext(l);
+        // call new MockLocationTracker with the passed latitude, longitude
+        TestInitUtils.initContext(46.52890355757567, 6.569420238493345);
     }
 
     @Test
