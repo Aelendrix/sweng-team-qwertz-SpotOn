@@ -23,11 +23,6 @@ public class EmptyUserTest {
     }
 
     @Test(expected=UnsupportedOperationException.class)
-    public void removeManagerTest(){
-        emptyUser.removeManager();
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
     public void computeRemainingPhotosTest(){
         emptyUser.computeRemainingPhotos();
     }

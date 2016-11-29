@@ -57,7 +57,7 @@ public class ServicesCheckerTests {
         checkExpected(expected);
 
 
-        Thread.sleep(5000); // needed for Database to initialize correctly
+        Thread.sleep(7000); // needed for Database to initialize correctly
 
         // no correct user
         UserManager.getInstance().destroyUser();
@@ -65,19 +65,15 @@ public class ServicesCheckerTests {
         expected = "You're not logged in\n"+"--  App may malfunction  --";
         checkExpected(expected);
 
-        // no correct Location
+        // correct state
         UserManager.getInstance().destroyUser();
         UserManager.getInstance().setMockUser(mMockUser);
-        mlt.forceLocationTimeout();
-        expected = "Can't localize your device\n"+"--  App may malfunction  --";
+        expected = "";
         checkExpected(expected);
 
-        // reset some location
-        Location newMockLoc = new Location("mockProvider");
-        newMockLoc.setLongitude(54.0);
-        newMockLoc.setLatitude(45.0);
-        mlt.setMockLocation(newMockLoc);
-        expected = "";
+        // no correct Location
+        mlt.forceLocationTimeout();
+        expected = "Can't localize your device\n"+"--  App may malfunction  --";
         checkExpected(expected);
 
 
