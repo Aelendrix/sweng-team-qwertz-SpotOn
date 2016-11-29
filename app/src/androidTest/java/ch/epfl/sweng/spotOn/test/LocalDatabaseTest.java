@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test;
 
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -13,6 +14,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 /**
  * Created by nico on 27.10.16.
@@ -28,8 +30,12 @@ public class LocalDatabaseTest {
     @Before
     public void init(){
         // don't change the MockLocationTracker_forTest latitude and longitude
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
-        LocalDatabase.initialize(mlt);
+//        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
+//        LocalDatabase.initialize(mlt);
+        Location l = new Location("mockProvider_LocalDatabaseTest");
+        l.setLatitude(46.52890355757567);
+        l.setLongitude(6.569420238493345);
+        TestInitUtils.initContext(l);
     }
 
     @Test
