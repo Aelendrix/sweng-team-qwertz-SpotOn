@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
@@ -60,12 +61,13 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                         //create a new adapter and refresh the gridView
 
                         LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                        FrameLayout frameLayout = (FrameLayout) mView.findViewById(R.id.grid_layout);
                         if (mImageAdapter.getCount() == 0) {
-                            mGridView.setVisibility(View.GONE);
+                            frameLayout.setVisibility(View.GONE);
                             linearLayout.setVisibility(View.VISIBLE);
                         } else {
                             linearLayout.setVisibility(View.GONE);
-                            mGridView.setVisibility(View.VISIBLE);
+                            frameLayout.setVisibility(View.VISIBLE);
                         }
                     }
                 });
