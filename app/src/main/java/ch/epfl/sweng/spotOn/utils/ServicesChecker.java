@@ -92,11 +92,11 @@ public class ServicesChecker {
 
     public String provideErrorMessage(){
         String errorMessage = "";
-        if( ! mLocationTrackerRef.hasValidLocation() ){
-            errorMessage += "Can't localize your device\n";
-        }
         if( ! databaseIsConnected ){
             errorMessage += "Can't connect to the database\n";
+        }
+        if( ! mLocationTrackerRef.hasValidLocation() ){
+            errorMessage += "Can't localize your device\n";
         }
         if( ! mUserManagerRef.getInstance().userIsLoggedIn() ){
             errorMessage += "You're not logged in\n";

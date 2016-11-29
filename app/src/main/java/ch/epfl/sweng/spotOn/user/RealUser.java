@@ -63,7 +63,7 @@ public class RealUser implements User {
     }
 
     public long computeRemainingPhotos(){
-        long maxPhotos = computeMaxPhotoInDay();
+        long maxPhotos = computeMaxPhotoInDay(mKarma);
         updatePhotosTaken();
         long lastPhotosTaken = 0;
         if(mPhotosTaken != null){
@@ -72,8 +72,8 @@ public class RealUser implements User {
         return maxPhotos - lastPhotosTaken;
     }
 
-    public long computeMaxPhotoInDay(){
-        int computed = Math.round((float)Math.sqrt(mKarma)/10);
+    public static long computeMaxPhotoInDay(long karma){
+        int computed = Math.round((float)Math.sqrt(karma)/10);
         return Math.min(Math.max(computed, MIN_POST_PER_DAY), MAX_POST_PER_DAY);
     }
 
