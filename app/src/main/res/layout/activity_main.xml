@@ -77,7 +77,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/logo"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_invert_logo"
+        android:src="@mipmap/ic_launcher"
         android:layout_below="@id/mainLoginTextView"
         android:layout_above="@id/wayToConnectTextView"/>
 

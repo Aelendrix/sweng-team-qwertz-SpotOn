@@ -226,31 +226,32 @@ public class PhotoObject {
         String resultProcess = "";
 
         if(mReportersList.contains(reporterID)){
-            resultProcess = "You have already reported this picture !";
-        }
-        else {
-            mNbReports ++;
+            resultProcess = "You unreported the picture.";
+            mNbReports --;
+            mReportersList.remove(reporterID);
+        } else {
+            resultProcess = "Thank you for reporting this picture.";
+            mNbReports++;
             mReportersList.add(reporterID);
+        }
 
+        if(mFullsizeImageLink != null) {
+            DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+            DBref.child(mPictureId).child("reports").setValue(mNbReports);
+            DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+        }
+
+        if(mNbReports >= MAX_NB_REPORTS){
             if(mFullsizeImageLink != null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                DBref.child(mPictureId).child("reports").setValue(mNbReports);
-                DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+                //remove picture from database
+                java.util.Date date= new java.util.Date();
+                DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
+                //decrease the karma of the picture author
+                giveAuthorHisKarma(REPORT_DECREASE_KARMA);
             }
-
-            if(mNbReports >= MAX_NB_REPORTS){
-                if(mFullsizeImageLink != null) {
-                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                    //remove picture from database
-                    java.util.Date date= new java.util.Date();
-                    DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
-                    //decrease the karma of the picture author
-                    giveAuthorHisKarma(REPORT_DECREASE_KARMA);
-                }
-            }
-
-            resultProcess = "Thank you for reporting this picture.";
         }
+
         return resultProcess;
     }
 

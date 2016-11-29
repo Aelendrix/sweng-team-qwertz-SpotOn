@@ -183,16 +183,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = User.getInstance().getUserId();
-            reported = true;
             String toastMessage = mDisplayedMedia.processReport(userId);
-            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+            if(reported){
+                reported = false;
+            } else {
+                reported = true;
+            }
         }
     }
 
     public boolean getUpvoted(){
         return upvoted;
     }
-
     public boolean getDownvoted(){
         return downvoted;
     }
