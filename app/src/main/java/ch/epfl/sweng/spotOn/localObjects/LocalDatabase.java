@@ -234,7 +234,6 @@ public class LocalDatabase implements LocationTrackerListener{
                 for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                     PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
                     LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
-                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                 }
                 // refresh last refresh date
                 mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
