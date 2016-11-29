@@ -222,7 +222,7 @@ public class LocalDatabase implements LocationTrackerListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 LocalDatabase.getInstance().clear();
-                Location mLocationTempCopy;
+//                Location mLocationTempCopy;
                 synchronized (this) {
 //                    mLocationTempCopy = new Location(mCachedLocation);
                 }
