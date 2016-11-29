@@ -100,11 +100,10 @@ public class LocalDatabase implements LocationTrackerListener{
         }
     }
 
-    // TODO - this needs to be re-done
-    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
+   /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
-        if( refToLocationTracker.hasValidLocation() ) {
+        if( mCachedLocation!=null ) {
             if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
                     && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
                 if (!mediaDataMap.containsKey(newObject.getPictureId())) {
@@ -155,8 +154,12 @@ public class LocalDatabase implements LocationTrackerListener{
 // PRIVATE METHODS
     /** adds the media to the list of viewable media if within viewable range */
     private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
-        if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
-            mViewableMediaDataMap.put(po.getPictureId(), po);
+        if(mCachedLocation==null){
+            Log.d("LocalDatabase","WARNING : called addToViewableMediaIfWithinRadius() called while holding no valid cached location");
+        }else {
+            if (mCachedLocation.distanceTo(po.obtainLocation()) < po.getRadius()) {
+                mViewableMediaDataMap.put(po.getPictureId(), po);
+            }
         }
     }
 
