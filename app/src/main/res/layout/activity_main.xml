@@ -5,40 +5,71 @@
     android:id="@+id/activity_tab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     tools:context="ch.epfl.sweng.spotOn.gui.MainActivity">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/mainLoginTextView"
-        android:text="@string/mainLoginTextView"
-        android:textSize="18sp"
-        android:textStyle="normal|bold"
+        android:text="@string/app_name"
+        android:textSize="75sp"
+        android:textStyle="normal"
         android:fontFamily="sans-serif"
-        android:textColor="@android:color/holo_orange_dark"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="30dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="62dp" />
-
+        android:layout_centerHorizontal="true" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/mainLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/mainLoginTextView"
+        android:layout_marginBottom="18dp"
+        android:layout_above="@+id/loginButton"
+        android:layout_alignStart="@+id/loginButton"
+        android:layout_alignEnd="@+id/loginButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/wayToConnectTextView"
+        android:text="@string/wayToConnect"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginBottom="16dp"
+        android:layout_above="@+id/mainLoginButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/logIn"
+        android:textColor="@color/colorWhite"
+        android:textSize="14sp"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/loginButton"
+        android:background="@drawable/button_shape_login"
+        android:drawableStart="@mipmap/ic_launcher"
+        android:paddingStart="2dp"
+        android:layout_marginBottom="14dp"
+        android:layout_above="@+id/restrictions"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/restrictions"
+        android:text="@string/restrictions"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginBottom="85dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
 

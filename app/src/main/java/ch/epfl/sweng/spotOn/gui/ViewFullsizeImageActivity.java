@@ -1,11 +1,13 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,8 +21,8 @@ public class ViewFullsizeImageActivity extends Activity {
 //    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
-    private ImageButton upvoteButton;
-    private ImageButton downvoteButton;
+    private ImageButton mUpvoteButton;
+    private ImageButton mDownvoteButton;
 
 
     @Override
@@ -34,34 +36,71 @@ public class ViewFullsizeImageActivity extends Activity {
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
-        upvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
-        downvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
+
+        mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
+        mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
+
+        Log.d("instantiateItem", "called2");
+        if(mFullScreenImageAdapter.getUpvoted()){
+            colorUpvote();
+        } else if(mFullScreenImageAdapter.getDownvoted()){
+            colorDownvote();
+        } else {
+            colorNone();
+        }
     }
 
-
+    /**
+     * Records an upvote and change the color of the upvote button if the user hasnt upvoted
+     * the picture yet
+     * @param view
+     */
     public void recordUpvote(View view) {
         mFullScreenImageAdapter.recordUpvote(view);
-        if(mFullScreenImageAdapter.getUpvoted()){
-            upvoteButton.setBackground(ContextCompat.getDrawable(this,
-                    R.drawable.button_shape_upvote_clicked));
-            downvoteButton.setBackground(ContextCompat.getDrawable(this,
-                    R.drawable.button_shape_downvote));
-        }
+        colorUpvote();
     }
 
-
+    /**
+     * Records a downvote and change the color of the downvote button if the user hasnt downvoted
+     * the picture yet
+     * @param view
+     */
     public void recordDownvote(View view) {
         mFullScreenImageAdapter.recordDownvote(view);
-        if(mFullScreenImageAdapter.getDownvoted()){
-            downvoteButton.setBackground(ContextCompat.getDrawable(this,
-                    R.drawable.button_shape_downvote_clicked));
-            upvoteButton.setBackground(ContextCompat.getDrawable(this,
-                    R.drawable.button_shape_upvote));
-        }
+        colorDownvote();
     }
-
 
     public void reportOffensivePicture(View view) {
         mFullScreenImageAdapter.reportOffensivePicture(view);
+    }
+
+    /**
+     * Colors upvote button in green -> downvote button has to be normal
+     */
+    public void colorUpvote(){
+        mUpvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_upvote_clicked));
+        mDownvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_downvote));
+    }
+
+    /**
+     * Colors downvote button in red -> upvote button has to be normal
+     */
+    public void colorDownvote(){
+        mDownvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_downvote_clicked));
+        mUpvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_upvote));
+    }
+
+    /**
+     * Colors both downvote and upvote in their natural color (if the user hasn't vote for the picture
+     */
+    public void colorNone(){
+        mUpvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_upvote));
+        mDownvoteButton.setBackground(ContextCompat.getDrawable(this,
+                R.drawable.button_shape_downvote));
     }
 }

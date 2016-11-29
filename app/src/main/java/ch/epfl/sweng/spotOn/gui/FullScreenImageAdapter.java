@@ -7,11 +7,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,9 +49,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private PhotoObject mDisplayedMedia;
 
     // Useful to change color of buttons when clicked
-    private boolean upvoted = false;
-    private boolean downvoted = false;
-    private boolean reported = false;
+    private boolean upvoted;
+    private boolean downvoted;
+    private boolean reported;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
@@ -114,6 +117,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
         mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
         voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
+
+        //set up this boolean to know if the user has already upvoted, downvoted, reported the picture
+        String userID = User.getInstance().getUserId();
+        upvoted = mDisplayedMedia.getUpvotersList().contains(userID);
+        downvoted = mDisplayedMedia.getDownvotersList().contains(userID);
+        reported = mDisplayedMedia.getReportersList().contains(userID);
+        Log.d("instantiateItem", "called1");
 
         container.addView(viewLayout);
         return viewLayout;
@@ -182,6 +192,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public boolean getUpvoted(){
         return upvoted;
     }
+
     public boolean getDownvoted(){
         return downvoted;
     }
