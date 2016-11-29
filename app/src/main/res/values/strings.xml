@@ -44,6 +44,12 @@
     <string name="okButton">OK !</string>
     <string name="textToBeDrawn"> Text to be drawn</string>
     <string name="profilePictureListText">Votes:</string>
+    <string name="upVoteOrderButton">Upvote</string>
+    <string name="newestOrderButton">Newest</string>
+    <string name="oldestOrderButton">Oldest</string>
+    <string name="hotOrderButton">Hot</string>
+
+
 
 
     <string name="dontLogginButton"> I don\'t want to log in </string>

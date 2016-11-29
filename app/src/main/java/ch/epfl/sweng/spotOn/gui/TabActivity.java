@@ -156,6 +156,35 @@ public class TabActivity extends AppCompatActivity{
         mTabLayout.getTabAt(2).select();
     }
 
+    public void onUpVoteOrderingClick(View v){
+        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",ToastProvider.SHORT);
+        refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
+    }
+
+    public void onOldestOrderingClick(View v){
+        ToastProvider.printOverCurrent("Ordered by oldest Picture",ToastProvider.SHORT);
+
+        refreshGrid(SeePicturesFragment.OLDEST_ORDER);
+    }
+
+    public void onNewestOrderingClick(View v){
+        ToastProvider.printOverCurrent("Ordered by newest Picture",ToastProvider.SHORT);
+
+        refreshGrid(SeePicturesFragment.NEWEST_ORDER);
+    }
+
+    public void onHottestOrderingClick(View v){
+        ToastProvider.printOverCurrent("Ordered by hottest Picture",ToastProvider.SHORT);
+
+        refreshGrid(SeePicturesFragment.HOTTEST_ORDER);
+    }
+
+    private void refreshGrid(int ordering){
+        if(mPicturesFragment!=null){
+            mPicturesFragment.refreshGrid(ordering);
+        }
+    }
+
 // PRIVATE HELPERS
     /** displays the error message if need be    */
     public void checkAndDisplayServicesError(){

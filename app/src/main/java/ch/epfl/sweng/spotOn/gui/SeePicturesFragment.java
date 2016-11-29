@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
@@ -18,10 +19,16 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 
 public class SeePicturesFragment extends Fragment implements LocalDatabaseListener{
 
+    public final static int DEFAULT_ORDER=0;
+    public final static int UPVOTE_ORDER=1;
+    public final static int OLDEST_ORDER=2;
+    public final static int NEWEST_ORDER=3;
+    public final static int HOTTEST_ORDER=4;
     View mView;
     GridView mGridView;
     private static ImageAdapter mImageAdapter;
     protected static int mDefaultItemPosition = 0;
+    int mOrdering = DEFAULT_ORDER;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,7 +36,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
 
         mView = inflater.inflate(R.layout.activity_see_pictures, container, false);
         mGridView = (GridView) mView.findViewById(R.id.gridview);
-        mImageAdapter = new ImageAdapter(mView.getContext());
+        mImageAdapter = new ImageAdapter(mView.getContext(),DEFAULT_ORDER);
         mGridView.setAdapter(mImageAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -40,15 +47,17 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
-        refreshGrid();
+        refreshGrid(mOrdering);
         return mView;
     }
 
-    //refresh the Grid when called
-    public void refreshGrid(){
+    /*refresh the Grid when called
+    @param ordering : represent the order of the image in the grid, value is initialised by the static constant in this class
+    */
+    public void refreshGrid(int ordering){
         if(mGridView!=null&&mView!=null){
-
-            mImageAdapter= new ImageAdapter(mView.getContext());
+            mOrdering=ordering;
+            mImageAdapter= new ImageAdapter(mView.getContext(), mOrdering);
             mGridView.invalidateViews();
             mGridView.setAdapter(mImageAdapter);
 
@@ -60,12 +69,13 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                     public void run() {
                         //create a new adapter and refresh the gridView
                         LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                        FrameLayout frameLayout = (FrameLayout) mView.findViewById(R.id.grid_layout);
                         if (mImageAdapter.getCount() == 0) {
-                            mGridView.setVisibility(View.GONE);
+                            frameLayout.setVisibility(View.GONE);
                             linearLayout.setVisibility(View.VISIBLE);
                         } else {
                             linearLayout.setVisibility(View.GONE);
-                            mGridView.setVisibility(View.VISIBLE);
+                            frameLayout.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -83,7 +93,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
 
     @Override
     public void databaseUpdated() {
-        refreshGrid();
+        refreshGrid(mOrdering);
     }
 
     public static ImageAdapter getImageAdapter(){

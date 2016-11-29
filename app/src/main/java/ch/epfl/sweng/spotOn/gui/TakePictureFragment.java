@@ -4,27 +4,20 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.location.Location;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 
@@ -35,10 +28,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 
-import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -57,6 +46,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -75,7 +65,7 @@ public class TakePictureFragment extends Fragment {
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
-    private String mTextToDraw;
+    private boolean mTextWrittenOnPic;//boolean to make sure the user does not write twice on the picture
     private Uri editUri;
 
     @Override
@@ -106,6 +96,7 @@ public class TakePictureFragment extends Fragment {
 
     /** Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored */
+
     public void storePictureOnInternalStorage(View view){
         if( ! ServicesChecker.getInstance().allowedToPost() ) {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
@@ -167,6 +158,7 @@ public class TakePictureFragment extends Fragment {
         } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
+            editPictureIntent.putExtra("alreadyWritten", mTextWrittenOnPic);
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         }
     }
@@ -215,7 +207,8 @@ public class TakePictureFragment extends Fragment {
     }
 
     /**
-     * Method that invokes the camera
+     * Method that invokes the camera and create the File of where the picture will be stored on
+     * the internal storage
      */
     private void invokeCamera() {
         //Needed to store the last picture taken on the user's storage in order to have HQ picture
@@ -223,15 +216,7 @@ public class TakePictureFragment extends Fragment {
             Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "/SpotOn/TEMP_PICTURE.jpg");
-            if(Build.VERSION.SDK_INT <= 23) {
-                mImageToUploadUri = Uri.fromFile(temporalStorage);
-                Log.d("URI ImageUpload", mImageToUploadUri.toString());
-            } else {
-                //For API >= 24 (was the cause of the crash)
-                mImageToUploadUri = FileProvider.getUriForFile(getContext(),
-                        BuildConfig.APPLICATION_ID + ".provider", temporalStorage);
-                Log.d("URI ImageUpload", mImageToUploadUri.toString());
-            }
+            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), temporalStorage);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
@@ -330,10 +315,13 @@ public class TakePictureFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            mTextWrittenOnPic = false;
             processResult(mImageToUploadUri);
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
-            processResult(Uri.parse(data.getExtras().getString("editedBitmap")));
+            Bundle dataBundle = data.getExtras();
+            mTextWrittenOnPic = dataBundle.getBoolean("writtenText");
+            processResult(Uri.parse(dataBundle.getString("editedBitmap")));
         }
     }
 
@@ -345,10 +333,10 @@ public class TakePictureFragment extends Fragment {
     public void processResult(Uri imageToUploadUri){
         if(imageToUploadUri != null) {
             editUri = imageToUploadUri;
-            //Get our saved picture from the file in a bitmap image and display it on the image view
+            //Get our saved picture from the uri in a bitmap image
             Uri selectedImage = imageToUploadUri;
             getContext().getContentResolver().notifyChange(selectedImage, null);
-            Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
+            Bitmap HQPicture = getBitmap(selectedImage, getContext());
             if(HQPicture != null){
                 mImageView.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database
