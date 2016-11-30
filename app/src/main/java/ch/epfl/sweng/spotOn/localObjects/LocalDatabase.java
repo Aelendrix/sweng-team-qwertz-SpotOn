@@ -44,7 +44,7 @@ public class LocalDatabase implements LocationTrackerListener{
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 3*60*1000; // refresh at least every 5 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
-    private final static double FETCH_RADIUS = 2*PhotoObject.MAX_VIEW_RADIUS; // the radius in which we fetch pictures, in degrees
+    private final static double FETCH_RADIUS = 2*PhotoObject.MAX_VIEW_RADIUS; // the radius in which we fetch pictures, in km
 
 
 

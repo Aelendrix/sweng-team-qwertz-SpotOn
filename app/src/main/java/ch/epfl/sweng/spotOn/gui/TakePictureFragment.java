@@ -354,6 +354,10 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
+    public PhotoObject getActualPhotoObject(){
+        return mActualPhotoObject;
+    }
+
     /** Method that will store the image in the Pictures file in the internal storage
      * @param photo a PhotoObject to get its full size picture to store in Pictures file   */
     private void storeImage(PhotoObject photo){
