@@ -33,13 +33,8 @@ public class ToastProvider {
     }
 
     public static void printOverCurrent(String message, int duration){
-        if(currentActivity==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
+        checkNonnullActivity();
+        checkDuration(duration);
         if(toastBeingDisplayed()){
             mCurrentlyDisplayedToast.cancel();
         }
@@ -59,13 +54,8 @@ public class ToastProvider {
 //    }
 
     public static void printIfNoCurrent(String message, int duration){
-        if(currentActivity==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
+        checkNonnullActivity();
+        checkDuration(duration);
         if(!toastBeingDisplayed()){
             displayToast(message, duration);
         }
@@ -93,6 +83,19 @@ public class ToastProvider {
                 newToast.show();
             }
         });
+    }
+
+    private static void checkDuration(int duration){
+        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
+            throw new IllegalArgumentException("Invalid duration");
+        }
+    }
+
+    private static void checkNonnullActivity(){
+        if(currentActivity==null){
+            Log.d("ToastProvider", "ToastProvider has no current context");
+            return;
+        }
     }
 
 
