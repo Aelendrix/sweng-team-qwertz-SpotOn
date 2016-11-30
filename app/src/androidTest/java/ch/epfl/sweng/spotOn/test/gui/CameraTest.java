@@ -40,7 +40,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -50,7 +50,7 @@ import ch.epfl.sweng.spotOn.user.User;
 @LargeTest
 public class CameraTest{
 
-    private User user = null;
+    private UserManager user = null;
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
@@ -61,7 +61,7 @@ public class CameraTest{
 
     @Before
     public void stubCameraIntent() {
-        User user = User.getInstance();
+        UserManager user = UserManager.getInstance();
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }

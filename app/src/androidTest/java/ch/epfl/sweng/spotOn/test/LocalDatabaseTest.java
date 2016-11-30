@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test;
 
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -11,8 +12,9 @@ import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 /**
  * Created by nico on 27.10.16.
@@ -27,9 +29,8 @@ public class LocalDatabaseTest {
 
     @Before
     public void init(){
-        // don't change the MockLocationTracker_forTest latitude and longitude
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest(46.52890355757567, 6.569420238493345);
-        LocalDatabase.initialize(mlt);
+        // call new MockLocationTracker with the passed latitude, longitude
+        TestInitUtils.initContext(46.52890355757567, 6.569420238493345);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class LocalDatabaseTest {
         Map<String,Bitmap> thumbList = LocalDatabase.getInstance().getViewableThumbnails();
 
         if(thumbList.size()!=3){ // the 3 pictures are within range, if the MockLocation latitude and longitude aren't changed
-            throw new AssertionError("return a list with a different size ("+thumbList.size()+") than the map");
+            throw new AssertionError("return a list with a different size ("+thumbList.size()+") than expected (3)");
         }
         if( !thumbList.get(photo1.getPictureId()).sameAs(photo1.getThumbnail()) ||
             !thumbList.get(photo2.getPictureId()).sameAs(photo2.getThumbnail()) ||

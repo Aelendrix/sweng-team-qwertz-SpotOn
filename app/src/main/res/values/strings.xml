@@ -12,11 +12,6 @@
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
-    <!-- <string name="queryDatabase">Query Database</string>
-     <string name="title_activity_DBquery">Query Database</string>
-     <string name="launchQueryButton">Search database</string>
-     <string name="queryTextFieldHint">Enter a key to lookup</string>
-     <string name="blankQueryResult">...</string>-->
     <string name="upvoteButtonText">Upvote Picture</string>
     <string name="downvoteButtonText">Downvote Picture</string>
     <string name="reportButton">Report the picture</string>
@@ -55,6 +50,9 @@
     <string name="hotOrderButton">Hot</string>
 
 
+
+
+    <string name="dontLogginButton"> I don\'t want to log in </string>
 
 
 </resources>

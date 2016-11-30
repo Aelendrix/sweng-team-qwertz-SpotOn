@@ -41,5 +41,16 @@
         android:layout_below="@+id/mainLoginTextView"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:text="@string/dontLogginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mainLoginButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:id="@+id/dontLogInButton"
+        android:textSize="12sp"
+        android:onClick="goToTabActivityNotLoggedIn" />
+
 
 </RelativeLayout>

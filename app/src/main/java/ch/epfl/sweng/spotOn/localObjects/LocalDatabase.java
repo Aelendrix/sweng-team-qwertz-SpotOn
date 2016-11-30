@@ -3,7 +3,6 @@ package ch.epfl.sweng.spotOn.localObjects;
 
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,7 +44,7 @@ public class LocalDatabase implements LocationTrackerListener{
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 3*60*1000; // refresh at least every 5 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
-    private final static double FETCH_RADIUS = 0.1; // the radius in which we fetch pictures, in degrees
+    private final static double FETCH_RADIUS = 2*PhotoObject.MAX_VIEW_RADIUS; // the radius in which we fetch pictures, in degrees
 
 
 
@@ -89,10 +88,8 @@ public class LocalDatabase implements LocationTrackerListener{
 
     /** Adds a photoObject to the database, regardless of its position. NB : listeners need to be updated manually after that  */
     public void addPhotoObject(PhotoObject photo){
-        if(!mediaDataMap.containsKey(photo.getPictureId())) {
-            mediaDataMap.put(photo.getPictureId(), photo);
-            addToViewableMediaIfWithinViewableRange(photo);
-        }
+        mediaDataMap.put(photo.getPictureId(), photo);
+        addToViewableMediaIfWithinViewableRange(photo);
     }
 
     /** remove a photoObject from the LocalDatabase - NB : listeners need to be updated manually after that  */
@@ -103,17 +100,17 @@ public class LocalDatabase implements LocationTrackerListener{
         }
     }
 
-    /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
+   /** adds the PhotoObject 'newObject' if it is within a radius of FETCH_PICTURES_RADIUS of the current cached location
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
-        if(databaseCachedLocation == null){
-            throw new IllegalStateException("caller function should ensure we have a valid location first");
-        }
-        if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
-                && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
-            if (!mediaDataMap.containsKey(newObject.getPictureId())) {
-                addPhotoObject(newObject);
+        if( mCachedLocation!=null ) {
+            if (newObject.obtainLocation().distanceTo(databaseCachedLocation) < FETCH_RADIUS) {
+                if (!mediaDataMap.containsKey(newObject.getPictureId())) {
+                    addPhotoObject(newObject);
+                }
             }
+        }else{
+            Log.d("LocalDatabase", "WARNING - called addIfWithinFetchRadius(), but LocationTracker had no valid location");
         }
     }
 
@@ -156,8 +153,12 @@ public class LocalDatabase implements LocationTrackerListener{
 // PRIVATE METHODS
     /** adds the media to the list of viewable media if within viewable range */
     private void addToViewableMediaIfWithinViewableRange(PhotoObject po){
-        if(refToLocationTracker.getLocation().distanceTo(po.obtainLocation()) < po.getRadius()) {
-            mViewableMediaDataMap.put(po.getPictureId(), po);
+        if(mCachedLocation==null){
+            Log.d("LocalDatabase","WARNING : called addToViewableMediaIfWithinRadius() called while holding no valid cached location");
+        }else {
+            if (mCachedLocation.distanceTo(po.obtainLocation()) < po.getRadius()) {
+                mViewableMediaDataMap.put(po.getPictureId(), po);
+            }
         }
     }
 
@@ -170,15 +171,15 @@ public class LocalDatabase implements LocationTrackerListener{
 
     /** refreshes the map of viewable photo */
     private void refreshViewablePhotos() {
-        for(PhotoObject po : mediaDataMap.values()){
-            // create a "location" object for the photo
-            Location newObjectLocation = new Location("dummyProvider");
-            newObjectLocation.setLatitude(po.getLatitude());
-            newObjectLocation.setLongitude(po.getLongitude());
-            // compare it with the location provided by the LocationTracker
-            if(newObjectLocation.distanceTo(mCachedLocation) < po.getRadius()) {
-                if(!mViewableMediaDataMap.containsKey(po.getPictureId())) {
-                    mViewableMediaDataMap.put(po.getPictureId(), po);
+        if( mCachedLocation == null){
+            Log.d("Localdatabase", "WARNING : called refreshViewablePhotos, but no valid cachedLocation");
+        }else {
+            for (PhotoObject po : mediaDataMap.values()) {
+                // compare the object's location with the location provided by the LocationTracker
+                if (po.obtainLocation().distanceTo(mCachedLocation) < po.getRadius()) {
+                    if (!mViewableMediaDataMap.containsKey(po.getPictureId())) {
+                        mViewableMediaDataMap.put(po.getPictureId(), po);
+                    }
                 }
             }
         }
@@ -217,25 +218,30 @@ public class LocalDatabase implements LocationTrackerListener{
     }
 
     /** adds a single-use listener to the firebase directory containing the medias  */
+    // NB : can't have a null mLocation, since this is only called when location updated
     private void forceSingleRefresh(){
         Query photoSortedByTime = DatabaseRef.getMediaDirectory().orderByChild("expireDate").startAt(new Date().getTime());
         photoSortedByTime.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                LocalDatabase.getInstance().clear();
-                Location mLocationTempCopy;
-                synchronized (this) {
-                    mLocationTempCopy = new Location(mCachedLocation);
+                if(mCachedLocation==null){
+                    Log.d("LocalDatabase","WARNING : calling forceSingleRefresh() while holding no valid mCachedLocation ");
+                }else {
+                    LocalDatabase.getInstance().clear();
+                    Location mLocationTempCopy;
+                    synchronized (this) {
+                        mLocationTempCopy = new Location(mCachedLocation);
+                    }
+                    for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
+                        PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                    }
+                    // refresh last refresh date
+                    mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
+                    Log.d("LocalDB", "updated via force single refresh, " + LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                    LocalDatabase.getInstance().refreshViewablePhotos();
+                    LocalDatabase.getInstance().notifyListeners();
                 }
-                for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
-                    PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                    LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
-                }
-                // refresh last refresh date
-                mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
-                Log.d("LocalDB", "updated via force single refresh, "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
-                LocalDatabase.getInstance().refreshViewablePhotos();
-                LocalDatabase.getInstance().notifyListeners();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

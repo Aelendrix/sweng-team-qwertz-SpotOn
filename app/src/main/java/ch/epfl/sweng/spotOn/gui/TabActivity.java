@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -19,13 +18,13 @@ import com.facebook.login.LoginManager;
 import ch.epfl.sweng.spotOn.R;
 
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
-import ch.epfl.sweng.spotOn.utils.ServicesCheckerListener;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
-public class TabActivity extends AppCompatActivity implements ServicesCheckerListener{
+public class TabActivity extends AppCompatActivity{
 
 
     private SeePicturesFragment mPicturesFragment = new SeePicturesFragment();
@@ -39,7 +38,6 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-        ToastProvider.update(getApplicationContext());
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,6 +56,12 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
             }
         });
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ToastProvider.update(this);
     }
 
 
@@ -97,9 +101,7 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         viewPager.setAdapter(adapter);
     }
 
-    /**
-     * This method uses the options menu when this activity is launched
-     */
+    /** This method uses the options menu when this activity is launched     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -107,25 +109,34 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
         return true;
     }
 
-    /*
-     * Handles what action to take when the user clicks on a menu item in the options menu
-     */
+    /* Handles what action to take when the user clicks on a menu item in the options menu     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-                disconnectFacebook();
-                User user = User.getInstance();
-                user.destroy();
-                return true;
+                if( ! UserManager.getInstance().userIsLoggedIn() ){
+                    // to provide a way to log back in - needs to be improved todo
+                    finish();
+                    return true;
+                } else {
+                    disconnectFacebook();
+                    UserManager user = UserManager.getInstance();
+                    user.destroyUser();
+                    return true;
+                }
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
                 return true;
             case R.id.user_profile:
-                Intent profileIntent = new Intent(this, UserProfileActivity.class);
-                startActivity(profileIntent); // go to the User Profile Activity
-                return true;
+                if( ! UserManager.getInstance().userIsLoggedIn() ){
+                    ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+                    return false;
+                }else {
+                    Intent profileIntent = new Intent(this, UserProfileActivity.class);
+                    startActivity(profileIntent); // go to the UserManager Profile Activity
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -145,24 +156,24 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
     }
 
     public void onUpVoteOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_LONG);
         refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
     }
 
     public void onOldestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by oldest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.OLDEST_ORDER);
     }
 
     public void onNewestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by newest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.NEWEST_ORDER);
     }
 
     public void onHottestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by hottest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.HOTTEST_ORDER);
     }
@@ -176,20 +187,13 @@ public class TabActivity extends AppCompatActivity implements ServicesCheckerLis
 // PRIVATE HELPERS
     /** displays the error message if need be    */
     public void checkAndDisplayServicesError(){
-        if( ! ServicesChecker.getInstance().statusIsOk() ){
+        if( ! ServicesChecker.getInstance().allServicesOk() ){
             String errorMessage = ServicesChecker.getInstance().provideErrorMessage();
             if( errorMessage.isEmpty() ){
                 throw new IllegalStateException("incoherent state : error message can't be empty if status isn't good");
             }
             ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
         }
-    }
-
-
-// LISTENER METHODS
-    @Override
-    public void servicesAvailabilityUpdated() {
-        checkAndDisplayServicesError();
     }
 
 

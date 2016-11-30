@@ -2,10 +2,8 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -20,15 +18,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
@@ -136,7 +131,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
-            String userId = User.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
             if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getUpvotersList().contains(userId)){
                 voteSum++;
@@ -153,8 +148,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             refreshVoteTextView(Integer.toString(voteSum));
 
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            ToastProvider.printOverCurrent(toastMessage,ToastProvider.SHORT);
-
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
@@ -163,9 +157,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            String userId = User.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mDisplayedMedia.processReport(userId);
-            Toast.makeText(mActivity, toastMessage, Toast.LENGTH_SHORT).show();
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 }

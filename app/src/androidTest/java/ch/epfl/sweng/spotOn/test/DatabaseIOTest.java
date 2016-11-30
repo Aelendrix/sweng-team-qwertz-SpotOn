@@ -35,7 +35,7 @@ public class DatabaseIOTest {
 
     private PhotoObject retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject=null;
 
-    @Test(expected=AssertionError.class)
+    @Test  (timeout=10000, expected=AssertionError.class)
     public void objectIsSentAndtestWaitsForSentCompleted() throws AssertionError, InterruptedException {
         PhotoObject testObject1 = getRandomPhotoObject();
 
@@ -64,7 +64,7 @@ public class DatabaseIOTest {
 
     }
 
-    @Test
+    @Test (timeout=30000)
     public void mediasAreSentAndReceivedCorrectly() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
             final PhotoObject po = p;
@@ -116,7 +116,7 @@ public class DatabaseIOTest {
         }
     }
 
-    @Test
+    @Test (timeout=30000)
     public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
 
