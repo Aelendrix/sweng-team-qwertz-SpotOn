@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +33,8 @@ import java.io.IOException;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class EditPictureActivity extends AppCompatActivity {
 
@@ -98,8 +101,8 @@ public class EditPictureActivity extends AppCompatActivity {
      * @param view
      */
     public void goToDrawTextActivity(View view){
-        Intent intent = new Intent(this, DrawTextActivity.class);
-        startActivityForResult(intent, REQUEST_TEXT_DRAWING);
+            Intent intent = new Intent(this, DrawTextActivity.class);
+            startActivityForResult(intent, REQUEST_TEXT_DRAWING);
     }
 
     /**
@@ -119,15 +122,14 @@ public class EditPictureActivity extends AppCompatActivity {
     /**
      * Method that will be used when the user adds text to the picture through the DrawTextActivity
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the request code the finished activity gave
+     * @param resultCode the result code the finished activity gave (OK or not)
+     * @param data the intent from the finished activity to this one
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_TEXT_DRAWING && resultCode == Activity.RESULT_OK){
-            //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mTextToDraw = data.getStringExtra("textToDraw");//preferences.getString("TD", "");
+            mTextToDraw = data.getStringExtra("textToDraw");
             Log.d("TextToDraw", mTextToDraw);
             float x = 50;
             float y = mEditedBitmap.getHeight() - 200;
@@ -145,19 +147,9 @@ public class EditPictureActivity extends AppCompatActivity {
      * @return the uri of where is stored the image
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
-        Uri resUri;
-        //Define the Uri (same directory where is stored the temporal image we are editing)
         File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "/SpotOn/EDITED_PICTURE.jpg");
-        if(Build.VERSION.SDK_INT <= 23) {
-            resUri = Uri.fromFile(storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            resUri = FileProvider.getUriForFile(this,
-                    BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        }
+                "/SpotOn/TEMP_PICTURE.jpg");
+        Uri resUri = BitmapUtils.getUriFromFile(this, storageForEdition);
 
         //Store the picture at the directory defined above
         try {

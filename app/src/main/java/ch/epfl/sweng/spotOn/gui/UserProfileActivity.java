@@ -19,6 +19,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -33,10 +34,9 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        mUser = User.getInstance();
-        mUser.getUserAttributesFromDB();
+        mUser = UserManager.getInstance().getUser();
 
-        if(mUser.getUserId() == null){
+        if( !mUser.isLoggedIn() || mUser.getUserId()==null){
             Log.e("UserProfileActivity", "UserId is null");
         }
         else {
@@ -62,11 +62,6 @@ public class UserProfileActivity extends AppCompatActivity {
             mPicturesListView.setAdapter(mPictureVoteAdapter);
 
             Context context = getApplicationContext();
-            String toastMessage = "Please wait a little bit while your info are updating";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, toastMessage, duration);
-            toast.show();
 
             mFirstNameTextView.setText(mFirstNameTextView.getText() + " " + mUser.getFirstName());
             mLastNameTextView.setText(mLastNameTextView.getText() + " " + mUser.getLastName());

@@ -1,8 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -18,9 +16,8 @@ import ch.epfl.sweng.spotOn.gui.MapFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -51,8 +48,9 @@ public class MapTest {
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
 
             LocalDatabase.initialize(mMockLocationTracker);
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-            User.initializeFromFb("Sweng", "Sweng", "114110565725225");
+            UserManager.initialize();
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+            UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         }
     };
 

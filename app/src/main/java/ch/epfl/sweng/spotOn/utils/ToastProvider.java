@@ -1,7 +1,11 @@
 package ch.epfl.sweng.spotOn.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,12 +13,10 @@ import android.widget.Toast;
  *   how several toasts are displayed simultaneously
  *   Downside : need to call update() when changing activity
  */
-public class ToastProvider extends Application {
+public class ToastProvider {
 
-    public static int LONG = Toast.LENGTH_LONG;
-    public static int SHORT = Toast.LENGTH_SHORT;
-
-    private static Context mCurrentContext = null;
+    //    private static Context mCurrentContext = null;
+    private static Activity currentActivity = null;
     private static Toast mCurrentlyDisplayedToast = null;
 
     private ToastProvider(){
@@ -22,31 +24,26 @@ public class ToastProvider extends Application {
     }
 
 
-// PUBLIC METHODS
-    public static void update(Context c){
-        if(c==null){
+    // PUBLIC METHODS
+    public static void update(Activity activity){
+        if(activity==null){
             throw new IllegalArgumentException();
         }
-        mCurrentContext=c;
+        currentActivity=activity;
     }
 
     public static void printOverCurrent(String message, int duration){
-        if(mCurrentContext==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==LONG || duration==SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
+        checkNonnullActivity();
+        checkDuration(duration);
         if(toastBeingDisplayed()){
             mCurrentlyDisplayedToast.cancel();
         }
         displayToast(message, duration);
     }
 
-// buggy, waiting for a fix
+// this methods has issues I need to solve later (todo)
 //    public static void printAfterCurrent(String message, int duration){
-//        if(mCurrentContext==null){
+//        if(currentActivity==null){
 //            Log.d("ToastProvider", "ToastProvider has no current context");
 //            return;
 //        }
@@ -57,13 +54,8 @@ public class ToastProvider extends Application {
 //    }
 
     public static void printIfNoCurrent(String message, int duration){
-        if(mCurrentContext==null){
-            Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
-        }
-        if(!(duration==LONG || duration==SHORT)){
-            throw new IllegalArgumentException("Invalid duration");
-        }
+        checkNonnullActivity();
+        checkDuration(duration);
         if(!toastBeingDisplayed()){
             displayToast(message, duration);
         }
@@ -77,12 +69,33 @@ public class ToastProvider extends Application {
         }
     }
 
+    public static void setDisplayedToast(Toast t){
+        mCurrentlyDisplayedToast = t;
+    }
 
-// PRIVATE HELPERS
-    private static void displayToast(String message, int duration){
-        Toast newToast = Toast.makeText(mCurrentContext,message,duration);
-        mCurrentlyDisplayedToast = newToast;
-        newToast.show();
+
+    // PRIVATE HELPERS
+    private static void displayToast(final String message, final int duration){
+        currentActivity.runOnUiThread( new Runnable() {
+            public void run() {
+                Toast newToast = Toast.makeText(currentActivity, message, duration);
+                ToastProvider.setDisplayedToast(newToast);
+                newToast.show();
+            }
+        });
+    }
+
+    private static void checkDuration(int duration){
+        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
+            throw new IllegalArgumentException("Invalid duration");
+        }
+    }
+
+    private static void checkNonnullActivity(){
+        if(currentActivity==null){
+            Log.d("ToastProvider", "ToastProvider has no current context");
+            return;
+        }
     }
 
 
