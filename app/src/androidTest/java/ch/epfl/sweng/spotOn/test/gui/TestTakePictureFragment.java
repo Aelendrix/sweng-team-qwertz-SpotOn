@@ -129,7 +129,7 @@ public class TestTakePictureFragment {
         StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
     }
 
-    public static ViewAction clickXY(final float x, final float y){
+    private static ViewAction clickXY(final float x, final float y){
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {
