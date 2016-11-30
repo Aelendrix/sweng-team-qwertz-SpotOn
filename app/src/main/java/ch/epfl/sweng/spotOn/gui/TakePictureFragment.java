@@ -65,7 +65,6 @@ public class TakePictureFragment extends Fragment {
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
-    private boolean mTextWrittenOnPic;//boolean to make sure the user does not write twice on the picture
     private Uri editUri;
 
     @Override
@@ -158,7 +157,6 @@ public class TakePictureFragment extends Fragment {
         } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
-            editPictureIntent.putExtra("alreadyWritten", mTextWrittenOnPic);
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         }
     }
@@ -315,12 +313,10 @@ public class TakePictureFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            mTextWrittenOnPic = false;
             processResult(mImageToUploadUri);
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
             Bundle dataBundle = data.getExtras();
-            mTextWrittenOnPic = dataBundle.getBoolean("writtenText");
             processResult(Uri.parse(dataBundle.getString("editedBitmap")));
         }
     }
@@ -346,6 +342,7 @@ public class TakePictureFragment extends Fragment {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
             } else {
+
                 ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
             }
         }

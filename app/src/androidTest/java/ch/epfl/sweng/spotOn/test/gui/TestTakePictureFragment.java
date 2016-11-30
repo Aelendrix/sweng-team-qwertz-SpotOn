@@ -3,7 +3,17 @@ package ch.epfl.sweng.spotOn.test.gui;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.CoordinatesProvider;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+
 
 import org.junit.After;
 import org.junit.Rule;
@@ -76,10 +86,13 @@ public class TestTakePictureFragment {
 
         onView(withId(R.id.editButton)).perform(click());
         Thread.sleep(1000);
+        onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
+        Thread.sleep(1000);
         onView(withId(R.id.addTextButton)).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
-
+        Thread.sleep(1000);
+        onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
         Thread.sleep(1000);
         onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
@@ -114,5 +127,25 @@ public class TestTakePictureFragment {
         file.delete();
         DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
         StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
+    }
+
+    private static ViewAction clickXY(final float x, final float y){
+        return new GeneralClickAction(
+                Tap.SINGLE,
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + x;
+                        final float screenY = screenPos[1] + y;
+                        float[] coordinates = {screenX, screenY};
+
+                        return coordinates;
+                    }
+                },
+                Press.FINGER);
     }
 }
