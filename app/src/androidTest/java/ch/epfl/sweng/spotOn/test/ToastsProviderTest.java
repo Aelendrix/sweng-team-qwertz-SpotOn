@@ -6,6 +6,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.Toast;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -47,6 +49,11 @@ public class ToastsProviderTest {
         UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
         ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance());
         displayFullSizeImageIntent = new Intent();
+    }
+
+    @After
+    public void cleanUpDatabase(){
+        DatabaseRef.deleteUserFromDB("cestDoncTonAmi");
     }
 
 
@@ -87,7 +94,7 @@ public class ToastsProviderTest {
         assertNoDisplayedToast();
 
         // printIfNoCurrent() shouldn't dispaly toast
-        ToastProvider.printOverCurrent("BaseToast", ToastProvider.LONG);
+        ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
         ToastProvider.printIfNoCurrent("(there should have been no toast after this 'basetoast')",Toast.LENGTH_LONG);
         Thread.sleep(longD - sec2 + 200 ); // 200 ms of margin of error since toast isn't displayed immediatly

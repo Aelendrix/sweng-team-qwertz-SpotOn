@@ -29,7 +29,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class mainActivity_notLoggedInButton {
+public class mainActivityTest_notLoggedInButton {
 
     UiDevice mDevice;
 

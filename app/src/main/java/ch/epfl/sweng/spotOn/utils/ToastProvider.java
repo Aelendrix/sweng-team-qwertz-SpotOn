@@ -15,9 +15,6 @@ import android.widget.Toast;
  */
 public class ToastProvider {
 
-    public static int LONG = Toast.LENGTH_LONG;
-    public static int SHORT = Toast.LENGTH_SHORT;
-
     //    private static Context mCurrentContext = null;
     private static Activity currentActivity = null;
     private static Toast mCurrentlyDisplayedToast = null;
@@ -40,7 +37,7 @@ public class ToastProvider {
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
         }
-        if(!(duration==LONG || duration==SHORT)){
+        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
             throw new IllegalArgumentException("Invalid duration");
         }
         if(toastBeingDisplayed()){
@@ -66,7 +63,7 @@ public class ToastProvider {
             Log.d("ToastProvider", "ToastProvider has no current context");
             return;
         }
-        if(!(duration==LONG || duration==SHORT)){
+        if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
             throw new IllegalArgumentException("Invalid duration");
         }
         if(!toastBeingDisplayed()){

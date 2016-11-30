@@ -104,8 +104,7 @@ public class LocalDatabase implements LocationTrackerListener{
      *  NB : listeners need to be updated manually after that  */
     public void addIfWithinFetchRadius(PhotoObject newObject, Location databaseCachedLocation) {
         if( mCachedLocation!=null ) {
-            if (Math.abs(newObject.getLatitude() - databaseCachedLocation.getLatitude()) < FETCH_RADIUS
-                    && Math.abs(newObject.getLongitude() - databaseCachedLocation.getLongitude()) < FETCH_RADIUS) {
+            if (newObject.obtainLocation().distanceTo(databaseCachedLocation) < FETCH_RADIUS) {
                 if (!mediaDataMap.containsKey(newObject.getPictureId())) {
                     addPhotoObject(newObject);
                 }
@@ -176,12 +175,8 @@ public class LocalDatabase implements LocationTrackerListener{
             Log.d("Localdatabase", "WARNING : called refreshViewablePhotos, but no valid cachedLocation");
         }else {
             for (PhotoObject po : mediaDataMap.values()) {
-                // create a "location" object for the photo
-                Location newObjectLocation = new Location("dummyProvider");
-                newObjectLocation.setLatitude(po.getLatitude());
-                newObjectLocation.setLongitude(po.getLongitude());
-                // compare it with the location provided by the LocationTracker
-                if (newObjectLocation.distanceTo(mCachedLocation) < po.getRadius()) {
+                // compare the object's location with the location provided by the LocationTracker
+                if (po.obtainLocation().distanceTo(mCachedLocation) < po.getRadius()) {
                     if (!mViewableMediaDataMap.containsKey(po.getPictureId())) {
                         mViewableMediaDataMap.put(po.getPictureId(), po);
                     }

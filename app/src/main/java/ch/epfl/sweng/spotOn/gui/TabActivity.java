@@ -116,8 +116,7 @@ public class TabActivity extends AppCompatActivity{
             case R.id.log_out:
                 if( ! UserManager.getInstance().userIsLoggedIn() ){
                     // to provide a way to log back in - needs to be improved todo
-                    Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                    startActivity(mainActivityIntent);
+                    finish();
                     return true;
                 } else {
                     disconnectFacebook();
@@ -157,24 +156,24 @@ public class TabActivity extends AppCompatActivity{
     }
 
     public void onUpVoteOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_LONG);
         refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
     }
 
     public void onOldestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by oldest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.OLDEST_ORDER);
     }
 
     public void onNewestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by newest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.NEWEST_ORDER);
     }
 
     public void onHottestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by hottest Picture",ToastProvider.SHORT);
+        ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_LONG);
 
         refreshGrid(SeePicturesFragment.HOTTEST_ORDER);
     }
