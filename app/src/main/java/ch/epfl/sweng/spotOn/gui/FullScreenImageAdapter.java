@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -46,12 +47,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageView mViewToSet;
     private int voteSum=0;
     private TextView mTextView;
+    private ImageButton mUpvoteButton;
+    private ImageButton mDownvoteButton;
+    private Button mReportButton;
     private PhotoObject mDisplayedMedia;
-
-    // Useful to change color of buttons when clicked
-    private boolean upvoted;
-    private boolean downvoted;
-    private boolean reported;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
@@ -75,7 +74,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
+        Log.d("instantiateItem", "called1");
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
         mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
@@ -118,14 +117,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
         voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 
-        //set up this boolean to know if the user has already upvoted, downvoted, reported the picture
+        View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
+        mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
+        mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
+        mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
         String userID = User.getInstance().getUserId();
-        upvoted = mDisplayedMedia.getUpvotersList().contains(userID);
-        downvoted = mDisplayedMedia.getDownvotersList().contains(userID);
-        reported = mDisplayedMedia.getReportersList().contains(userID);
-        Log.d("instantiateItem", "called1");
+        colorButtons(userID);
 
         container.addView(viewLayout);
+        container.addView(viewFullSize);
         return viewLayout;
     }
 
@@ -153,20 +153,18 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }else{
             String userId = User.getInstance().getUserId();
             //fake vote method to have more responsive interface
-            if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getUpvotersList().contains(userId)){
+            if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!alreadyUpvoted(userId)){
                 voteSum++;
-                upvoted = true;
-                if(mDisplayedMedia.getDownvotersList().contains(userId)){
+                colorIfUpvote();
+                if(alreadyDownvoted(userId)){
                     voteSum++;
-                    downvoted = false;
                 }
             }
-            if(vote==-1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getDownvotersList().contains(userId)){
+            if(vote==-1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!alreadyDownvoted(userId)){
                 voteSum--;
-                downvoted = true;
-                if(mDisplayedMedia.getUpvotersList().contains(userId)){
+                colorIfDownvote();
+                if(alreadyUpvoted(userId)){
                     voteSum--;
-                    upvoted = false;
                 }
             }
             refreshVoteTextView(Integer.toString(voteSum));
@@ -183,23 +181,87 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = User.getInstance().getUserId();
+            //Change color of report button depending if the user reports or unreports the picture
+            if(alreadyReported(userId)){
+                colorIfNotReported();
+            } else {
+                colorIfReported();
+            }
             String toastMessage = mDisplayedMedia.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
-            if(reported){
-                reported = false;
-            } else {
-                reported = true;
-            }
         }
     }
 
-    public boolean getUpvoted(){
-        return upvoted;
+    /**
+     * Checks if the user has upvoted the displayed picture
+     * @param userID the user ID
+     */
+    private boolean alreadyUpvoted(String userID){
+        if(mDisplayedMedia != null) {
+            return mDisplayedMedia.getUpvotersList().contains(userID);
+        } else {
+            throw new NullPointerException("The photoObject is null");
+        }
     }
-    public boolean getDownvoted(){
-        return downvoted;
+
+    /**
+     * Checks if the user has downvoted the displayed picture
+     * @param userID the user ID
+     */
+    private boolean alreadyDownvoted(String userID){
+        if(mDisplayedMedia != null){
+            return mDisplayedMedia.getDownvotersList().contains(userID);
+        } else {
+            throw new NullPointerException("The photoObject is null");
+        }
     }
-    public boolean getReported(){
-        return reported;
+
+    /**
+     * Checks if the user has reported the displayed picture
+     * @param userID the user ID
+     */
+    private boolean alreadyReported(String userID){
+        if(mDisplayedMedia != null) {
+            return mDisplayedMedia.getReportersList().contains(userID);
+        } else {
+            throw new NullPointerException("The photoObject is null");
+        }
+    }
+
+    private void colorButtons(String userID){
+        if(alreadyUpvoted(userID)){
+            colorIfUpvote();
+        } else if (alreadyDownvoted(userID)) {
+            colorIfDownvote();
+        }
+
+        if(alreadyReported(userID)){
+            colorIfReported();
+        }
+    }
+
+    private void colorIfUpvote(){
+        //Can't get the colors from resources because we are not in an activity and I can't have the context
+        int colorGreen = Color.parseColor("#2ac903");
+        int colorPrimary = Color.parseColor("#854442");
+        mUpvoteButton.setBackgroundColor(colorGreen);
+        mDownvoteButton.setBackgroundColor(colorPrimary);
+    }
+
+    private void colorIfDownvote(){
+        int colorRed = Color.parseColor("#f20408");
+        int colorPrimary = Color.parseColor("#854442");
+        mUpvoteButton.setBackgroundColor(colorPrimary);
+        mDownvoteButton.setBackgroundColor(colorRed);
+    }
+
+    private void colorIfReported(){
+        int colorBlack = Color.parseColor("#000000");
+        mReportButton.setBackgroundColor(colorBlack);
+    }
+
+    private void colorIfNotReported(){
+        int colorPrimary = Color.parseColor("#854442");
+        mReportButton.setBackgroundColor(colorPrimary);
     }
 }
