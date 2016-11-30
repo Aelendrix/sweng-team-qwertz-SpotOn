@@ -20,6 +20,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -50,9 +51,24 @@ public class EditPictureActivity extends AppCompatActivity {
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
-        Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
-        mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        //mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         mEditedImageView.setImageBitmap(mEditedBitmap);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float textPositionX = event.getX();
+        float textPositionY = event.getY();
+
+        if(mTextToDraw != null) {drawText(textPositionX, textPositionY);}
+
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
+        }
+        return false;
     }
 
     /**
@@ -105,24 +121,9 @@ public class EditPictureActivity extends AppCompatActivity {
             //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             mTextToDraw = data.getStringExtra("textToDraw");//preferences.getString("TD", "");
             Log.d("TextToDraw", mTextToDraw);
-            if(mTextToDraw != null){
-                //Edits the bitmap in a canvas
-                Log.d("TextToDraw", "entered the loop");
-                Canvas canvas = new Canvas(mEditedBitmap);
-                Paint paint = new Paint();
-                paint.setColor(Color.WHITE);
-                paint.setShadowLayer(10, 0, 0, Color.BLACK);
-                paint.setTextSize(50);
-                float x = 50;
-                float y = mEditedBitmap.getHeight() - 200;
-                paint.setFakeBoldText(true);
-                canvas.drawText(mTextToDraw, x, y, paint);
-                //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
-                //SharedPreferences.Editor edit = preferences.edit();
-                //edit.remove("TD");
-                //edit.apply();
-                mEditedImageView.setImageBitmap(mEditedBitmap);
-            }
+            float x = 50;
+            float y = mEditedBitmap.getHeight() - 200;
+            drawText(x, y);
         }
     }
 
@@ -167,5 +168,22 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("Store Image", "File not closed: " + e.getMessage());
         }
         return resUri;
+    }
+
+    private void drawText(float x, float y) {
+        Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Log.d("TextToDraw", mTextToDraw);
+        if(mTextToDraw != null){
+            //Edits the bitmap in a canvas
+            Log.d("TextToDraw", "entered the loop");
+            Canvas canvas = new Canvas(addTextBitmap);
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setShadowLayer(10, 0, 0, Color.BLACK);
+            paint.setTextSize(50);
+            paint.setFakeBoldText(true);
+            canvas.drawText(mTextToDraw, x, y, paint);
+            mEditedImageView.setImageBitmap(addTextBitmap);
+        }
     }
 }
