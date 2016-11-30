@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -77,11 +78,17 @@ public class TakePictureFragment extends Fragment {
     private boolean mTextWrittenOnPic;//boolean to make sure the user does not write twice on the picture
     private Uri editUri;
 
+    //Buttons to change their color
+    private ImageButton mStoreButton;
+    private ImageButton mSendButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
         mImageView = (ImageView) view.findViewById(R.id.image_view);
+        mStoreButton = (ImageButton) view.findViewById(R.id.storeButton);
+        mSendButton = (ImageButton) view.findViewById(R.id.sendButton);
         return view;
     }
 
@@ -110,14 +117,12 @@ public class TakePictureFragment extends Fragment {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
                 ToastProvider.printOverCurrent("Picture stored in your internal storage", Toast.LENGTH_LONG);
-                //Toast.makeText(this.getActivity(), "Picture stored in your internal storage", Toast.LENGTH_LONG).show();
+                colorBlackButton(mStoreButton);
             } else {
                 ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_LONG);
-                //Toast.makeText(this.getActivity(), "Picture already stored", Toast.LENGTH_LONG).show();
             }
         } else {
             ToastProvider.printOverCurrent("You need to take a picture in order to store it.", Toast.LENGTH_LONG);
-            //Toast.makeText(this.getActivity(), "You need to take a picture in order to store it.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -142,6 +147,7 @@ public class TakePictureFragment extends Fragment {
                         }
                     });
                     mActualPhotoObject.setSentToServerStatus(true);
+                    colorBlackButton(mSendButton);
                 } else {
                     Log.d("TakePictureFragment","User "+USER.getUserId()+" can't post photo anymore");
                     ToastProvider.printOverCurrent("You can't post anymore photos for today\n#FeelsBadMan", Toast.LENGTH_LONG);
@@ -149,11 +155,9 @@ public class TakePictureFragment extends Fragment {
 
             } else {
                 ToastProvider.printOverCurrent("This picture is already online", Toast.LENGTH_LONG);
-                //Toast.makeText(this.getActivity(), "This picture is already online", Toast.LENGTH_LONG).show();
             }
         } else {
             ToastProvider.printOverCurrent("You need to take a picture in order to send it", Toast.LENGTH_LONG);
-            //Toast.makeText(this.getActivity(), "You need to take a picture in order to send it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -169,7 +173,6 @@ public class TakePictureFragment extends Fragment {
             startActivityForResult(editPictureIntent, REQUEST_EDITION);
         } else {
             ToastProvider.printOverCurrent("You need to take a picture in order to edit it", Toast.LENGTH_LONG);
-            //Toast.makeText(this.getActivity(), "You need to take a picture in order to edit it", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -212,7 +215,6 @@ public class TakePictureFragment extends Fragment {
                 invokeCamera();
             } else {
                 ToastProvider.printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
-                //Toast.makeText(getContext(), getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -327,6 +329,14 @@ public class TakePictureFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             mTextWrittenOnPic = false;
             processResult(mImageToUploadUri);
+
+            colorPrimaryButton(mStoreButton);
+            final long remainingPhotos = USER.computeRemainingPhotos();
+            if(remainingPhotos > 0 || USER.getUserId().equals("114110565725225")){
+                colorPrimaryButton(mSendButton);
+            } else {
+                colorBlackButton(mSendButton);
+            }
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
             Bundle dataBundle = data.getExtras();
@@ -423,6 +433,26 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    //GRAPHICAL METHODS
+
+    /**
+     * Colors a button in black (gives him shape of button_shape_picture_after_clicked)
+     * @param button the button to color in black
+     */
+    private void colorBlackButton(ImageButton button){
+        button.setBackground(ContextCompat.getDrawable(getActivity(),
+                R.drawable.button_shape_picture_after_clicked));
+    }
+
+    /**
+     * Colors a button in red (gives him shape of button_shape_take_picture)
+     * @param button the button to color in red
+     */
+    private void colorPrimaryButton(ImageButton button){
+        button.setBackground(ContextCompat.getDrawable(getActivity(),
+                R.drawable.button_shape_take_picture));
     }
 }
 
