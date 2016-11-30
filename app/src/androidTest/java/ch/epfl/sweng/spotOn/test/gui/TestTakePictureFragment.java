@@ -26,7 +26,11 @@ import java.io.OutputStream;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 
@@ -49,6 +53,7 @@ public class TestTakePictureFragment {
     };
     Uri mImageToUploadUri;
     File file;
+    PhotoObject mActualPhotoObject;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
@@ -97,7 +102,8 @@ public class TestTakePictureFragment {
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
+        mActualPhotoObject = pictureFragment.getActualPhotoObject();
 
         /*
 
@@ -119,7 +125,8 @@ public class TestTakePictureFragment {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
         file.delete();
-
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
+        StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
     }
 
     public static ViewAction clickXY(final float x, final float y){
