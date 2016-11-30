@@ -41,6 +41,8 @@ public class EditPictureActivity extends AppCompatActivity {
     private Bitmap mEditedBitmap;
     private ImageView mEditedImageView;
     public String mTextToDraw;
+    private Bitmap withoutTextBitmap;
+    private boolean textIsDrawn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class EditPictureActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
         mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
-        //mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        withoutTextBitmap = mEditedBitmap;
         mEditedImageView.setImageBitmap(mEditedBitmap);
     }
 
@@ -61,7 +63,12 @@ public class EditPictureActivity extends AppCompatActivity {
         float textPositionX = event.getX();
         float textPositionY = event.getY();
 
-        if(mTextToDraw != null) {drawText(textPositionX, textPositionY);}
+        if(mTextToDraw != null) {
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
+            }
+            drawText(textPositionX, textPositionY);
+        }
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -82,6 +89,7 @@ public class EditPictureActivity extends AppCompatActivity {
         Bitmap rotatedBitmap = Bitmap.createBitmap(mEditedBitmap, 0, 0, mEditedBitmap.getWidth(),
                 mEditedBitmap.getHeight(), rotationMatrix, true);
         mEditedBitmap = rotatedBitmap;
+        withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
     }
 
@@ -123,7 +131,10 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("TextToDraw", mTextToDraw);
             float x = 50;
             float y = mEditedBitmap.getHeight() - 200;
-            drawText(x, y);
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
+            }
+            textIsDrawn = drawText(x, y);
         }
     }
 
@@ -170,7 +181,7 @@ public class EditPictureActivity extends AppCompatActivity {
         return resUri;
     }
 
-    private void drawText(float x, float y) {
+    private boolean drawText(float x, float y) {
         Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Log.d("TextToDraw", mTextToDraw);
         if(mTextToDraw != null){
@@ -184,6 +195,9 @@ public class EditPictureActivity extends AppCompatActivity {
             paint.setFakeBoldText(true);
             canvas.drawText(mTextToDraw, x, y, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
+            mEditedBitmap = addTextBitmap;
+            return true;
         }
+        return false;
     }
 }
