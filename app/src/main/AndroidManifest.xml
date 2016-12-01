@@ -99,6 +99,7 @@
         </provider>
 
         <activity android:name=".gui.EditPictureActivity"></activity>
+        <activity android:name=".gui.ViewUserPhotoActivity"></activity>
     </application>
 
 </manifest>
