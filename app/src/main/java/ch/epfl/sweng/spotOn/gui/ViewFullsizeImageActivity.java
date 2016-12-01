@@ -22,6 +22,10 @@ public class ViewFullsizeImageActivity extends Activity {
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
 
+    private ImageButton mUpvoteButton;
+    private ImageButton mDownvoteButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,15 +37,22 @@ public class ViewFullsizeImageActivity extends Activity {
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
+
+        mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
+        mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
     }
 
 
     public void recordUpvote(View view) {
         mFullScreenImageAdapter.recordUpvote(view);
+        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
+        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
     }
 
     public void recordDownvote(View view) {
         mFullScreenImageAdapter.recordDownvote(view);
+        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
+        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
     }
 
     public void reportOffensivePicture(View view) {
