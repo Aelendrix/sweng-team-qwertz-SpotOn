@@ -263,7 +263,6 @@ public class LocalDatabase implements LocationTrackerListener{
             boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations < TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
             boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
 
-            //Log.d("LocalDatabase","allowRefreshAccordingToNewLocation() : tooLong="+tooLongWithoutRefreshing+" tooOften="+refreshingTooOften+" farEnough="+travelledFarEnoughForARefresh);
             return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);
         }
     }
@@ -290,9 +289,6 @@ public class LocalDatabase implements LocationTrackerListener{
             Log.d("Localdatabase", "location updated, forcing single refresh");
             forceSingleRefresh();
         }// otherwise, it's not worth it to refresh the database
-        else{
-            Log.d("Locadatabase","Location updated, but not worth a database refresh");
-        }
     }
 
     @Override

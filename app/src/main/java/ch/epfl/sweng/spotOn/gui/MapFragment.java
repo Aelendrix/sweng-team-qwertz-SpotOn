@@ -244,7 +244,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     // LISTENER METHODS
     @Override
     public void updateLocation(Location newLocation) {
-        Log.d("MapFragment","Location updated");
         refreshMapLocation();
     }
 
@@ -255,7 +254,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     @Override
     public void databaseUpdated() {
-        Log.d("MapFragment","Local database updated");
         addDBMarkers();
     }
 

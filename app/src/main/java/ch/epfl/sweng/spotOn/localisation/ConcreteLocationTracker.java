@@ -44,7 +44,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
         mRunOnTimeout  = new Runnable() {
             @Override
             public void run() {
-                Log.d("LocationTracker", "loop finished");
+                Log.d("LocationTracker", "timeout finished");
                 // synchronized, to prevent race conditions with another thread setting mLocation to a new location while we're notifying the listeners
                 synchronized (ConcreteLocationTracker.getInstance()){
                     notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
