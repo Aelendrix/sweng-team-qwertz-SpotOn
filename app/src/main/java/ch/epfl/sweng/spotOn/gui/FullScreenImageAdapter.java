@@ -129,9 +129,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
-    @Override
-    public
-
     public void refreshVoteTextView(String s){
         mTextView.setText(s);
     }
