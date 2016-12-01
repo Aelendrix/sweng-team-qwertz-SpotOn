@@ -1,8 +1,7 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,5 +73,9 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
         });
 
         return rowView;
+    }
+
+    public void updateList(List<PhotoObject> photoList) {
+        mPhotoList = photoList;
     }
 }
