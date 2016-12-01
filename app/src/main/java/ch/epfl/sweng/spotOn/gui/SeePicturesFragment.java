@@ -60,14 +60,14 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
             mImageAdapter= new ImageAdapter(mView.getContext(), mOrdering);
             mGridView.invalidateViews();
             mGridView.setAdapter(mImageAdapter);
+
             if(getActivity()==null){
-                Log.d("Correct tab", "Not on Around me tab");
+                Log.d("SeePicturesFragment","Fragment is in background, ");
             }else {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //create a new adapter and refresh the gridView
-
                         LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
                         FrameLayout frameLayout = (FrameLayout) mView.findViewById(R.id.grid_layout);
                         if (mImageAdapter.getCount() == 0) {

@@ -2,11 +2,18 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.CoordinatesProvider;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+
 
 import org.junit.After;
 import org.junit.Rule;
@@ -16,25 +23,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.location.MockLocationTracker_forTest;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -49,8 +51,9 @@ public class TestTakePictureFragment {
             TestInitUtils.initContext();
         }
     };
-    Uri mImageToUploadUri;
-    File file;
+    private Uri mImageToUploadUri;
+    private File file;
+    private PhotoObject mActualPhotoObject;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
@@ -83,10 +86,13 @@ public class TestTakePictureFragment {
 
         onView(withId(R.id.editButton)).perform(click());
         Thread.sleep(1000);
+        onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
+        Thread.sleep(1000);
         onView(withId(R.id.addTextButton)).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
-
+        Thread.sleep(1000);
+        onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
         Thread.sleep(1000);
         onView(withId(R.id.rotateButton)).perform(click());
         Thread.sleep(1000);
@@ -96,7 +102,8 @@ public class TestTakePictureFragment {
         onView(withId(R.id.storeButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
+        mActualPhotoObject = pictureFragment.getActualPhotoObject();
 
         /*
 
@@ -118,6 +125,27 @@ public class TestTakePictureFragment {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
         file.delete();
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
+        StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
+    }
 
+    private static ViewAction clickXY(final float x, final float y){
+        return new GeneralClickAction(
+                Tap.SINGLE,
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + x;
+                        final float screenY = screenPos[1] + y;
+                        float[] coordinates = {screenX, screenY};
+
+                        return coordinates;
+                    }
+                },
+                Press.FINGER);
     }
 }

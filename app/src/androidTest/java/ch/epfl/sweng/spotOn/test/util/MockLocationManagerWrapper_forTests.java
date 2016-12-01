@@ -1,4 +1,4 @@
-package ch.epfl.sweng.spotOn.test.location;
+package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
 import android.location.LocationListener;

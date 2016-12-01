@@ -2,7 +2,6 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,15 +23,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
@@ -117,13 +113,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
         voteSum = mDisplayedMedia.getUpvotes()- mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 
-        View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
+        /**View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
         mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
         mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
-        String userID = User.getInstance().getUserId();
-        colorButtons(userID);
+        String userID = UserManager.getInstance().getUser().getUserId();
+        colorButtons(userID);*/
 
         container.addView(viewLayout);
         return viewLayout;
@@ -133,6 +128,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((RelativeLayout) object);
     }
+
+    @Override
+    public
 
     public void refreshVoteTextView(String s){
         mTextView.setText(s);
@@ -151,7 +149,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
-            String userId = User.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
             if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!alreadyUpvoted(userId)){
                 voteSum++;
@@ -170,8 +168,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             refreshVoteTextView(Integer.toString(voteSum));
 
             String toastMessage = mDisplayedMedia.processVote(vote, userId);
-            ToastProvider.printOverCurrent(toastMessage,ToastProvider.SHORT);
-
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
@@ -180,7 +177,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mDisplayedMedia == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            String userId = User.getInstance().getUserId();
+            String userId = UserManager.getInstance().getUser().getUserId();
             //Change color of report button depending if the user reports or unreports the picture
             if(alreadyReported(userId)){
                 colorIfNotReported(view);

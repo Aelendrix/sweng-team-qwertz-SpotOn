@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.StorageRef_Test;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
@@ -28,7 +29,7 @@ public class GridOrderingTest {
         @Override
         public void beforeActivityLaunched(){
             po = PhotoObjectTestUtils.iceDivingPO();
-            po.upload();
+            po.uploadWithoutFeedback();
             TestInitUtils.initContext();
 
         }
@@ -50,5 +51,6 @@ public class GridOrderingTest {
     @After
     public void clear(){
         DatabaseRef.deletePhotoObjectFromDB(po.getPictureId());
+        StorageRef.deletePictureFromStorage(po.getPictureId());
     }
 }

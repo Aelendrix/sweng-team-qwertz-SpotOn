@@ -27,9 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="18dp"
-        android:layout_above="@+id/loginButton"
-        android:layout_alignStart="@+id/loginButton"
-        android:layout_alignEnd="@+id/loginButton" />
+        android:layout_above="@+id/dontLogInButton"
+        android:layout_alignStart="@+id/dontLogInButton"
+        android:layout_alignEnd="@+id/dontLogInButton" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,13 +45,14 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="@string/logIn"
+        android:text="@string/dontLogInButton"
         android:textColor="@color/colorWhite"
         android:textSize="14sp"
         android:textAllCaps="false"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:id="@+id/loginButton"
+        android:id="@+id/dontLogInButton"
+        android:onClick="goToTabActivityNotLoggedIn"
         android:background="@drawable/button_shape_login"
         android:drawableStart="@mipmap/ic_launcher"
         android:paddingStart="2dp"
@@ -80,6 +81,5 @@
         android:src="@mipmap/ic_launcher"
         android:layout_below="@id/mainLoginTextView"
         android:layout_above="@id/wayToConnectTextView"/>
-
 
 </RelativeLayout>

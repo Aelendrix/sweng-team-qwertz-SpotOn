@@ -10,17 +10,19 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.user.UserStoredInDatabase;
 
 @RunWith(AndroidJUnit4.class)
 public class UserStoredInDatabaseTest {
 
-    UserStoredInDatabase userInDB = null;
+    UserStoredInDatabase userInDB;
 
     @Test
     public void testGetUserStoredInDB(){
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        User user = User.getInstance();
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("firstname", "lastname", "mlb");
+        User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
 
         Assert.assertEquals(userInDB.getFirstName(), "firstname");
@@ -29,14 +31,16 @@ public class UserStoredInDatabaseTest {
         Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
-        user.destroy();
+        UserManager.getInstance().destroyUser();
     }
 
     @Test
     public void testSetUserStoredInDB(){
-        User.initializeFromFb("firstname", "lastname", "mlb");
-        User user = User.getInstance();
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("firstname", "lastname", "mlb");
+        User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
+
         userInDB.setFirstName("blabla");
         userInDB.setLastName("test");
         userInDB.setUserId("mlb_test");
@@ -48,6 +52,6 @@ public class UserStoredInDatabaseTest {
         Assert.assertEquals(userInDB.getKarma(), 12);
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
-        user.destroy();
+        UserManager.getInstance().destroyUser();
     }
 }

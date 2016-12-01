@@ -20,6 +20,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,7 +44,8 @@ public class EditPictureActivity extends AppCompatActivity {
     private Bitmap mEditedBitmap;
     private ImageView mEditedImageView;
     public String mTextToDraw;
-    private boolean mTextWrittenOnPic;
+    private Bitmap withoutTextBitmap;
+    private boolean textIsDrawn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +55,30 @@ public class EditPictureActivity extends AppCompatActivity {
 
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
-        mTextWrittenOnPic = intent.getExtras().getBoolean("alreadyWritten");
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
-        Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
-        mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        withoutTextBitmap = mEditedBitmap;
         mEditedImageView.setImageBitmap(mEditedBitmap);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float textPositionX = event.getX();
+        float textPositionY = event.getY();
+
+        if(mTextToDraw != null) {
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
+            }
+            drawText(textPositionX, textPositionY);
+        }
+
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
+        }
+        return false;
     }
 
     /**
@@ -71,6 +92,7 @@ public class EditPictureActivity extends AppCompatActivity {
         Bitmap rotatedBitmap = Bitmap.createBitmap(mEditedBitmap, 0, 0, mEditedBitmap.getWidth(),
                 mEditedBitmap.getHeight(), rotationMatrix, true);
         mEditedBitmap = rotatedBitmap;
+        withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
     }
 
@@ -79,12 +101,8 @@ public class EditPictureActivity extends AppCompatActivity {
      * @param view
      */
     public void goToDrawTextActivity(View view){
-        if(! mTextWrittenOnPic) {
             Intent intent = new Intent(this, DrawTextActivity.class);
             startActivityForResult(intent, REQUEST_TEXT_DRAWING);
-        } else {
-            Toast.makeText(this, "You can't write twice on the same picture", Toast.LENGTH_LONG).show();
-        }
     }
 
     /**
@@ -97,7 +115,6 @@ public class EditPictureActivity extends AppCompatActivity {
         mURIofBitmap = storeAndGetImageUri(mEditedBitmap);
         //Give the Uri as a string in extras ! Just giving the Uri is not working
         intent.putExtra("editedBitmap", mURIofBitmap.toString());
-        intent.putExtra("writtenText", mTextWrittenOnPic);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -114,21 +131,12 @@ public class EditPictureActivity extends AppCompatActivity {
         if(requestCode == REQUEST_TEXT_DRAWING && resultCode == Activity.RESULT_OK){
             mTextToDraw = data.getStringExtra("textToDraw");
             Log.d("TextToDraw", mTextToDraw);
-            if(mTextToDraw != null){
-                mTextWrittenOnPic = true;
-                //Edits the bitmap in a canvas
-                Log.d("TextToDraw", "entered the loop");
-                Canvas canvas = new Canvas(mEditedBitmap);
-                Paint paint = new Paint();
-                paint.setColor(Color.RED);
-                paint.setTextSize(50);
-                float x = 50;
-                float y = mEditedBitmap.getHeight() - 200;
-                paint.setFakeBoldText(true);
-                canvas.drawText(mTextToDraw, x, y, paint);
-
-                mEditedImageView.setImageBitmap(mEditedBitmap);
+            float x = 50;
+            float y = mEditedBitmap.getHeight() - 200;
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
             }
+            textIsDrawn = drawText(x, y);
         }
     }
 
@@ -163,5 +171,25 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("Store Image", "File not closed: " + e.getMessage());
         }
         return resUri;
+    }
+
+    private boolean drawText(float x, float y) {
+        Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Log.d("TextToDraw", mTextToDraw);
+        if(mTextToDraw != null){
+            //Edits the bitmap in a canvas
+            Log.d("TextToDraw", "entered the loop");
+            Canvas canvas = new Canvas(addTextBitmap);
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setShadowLayer(10, 0, 0, Color.BLACK);
+            paint.setTextSize(50);
+            paint.setFakeBoldText(true);
+            canvas.drawText(mTextToDraw, x, y, paint);
+            mEditedImageView.setImageBitmap(addTextBitmap);
+            mEditedBitmap = addTextBitmap;
+            return true;
+        }
+        return false;
     }
 }

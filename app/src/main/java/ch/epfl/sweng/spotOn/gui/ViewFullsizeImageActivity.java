@@ -11,10 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.user.UserManager;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class ViewFullsizeImageActivity extends Activity {
 
@@ -44,18 +48,30 @@ public class ViewFullsizeImageActivity extends Activity {
 
 
     public void recordUpvote(View view) {
-        mFullScreenImageAdapter.recordUpvote(view);
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+        if( !UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        }else {
+            mFullScreenImageAdapter.recordUpvote(view);
+            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
+            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+        }
     }
 
     public void recordDownvote(View view) {
-        mFullScreenImageAdapter.recordDownvote(view);
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
+        if( !UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        }else {
+            mFullScreenImageAdapter.recordDownvote(view);
+            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
+            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
+        }
     }
 
     public void reportOffensivePicture(View view) {
-        mFullScreenImageAdapter.reportOffensivePicture(view);
+        if( !UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        }else {
+            mFullScreenImageAdapter.reportOffensivePicture(view);
+        }
     }
 }

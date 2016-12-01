@@ -144,7 +144,7 @@ public class PhotoObject {
         // sendToFileServer calls sendToDatabase on success
         sendToFileServer(hasListener, completionListener);
     }
-    public void upload(){
+    public void uploadWithoutFeedback(){
         upload(false, null);
     }
 
