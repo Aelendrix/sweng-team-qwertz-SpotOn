@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.fileDeletionServices;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,10 +37,18 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
-                    String pictureID = photoWithoutPic.getPictureId();
-                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
-                    StorageRef.deletePictureFromStorage(pictureID);
+                    if(child.exists()) {
+                        PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
+                        String pictureID = photoWithoutPic.getPictureId();
+                        if(pictureID==null){
+                            throw new IllegalArgumentException("Ser.Del.Exp.PhotoRec. : pictureId null");
+                        }
+                        DatabaseRef.deletePhotoObjectFromDB(pictureID);
+                        StorageRef.deletePictureFromStorage(pictureID);
+                    }else{
+                        Log.d("Ser.Del.Exp.PhotoRec.","child doesn't exist");
+                        throw new IllegalArgumentException("Ser.Del.Exp.PhotoRec. : child doesn't exist");
+                    }
                 }
             }
 
