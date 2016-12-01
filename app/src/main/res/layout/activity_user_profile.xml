@@ -56,20 +56,20 @@
         android:textStyle="normal|bold"
         android:id="@+id/profileKarmaTextView" />
 
-    <Button
-        android:text="@string/userProfileBackButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profilePicturesListView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:id="@+id/profileBackButton" />
-
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileKarmaTextView"
         android:layout_marginTop="20dp"
         android:id="@+id/profilePicturesListView" />
+
+    <Button
+        android:text="@string/userProfileBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/profileBackButton"
+        android:layout_alignBaseline="@+id/profileTitleTextView"
+        android:layout_alignBottom="@+id/profileTitleTextView"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

@@ -29,6 +29,8 @@ public class EmptyUser implements User {
     public void addPhoto(PhotoObject photo) {
         throw new UnsupportedOperationException();
     }
+    @Override
+    public void removePhoto(String pictureID) { throw  new UnsupportedOperationException(); }
 
     @Override
     public String getFirstName() {

@@ -3,19 +3,37 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/profilePicturesList">
 
-    <TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <ImageView
             android:id="@+id/profilePictureThumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginLeft="17dp"/>
 
+        <Button
+            android:text="@string/userProfileListPictureDeleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="50dp"
+            android:id="@+id/deletePictureButton"/>
+
         <TextView
             android:id="@+id/profilePictureVotes"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginLeft="120dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="0dp"
             android:text="@string/profilePictureListText"/>
+
+        <TextView
+            android:id="@+id/profilePictureID"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="-150dp"
+            android:layout_marginTop="50dp"
+            android:text=""/>
 
     </TableRow>
 </TableLayout>
