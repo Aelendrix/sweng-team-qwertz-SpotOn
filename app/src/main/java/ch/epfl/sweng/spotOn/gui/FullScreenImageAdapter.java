@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -105,6 +107,51 @@ public class FullScreenImageAdapter extends PagerAdapter {
         voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 
+        ImageButton upvote = (ImageButton) viewLayout.findViewById(R.id.upvoteButton);
+        upvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mDisplayedMedia==null) {
+                    throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
+                }else {
+                    String userId = UserManager.getInstance().getUser().getUserId();
+                    //fake vote method to have more responsive interface
+                    if (!mDisplayedMedia.getAuthorId().equals(userId) && !mDisplayedMedia.getUpvotersList().contains(userId)) {
+                        voteSum++;
+                        if (mDisplayedMedia.getDownvotersList().contains(userId)) {
+                            voteSum++;
+                        }
+                    }
+                    refreshVoteTextView(Integer.toString(voteSum));
+
+                    String toastMessage = mDisplayedMedia.processVote(1, userId);
+                    ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+        ImageButton downVote = (ImageButton) viewLayout.findViewById(R.id.downvoteButton);
+        downVote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDisplayedMedia == null) {
+                    throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
+                } else {
+                    String userId = UserManager.getInstance().getUser().getUserId();
+                    //fake vote method to have more responsive interface
+                    if (!mDisplayedMedia.getAuthorId().equals(userId) && !mDisplayedMedia.getUpvotersList().contains(userId)) {
+                        voteSum--;
+                        if (mDisplayedMedia.getDownvotersList().contains(userId)) {
+                            voteSum--;
+                        }
+                    }
+                    refreshVoteTextView(Integer.toString(voteSum));
+
+                    String toastMessage = mDisplayedMedia.processVote(-1, userId);
+                    ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+                }
+            }
+        });
         container.addView(viewLayout);
         return viewLayout;
     }
