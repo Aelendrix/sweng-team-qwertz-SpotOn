@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 
@@ -19,6 +20,9 @@ public class ViewFullsizeImageActivity extends Activity {
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
 
+    private ImageButton mUpvoteButton;
+    private ImageButton mDownvoteButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,9 @@ public class ViewFullsizeImageActivity extends Activity {
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
+
+        mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
+        mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
     }
 
 
@@ -39,18 +46,20 @@ public class ViewFullsizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
+            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
+            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
         }
     }
-
 
     public void recordDownvote(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
+            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
+            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
         }
     }
-
 
     public void reportOffensivePicture(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
