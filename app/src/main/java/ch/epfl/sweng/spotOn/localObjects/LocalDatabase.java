@@ -32,6 +32,7 @@ public class LocalDatabase implements LocationTrackerListener{
     private List<LocalDatabaseListener> mListeners;
 
     private Location mCachedLocation;
+
     private long mLastRefreshDate;
 
     private LocationTracker refToLocationTracker;
@@ -41,7 +42,7 @@ public class LocalDatabase implements LocationTrackerListener{
     private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 3*1000; // refresh the localdatabase at most every 3 seconds
 
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 3*60*1000; // refresh at least every 5 minutes
-    private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 5; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
+    private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 3; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
 
     private final static double FETCH_RADIUS = 2*PhotoObject.MAX_VIEW_RADIUS; // the radius in which we fetch pictures, in km
 
@@ -147,6 +148,13 @@ public class LocalDatabase implements LocationTrackerListener{
         l.databaseUpdated();
     }
 
+    /** clears all data from the LocalDatabase */
+    public void clear() {
+        mediaDataMap.clear();
+        mViewableMediaDataMap.clear();
+        notifyListeners();
+    }
+
 
 
 // PRIVATE METHODS
@@ -159,13 +167,6 @@ public class LocalDatabase implements LocationTrackerListener{
                 mViewableMediaDataMap.put(po.getPictureId(), po);
             }
         }
-    }
-
-    /** clears all data from the LocalDatabase */
-    public void clear() {
-        mediaDataMap.clear();
-        mViewableMediaDataMap.clear();
-        notifyListeners();
     }
 
     /** refreshes the map of viewable photo */
@@ -202,7 +203,7 @@ public class LocalDatabase implements LocationTrackerListener{
                     }
                     // refresh last refresh date
                     mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
-                    Log.d("LocalDB", "updated via firebase listener : "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                    Log.d("LocalDatabase", "updated via firebase listener : "+LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
                     LocalDatabase.getInstance().refreshViewablePhotos();
                     LocalDatabase.getInstance().notifyListeners();
                 }
@@ -237,7 +238,7 @@ public class LocalDatabase implements LocationTrackerListener{
                     }
                     // refresh last refresh date
                     mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
-                    Log.d("LocalDB", "updated via force single refresh, " + LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
+                    Log.d("LocalDatabase", "updated via force single refresh, " + LocalDatabase.getInstance().getAllNearbyMediasMap().size() + " photoObjects added");
                     LocalDatabase.getInstance().refreshViewablePhotos();
                     LocalDatabase.getInstance().notifyListeners();
                 }
@@ -258,7 +259,7 @@ public class LocalDatabase implements LocationTrackerListener{
             long timeDiffBetweenCurrenAndNewLocations = Math.abs(newLocation.getTime() - mCachedLocation.getTime());
 
             boolean tooLongWithoutRefreshing = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
-            boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
+            boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations < TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
             boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
 
             return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);

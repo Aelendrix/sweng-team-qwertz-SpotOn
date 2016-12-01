@@ -38,8 +38,7 @@ public class DatabaseRef{
 
     public static void deletePhotoObjectFromDB(String pictureID){
 
-        if(pictureID == null)
-        {
+        if(pictureID == null){
             throw new IllegalArgumentException("Error in DatabaseRef: deletePhotoObjectFromDB, pictureId is null");
         } else {
             mMediaDirectory.child(pictureID).removeValue();

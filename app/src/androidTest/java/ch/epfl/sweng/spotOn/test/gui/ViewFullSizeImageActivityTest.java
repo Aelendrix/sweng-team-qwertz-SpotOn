@@ -72,13 +72,13 @@ public class ViewFullSizeImageActivityTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
             Thread.sleep(1000);
             onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-            Thread.sleep(500);
+            Thread.sleep(1000);
             onView(withId(R.id.upvoteButton)).perform(click());
-            Thread.sleep(500);
+            Thread.sleep(1000);
             onView(withId(R.id.downvoteButton)).perform(click());
             Thread.sleep(5000); // should permit to explore the "Karma" code
             onView(withId(R.id.reportButton)).perform(click());
-            Thread.sleep(500);
+            Thread.sleep(1000);
             /*
             //come back an reperform the action with an already downloaded picture
             mActivityTestRule.getActivity().onBackPressed();
@@ -93,7 +93,7 @@ public class ViewFullSizeImageActivityTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
     }
 
