@@ -1,5 +1,4 @@
-
- package ch.epfl.sweng.spotOn.test.user;
+package ch.epfl.sweng.spotOn.test.user;
 
 import android.support.test.runner.AndroidJUnit4;
 
