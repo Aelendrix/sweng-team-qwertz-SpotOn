@@ -49,14 +49,14 @@ public class TabActivityTest {
     {
         @Override
         public void beforeActivityLaunched(){
-            User mockUser = new MockUser_forTests("julius","caius","caesar", 1000, new HashMap<String, Long>(), true);
+            User mockUser = new MockUser_forTests("julius","caius","caesar", 1000, new HashMap<String, Long>(), true, true);
             TestInitUtils.initContextMockUser(mockUser);
         }
     };
 
 //    @Before
 //    public void setUpContext(){
-//        User mockUser = new MockUser_forTests("julius","caius","caesar", 1000, new HashMap<String, Long>(), true);
+//        User mockUser = new MockUser_forTests("julius","caius","caesar", 1000, new HashMap<String, Long>(), true, true);
 //        TestInitUtils.initContextMockUser(mockUser);
 //    }
 

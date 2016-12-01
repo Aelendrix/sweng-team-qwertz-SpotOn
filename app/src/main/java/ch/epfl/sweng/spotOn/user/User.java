@@ -23,6 +23,7 @@ public interface User {
     void removeManager();
     void addPhoto(PhotoObject photo);
     long computeRemainingPhotos();
+    void removePhoto(String pictureID);
 
 
 //PUBLIC GETTERS
@@ -31,6 +32,7 @@ public interface User {
     String getUserId();
     long getKarma();
     Map<String, Long> getPhotosTaken();
+    boolean getIsRetrievedFromDB();
 
 
 //PUBLIC SETTERS

@@ -29,6 +29,8 @@ public class EmptyUser implements User {
     public void addPhoto(PhotoObject photo) {
         throw new UnsupportedOperationException();
     }
+    @Override
+    public void removePhoto(String pictureID) { throw  new UnsupportedOperationException(); }
 
     @Override
     public String getFirstName() {
@@ -49,6 +51,11 @@ public class EmptyUser implements User {
 
     @Override
     public Map<String, Long> getPhotosTaken() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean getIsRetrievedFromDB() {
         throw new UnsupportedOperationException();
     }
 
