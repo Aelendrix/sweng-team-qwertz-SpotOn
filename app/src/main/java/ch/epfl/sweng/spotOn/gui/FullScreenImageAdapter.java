@@ -40,7 +40,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageView mViewToSet;
     private int voteSum=0;
     private TextView mTextView;
-    private PhotoObject mDisplayedMedia;
+    private PhotoObject mCurrentPicture;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
@@ -78,7 +78,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
             throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
         }
-        mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
+        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
         if (mDisplayedMedia.hasFullSizeImage()) {
             Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
@@ -107,24 +107,24 @@ public class FullScreenImageAdapter extends PagerAdapter {
         voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 
-        ImageButton upvote = (ImageButton) viewLayout.findViewById(R.id.upvoteButton);
+        /*ImageButton upvote = (ImageButton) viewLayout.findViewById(R.id.upvoteButton);
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mDisplayedMedia==null) {
+                if(mCurrentPicture==null) {
                     throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
                 }else {
                     String userId = UserManager.getInstance().getUser().getUserId();
                     //fake vote method to have more responsive interface
-                    if (!mDisplayedMedia.getAuthorId().equals(userId) && !mDisplayedMedia.getUpvotersList().contains(userId)) {
+                    if (!mCurrentPicture.getAuthorId().equals(userId) && !mCurrentPicture.getUpvotersList().contains(userId)) {
                         voteSum++;
-                        if (mDisplayedMedia.getDownvotersList().contains(userId)) {
+                        if (mCurrentPicture.getDownvotersList().contains(userId)) {
                             voteSum++;
                         }
                     }
                     refreshVoteTextView(Integer.toString(voteSum));
 
-                    String toastMessage = mDisplayedMedia.processVote(1, userId);
+                    String toastMessage = mCurrentPicture.processVote(1, userId);
                     ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
                 }
             }
@@ -134,24 +134,24 @@ public class FullScreenImageAdapter extends PagerAdapter {
         downVote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mDisplayedMedia == null) {
+                if (mCurrentPicture == null) {
                     throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
                 } else {
                     String userId = UserManager.getInstance().getUser().getUserId();
                     //fake vote method to have more responsive interface
-                    if (!mDisplayedMedia.getAuthorId().equals(userId) && !mDisplayedMedia.getUpvotersList().contains(userId)) {
+                    if (!mCurrentPicture.getAuthorId().equals(userId) && !mCurrentPicture.getUpvotersList().contains(userId)) {
                         voteSum--;
-                        if (mDisplayedMedia.getDownvotersList().contains(userId)) {
+                        if (mCurrentPicture.getDownvotersList().contains(userId)) {
                             voteSum--;
                         }
                     }
                     refreshVoteTextView(Integer.toString(voteSum));
 
-                    String toastMessage = mDisplayedMedia.processVote(-1, userId);
+                    String toastMessage = mCurrentPicture.processVote(-1, userId);
                     ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
                 }
             }
-        });
+        });*/
         container.addView(viewLayout);
         return viewLayout;
     }
@@ -175,38 +175,49 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void vote(int vote){
-        if(mDisplayedMedia==null) {
+        if(mCurrentPicture==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
-            if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getUpvotersList().contains(userId)){
+            if(vote==1&&!mCurrentPicture.getAuthorId().equals(userId)&&!mCurrentPicture.getUpvotersList().contains(userId)){
                 voteSum++;
-                if(mDisplayedMedia.getDownvotersList().contains(userId)){
+                if(mCurrentPicture.getDownvotersList().contains(userId)){
                     voteSum++;
                 }
             }
-            if(vote==-1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!mDisplayedMedia.getDownvotersList().contains(userId)){
+            if(vote==-1&&!mCurrentPicture.getAuthorId().equals(userId)&&!mCurrentPicture.getDownvotersList().contains(userId)){
                 voteSum--;
-                if(mDisplayedMedia.getUpvotersList().contains(userId)){
+                if(mCurrentPicture.getUpvotersList().contains(userId)){
                     voteSum--;
                 }
             }
             refreshVoteTextView(Integer.toString(voteSum));
 
-            String toastMessage = mDisplayedMedia.processVote(vote, userId);
+            String toastMessage = mCurrentPicture.processVote(vote, userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
 
     public void reportOffensivePicture(View view){
-        if(mDisplayedMedia == null) {
+        if(mCurrentPicture == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
-            String toastMessage = mDisplayedMedia.processReport(userId);
+            String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
+    }
+
+    public void setCurrentMedia(int position) {
+        Log.d("Current media position", "" + position);
+        String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
+        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
+            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+        }
+        mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
+
+
     }
 }
