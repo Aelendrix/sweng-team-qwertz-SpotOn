@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test;
 
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -12,7 +11,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
