@@ -1,7 +1,5 @@
 package ch.epfl.sweng.spotOn.test.user;
 
-
-import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
@@ -9,9 +7,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
@@ -51,70 +48,7 @@ public class UserStoredInDatabaseTest {
         userInDB.setUserId("mlb_test");
         userInDB.setKarma(12);
 
-        Map<String, Long> mapPhotoTaken = new Map<String, Long>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public boolean containsKey(Object key) {
-                return false;
-            }
-
-            @Override
-            public boolean containsValue(Object value) {
-                return false;
-            }
-
-            @Override
-            public Long get(Object key) {
-                return null;
-            }
-
-            @Override
-            public Long put(String key, Long value) {
-                return null;
-            }
-
-            @Override
-            public Long remove(Object key) {
-                return null;
-            }
-
-            @Override
-            public void putAll(Map<? extends String, ? extends Long> m) {
-
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @NonNull
-            @Override
-            public Set<String> keySet() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Collection<Long> values() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Set<Entry<String, Long>> entrySet() {
-                return null;
-            }
-        };
+        Map<String, Long> mapPhotoTaken = new HashMap<String, Long>() {};
 
         Long testLong = new Long(12);
         mapPhotoTaken.put("test",testLong);
