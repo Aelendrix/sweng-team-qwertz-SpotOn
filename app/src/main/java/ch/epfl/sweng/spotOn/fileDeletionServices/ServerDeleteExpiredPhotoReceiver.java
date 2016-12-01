@@ -37,18 +37,14 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(child.exists()) {
-                        PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
-                        String pictureID = photoWithoutPic.getPictureId();
-                        if(pictureID==null){
-                            throw new IllegalArgumentException("Ser.Del.Exp.PhotoRec. : pictureId null");
-                        }
-                        DatabaseRef.deletePhotoObjectFromDB(pictureID);
-                        StorageRef.deletePictureFromStorage(pictureID);
-                    }else{
-                        Log.d("Ser.Del.Exp.PhotoRec.","child doesn't exist");
-                        throw new IllegalArgumentException("Ser.Del.Exp.PhotoRec. : child doesn't exist");
-                    }
+//                    PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
+//                    String pictureID = photoWithoutPic.getPictureId();
+//                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
+//                    StorageRef.deletePictureFromStorage(pictureID);
+                    String pictureID = child.getKey();
+                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
+                    StorageRef.deletePictureFromStorage(pictureID);
+
                 }
             }
 
