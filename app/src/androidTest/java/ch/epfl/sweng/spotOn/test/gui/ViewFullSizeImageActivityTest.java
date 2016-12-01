@@ -10,6 +10,7 @@ import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.text.Layout;
 import android.view.View;
 
 import org.junit.After;
@@ -71,7 +72,7 @@ public class ViewFullSizeImageActivityTest {
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
             Thread.sleep(1000);
-            onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+            onView(withId(R.id.viewpager)).perform(clickXY(150, 50));
             Thread.sleep(1000);
             onView(withId(R.id.upvoteButton)).perform(click());
             Thread.sleep(1000);
