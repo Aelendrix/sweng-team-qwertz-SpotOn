@@ -1,11 +1,8 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -55,24 +52,10 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
             LocalDatabase.getInstance().addListener(this);
             refreshVoteAndPictureLists();
 
-            Context context = getApplicationContext();
-
             mFirstNameTextView.setText(mFirstNameTextView.getText() + " " + mUser.getFirstName());
             mLastNameTextView.setText(mLastNameTextView.getText() + " " + mUser.getLastName());
             mKarmaTextView.setText(mKarmaTextView.getText() + " " + mUser.getKarma());
         }
-
-        final Button button = (Button) findViewById(R.id.profileBackButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                goBackToTabActivity();
-            }
-        });
-    }
-
-
-    private void goBackToTabActivity(){
-        finish();
     }
 
 
@@ -95,5 +78,10 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
         mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
         mPicturesListView.setAdapter(mPictureVoteAdapter);
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
     }
 }

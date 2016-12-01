@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
+    public final static String EXTRA_USER_PICTURE_ID = "ch.epfl.sweng.spotOn.USER_PICTURE_ID";
+
     private final Activity mActivityContext;
     private List<PhotoObject> mPhotoList;
 
@@ -44,11 +47,13 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
         final String pictureID = mPhotoList.get(position).getPictureId();
 
-        TextView pictureIDTextView = (TextView) rowView.findViewById(R.id.profilePictureID);
-        pictureIDTextView.setText(pictureID);
-
-        ImageView thumbnailImageView = (ImageView) rowView.findViewById(R.id.profilePictureThumbnail);
+        final ImageView thumbnailImageView = (ImageView) rowView.findViewById(R.id.profilePictureThumbnail);
         thumbnailImageView.setImageBitmap(mPhotoList.get(position).getThumbnail());
+        thumbnailImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                goToViewUserPictureActivity(mPhotoList.get(position).getPictureId());
+            }
+        });
         String vote = Integer.toString(mPhotoList.get(position).getUpvotes() - mPhotoList.get(position).getDownvotes());
         String textVote = voteTextView.getText() + " " + vote;
         voteTextView.setText(textVote);
@@ -75,7 +80,10 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
         return rowView;
     }
 
-    public void updateList(List<PhotoObject> photoList) {
-        mPhotoList = photoList;
+
+    public void goToViewUserPictureActivity(String pictureId){
+        Intent intent = new Intent(mActivityContext, ViewUserPhotoActivity.class);
+        intent.putExtra(EXTRA_USER_PICTURE_ID, pictureId);
+        mActivityContext.startActivity(intent);
     }
 }

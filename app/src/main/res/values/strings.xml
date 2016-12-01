@@ -31,13 +31,7 @@
     <string name="userProfileTitle">User Profile</string>
     <string name="userProfileFirstName">First Name:</string>
     <string name="userProfileLastName">Last Name:</string>
-    <string name="userProfileGender">Gender:</string>
-    <string name="userProfileEmailAddress">Email Address:</string>
-    <string name="userProfileBirthday">Birthday:</string>
-    <string name="userProfileNbVotes">Number of votes:</string>
-    <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
     <string name="userProfileKarma">Karma:</string>
-    <string name="userProfileBackButton">Back</string>
     <string name="profilePictureListText">Votes:</string>
     <string name="userProfileListPictureDeleteButton">Delete!</string>
 

@@ -148,14 +148,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
-            if(vote==1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!alreadyUpvoted(userId)){
+            if(vote==1 && !mDisplayedMedia.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
                 colorIfUpvote();
                 if(alreadyDownvoted(userId)){
                     voteSum++;
                 }
             }
-            if(vote==-1&&!mDisplayedMedia.getAuthorId().equals(userId)&&!alreadyDownvoted(userId)){
+
+            if(vote==-1 && !mDisplayedMedia.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
                 colorIfDownvote();
                 if(alreadyUpvoted(userId)){
