@@ -56,6 +56,7 @@
         android:textStyle="normal|bold"
         android:id="@+id/profileKarmaTextView" />
 
+
     <Button
         android:text="@string/userProfileBackButton"
         android:layout_width="wrap_content"
@@ -66,11 +67,13 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"/>
 
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileKarmaTextView"
         android:layout_marginTop="20dp"
         android:id="@+id/profilePicturesListView" />
+
 
 </RelativeLayout>

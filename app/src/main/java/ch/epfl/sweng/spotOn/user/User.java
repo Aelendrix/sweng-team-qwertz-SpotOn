@@ -23,6 +23,7 @@ public interface User {
     void removeManager();
     void addPhoto(PhotoObject photo);
     long computeRemainingPhotos();
+    void removePhoto(String pictureID);
 
 
 //PUBLIC GETTERS

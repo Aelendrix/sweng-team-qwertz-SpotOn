@@ -54,6 +54,9 @@ public class MockUser_forTests implements User {
     }
 
     @Override
+    public void removePhoto(String pictureID){}
+
+    @Override
     public String getFirstName() {
         return mFirstName;
     }
