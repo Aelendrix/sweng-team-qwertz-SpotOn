@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -33,7 +34,8 @@ import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceive
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
+import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
@@ -56,23 +58,14 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialize LocationTracker and LocalDatabase
-        Log.d("MainActivity","initializing singletons");
-        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance());
-        ToastProvider.update(getApplicationContext());
-        Log.d("MainActivity","done initializing");
+        initializeSingletons();
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
         /*Create an alarm which will go off for sending queries to the Firebase server
-         * to check the expiration time of the files.
-         */
-
-        System.out.println("Hello");
+         * to check the expiration time of the files.        */
         AlarmManager serverDataDeletionAlarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent serverDataDeletionIntent = new Intent(this, ServerDeleteExpiredPhotoReceiver.class);
         PendingIntent serverDataDeletionPendingIntent = PendingIntent.getBroadcast(this, 0, serverDataDeletionIntent, 0);
@@ -120,6 +113,12 @@ public final class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        ToastProvider.update(this);
+    }
+
 
     @Override
     protected void onStart() {
@@ -140,17 +139,25 @@ public final class MainActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void goToTabActivity() {
-        // create the user
-        //User user = User.getInstance();
-        User.initializeFromFb(mFbProfile.getFirstName(), mFbProfile.getLastName(),
-                mFbProfile.getId());
+
+    public void goToTabActivityNotLoggedIn(View view){
+        goToTabActivity(false);
+    }
+
+    public void goToTabActivity(boolean loggedIn) {
+        if( !LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists() || !UserManager.instanceExists()){
+            throw new IllegalStateException("All required singletons need to be initalized before leaving the mainActivity");
+        }
+        if(loggedIn) {
+            UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
+        }else{
+            UserManager.getInstance().setEmptyUser();
+        }
 
         //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
     }
-
 
 
     /* Method to get the Facebook profile of the user */
@@ -164,7 +171,7 @@ public final class MainActivity extends AppCompatActivity {
                     mFbProfile = newProfile;
 
                     //login done so call to goToTabActivity
-                    goToTabActivity();
+                    goToTabActivity(true);
 
                     mFbProfileTracker.stopTracking();
                 }
@@ -175,7 +182,7 @@ public final class MainActivity extends AppCompatActivity {
             mFbProfile = Profile.getCurrentProfile();
 
             //login done so call to goToTabActivity
-            goToTabActivity();
+            goToTabActivity(true);
 
         }
     }
@@ -206,5 +213,14 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void initializeSingletons(){
+        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
+        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
+        UserManager.initialize();
+        UserManager.getInstance().setEmptyUser();
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ToastProvider.update(this);
     }
 }

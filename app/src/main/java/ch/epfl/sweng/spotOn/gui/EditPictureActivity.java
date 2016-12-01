@@ -20,8 +20,10 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,6 +33,8 @@ import java.io.IOException;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.utils.BitmapUtils;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class EditPictureActivity extends AppCompatActivity {
 
@@ -40,6 +44,8 @@ public class EditPictureActivity extends AppCompatActivity {
     private Bitmap mEditedBitmap;
     private ImageView mEditedImageView;
     public String mTextToDraw;
+    private Bitmap withoutTextBitmap;
+    private boolean textIsDrawn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +56,29 @@ public class EditPictureActivity extends AppCompatActivity {
         //Set the parameters of the activity (defined above) with the extras of the TakePicture activity
         Intent intent = getIntent();
         mURIofBitmap = Uri.parse(intent.getExtras().getString("bitmapToEdit"));
-        Bitmap receivedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
-        mEditedBitmap = receivedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
+        withoutTextBitmap = mEditedBitmap;
         mEditedImageView.setImageBitmap(mEditedBitmap);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float textPositionX = event.getX();
+        float textPositionY = event.getY();
+
+        if(mTextToDraw != null) {
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
+            }
+            drawText(textPositionX, textPositionY);
+        }
+
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
+        }
+        return false;
     }
 
     /**
@@ -66,6 +92,7 @@ public class EditPictureActivity extends AppCompatActivity {
         Bitmap rotatedBitmap = Bitmap.createBitmap(mEditedBitmap, 0, 0, mEditedBitmap.getWidth(),
                 mEditedBitmap.getHeight(), rotationMatrix, true);
         mEditedBitmap = rotatedBitmap;
+        withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
     }
 
@@ -74,8 +101,8 @@ public class EditPictureActivity extends AppCompatActivity {
      * @param view
      */
     public void goToDrawTextActivity(View view){
-        Intent intent = new Intent(this, DrawTextActivity.class);
-        startActivityForResult(intent, REQUEST_TEXT_DRAWING);
+            Intent intent = new Intent(this, DrawTextActivity.class);
+            startActivityForResult(intent, REQUEST_TEXT_DRAWING);
     }
 
     /**
@@ -95,33 +122,21 @@ public class EditPictureActivity extends AppCompatActivity {
     /**
      * Method that will be used when the user adds text to the picture through the DrawTextActivity
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the request code the finished activity gave
+     * @param resultCode the result code the finished activity gave (OK or not)
+     * @param data the intent from the finished activity to this one
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_TEXT_DRAWING && resultCode == Activity.RESULT_OK){
-            //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mTextToDraw = data.getStringExtra("textToDraw");//preferences.getString("TD", "");
+            mTextToDraw = data.getStringExtra("textToDraw");
             Log.d("TextToDraw", mTextToDraw);
-            if(mTextToDraw != null){
-                //Edits the bitmap in a canvas
-                Log.d("TextToDraw", "entered the loop");
-                Canvas canvas = new Canvas(mEditedBitmap);
-                Paint paint = new Paint();
-                paint.setColor(Color.RED);
-                paint.setTextSize(50);
-                float x = 50;
-                float y = mEditedBitmap.getHeight() - 200;
-                paint.setFakeBoldText(true);
-                canvas.drawText(mTextToDraw, x, y, paint);
-                //Removes string from the preferences so the next picture taken by the user doesn't always draw the same string
-                //SharedPreferences.Editor edit = preferences.edit();
-                //edit.remove("TD");
-                //edit.apply();
-                mEditedImageView.setImageBitmap(mEditedBitmap);
+            float x = 50;
+            float y = mEditedBitmap.getHeight() - 200;
+            if(textIsDrawn) {
+                mEditedBitmap = withoutTextBitmap;
             }
+            textIsDrawn = drawText(x, y);
         }
     }
 
@@ -132,19 +147,9 @@ public class EditPictureActivity extends AppCompatActivity {
      * @return the uri of where is stored the image
      */
     private Uri storeAndGetImageUri(Bitmap bitmap) {
-        Uri resUri;
-        //Define the Uri (same directory where is stored the temporal image we are editing)
         File storageForEdition = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "/SpotOn/EDITED_PICTURE.jpg");
-        if(Build.VERSION.SDK_INT <= 23) {
-            resUri = Uri.fromFile(storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        } else {
-            //For API >= 24 (was the cause of the crash)
-            resUri = FileProvider.getUriForFile(this,
-                    BuildConfig.APPLICATION_ID + ".provider", storageForEdition);
-            Log.d("UriEditedImage", resUri.toString());
-        }
+                "/SpotOn/TEMP_PICTURE.jpg");
+        Uri resUri = BitmapUtils.getUriFromFile(this, storageForEdition);
 
         //Store the picture at the directory defined above
         try {
@@ -166,5 +171,25 @@ public class EditPictureActivity extends AppCompatActivity {
             Log.d("Store Image", "File not closed: " + e.getMessage());
         }
         return resUri;
+    }
+
+    private boolean drawText(float x, float y) {
+        Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Log.d("TextToDraw", mTextToDraw);
+        if(mTextToDraw != null){
+            //Edits the bitmap in a canvas
+            Log.d("TextToDraw", "entered the loop");
+            Canvas canvas = new Canvas(addTextBitmap);
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setShadowLayer(10, 0, 0, Color.BLACK);
+            paint.setTextSize(50);
+            paint.setFakeBoldText(true);
+            canvas.drawText(mTextToDraw, x, y, paint);
+            mEditedImageView.setImageBitmap(addTextBitmap);
+            mEditedBitmap = addTextBitmap;
+            return true;
+        }
+        return false;
     }
 }

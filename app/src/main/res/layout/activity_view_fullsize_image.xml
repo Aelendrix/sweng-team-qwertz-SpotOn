@@ -42,13 +42,14 @@
         android:text="@string/reportButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="19dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:onClick="reportOffensivePicture"
         android:background="@drawable/button_shape_report"
         android:id="@+id/reportButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="21dp"
-        android:layout_toStartOf="@+id/upvoteButton" />
+        android:layout_toStartOf="@+id/upvoteButton"
+        android:layout_toEndOf="@+id/downvoteButton"/>
 
 </RelativeLayout>

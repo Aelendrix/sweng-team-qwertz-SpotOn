@@ -1,58 +1,64 @@
 
 package ch.epfl.sweng.spotOn.utils;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by quentin on 17.11.16.
  */
 
-public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener{
+//public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener, UserListener{
+public class ServicesChecker {
 
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
-    private LocalDatabase mLocalDatabaseRef;
+    private UserManager mUserManagerRef;
 
-    private boolean databaseConnectionStatus;
-    private boolean validLocationStatus;
+    private boolean databaseIsConnected;
 
-    private List<ServicesCheckerListener> mListeners;
+//    private boolean locationIsValid;
+//    private boolean userIsLoggedIn;
+
+//    private List<ServicesCheckerListener> mListeners;
+
+
 
 
 // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationTracker ltref, LocalDatabase ldbref){
-        mSingleInstance = new ServicesChecker(ltref, ldbref);
+    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
+        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
         mSingleInstance.listenForDatabaseConnectivity();
-        ltref.addListener(mSingleInstance);
-        ldbref.addListener(mSingleInstance);
+//        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
+//        mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
     }
-    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref){
-        if( !ConcreteLocationTracker.instanceExists() || !LocalDatabase.instanceExists() ){
-            // test just in case
-            throw new IllegalStateException("Must initialize LocationTracker and Localdatabase first");
+
+    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
+        if( ltref==null || ldbref==null|| userRef==null){
+            // test to enforce that all required singletons are instanciated
+            throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
         }
-        mListeners = new ArrayList<>();
-        mLocalDatabaseRef = ldbref;
+        // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
+//        mListeners = new ArrayList<>();
         mLocationTrackerRef = ltref;
-        databaseConnectionStatus = false;
-        validLocationStatus = ltref.hasValidLocation();
+//        databaseConnectionStatus = false;
+//        validLocationStatus = ltref.hasValidLocation();
+        mUserManagerRef = userRef;
+        //userIsLoggedIn = mUserRef.userIsLoggedIn();
     }
+
+
+
 
 // PUBLIC METHODS
     public static  boolean instanceExists(){
@@ -66,30 +72,42 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
         return mSingleInstance;
     }
 
-    public void addListener(ServicesCheckerListener l ){
-        mListeners.add(l);
-        l.servicesAvailabilityUpdated();
+//    public void addListener(ServicesCheckerListener l ){
+//        mListeners.add(l);
+//        l.servicesAvailabilityUpdated();
+//    }
+
+    public boolean allServicesOk(){
+        // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
 
-    public  boolean statusIsOk(){
-        if( ! ConcreteLocationTracker.getInstance().hasValidLocation() || ! databaseConnectionStatus){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean allowedToPost(){
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
+    }
+
+    public boolean allowedToViewPosts(){
+        return databaseIsConnected && mLocationTrackerRef.hasValidLocation();
     }
 
     public String provideErrorMessage(){
         String errorMessage = "";
-        if( !validLocationStatus ){
-            errorMessage += "Can't find your gps location\n";
-        }
-        if( !databaseConnectionStatus ){
+        if( ! databaseIsConnected ){
             errorMessage += "Can't connect to the database\n";
         }
-        errorMessage += "--  App may malfunction  --";
+        if( ! mLocationTrackerRef.hasValidLocation() ){
+            errorMessage += "Can't localize your device\n";
+        }
+        if( ! mUserManagerRef.getInstance().userIsLoggedIn() ){
+            errorMessage += "You're not logged in\n";
+        }
+        if(!allServicesOk()) {
+            errorMessage += "--  App may malfunction  --";
+        }
         return errorMessage;
     }
+
+
 
 
 // PRIVATE METHODS
@@ -102,50 +120,73 @@ public class ServicesChecker implements LocationTrackerListener, LocalDatabaseLi
                 boolean connected = dataSnapshot.getValue(Boolean.class);
                 Log.d("ServicesChecker", " database connection status : "+connected);
                 if(connected){
-                    databaseConnectionStatus = true;
+                    databaseIsConnected = true;
                 }else{
-                    databaseConnectionStatus = false;
+                    databaseIsConnected = false;
                 }
-                notifyListeners();
+//                notifyListeners();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                databaseConnectionStatus = false;
-                notifyListeners();
-                Log.d("ServicesChecker", "cancelled database query");
+                databaseIsConnected = false;
+//                notifyListeners();
+                Log.d("ServicesChecker", "ERROR : cancelled database query");
             }
         });
     }
 
 
+
+
 // LISTENER PATTERN METHODS
-    public void notifyListeners(){
-        for( ServicesCheckerListener l : mListeners){
-            l.servicesAvailabilityUpdated();
-        }
-    }
+//    public void notifyListeners(){
+//        for( ServicesCheckerListener l : mListeners){
+//            l.servicesAvailabilityUpdated();
+//        }
+//    }
+
+
+
 
 // LISTENER METHODS -- todo
-    @Override
-    public void databaseUpdated() {
-        // nothing to do, we have another listener for that
-    }
+//    @Override
+//    public void databaseUpdated() {
+//        // nothing to do, we have another listener for that
+//    }
+//
+//    @Override
+//    public void updateLocation(Location newLocation) {
+//        if( ! locationIsValid){            // change in services status
+//            Log.d("ServicesChecker","location status changed : listeners notified");
+//            locationIsValid = true;
+////            notifyListeners();
+//        }
+//    }
+//
+//    @Override
+//    public void locationTimedOut(Location old) {
+//        if(locationIsValid){           // change in services status
+//            Log.d("ServicesChecker","location timedout : listeners notified");
+//            locationIsValid = false;
+////            notifyListeners();
+//        }
+//    }
 
-    @Override
-    public void updateLocation(Location newLocation) {
-        if( !validLocationStatus){            // change in services status
-            Log.d("ServicesChecker","location status changed : listeners notified");
-            notifyListeners();
-        }
-        validLocationStatus = true;
-    }
-
-    @Override
-    public void locationTimedOut(Location old) {
-        if(validLocationStatus){           // change in services status
-            Log.d("ServicesChecker","location timedout : listeners notified");
-            notifyListeners();
-        }
-        validLocationStatus = false;
-    }
+//    @Override
+//    public void userConnected() {
+//        if( !userIsLoggedIn ){
+//            Log.d("ServicesChecker","user logged in : listeners notified");
+//            userIsLoggedIn=true;
+//            notifyListeners();
+//        }
+//    }
+//
+//    @Override
+//    public void userDisconnected() {
+//        if( userIsLoggedIn ){
+//            Log.d("ServicesChecker","user logged out : listeners notified");
+//            userIsLoggedIn=false;
+//            notifyListeners();
+//        }
+//    }
 }
