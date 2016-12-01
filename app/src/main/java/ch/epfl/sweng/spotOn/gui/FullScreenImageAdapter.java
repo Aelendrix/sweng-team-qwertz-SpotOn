@@ -113,12 +113,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
         voteSum = mDisplayedMedia.getUpvotes()- mDisplayedMedia.getDownvotes();
         refreshVoteTextView(Integer.toString(voteSum));
 
-        /**View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
+        View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
         mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
         mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
         String userID = UserManager.getInstance().getUser().getUserId();
-        colorButtons(userID);*/
+        colorButtons(userID);
 
         container.addView(viewLayout);
         return viewLayout;
@@ -228,33 +228,26 @@ public class FullScreenImageAdapter extends PagerAdapter {
         } else if (alreadyDownvoted(userID)) {
             colorIfDownvote();
         }
-
         /*if(alreadyReported(userID)){
             colorIfReported();
         }*/
     }
 
     private void colorIfUpvote(){
-        //mUpvoteButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_upvote_clicked));
-        //mDownvoteButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_downvote));
         mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
         mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
     }
 
     private void colorIfDownvote(){
-        //mUpvoteButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_upvote));
-        //mDownvoteButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_downvote_clicked));
         mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
         mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
     }
 
     private void colorIfReported(View view){
-        //mReportButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_report_clicked));
         view.setBackgroundResource(R.drawable.button_shape_report_clicked);
     }
 
     private void colorIfNotReported(View view){
-        //mReportButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_shape_report));
         view.setBackgroundResource(R.drawable.button_shape_report);
     }
 }
