@@ -36,8 +36,7 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    PhotoObjectStoredInDatabase photoWithoutPic = child.getValue(PhotoObjectStoredInDatabase.class);
-                    String pictureID = photoWithoutPic.getPictureId();
+                    String pictureID = child.getKey();
                     DatabaseRef.deletePhotoObjectFromDB(pictureID);
                     StorageRef.deletePictureFromStorage(pictureID);
                 }
