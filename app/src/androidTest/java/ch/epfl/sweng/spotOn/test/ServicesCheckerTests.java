@@ -42,7 +42,7 @@ public class ServicesCheckerTests {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        mMockUser = new MockUser_forTests("some","name","UUID",0l,new HashMap<String, Long>(), true);
+        mMockUser = new MockUser_forTests("some","name","UUID",0l,new HashMap<String, Long>(), true, true);
         UserManager.getInstance().setMockUser(mMockUser);
 
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());

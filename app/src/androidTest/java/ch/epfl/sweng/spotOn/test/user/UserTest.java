@@ -1,6 +1,5 @@
 
-
- package ch.epfl.sweng.spotOn.test.user;
+package ch.epfl.sweng.spotOn.test.user;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -41,5 +40,7 @@ public class UserTest {
         Assert.assertEquals(testUser.getKarma(), 500);
         Assert.assertEquals(testUser.computeRemainingPhotos(), RealUser.computeMaxPhotoInDay(500));
         Assert.assertEquals(testUser.isLoggedIn(), false);
+        Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
     }
 }
+

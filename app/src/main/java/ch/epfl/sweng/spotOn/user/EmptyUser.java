@@ -55,6 +55,11 @@ public class EmptyUser implements User {
     }
 
     @Override
+    public boolean getIsRetrievedFromDB() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setKarma(long karma) {
         throw new UnsupportedOperationException();
     }

@@ -17,17 +17,20 @@ public class MockUser_forTests implements User {
     private String mUserId;
     private long mKarma;
     private Map<String, Long> mPhotosTaken;
+    private boolean mIsRetrievedFromDB;
 
     private boolean mIsLoggedIn;
 
 
-    public MockUser_forTests(String firstName, String lastName, String uid, long karma, Map<String, Long> taken, boolean isLoggedIn){
+    public MockUser_forTests(String firstName, String lastName, String uid, long karma, Map<String,
+            Long> taken, boolean isLoggedIn, boolean isRetrievedFromDB){
         mFirstName=firstName;
         mLastName=lastName;
         mUserId=uid;
         mKarma=karma;
         mPhotosTaken=taken;
         mIsLoggedIn=isLoggedIn;
+        mIsRetrievedFromDB = isRetrievedFromDB;
     }
 
     @Override
@@ -77,6 +80,9 @@ public class MockUser_forTests implements User {
     public Map<String, Long> getPhotosTaken() {
         return mPhotosTaken;
     }
+
+    @Override
+    public boolean getIsRetrievedFromDB(){ return mIsRetrievedFromDB; }
 
     @Override
     public void setKarma(long karma) {

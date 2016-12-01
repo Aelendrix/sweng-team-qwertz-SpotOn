@@ -1,12 +1,14 @@
 package ch.epfl.sweng.spotOn.test.user;
 
-
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.User;
@@ -46,10 +48,17 @@ public class UserStoredInDatabaseTest {
         userInDB.setUserId("mlb_test");
         userInDB.setKarma(12);
 
+        Map<String, Long> mapPhotoTaken = new HashMap<String, Long>() {};
+
+        Long testLong = new Long(12);
+        mapPhotoTaken.put("test",testLong);
+        userInDB.setPhotosTaken(mapPhotoTaken);
+
         Assert.assertEquals(userInDB.getFirstName(), "blabla");
         Assert.assertEquals(userInDB.getLastName(), "test");
         Assert.assertEquals(userInDB.getUserId(), "mlb_test");
         Assert.assertEquals(userInDB.getKarma(), 12);
+        Assert.assertEquals(userInDB.getPhotosTaken().equals(mapPhotoTaken), true);
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
         UserManager.getInstance().destroyUser();
