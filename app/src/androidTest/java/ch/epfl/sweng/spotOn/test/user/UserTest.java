@@ -16,7 +16,6 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.RealUser;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.user.UserManager;
 
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getBitmapFromURL;
 
