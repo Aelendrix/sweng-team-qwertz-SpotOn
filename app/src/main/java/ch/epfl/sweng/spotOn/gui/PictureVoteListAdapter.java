@@ -38,7 +38,7 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
         LayoutInflater inflater = mActivityContext.getLayoutInflater();
         View rowView= inflater.inflate(R.layout.content_profile_list_pictures, null, true);
         TextView voteTextView = (TextView) rowView.findViewById(R.id.profilePictureVotes);
@@ -62,6 +62,7 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
                     DatabaseRef.deletePhotoObjectFromDB(pictureID);
                     StorageRef.deletePictureFromStorage(pictureID);
                     UserManager.getInstance().getUser().removePhoto(pictureID);
+                    mPhotoList.remove(mPhotoList.get(position));
                     ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
 
                 }
@@ -74,5 +75,4 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
         return rowView;
     }
-
 }
