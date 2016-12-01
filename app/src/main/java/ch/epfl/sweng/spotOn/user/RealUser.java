@@ -85,6 +85,11 @@ public class RealUser implements User {
         DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
     }
 
+    public void removePhoto(String pictureID){
+        mPhotosTaken.remove(pictureID);
+        DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
+    }
+
 
 
 //PUBLIC GETTERS

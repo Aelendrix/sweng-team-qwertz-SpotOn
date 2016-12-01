@@ -38,6 +38,8 @@
     <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
     <string name="userProfileKarma">Karma:</string>
     <string name="userProfileBackButton">Back</string>
+    <string name="profilePictureListText">Votes:</string>
+    <string name="userProfileListPictureDeleteButton">Delete!</string>
 
     <string name="fullSizeImage">Thumbnail in full size</string>
 
@@ -45,7 +47,6 @@
     <string name="goToMap">Go to the Map</string>
     <string name="okButton">OK !</string>
     <string name="textToBeDrawn"> Text to be drawn</string>
-    <string name="profilePictureListText">Votes:</string>
     <string name="upVoteOrderButton">Upvote</string>
     <string name="newestOrderButton">Newest</string>
     <string name="oldestOrderButton">Oldest</string>
