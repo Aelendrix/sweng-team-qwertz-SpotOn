@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -67,11 +68,17 @@ public class TakePictureFragment extends Fragment {
     private PhotoObject mActualPhotoObject;
     private Uri editUri;
 
+    //Buttons to change their color
+    private ImageButton mStoreButton;
+    private ImageButton mSendButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.activity_picture, container, false);
         mImageView = (ImageView) view.findViewById(R.id.image_view);
+        mStoreButton = (ImageButton) view.findViewById(R.id.storeButton);
+        mSendButton = (ImageButton) view.findViewById(R.id.sendButton);
         return view;
     }
 
@@ -105,9 +112,10 @@ public class TakePictureFragment extends Fragment {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
-                ToastProvider.printOverCurrent("Picture stored in your gallery", Toast.LENGTH_SHORT);
+                ToastProvider.printOverCurrent("Picture stored in your gallery", Toast.LENGTH_LONG);
+                colorBlackButton(mStoreButton);
             } else {
-                ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_SHORT);
+                ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_LONG);
             }
         }
     }
@@ -314,6 +322,14 @@ public class TakePictureFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             processResult(mImageToUploadUri);
+
+            colorPrimaryButton(mStoreButton);
+            final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
+            if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
+                colorPrimaryButton(mSendButton);
+            } else {
+                colorBlackButton(mSendButton);
+            }
         }
         if(requestCode == REQUEST_EDITION && resultCode == Activity.RESULT_OK) {
             Bundle dataBundle = data.getExtras();
@@ -405,5 +421,25 @@ public class TakePictureFragment extends Fragment {
         File pictureFile = new File(pictureDirectory.getPath() + File.separator + photo.getPhotoName());
         pictureFile.setLastModified(photo.getCreatedDate().getTime());//we want last modified time to be created time of the photoObject
         return pictureFile;
+    }
+
+    //GRAPHICAL METHODS
+
+    /**
+     * Colors a button in black (gives him shape of button_shape_picture_after_clicked)
+     * @param button the button to color in black
+     */
+    private void colorBlackButton(ImageButton button){
+        button.setBackground(ContextCompat.getDrawable(getActivity(),
+                R.drawable.button_shape_picture_after_clicked));
+    }
+
+    /**
+     * Colors a button in red (gives him shape of button_shape_take_picture)
+     * @param button the button to color in red
+     */
+    private void colorPrimaryButton(ImageButton button){
+        button.setBackground(ContextCompat.getDrawable(getActivity(),
+                R.drawable.button_shape_take_picture));
     }
 }
