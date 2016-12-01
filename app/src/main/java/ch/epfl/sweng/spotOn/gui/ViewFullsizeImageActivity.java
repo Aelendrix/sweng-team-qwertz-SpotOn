@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -21,13 +22,14 @@ public class ViewFullsizeImageActivity extends Activity {
     //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
+    private TextView mTextView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
-
+        mTextView = (TextView) findViewById(R.id.UpvoteTextView);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
@@ -41,6 +43,7 @@ public class ViewFullsizeImageActivity extends Activity {
             public void onPageSelected(int position) {
                 Log.d("Picture position", " : " + position);
                 mFullScreenImageAdapter.setCurrentMedia(position);
+                mFullScreenImageAdapter.refreshVoteTextView(position);
             }
 
             @Override

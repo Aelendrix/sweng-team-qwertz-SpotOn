@@ -50,6 +50,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
+        mTextView = (TextView) mActivity.findViewById(R.id.UpvoteTextView);
     }
 
     @Override
@@ -103,55 +104,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
             });
         }
         //upvotes
-        mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
-        voteSum = mDisplayedMedia.getUpvotes()-mDisplayedMedia.getDownvotes();
-        refreshVoteTextView(Integer.toString(voteSum));
+        if(mCurrentPicture != null) {
+            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
+        }
 
-        /*ImageButton upvote = (ImageButton) viewLayout.findViewById(R.id.upvoteButton);
-        upvote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mCurrentPicture==null) {
-                    throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
-                }else {
-                    String userId = UserManager.getInstance().getUser().getUserId();
-                    //fake vote method to have more responsive interface
-                    if (!mCurrentPicture.getAuthorId().equals(userId) && !mCurrentPicture.getUpvotersList().contains(userId)) {
-                        voteSum++;
-                        if (mCurrentPicture.getDownvotersList().contains(userId)) {
-                            voteSum++;
-                        }
-                    }
-                    refreshVoteTextView(Integer.toString(voteSum));
 
-                    String toastMessage = mCurrentPicture.processVote(1, userId);
-                    ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
-                }
-            }
-        });
-
-        ImageButton downVote = (ImageButton) viewLayout.findViewById(R.id.downvoteButton);
-        downVote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentPicture == null) {
-                    throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
-                } else {
-                    String userId = UserManager.getInstance().getUser().getUserId();
-                    //fake vote method to have more responsive interface
-                    if (!mCurrentPicture.getAuthorId().equals(userId) && !mCurrentPicture.getUpvotersList().contains(userId)) {
-                        voteSum--;
-                        if (mCurrentPicture.getDownvotersList().contains(userId)) {
-                            voteSum--;
-                        }
-                    }
-                    refreshVoteTextView(Integer.toString(voteSum));
-
-                    String toastMessage = mCurrentPicture.processVote(-1, userId);
-                    ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
-                }
-            }
-        });*/
         container.addView(viewLayout);
         return viewLayout;
     }
@@ -161,8 +118,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
-    public void refreshVoteTextView(String s){
-        mTextView.setText(s);
+    public void refreshVoteTextView(int position){
+        String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
+        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
+            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+        }
+        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
+        int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
+        mTextView.setText(Integer.toString(votes));
+
     }
 
     public void recordUpvote(View view){
@@ -192,7 +156,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     voteSum--;
                 }
             }
-            refreshVoteTextView(Integer.toString(voteSum));
+            mTextView.setText(Integer.toString(voteSum));
 
             String toastMessage = mCurrentPicture.processVote(vote, userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
