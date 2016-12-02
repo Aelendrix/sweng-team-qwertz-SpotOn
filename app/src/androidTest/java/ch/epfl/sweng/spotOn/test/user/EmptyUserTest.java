@@ -33,6 +33,11 @@ public class EmptyUserTest {
     }
 
     @Test(expected=UnsupportedOperationException.class)
+    public void removePhotoTest(){
+        emptyUser.removePhoto("pictureIdOfThePhoto");
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
     public void getFirstNameTest(){
         emptyUser.getFirstName();
     }
@@ -63,8 +68,17 @@ public class EmptyUserTest {
     }
 
     @Test(expected=UnsupportedOperationException.class)
+    public void getIsRetrievedFromDBTest(){
+        emptyUser.getIsRetrievedFromDB();
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
     public void setPhotoTakenTest(){
         emptyUser.setPhotosTaken(new HashMap<String, Long>());
     }
 
+    @Test(expected=UnsupportedOperationException.class)
+    public void getPhotoTakenTest(){
+        emptyUser.getPhotosTaken();
+    }
 }
