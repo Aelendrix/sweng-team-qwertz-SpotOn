@@ -195,7 +195,7 @@ public final class MainActivity extends AppCompatActivity {
             case REQUEST_FINE_LOCALISATION: {
                 // If request is cancelled, the result arrays are empty.
                 // permission was granted
-                if (grantResults.length > 0
+                if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //TODO: When the TakePictureFragment and MapFragment will be fragment inside MainActivity, create the LocationManager here
 

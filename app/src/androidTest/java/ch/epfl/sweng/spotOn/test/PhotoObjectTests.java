@@ -244,16 +244,14 @@ public class PhotoObjectTests {
         PhotoObject po = new PhotoObject(fullSizePic, authorID, photoName,
                 createdDate, latitude, longitude);
         DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+
         assert (po.getFullSizeImage() == fullSizePic);
-        assert (po.getAuthorId().equals(authorID));
-        assert (po.getPhotoName().equals(photoName));
-        assert (po.getCreatedDate() == createdDate);
-        assert (po.getExpireDate().getTime() > createdDate.getTime());
-        assert (po.getLatitude() == latitude);
-        assert (po.getLongitude() == longitude);
-        assert (po.getPictureId().length() == DBref.push().getKey().length());
+        Assert.assertEquals(po.getAuthorId().equals(authorID), true);
+        Assert.assertEquals(po.getPhotoName().equals(photoName), true);
+        Assert.assertEquals(po.getCreatedDate(), createdDate);
+        Assert.assertEquals(po.getExpireDate().getTime() > createdDate.getTime(), true);
+        Assert.assertEquals(po.getLatitude(), latitude);
+        Assert.assertEquals(po.getLongitude(), longitude);
+        Assert.assertEquals(po.getPictureId().length(), DBref.push().getKey().length());
     }
-
-
-
 }

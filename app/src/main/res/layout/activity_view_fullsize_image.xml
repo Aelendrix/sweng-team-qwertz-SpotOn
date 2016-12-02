@@ -39,7 +39,8 @@
         android:src="@drawable/ic_thumb_down_30dp"
         android:background="@drawable/button_shape_downvote"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/contentDescriptionDownVoteImageButton"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -50,7 +51,8 @@
         android:src="@drawable/ic_thumb_up_30dp"
         android:background="@drawable/button_shape_upvote"
         android:layout_alignTop="@+id/downvoteButton"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/contentDescriptionUpVoteImageButton"/>
 
     <Button
         android:text="@string/reportButton"

@@ -50,7 +50,7 @@ public class UserStoredInDatabaseTest {
 
         Map<String, Long> mapPhotoTaken = new HashMap<String, Long>() {};
 
-        Long testLong = new Long(12);
+        Long testLong = Long.valueOf(12);
         mapPhotoTaken.put("test",testLong);
         userInDB.setPhotosTaken(mapPhotoTaken);
 

@@ -28,7 +28,7 @@
         This page will tell you more about us. Please be patient.
     </string>
 
-    <string name="userProfileTitle">User Profile</string>
+    <string name="userProfileTitle">Profile</string>
     <string name="userProfileFirstName">First Name:</string>
     <string name="userProfileLastName">Last Name:</string>
     <string name="userProfileKarma">Karma:</string>
@@ -45,11 +45,13 @@
     <string name="newestOrderButton">Newest</string>
     <string name="oldestOrderButton">Oldest</string>
     <string name="hotOrderButton">Hot</string>
-
-
-
-
     <string name="dontLogInButton"> I don\'t want to log in </string>
+
+    <string name="contentDescriptionUserPictureImage">UserPicture</string>
+    <string name="contentDescriptionPictureThumbnailImage">PictureThumbnail</string>
+    <string name="contentDescriptionDownVoteImageButton">DownVoteButton</string>
+    <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
+    <string name="contentDescriptionLoginTextView">LoginTextView</string>
 
 
 </resources>

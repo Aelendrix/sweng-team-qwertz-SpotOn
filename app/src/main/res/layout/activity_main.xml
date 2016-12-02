@@ -80,6 +80,7 @@
         android:layout_gravity="center_horizontal"
         android:src="@mipmap/ic_launcher"
         android:layout_below="@id/mainLoginTextView"
-        android:layout_above="@id/wayToConnectTextView"/>
+        android:layout_above="@id/wayToConnectTextView"
+        android:contentDescription="@string/contentDescriptionLoginTextView"/>
 
 </RelativeLayout>
