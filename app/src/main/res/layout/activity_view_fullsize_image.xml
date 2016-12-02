@@ -25,7 +25,7 @@
         android:shadowRadius="1.6"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
