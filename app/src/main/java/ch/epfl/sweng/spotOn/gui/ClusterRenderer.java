@@ -2,6 +2,9 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -14,18 +17,18 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
  * Get the right colors on the pins (green or yellow) for the cluster manager
  * Created by olivi on 31.10.2016.
  */
-
 public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
-
     /*private Context mContext;
     private final IconGenerator mIconGenerator;
     private ShapeDrawable mColoredCircleBackground;
     private SparseArray<BitmapDescriptor> mIcons = new SparseArray<>();
     private final float mDensity;*/
-
+    boolean zoom = false;
+    GoogleMap mMap;
     public ClusterRenderer(Context context, GoogleMap map,
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
+        mMap = map;
         /*mContext = context;
         mIconGenerator = new IconGenerator(context);
         mIconGenerator.setContentView(this.makeSquareTextView(context));
@@ -34,7 +37,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
         mIconGenerator.setBackground(this.makeClusterBackground());
         mColoredCircleBackground = new ShapeDrawable(new OvalShape());
         mDensity = context.getResources().getDisplayMetrics().density;*/
-
     }
 
     @Override
@@ -42,7 +44,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                                                MarkerOptions markerOptions) {
 
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.defaultMarker(pin.getColor());
-        markerOptions.title(pin.getTitle());
         markerOptions.icon(markerDescriptor);
     }
 
@@ -61,9 +62,19 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
     @Override
     protected boolean shouldRenderAsCluster(Cluster cluster) {
-        return (cluster.getSize() >= 3);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                computeZoom();
+            }
+        });
+        return cluster.getSize() >=3  && !zoom;
     }
 
+    private void computeZoom(){
+        zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
+
+    }
     /*private SquareTextView makeSquareTextView(Context context){
         SquareTextView squareTextView = new SquareTextView(context);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(-2, -2);

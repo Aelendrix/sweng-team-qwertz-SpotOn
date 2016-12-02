@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -296,7 +297,17 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      * @return true -> clicking on a cluster does nothing
      */
     @Override
-    public boolean onClusterClick(Cluster<Pin> cluster){return true;}
+    public boolean onClusterClick(Cluster<Pin> cluster){
+        if(mMap!=null){
+            CameraUpdate center = CameraUpdateFactory.newLatLng(cluster.getPosition());
+            mMap.moveCamera(center);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    cluster.getPosition(), (float) Math.floor(mMap
+                            .getCameraPosition().zoom + 1)), 300,
+                    null);
+        }
+        return true;
+    }
 
     /**
      * Get a bitmap from a VectorDrawable (xml file) -> this method will be called if the API is
