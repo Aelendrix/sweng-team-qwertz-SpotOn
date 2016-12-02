@@ -40,6 +40,7 @@ public class ToastProvider {
         }
         displayToast(message, duration);
     }
+    
 
 // this methods has issues I need to solve later (todo)
 //    public static void printAfterCurrent(String message, int duration){
