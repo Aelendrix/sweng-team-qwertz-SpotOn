@@ -201,10 +201,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-    @Override
-    public void finishUpdate(ViewGroup container) {
-        super.finishUpdate(container);
-    }
 
     public void setCurrentMedia(int position) {
         Log.d("Current media position", "" + position);
