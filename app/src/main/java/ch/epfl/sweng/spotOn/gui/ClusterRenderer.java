@@ -51,7 +51,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
         mIconGenerator.setBackground(this.makeClusterBackground());
         mColoredCircleBackground = new ShapeDrawable(new OvalShape());
         mDensity = context.getResources().getDisplayMetrics().density;*/
-
     }
 
     @Override
