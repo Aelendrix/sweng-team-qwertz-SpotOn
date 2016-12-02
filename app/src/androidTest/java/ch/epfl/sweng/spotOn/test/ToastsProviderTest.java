@@ -97,7 +97,7 @@ public class ToastsProviderTest {
         ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
         ToastProvider.printIfNoCurrent("(there should have been no toast after this 'basetoast')",Toast.LENGTH_LONG);
-        Thread.sleep(longD - sec2 + 200 ); // 200 ms of margin of error since toast isn't displayed immediatly
+        Thread.sleep(longD - sec2 + 500 ); // 200 ms of margin of error since toast isn't displayed immediatly
         assertNoDisplayedToast();
         Thread.sleep(sec3);
 
