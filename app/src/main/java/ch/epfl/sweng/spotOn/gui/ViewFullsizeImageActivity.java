@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -16,9 +19,10 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class ViewFullsizeImageActivity extends Activity {
 
-//    public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
+    //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
+    private TextView mTextView;
 
     private ImageButton mUpvoteButton;
     private ImageButton mDownvoteButton;
@@ -28,18 +32,40 @@ public class ViewFullsizeImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
-
+        mTextView = (TextView) findViewById(R.id.UpvoteTextView);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d("Picture position", " : " + position);
+                updateCurrentMedia(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
+        updateCurrentMedia(position);
 
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
     }
 
+    private void updateCurrentMedia(int position) {
+        mFullScreenImageAdapter.setCurrentMedia(position);
+        mFullScreenImageAdapter.refreshVoteTextView(position);
+    }
 
     public void recordUpvote(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
@@ -68,4 +94,5 @@ public class ViewFullsizeImageActivity extends Activity {
             mFullScreenImageAdapter.reportOffensivePicture(view);
         }
     }
+
 }

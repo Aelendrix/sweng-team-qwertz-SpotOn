@@ -43,6 +43,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ImageView mViewToSet;
     private int voteSum=0;
     private TextView mTextView;
+    private PhotoObject mCurrentPicture;
     private ImageButton mUpvoteButton;
     private ImageButton mDownvoteButton;
     private Button mReportButton;
@@ -56,6 +57,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
+        mTextView = (TextView) mActivity.findViewById(R.id.UpvoteTextView);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
             throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
         }
-        mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
+        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
         if (mDisplayedMedia.hasFullSizeImage()) {
             Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
@@ -109,16 +111,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
             });
         }
         //upvotes
-        mTextView = (TextView) viewLayout.findViewById(R.id.UpvoteTextView);
-        voteSum = mDisplayedMedia.getUpvotes()- mDisplayedMedia.getDownvotes();
-        refreshVoteTextView(Integer.toString(voteSum));
+        if(mCurrentPicture != null) {
+            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
+        }
+
 
         View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
         mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
         mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
-        String userID = UserManager.getInstance().getUser().getUserId();
-        colorButtons(userID);
+        if(UserManager.getInstance().userIsLoggedIn() && mCurrentPicture != null) {
+            String userID = UserManager.getInstance().getUser().getUserId();
+            colorButtons(userID);
+        }
 
         container.addView(viewLayout);
         return viewLayout;
@@ -129,8 +134,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
-    public void refreshVoteTextView(String s){
-        mTextView.setText(s);
+    public void refreshVoteTextView(int position){
+        String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
+        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
+            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+        }
+        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
+        int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
+        mTextView.setText(Integer.toString(votes));
+
     }
 
     public void recordUpvote(View view){
@@ -143,12 +155,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
 
     private void vote(int vote){
-        if(mDisplayedMedia==null) {
+        if(mCurrentPicture==null) {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             //fake vote method to have more responsive interface
-            if(vote==1 && !mDisplayedMedia.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
+
+            if(vote==1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
                 colorIfUpvote();
                 if(alreadyDownvoted(userId)){
@@ -156,44 +169,60 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
 
-            if(vote==-1 && !mDisplayedMedia.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
+            if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
                 colorIfDownvote();
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
             }
-            refreshVoteTextView(Integer.toString(voteSum));
+            mTextView.setText(Integer.toString(voteSum));
 
-            String toastMessage = mDisplayedMedia.processVote(vote, userId);
+            String toastMessage = mCurrentPicture.processVote(vote, userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
 
     public void reportOffensivePicture(View view){
-        if(mDisplayedMedia == null) {
+        if(mCurrentPicture == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
+
             //Change color of report button depending if the user reports or unreports the picture
             if(alreadyReported(userId)){
                 colorIfNotReported(view);
             } else {
                 colorIfReported(view);
             }
-            String toastMessage = mDisplayedMedia.processReport(userId);
+            String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        super.finishUpdate(container);
+    }
+
+    public void setCurrentMedia(int position) {
+        Log.d("Current media position", "" + position);
+        String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
+        if (!LocalDatabase.getInstance().hasKey(wantedPicId)) {
+            throw new NoSuchElementException("Localdatabase does not contain wanted picture : " + wantedPicId);
+        }
+        mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
+    }
+
 
     /**
      * Checks if the user has upvoted the displayed picture
      * @param userID the user ID
      */
     private boolean alreadyUpvoted(String userID){
-        if(mDisplayedMedia != null) {
-            return mDisplayedMedia.getUpvotersList().contains(userID);
+        if(mCurrentPicture != null) {
+            return mCurrentPicture.getUpvotersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
@@ -204,8 +233,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * @param userID the user ID
      */
     private boolean alreadyDownvoted(String userID){
-        if(mDisplayedMedia != null){
-            return mDisplayedMedia.getDownvotersList().contains(userID);
+        if(mCurrentPicture != null){
+            return mCurrentPicture.getDownvotersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
@@ -216,8 +245,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * @param userID the user ID
      */
     private boolean alreadyReported(String userID){
-        if(mDisplayedMedia != null) {
-            return mDisplayedMedia.getReportersList().contains(userID);
+        if(mCurrentPicture != null) {
+            return mCurrentPicture.getReportersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
