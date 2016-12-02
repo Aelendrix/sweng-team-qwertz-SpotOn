@@ -83,12 +83,11 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-        return cluster.getSize()>=3  && !zoom;
+        return cluster.getSize() >=3  && !zoom;
     }
 
     private void computeZoom(){
-        zoom = mMap.getMaxZoomLevel()-3<mMap.getCameraPosition().zoom;
-        Log.d("YOLO",mMap.getMaxZoomLevel()+" "+mMap.getCameraPosition().zoom+" "+zoom);
+        zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
 
     }
     /*private SquareTextView makeSquareTextView(Context context){
