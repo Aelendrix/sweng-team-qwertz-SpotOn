@@ -2,12 +2,12 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,7 +100,7 @@ public class TabActivityTest {
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Profile")).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
-        onView(withId(R.id.profileBackButton)).perform(click());
+        Espresso.pressBack();
         Intents.release();
     }
 

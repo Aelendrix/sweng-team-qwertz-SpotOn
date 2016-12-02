@@ -51,9 +51,9 @@ public class TestTakePictureFragment {
             TestInitUtils.initContext();
         }
     };
-    Uri mImageToUploadUri;
-    File file;
-    PhotoObject mActualPhotoObject;
+    private Uri mImageToUploadUri;
+    private File file;
+    private PhotoObject mActualPhotoObject;
 
     @Test
     public void StoreFunctionWorking() throws Exception{

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">SpotOn</string>
-    <string name="mainLoginTextView">Please sign in to access our awesome app</string>
+    <string name="wayToConnect">Choose a way to log in:</string>
+    <string name="logIn">Log in with SpotOn</string>
+    <string name="restrictions">You won\'t be able to send pictures by not logging in</string>
     <string name="facebook_app_id">348409365495965</string>
     <string name="options_menu">Options</string>
     <string name="log_out">Log out</string>
@@ -29,13 +31,7 @@
     <string name="userProfileTitle">User Profile</string>
     <string name="userProfileFirstName">First Name:</string>
     <string name="userProfileLastName">Last Name:</string>
-    <string name="userProfileGender">Gender:</string>
-    <string name="userProfileEmailAddress">Email Address:</string>
-    <string name="userProfileBirthday">Birthday:</string>
-    <string name="userProfileNbVotes">Number of votes:</string>
-    <string name="userProfileNbPicturesTaken">Number of pictures taken:</string>
     <string name="userProfileKarma">Karma:</string>
-    <string name="userProfileBackButton">Back</string>
     <string name="profilePictureListText">Votes:</string>
     <string name="userProfileListPictureDeleteButton">Delete!</string>
 
@@ -53,7 +49,7 @@
 
 
 
-    <string name="dontLogginButton"> I don\'t want to log in </string>
+    <string name="dontLogInButton"> I don\'t want to log in </string>
 
 
 </resources>

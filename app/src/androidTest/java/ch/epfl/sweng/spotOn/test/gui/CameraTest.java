@@ -70,16 +70,15 @@ public class CameraTest{
     }
 
     @Test
-    public void testTakePhoto() {
+    public void testTakePhoto() throws Exception{
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }
 
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
-
+        
         onView(withId(R.id.captureButton)).perform(click());
-
         //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
         //Test all behavior: before and after rotating picture
         onView(withId(R.id.storeButton)).perform(click());
