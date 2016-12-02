@@ -73,7 +73,7 @@ public class ViewFullSizeImageActivityTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
             Thread.sleep(1000);
             onView(withId(R.id.viewpager)).perform(clickXY(150, 50));
-            Thread.sleep(1000);
+            Thread.sleep(5000);
             onView(withId(R.id.upvoteButton)).perform(click());
             Thread.sleep(1000);
             onView(withId(R.id.downvoteButton)).perform(click());
