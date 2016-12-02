@@ -71,13 +71,9 @@ public class EditPictureActivity extends AppCompatActivity {
                 mEditedBitmap = withoutTextBitmap;
             }
             drawText(textPositionX, textPositionY);
+            return true;
         }
 
-        switch(event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_MOVE:
-        }
         return false;
     }
 
