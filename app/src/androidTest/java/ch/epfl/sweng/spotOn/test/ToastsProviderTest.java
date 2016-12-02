@@ -106,6 +106,7 @@ public class ToastsProviderTest {
         Thread.sleep(sec1);
     }
 
+    
     @Test (expected = IllegalArgumentException.class)
     public void invalidDurationToast_printOverCurrent(){
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
