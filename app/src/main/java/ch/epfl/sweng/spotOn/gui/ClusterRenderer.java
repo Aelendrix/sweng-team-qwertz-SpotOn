@@ -5,7 +5,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -34,10 +37,12 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
     private ShapeDrawable mColoredCircleBackground;
     private SparseArray<BitmapDescriptor> mIcons = new SparseArray<>();
     private final float mDensity;*/
-
+    boolean zoom = false;
+    GoogleMap mMap;
     public ClusterRenderer(Context context, GoogleMap map,
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
+        mMap = map;
         /*mContext = context;
         mIconGenerator = new IconGenerator(context);
         mIconGenerator.setContentView(this.makeSquareTextView(context));
@@ -73,9 +78,20 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
     @Override
     protected boolean shouldRenderAsCluster(Cluster cluster) {
-        return cluster.getSize()>=3;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                computeZoom();
+            }
+        });
+        return cluster.getSize()>=3  && !zoom;
     }
 
+    private void computeZoom(){
+        zoom = mMap.getMaxZoomLevel()-3<mMap.getCameraPosition().zoom;
+        Log.d("YOLO",mMap.getMaxZoomLevel()+" "+mMap.getCameraPosition().zoom+" "+zoom);
+
+    }
     /*private SquareTextView makeSquareTextView(Context context){
         SquareTextView squareTextView = new SquareTextView(context);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(-2, -2);
