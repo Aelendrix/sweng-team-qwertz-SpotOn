@@ -38,8 +38,8 @@ public class LocalDatabase implements LocationTrackerListener{
     private LocationTracker refToLocationTracker;
 
     // these settings help to avoid unnecessary refreshes of the database
-    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE = 1500; // refresh the localdatabase at most every 1.5 seconds
-    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 3*1000; // refresh the localdatabase at most every 3 seconds
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_FIREBASE = 1500; // refresh the localDatabase at most every 1.5 seconds
+    private final static int TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION = 3*1000; // refresh the localDatabase at most every 3 seconds
 
     private final static int TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE = 3*60*1000; // refresh at least every 5 minutes
     private final static int MINIMUM_DISTANCE_REFRESH_THRESHOLD = 3; // won't refresh if the last Location was closer than this (don't refresh due to "noise" in the Location sensors)
@@ -73,7 +73,7 @@ public class LocalDatabase implements LocationTrackerListener{
 
     public static LocalDatabase getInstance(){
         if(mSingleInstance==null){
-            throw new IllegalStateException("Localdatabase not initialized yet");
+            throw new IllegalStateException("LocalDatabase not initialized yet");
         }
         return mSingleInstance;
     }
@@ -172,7 +172,7 @@ public class LocalDatabase implements LocationTrackerListener{
     /** refreshes the map of viewable photo */
     private void refreshViewablePhotos() {
         if( mCachedLocation == null){
-            Log.d("Localdatabase", "WARNING : called refreshViewablePhotos, but no valid cachedLocation");
+            Log.d("LocalDatabase", "WARNING : called refreshViewablePhotos, but no valid cachedLocation");
         }else {
             for (PhotoObject po : mediaDataMap.values()) {
                 // compare the object's location with the location provided by the LocationTracker
@@ -256,10 +256,10 @@ public class LocalDatabase implements LocationTrackerListener{
         if(mCachedLocation==null){
             return true;
         }else {
-            long timeDiffBetweenCurrenAndNewLocations = Math.abs(newLocation.getTime() - mCachedLocation.getTime());
+            long timeDiffBetweenCurrentAndNewLocations = Math.abs(newLocation.getTime() - mCachedLocation.getTime());
 
-            boolean tooLongWithoutRefreshing = timeDiffBetweenCurrenAndNewLocations > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
-            boolean refreshingTooOften = timeDiffBetweenCurrenAndNewLocations < TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
+            boolean tooLongWithoutRefreshing = timeDiffBetweenCurrentAndNewLocations > TIME_INTERVAL_FOR_MINIMUM_REFRESH_RATE;
+            boolean refreshingTooOften = timeDiffBetweenCurrentAndNewLocations < TIME_INTERVAL_FOR_MAXIMUM_REFRESH_RATE_LOCATION;
             boolean travelledFarEnoughForARefresh = mCachedLocation.distanceTo(newLocation) > MINIMUM_DISTANCE_REFRESH_THRESHOLD;
 
             return tooLongWithoutRefreshing || (!refreshingTooOften && travelledFarEnoughForARefresh);
@@ -268,7 +268,7 @@ public class LocalDatabase implements LocationTrackerListener{
 
     private boolean allowRefreshAccordingToMaxRefreshRate(){
         if(mCachedLocation==null){
-            Log.d("LocalDatabase","Refresh based on maximum refresh rate couldn't be allowed : no Location avaible");
+            Log.d("LocalDatabase","Refresh based on maximum refresh rate couldn't be allowed : no Location available");
             return false;
         }else {
             long timeDiffSinceLastRefresh = Math.abs(mLastRefreshDate - Calendar.getInstance().getTimeInMillis());
@@ -285,14 +285,14 @@ public class LocalDatabase implements LocationTrackerListener{
             synchronized (this) {
                 mCachedLocation = newLocation;
             }
-            Log.d("Localdatabase", "location updated, forcing single refresh");
+            Log.d("LocalDatabase", "location updated, forcing single refresh");
             forceSingleRefresh();
         }// otherwise, it's not worth it to refresh the database
     }
 
     @Override
     public void locationTimedOut(Location old){
-        Log.d("Localdatabase","listener notifed that location timed out");
+        Log.d("LocalDatabase","listener notified that location timed out");
         synchronized (this) {
             mCachedLocation = null;
         }

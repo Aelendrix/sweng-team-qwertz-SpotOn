@@ -27,7 +27,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:id="@+id/empty_grid_textview" />
+        android:id="@+id/empty_grid_textView" />
 
     <Button
         android:text="@string/goToMap"

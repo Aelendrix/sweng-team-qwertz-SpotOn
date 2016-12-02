@@ -23,12 +23,12 @@ public class UserStoredInDatabaseTest {
     @Test
     public void testGetUserStoredInDB(){
         UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("firstname", "lastname", "mlb");
+        UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
 
-        Assert.assertEquals(userInDB.getFirstName(), "firstname");
-        Assert.assertEquals(userInDB.getLastName(), "lastname");
+        Assert.assertEquals(userInDB.getFirstName(), "firstName");
+        Assert.assertEquals(userInDB.getLastName(), "lastName");
         Assert.assertEquals(userInDB.getUserId(), "mlb");
         Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
 
@@ -39,7 +39,7 @@ public class UserStoredInDatabaseTest {
     @Test
     public void testSetUserStoredInDB(){
         UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("firstname", "lastname", "mlb");
+        UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
 

@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.Image;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -84,7 +81,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
         }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
@@ -100,8 +97,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                     if(retrieveFullSizePicTask.getException()!=null){
                         currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                        // maybe it's better if we recover from this, and use only a log. Tell me in the Pull Request Comments (also, I left it as is to proove it passes tests
-                        throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureid : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+                        // maybe it's better if we recover from this, and use only a log
+                        throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
                         //Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
                     }else{
                         Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
@@ -137,7 +134,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public void refreshVoteTextView(int position){
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
         }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
         int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
@@ -210,7 +207,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         Log.d("Current media position", "" + position);
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if (!LocalDatabase.getInstance().hasKey(wantedPicId)) {
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : " + wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : " + wantedPicId);
         }
         mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
     }

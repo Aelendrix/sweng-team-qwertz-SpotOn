@@ -29,7 +29,7 @@ public class PhotoObjectTestUtils {
 
 // USEFUL METHODS ON PHOTOOBJECTS
 
-    /* compares the PhotoOBjects field by field for equality */
+    /* compares the PhotoObjects field by field for equality */
     public static boolean areEquals(PhotoObject p1, PhotoObject p2){
         boolean fullsizeImageOrLinkComparison = false;      // images have either a fullsizeimage or a link
         if(p1.hasFullSizeImage() && p2.hasFullSizeImage()){
@@ -60,7 +60,7 @@ public class PhotoObjectTestUtils {
     }
 
 
-// FACTORY METHODS TO INSTANCIATE PREMADE PHOTOBJECTS
+// FACTORY METHODS TO INSTANTIATE PREMADE PHOTOOBJECTS
 
     public static PhotoObject getRandomPhotoObject(){
         return getOnePo(new Random().nextInt(NB_PO_AVAILABLE));

@@ -10,7 +10,6 @@ import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.Layout;
 import android.view.View;
 
 import org.junit.After;

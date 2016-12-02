@@ -13,7 +13,6 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
-import ch.epfl.sweng.spotOn.test.util.StorageRef_Test;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 import static android.support.test.espresso.Espresso.onView;

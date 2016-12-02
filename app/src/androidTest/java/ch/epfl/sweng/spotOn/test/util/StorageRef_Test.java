@@ -19,7 +19,7 @@ public class StorageRef_Test {
     }
 
 
-    // CONSTUCTOR FOR SINGLETON
+    // CONSTRUCTOR FOR SINGLETON
     private StorageRef_Test(){
         // empty
     }

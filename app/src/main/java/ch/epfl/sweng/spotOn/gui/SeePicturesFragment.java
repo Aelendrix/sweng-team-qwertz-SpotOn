@@ -43,7 +43,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 mDefaultItemPosition = position;
-                displayFullsizeImage(position);
+                displayFullSizeImage(position);
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
@@ -83,12 +83,13 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
         }
     }
 
-    /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked (method called by a OnClickListener in the gridview
+    /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked
+     * (method called by a OnClickListener in the gridView)
      */
-    public void displayFullsizeImage(int positionOfThumbnail){
-        Intent displayFullsizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        //displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
-        startActivity(displayFullsizeImageIntent);
+    public void displayFullSizeImage(int positionOfThumbnail){
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullSizeImageActivity.class);
+        //displayFullSizeImageIntent.putExtra(ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+        startActivity(displayFullSizeImageIntent);
     }
 
     @Override

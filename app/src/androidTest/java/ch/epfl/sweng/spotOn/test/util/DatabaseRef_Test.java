@@ -3,8 +3,6 @@ package ch.epfl.sweng.spotOn.test.util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-
 /** singleton that provides database directories that will be used for storing test objects
  * Created by quentin on 04.11.16.
  */
