@@ -120,8 +120,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
         mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
         mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
-        String userID = UserManager.getInstance().getUser().getUserId();
-        colorButtons(userID);
+        if(UserManager.getInstance().userIsLoggedIn() && mCurrentPicture != null) {
+            String userID = UserManager.getInstance().getUser().getUserId();
+            colorButtons(userID);
+        }
 
         container.addView(viewLayout);
         return viewLayout;

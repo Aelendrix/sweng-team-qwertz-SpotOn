@@ -45,8 +45,7 @@ public class ViewFullsizeImageActivity extends Activity {
             @Override
             public void onPageSelected(int position) {
                 Log.d("Picture position", " : " + position);
-                mFullScreenImageAdapter.setCurrentMedia(position);
-                mFullScreenImageAdapter.refreshVoteTextView(position);
+                updateCurrentMedia(position);
             }
 
             @Override
@@ -57,11 +56,16 @@ public class ViewFullsizeImageActivity extends Activity {
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
+        updateCurrentMedia(position);
 
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
     }
 
+    private void updateCurrentMedia(int position) {
+        mFullScreenImageAdapter.setCurrentMedia(position);
+        mFullScreenImageAdapter.refreshVoteTextView(position);
+    }
 
     public void recordUpvote(View view) {
         if( !UserManager.getInstance().userIsLoggedIn() ){
