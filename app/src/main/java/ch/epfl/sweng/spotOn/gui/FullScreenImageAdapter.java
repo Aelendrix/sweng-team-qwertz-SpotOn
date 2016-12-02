@@ -219,8 +219,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * @param userID the user ID
      */
     private boolean alreadyUpvoted(String userID){
-        if(mDisplayedMedia != null) {
-            return mDisplayedMedia.getUpvotersList().contains(userID);
+        if(mCurrentPicture != null) {
+            return mCurrentPicture.getUpvotersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
@@ -231,8 +231,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * @param userID the user ID
      */
     private boolean alreadyDownvoted(String userID){
-        if(mDisplayedMedia != null){
-            return mDisplayedMedia.getDownvotersList().contains(userID);
+        if(mCurrentPicture != null){
+            return mCurrentPicture.getDownvotersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
@@ -243,8 +243,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * @param userID the user ID
      */
     private boolean alreadyReported(String userID){
-        if(mDisplayedMedia != null) {
-            return mDisplayedMedia.getReportersList().contains(userID);
+        if(mCurrentPicture != null) {
+            return mCurrentPicture.getReportersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
