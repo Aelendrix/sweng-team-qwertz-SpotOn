@@ -277,20 +277,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     /**
-     * Clicking on the location marker does nothing. It corrects the bug that clicking on a pin and
-     * then clicking on the location marker displayed the thumbnail of the pin clicked.
-     * @param marker the location marker
-     * @return true -> clicking on the marker does nothing
-     */
-    /**@Override
-    public boolean onMarkerClick(Marker marker){
-        if(marker.equals(mLocationMarker)){
-            return true;
-        }
-        return false;
-    }*/
-
-    /**
      * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
      * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
      * cluster displayed the info window of the pin.

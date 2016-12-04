@@ -115,16 +115,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
             voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
         }
 
-
-        View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
-        mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
-        mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
-        mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
-        if(UserManager.getInstance().userIsLoggedIn() && mCurrentPicture != null) {
-            String userID = UserManager.getInstance().getUser().getUserId();
-            colorButtons(userID);
-        }
-
         container.addView(viewLayout);
         return viewLayout;
     }
@@ -163,7 +153,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
             if(vote==1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
-                colorIfUpvote();
                 if(alreadyDownvoted(userId)){
                     voteSum++;
                 }
@@ -171,7 +160,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
             if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
-                colorIfDownvote();
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
@@ -216,7 +204,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has upvoted the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyUpvoted(String userID){
+    public boolean alreadyUpvoted(String userID){
         if(mCurrentPicture != null) {
             return mCurrentPicture.getUpvotersList().contains(userID);
         } else {
@@ -228,7 +216,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has downvoted the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyDownvoted(String userID){
+    public boolean alreadyDownvoted(String userID){
         if(mCurrentPicture != null){
             return mCurrentPicture.getDownvotersList().contains(userID);
         } else {
@@ -240,33 +228,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has reported the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyReported(String userID){
+    public boolean alreadyReported(String userID){
         if(mCurrentPicture != null) {
             return mCurrentPicture.getReportersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
         }
-    }
-
-    private void colorButtons(String userID){
-        if(alreadyUpvoted(userID)){
-            colorIfUpvote();
-        } else if (alreadyDownvoted(userID)) {
-            colorIfDownvote();
-        }
-        /*if(alreadyReported(userID)){
-            colorIfReported();
-        }*/
-    }
-
-    private void colorIfUpvote(){
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
-    }
-
-    private void colorIfDownvote(){
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
     }
 
     private void colorIfReported(View view){

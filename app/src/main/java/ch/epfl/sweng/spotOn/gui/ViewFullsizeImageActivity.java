@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
@@ -22,17 +23,23 @@ public class ViewFullsizeImageActivity extends Activity {
     //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
+    private String userID;
     private TextView mTextView;
 
     private ImageButton mUpvoteButton;
     private ImageButton mDownvoteButton;
+    private Button mReportButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
+        userID = UserManager.getInstance().getUser().getUserId();
         mTextView = (TextView) findViewById(R.id.UpvoteTextView);
+        mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
+        mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
+        mReportButton = (Button) findViewById(R.id.reportButton);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
@@ -57,14 +64,30 @@ public class ViewFullsizeImageActivity extends Activity {
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
         updateCurrentMedia(position);
-
-        mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
-        mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
     }
 
     private void updateCurrentMedia(int position) {
         mFullScreenImageAdapter.setCurrentMedia(position);
         mFullScreenImageAdapter.refreshVoteTextView(position);
+
+        //Get the status of the user on the seen picture to color the buttons
+        boolean upvoted = mFullScreenImageAdapter.alreadyUpvoted(userID);
+        boolean downvoted = mFullScreenImageAdapter.alreadyDownvoted(userID);
+        boolean reported = mFullScreenImageAdapter.alreadyReported(userID);
+
+        if(upvoted){
+            colorForUpvote();
+        } else if(downvoted){
+            colorForDownvote();
+        } else {
+            colorNone();
+        }
+
+        if(reported){
+            mReportButton.setBackgroundResource(R.drawable.button_shape_report_clicked);
+        } else {
+            mReportButton.setBackgroundResource(R.drawable.button_shape_report);
+        }
     }
 
     public void recordUpvote(View view) {
@@ -94,5 +117,21 @@ public class ViewFullsizeImageActivity extends Activity {
             mFullScreenImageAdapter.reportOffensivePicture(view);
         }
     }
+
+    private void colorForUpvote(){
+        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
+        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+    }
+
+    private void colorForDownvote(){
+        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
+        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
+    }
+
+    private void colorNone(){
+        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
+        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+    }
+
 
 }
