@@ -44,9 +44,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private int voteSum=0;
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
-    private ImageButton mUpvoteButton;
-    private ImageButton mDownvoteButton;
-    private Button mReportButton;
     private PhotoObject mDisplayedMedia;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
@@ -233,6 +230,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
             return mCurrentPicture.getReportersList().contains(userID);
         } else {
             throw new NullPointerException("The photoObject is null");
+        }
+    }
+
+    /**
+     * Method useful for the ViewFullSizeImageActivity to make sure the buttons do not change color
+     * when the user votes for his own picture
+     * @return the author of the displayed picture
+     */
+    public String getAuthorOfDisplayedPicture(){
+        if(mCurrentPicture == null){
+            throw new NullPointerException("The photoObject is null: can't retrieve the author ID");
+        } else {
+            return mCurrentPicture.getAuthorId();
         }
     }
 

@@ -35,12 +35,14 @@ public class ViewFullsizeImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
+
         userID = UserManager.getInstance().getUser().getUserId();
         mTextView = (TextView) findViewById(R.id.UpvoteTextView);
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
         mReportButton = (Button) findViewById(R.id.reportButton);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -95,8 +97,10 @@ public class ViewFullsizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
-            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
-            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+            //Change color of buttons only if the user is not th author of the picture
+            if(!userID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                colorForUpvote();
+            }
         }
     }
 
@@ -105,8 +109,9 @@ public class ViewFullsizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
-            mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
-            mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
+            if(!userID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                colorForDownvote();
+            }
         }
     }
 
@@ -115,6 +120,7 @@ public class ViewFullsizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
+            //The color change of button is done in the above method reportOffensivePicture(view)
         }
     }
 
