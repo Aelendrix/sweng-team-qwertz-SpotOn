@@ -38,7 +38,6 @@ public class TabActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
