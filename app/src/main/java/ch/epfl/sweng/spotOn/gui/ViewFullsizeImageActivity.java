@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -23,7 +26,8 @@ public class ViewFullsizeImageActivity extends Activity {
     //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
-    private String userID;
+    private String mUserID;
+    private boolean mButtonsAreVisible;
     private TextView mTextView;
 
     private ImageButton mUpvoteButton;
@@ -36,12 +40,45 @@ public class ViewFullsizeImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
 
-        userID = UserManager.getInstance().getUser().getUserId();
+        if(UserManager.getInstance().userIsLoggedIn()) {
+            mUserID = UserManager.getInstance().getUser().getUserId();
+        }
+
         mTextView = (TextView) findViewById(R.id.UpvoteTextView);
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
         mReportButton = (Button) findViewById(R.id.reportButton);
+        mButtonsAreVisible = true;
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+
+        //Needed to detect a tap on the viewPager
+        final GestureDetector gestureDetector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                // Removes or replaces the layout of the buttons on a singleTap of the user
+                if(mButtonsAreVisible){
+                    mUpvoteButton.setVisibility(View.GONE);
+                    mDownvoteButton.setVisibility(View.GONE);
+                    mReportButton.setVisibility(View.GONE);
+                    mButtonsAreVisible = false;
+                } else {
+                    mUpvoteButton.setVisibility(View.VISIBLE);
+                    mDownvoteButton.setVisibility(View.VISIBLE);
+                    mReportButton.setVisibility(View.VISIBLE);
+                    mButtonsAreVisible = true;
+                }
+                return true;
+            }
+        });
+
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("onClick", "All Good");
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
 
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
@@ -62,6 +99,7 @@ public class ViewFullsizeImageActivity extends Activity {
 
             }
         });
+
         Intent displayImageIntent = getIntent();
         int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
         viewPager.setCurrentItem(position);
@@ -73,22 +111,24 @@ public class ViewFullsizeImageActivity extends Activity {
         mFullScreenImageAdapter.refreshVoteTextView(position);
 
         //Get the status of the user on the seen picture to color the buttons
-        boolean upvoted = mFullScreenImageAdapter.alreadyUpvoted(userID);
-        boolean downvoted = mFullScreenImageAdapter.alreadyDownvoted(userID);
-        boolean reported = mFullScreenImageAdapter.alreadyReported(userID);
+        if(mUserID != null) {
+            boolean upvoted = mFullScreenImageAdapter.alreadyUpvoted(mUserID);
+            boolean downvoted = mFullScreenImageAdapter.alreadyDownvoted(mUserID);
+            boolean reported = mFullScreenImageAdapter.alreadyReported(mUserID);
 
-        if(upvoted){
-            colorForUpvote();
-        } else if(downvoted){
-            colorForDownvote();
-        } else {
-            colorNone();
-        }
+            if (upvoted) {
+                colorForUpvote();
+            } else if (downvoted) {
+                colorForDownvote();
+            } else {
+                colorNone();
+            }
 
-        if(reported){
-            mReportButton.setBackgroundResource(R.drawable.button_shape_report_clicked);
-        } else {
-            mReportButton.setBackgroundResource(R.drawable.button_shape_report);
+            if (reported) {
+                mReportButton.setBackgroundResource(R.drawable.button_shape_report_clicked);
+            } else {
+                mReportButton.setBackgroundResource(R.drawable.button_shape_report);
+            }
         }
     }
 
@@ -98,7 +138,7 @@ public class ViewFullsizeImageActivity extends Activity {
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
             //Change color of buttons only if the user is not th author of the picture
-            if(!userID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                 colorForUpvote();
             }
         }
@@ -109,7 +149,7 @@ public class ViewFullsizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
-            if(!userID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                 colorForDownvote();
             }
         }
