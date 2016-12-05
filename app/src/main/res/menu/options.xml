@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_favorite"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/options_menu"
-        app:showAsAction="ifRoom"/>
 
     <item
+        android:icon="@drawable/ic_account_circle"
         android:id="@+id/user_profile"
         android:title="Profile"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
     <item
+        android:icon="@drawable/ic_lock_open"
         android:id="@+id/log_out"
         android:title="@string/log_out"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
     <item
+        android:icon="@drawable/ic_info_outline"
         android:id="@+id/action_about"
         android:title="@string/about_menu"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
 </menu>
