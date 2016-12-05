@@ -9,7 +9,7 @@
         app:showAsAction="always"/>
 
     <item
-        android:icon="@drawable/ic_lock_open"
+        android:icon="@drawable/ic_action_io"
         android:id="@+id/log_out"
         android:title="@string/log_out"
         app:showAsAction="always"/>

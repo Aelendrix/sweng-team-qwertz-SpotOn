@@ -87,8 +87,7 @@ public class LogInOutTest {
         //wait the mainActivity to start TabActivity
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("Log out")).perform(click());
+        onView(withId(R.id.log_out)).perform(click());
 
         */
     }
