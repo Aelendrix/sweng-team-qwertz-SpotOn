@@ -9,15 +9,15 @@
         app:showAsAction="always"/>
 
     <item
-        android:icon="@drawable/ic_action_io"
-        android:id="@+id/log_out"
-        android:title="@string/log_out"
-        app:showAsAction="always"/>
-
-    <item
         android:icon="@drawable/ic_info_outline"
         android:id="@+id/action_about"
         android:title="@string/about_menu"
+        app:showAsAction="always"/>
+
+    <item
+        android:icon="@drawable/ic_action_io"
+        android:id="@+id/log_out"
+        android:title="@string/log_out"
         app:showAsAction="always"/>
 
 </menu>
