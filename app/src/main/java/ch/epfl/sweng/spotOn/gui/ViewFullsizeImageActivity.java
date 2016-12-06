@@ -47,6 +47,7 @@ public class ViewFullsizeImageActivity extends Activity {
         mButtonsAreVisible = true;
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
+        //if user logged in he can make buttons appear or disappear by tapping on the screen
         if(UserManager.getInstance().userIsLoggedIn()) {
             mUserID = UserManager.getInstance().getUser().getUserId();
             //Needed to detect a tap on the viewPager
@@ -71,7 +72,6 @@ public class ViewFullsizeImageActivity extends Activity {
             viewPager.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    Log.d("onClick", "All Good");
                     return gestureDetector.onTouchEvent(event);
                 }
             });
