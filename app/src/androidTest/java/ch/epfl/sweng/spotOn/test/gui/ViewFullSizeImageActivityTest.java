@@ -31,6 +31,7 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.anything;
 
@@ -73,23 +74,27 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws Exception{
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-            //Thread.sleep(1000);
-            //onView(withId(R.id.viewpager)).perform(clickXY(150, 50));
-            onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
-            //Thread.sleep(5000);
-            onView(withId(R.id.upvoteButton)).perform(click());
-            //Thread.sleep(1000);
-            onView(withId(R.id.downvoteButton)).perform(click());
-            //Thread.sleep(5000); // should permit to explore the "Karma" code
-            onView(withId(R.id.reportButton)).perform(click());
-            //Thread.sleep(1000);
-            /*
-            //come back an reperform the action with an already downloaded picture
-            mActivityTestRule.getActivity().onBackPressed();
-            Thread.sleep(500);
-            onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-            Thread.sleep(500);
-            */
+        Thread.sleep(1000);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        //onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.upvoteButton)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.downvoteButton)).perform(click());
+        Thread.sleep(1000);
+        //report
+        onView(withId(R.id.reportButton)).perform(click());
+        Thread.sleep(1000);
+        //unreport
+        onView(withId(R.id.reportButton)).perform(click());
+        Thread.sleep(1000);
+        /*
+        //come back an reperform the action with an already downloaded picture
+        mActivityTestRule.getActivity().onBackPressed();
+        Thread.sleep(500);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(500);
+        */
     }
 
     @Test
@@ -99,6 +104,23 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeLeft());
+        Thread.sleep(1000);
+        onView(withId(R.id.pager)).perform(swipeRight());
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void buttonsDisappearTest() throws InterruptedException {
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        Thread.sleep(1000);
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        Thread.sleep(1000);
+        //make buttons disappear
+        onView(withId(R.id.pager)).perform(click());
+        Thread.sleep(1000);
+        //make buttons reappear
+        onView(withId(R.id.pager)).perform(click());
+        Thread.sleep(1000);
     }
 
     public static ViewAction clickXY(final int x, final int y){
