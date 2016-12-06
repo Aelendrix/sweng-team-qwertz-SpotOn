@@ -61,10 +61,13 @@ public class TabActivityTest {
 //    }
 
     @Test
-    public void swipe_between_fragments() {
+    public void swipe_between_fragments() throws Exception {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
         onView(withText("Camera")).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(swipeRight());
     }
 

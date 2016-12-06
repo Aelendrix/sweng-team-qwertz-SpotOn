@@ -57,7 +57,9 @@ public class MapTest {
     @Test
     public void refreshLocalisationMarker() throws Exception{
         onView(withId(R.id.viewpager)).perform(swipeRight());
+        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(swipeLeft());
+        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         Thread.sleep(2000);
 
