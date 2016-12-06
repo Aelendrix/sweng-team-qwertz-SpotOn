@@ -266,8 +266,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
         String thumbID = pin.getPhotoObject().getPictureId();
-        if(mThumbIDs.contains(thumbID)) {
-            SeePicturesFragment.mDefaultItemPosition = mThumbIDs.indexOf(thumbID);
+        ImageAdapter imgAdapter = SeePicturesFragment.getImageAdapter();
+        if(imgAdapter.containsThumbID(thumbID)) {
+            SeePicturesFragment.mDefaultItemPosition = imgAdapter.getPositionThumbID(thumbID);
         } else {
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
