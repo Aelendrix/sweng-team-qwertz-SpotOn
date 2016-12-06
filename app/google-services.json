@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:54462369971:android:3d283d7b9bf3b490",
         "android_client_info": {
-          "package_name": "ch.epfl.sweng.project"
+          "package_name": "ch.epfl.sweng.spotOn"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "54462369971-96uk80c562vobev146kdn1cvd0a6a9d1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "ch.epfl.sweng.project",
+            "package_name": "ch.epfl.sweng.spotOn",
             "certificate_hash": "B313FA66657D47F73E15BE5F3C759FE922723349"
           }
         },
