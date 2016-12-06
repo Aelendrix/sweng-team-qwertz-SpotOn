@@ -69,7 +69,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Log.d("instantiateItem", "called1");
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
         mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
@@ -176,10 +175,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
             String userId = UserManager.getInstance().getUser().getUserId();
 
             //Change color of report button depending if the user reports or unreports the picture
-            if(alreadyReported(userId)){
-                colorIfNotReported(view);
-            } else {
-                colorIfReported(view);
+            //and if he is not the author of the picture
+            if(! userId.equals(mCurrentPicture.getAuthorId())) {
+                if (alreadyReported(userId)) {
+                    colorIfNotReported(view);
+                } else {
+                    colorIfReported(view);
+                }
             }
             String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);

@@ -40,10 +40,6 @@ public class ViewFullsizeImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
 
-        if(UserManager.getInstance().userIsLoggedIn()) {
-            mUserID = UserManager.getInstance().getUser().getUserId();
-        }
-
         mTextView = (TextView) findViewById(R.id.UpvoteTextView);
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
@@ -51,34 +47,38 @@ public class ViewFullsizeImageActivity extends Activity {
         mButtonsAreVisible = true;
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
-        //Needed to detect a tap on the viewPager
-        final GestureDetector gestureDetector = new GestureDetector(this,
-                new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-                // Removes or replaces the layout of the buttons on a singleTap of the user
-                if(mButtonsAreVisible){
-                    mUpvoteButton.setVisibility(View.GONE);
-                    mDownvoteButton.setVisibility(View.GONE);
-                    mReportButton.setVisibility(View.GONE);
-                    mButtonsAreVisible = false;
-                } else {
-                    mUpvoteButton.setVisibility(View.VISIBLE);
-                    mDownvoteButton.setVisibility(View.VISIBLE);
-                    mReportButton.setVisibility(View.VISIBLE);
-                    mButtonsAreVisible = true;
-                }
-                return true;
-            }
-        });
+        if(UserManager.getInstance().userIsLoggedIn()) {
+            mUserID = UserManager.getInstance().getUser().getUserId();
+            //Needed to detect a tap on the viewPager
+            final GestureDetector gestureDetector = new GestureDetector(this,
+                    new GestureDetector.SimpleOnGestureListener() {
+                        @Override
+                        public boolean onSingleTapConfirmed(MotionEvent e) {
+                            // Removes or replaces the layout of the buttons on a singleTap of the user
+                            if (mButtonsAreVisible) {
+                                makeButtonsDisappear();
+                                mButtonsAreVisible = false;
+                            } else {
+                                mUpvoteButton.setVisibility(View.VISIBLE);
+                                mDownvoteButton.setVisibility(View.VISIBLE);
+                                mReportButton.setVisibility(View.VISIBLE);
+                                mButtonsAreVisible = true;
+                            }
+                            return true;
+                        }
+                    });
 
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d("onClick", "All Good");
-                return gestureDetector.onTouchEvent(event);
-            }
-        });
+            viewPager.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d("onClick", "All Good");
+                    return gestureDetector.onTouchEvent(event);
+                }
+            });
+        } else {
+            //if the user is not logged in we delete the upvote/downvote/report buttons
+            makeButtonsDisappear();
+        }
 
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
@@ -177,6 +177,12 @@ public class ViewFullsizeImageActivity extends Activity {
     private void colorNone(){
         mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
         mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
+    }
+
+    private void makeButtonsDisappear(){
+        mUpvoteButton.setVisibility(View.GONE);
+        mDownvoteButton.setVisibility(View.GONE);
+        mReportButton.setVisibility(View.GONE);
     }
 
 
