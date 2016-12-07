@@ -26,9 +26,9 @@ public class ViewFullsizeImageActivity extends Activity {
     //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
+
     private String mUserID;
     private boolean mButtonsAreVisible;
-    private TextView mTextView;
 
     private ImageButton mUpvoteButton;
     private ImageButton mDownvoteButton;
@@ -39,12 +39,12 @@ public class ViewFullsizeImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_fullsize_image);
-
-        mTextView = (TextView) findViewById(R.id.UpvoteTextView);
+        
         mUpvoteButton = (ImageButton) findViewById(R.id.upvoteButton);
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
         mReportButton = (Button) findViewById(R.id.reportButton);
         mButtonsAreVisible = true;
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
         //if user logged in he can make buttons appear or disappear by tapping on the screen

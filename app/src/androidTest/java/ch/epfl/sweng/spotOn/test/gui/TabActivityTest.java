@@ -87,8 +87,7 @@ public class TabActivityTest {
     @Test
     public void aboutPagePopsUp() {
         Intents.init();
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("About")).perform(click());
+        onView(withId(R.id.action_about)).perform(click());
         intended(hasComponent(AboutPage.class.getName()));
         Intents.release();
     }
@@ -100,20 +99,12 @@ public class TabActivityTest {
         if(!UserManager.getInstance().userIsLoggedIn()){
             throw new AssertionError();
         }
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("Profile")).perform(click());
+
+        onView(withId(R.id.user_profile)).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
         Espresso.pressBack();
         Intents.release();
     }
-
-
-    /*@Test
-    public void clickRotate() throws InterruptedException {
-        onView(withText("Camera")).perform(click());
-        Thread.sleep(5000);
-        onView(withId(R.id.rotateButton)).perform(click());
-    }*/
 
     @After
     public void after(){

@@ -53,8 +53,7 @@ public class mainActivityTest_notLoggedInButton {
         // wait for transition to tabActivity
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("Log out")).perform(click());
+        onView(withId(R.id.log_out)).perform(click());
     }
 
 
