@@ -145,6 +145,14 @@ public class ImageAdapter extends BaseAdapter {
         return sImageView;
     }
 
+    public boolean containsThumbID(String thumbID){
+        return mThumbId.contains(thumbID);
+    }
+
+    public int getPositionThumbID(String thumbID){
+        return mThumbId.indexOf(thumbID);
+    }
+
     public String getIdAtPosition(int pos){
         return mThumbId.get(pos);
     }

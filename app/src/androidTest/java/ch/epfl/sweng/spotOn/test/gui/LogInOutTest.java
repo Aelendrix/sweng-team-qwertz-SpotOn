@@ -71,6 +71,7 @@ public class LogInOutTest {
     //this test can fail randomly cause it depends of retrieving a webview from facebook
     public void logInAndOut() throws Exception {
         mActivityTestRule.launchActivity(new Intent());
+        Thread.sleep(5000);
         onView(withId(R.id.mainLoginButton)).perform(click());/*
         Thread.sleep(4000); // sorry... my phone is slow
 

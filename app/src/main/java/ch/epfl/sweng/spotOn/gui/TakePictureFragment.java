@@ -145,6 +145,7 @@ public class TakePictureFragment extends Fragment {
                     }
                 });
                 mActualPhotoObject.setSentToServerStatus(true);
+                colorBlackButton(mSendButton);
             }else{
                 ToastProvider.printOverCurrent("You can't post anymore photos today\n#FeelsBadMan", Toast.LENGTH_LONG);
                 Log.d("TakePictureFragment", "UserManager " + UserManager.getInstance().getUser().getUserId() + " can't post photo anymore");
