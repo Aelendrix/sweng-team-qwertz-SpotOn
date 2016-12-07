@@ -33,7 +33,7 @@ public class Pin implements ClusterItem {
         //Yellow pin if not accessible
         else{
             color = BitmapDescriptorFactory.HUE_YELLOW;
-            zDepth = 10f;
+            zDepth = 20f;
         }
     }
 

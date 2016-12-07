@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -155,6 +157,10 @@ public class TabActivity extends AppCompatActivity{
 
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
+    }
+
+    public void onExtendOrderList(View v){
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.empty_grid_info);
     }
 
     public void onUpVoteOrderingClick(View v){
