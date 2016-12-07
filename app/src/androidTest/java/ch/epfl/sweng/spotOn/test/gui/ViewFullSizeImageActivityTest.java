@@ -24,6 +24,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
@@ -45,29 +46,11 @@ public class ViewFullSizeImageActivityTest {
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
     private Intent displayFullSizeImageIntent;
-    private PhotoObject po;
-    private PhotoObject secondPo;
 
     @Before
     public void initLocalDatabase() throws InterruptedException {
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-
-        TestInitUtils.initContext(location);
-
-        po = PhotoObjectTestUtils.germaynDeryckePO();
-        LocalDatabase.getInstance().addPhotoObject(po);
-
-        secondPo = PhotoObjectTestUtils.paulVanDykPO();
-        LocalDatabase.getInstance().addPhotoObject(secondPo);
-
-        LocalDatabase.getInstance().notifyListeners();
-
+        LocalDatabaseUtils.initLocalDatabase();
         displayFullSizeImageIntent = new Intent();
-
     }
 
     @Test
@@ -102,7 +85,7 @@ public class ViewFullSizeImageActivityTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         onView(withId(R.id.pager)).perform(swipeLeft());
         Thread.sleep(1000);
         onView(withId(R.id.pager)).perform(swipeRight());
@@ -144,20 +127,7 @@ public class ViewFullSizeImageActivityTest {
     }
 
     @After
-    public void after(){
-        ConcreteLocationTracker.destroyInstance();
-        if( ConcreteLocationTracker.instanceExists()){
-            throw new AssertionError("CameraTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
-        }
-        // stuff below seems pretty unimportant to me
-        if(LocalDatabase.instanceExists()){
-            LocalDatabase ldb = LocalDatabase.getInstance();
-            if(po!=null){
-                ldb.removePhotoObject( po.getPictureId());
-            }
-            if(secondPo!=null){
-                ldb.removePhotoObject(secondPo.getPictureId());
-            }
-        }
+    public void after() {
+        LocalDatabaseUtils.afterTests();
     }
 }
