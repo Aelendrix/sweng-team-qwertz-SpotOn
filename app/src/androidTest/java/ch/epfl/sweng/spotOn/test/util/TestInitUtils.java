@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.test.util;
 import android.location.Location;
 
 
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
@@ -28,7 +29,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
@@ -42,7 +43,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
@@ -70,7 +71,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
@@ -85,7 +86,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setMockUser(user);
     }
 
@@ -100,7 +101,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
     }
 
     public static void initContextNoUser(){
@@ -114,6 +115,6 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
     }
 }

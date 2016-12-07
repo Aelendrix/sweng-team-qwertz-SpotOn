@@ -16,6 +16,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
+import ch.epfl.sweng.spotOn.test.util.MockFirebaseConnectionTracker_forTests;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
@@ -37,8 +38,6 @@ public class ServicesCheckerTests {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
- //           TestInitUtils.initContext();
-
 
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
@@ -54,7 +53,7 @@ public class ServicesCheckerTests {
         UserManager.getInstance().setMockUser(mMockUser);
 
 
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
         }
     };
 
@@ -67,9 +66,10 @@ public class ServicesCheckerTests {
 
         mActivityTestRule.launchActivity(new Intent());
 
+        Thread.sleep(500);
+
         String expected = "";
 
-        // testing connection to database is too random, need to think about it
 
         // no correct user
         UserManager.getInstance().destroyUser();
@@ -97,9 +97,7 @@ public class ServicesCheckerTests {
 
     private void checkExpected(String expected){
         String errMsg = ServicesChecker.getInstance().provideErrorMessage();
-        String expected2 = "Can't connect to the database\n"+expected;          // connection to database too hard to tests
-        String expected3 = expected2+"--  Some features will be restricted  --";             // expected2 and expected3 allow to pass regardless of database connection state
-        if( ! errMsg.equals(expected) && ! errMsg.equals(expected2) && ! errMsg.equals(expected3)){
+        if( ! errMsg.equals(expected)){
             throw new AssertionError("Error messages was :\n"+errMsg+"\n\nWhile expecting :\n"+expected+"\n\n");
         }
     }

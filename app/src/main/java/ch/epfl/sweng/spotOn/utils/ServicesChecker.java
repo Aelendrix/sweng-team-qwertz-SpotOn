@@ -5,15 +5,12 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionListener;
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserListener;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
@@ -21,12 +18,13 @@ import ch.epfl.sweng.spotOn.user.UserManager;
  * Created by quentin on 17.11.16.
  */
 
-public class ServicesChecker implements LocationTrackerListener, UserListener {
+public class ServicesChecker implements LocationTrackerListener, UserListener, FirebaseConnectionListener {
 
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
     private UserManager mUserManagerRef;
+    private FirebaseConnectionTracker mFbCoTrackerRef;
 
     private boolean databaseIsConnected;
 
@@ -38,14 +36,15 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
 
 
 // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
-        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
-        mSingleInstance.listenForDatabaseConnectivity();
+    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef, FirebaseConnectionTracker fbCoTrackerRef){
+        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef, fbCoTrackerRef);
+
         mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
         mSingleInstance.mUserManagerRef.addListener(mSingleInstance);
+        mSingleInstance.mFbCoTrackerRef.addListener(mSingleInstance);
     }
 
-    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
+    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef, FirebaseConnectionTracker fbCoTrackerRef){
         if( ltref==null || ldbref==null|| userRef==null){
             // test to enforce that all required singletons are instanciated
             throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
@@ -53,6 +52,8 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
         // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
         mLocationTrackerRef = ltref;
         mUserManagerRef = userRef;
+        mFbCoTrackerRef = fbCoTrackerRef;
+        databaseIsConnected = fbCoTrackerRef.isConnected();
         locationIsValid = ltref.hasValidLocation();
         userIsLoggedIn = mUserManagerRef.userIsLoggedIn();
     }
@@ -119,45 +120,27 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
 
 
 
-// PRIVATE METHODS
-
-    /** adds a listener to keep track of the connection to database  */
-    private void listenForDatabaseConnectivity(){
-        DatabaseRef.getRootDirectory().child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = dataSnapshot.getValue(Boolean.class);
-                Log.d("ServicesChecker", " database connection status : "+connected);
-                databaseConnectionUpdated(connected);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                databaseConnectionUpdated(false);
-                Log.d("ServicesChecker", "ERROR : cancelled database query");
-            }
-        });
-    }
-
-
-
-
 // LISTENER METHODS
 
-    public void databaseConnectionUpdated(boolean isNowConnected){
-        if(isNowConnected){
-            if(!databaseIsConnected){ // disconnected -> connected
-                databaseIsConnected = true;
-                if(allServicesOk()){
-                    ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
-                }else{
-                    ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
-                }
-            }
-        }else{
-            if(databaseIsConnected){ // connected -> connected
-                databaseIsConnected = false;
+    @Override
+    public void firebaseDatabaseConnected() {
+        Log.d("ServicesChecker","database connected");
+        if(!databaseIsConnected){ // disconnected -> connected
+            databaseIsConnected = true;
+            if(allServicesOk()){
+                ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+            }else{
                 ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
             }
+        }
+    }
+
+    @Override
+    public void firebaseDatabaseDisconnected() {
+        Log.d("ServicesChecker","database disconnected");
+        if(databaseIsConnected){ // connected -> connected
+            databaseIsConnected = false;
+            ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
         }
     }
 

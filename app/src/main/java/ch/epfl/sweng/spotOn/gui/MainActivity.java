@@ -29,12 +29,12 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -220,7 +220,7 @@ public final class MainActivity extends AppCompatActivity {
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         ToastProvider.update(this);
     }
 }
