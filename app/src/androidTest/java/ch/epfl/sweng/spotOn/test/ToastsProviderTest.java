@@ -66,7 +66,7 @@ public class ToastsProviderTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
         assertNoDisplayedToast();
-
+ 
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         Thread.sleep(200);
