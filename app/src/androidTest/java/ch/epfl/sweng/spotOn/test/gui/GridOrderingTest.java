@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
@@ -18,6 +19,7 @@ import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
@@ -38,6 +40,12 @@ public class GridOrderingTest {
     @Test
     public void testChangeOrdering () throws Exception{
         onView(withText("Around me")).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(500);
+        onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
         onView(withText("Upvote")).perform(click());
         Thread.sleep(1000);
