@@ -2,9 +2,12 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
 
+import com.google.firebase.database.DatabaseReference;
+
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /**
  * Created by olivi on 07.12.2016.
@@ -27,10 +30,10 @@ public class LocalDatabaseUtils {
         TestInitUtils.initContext(location);
 
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
-        LocalDatabase.getInstance().addPhotoObject(firstPo);
+        firstPo.uploadWithoutFeedback();
 
         secondPo = PhotoObjectTestUtils.paulVanDykPO();
-        LocalDatabase.getInstance().addPhotoObject(secondPo);
+        secondPo.uploadWithoutFeedback();
 
         LocalDatabase.getInstance().notifyListeners();
     }
@@ -42,12 +45,11 @@ public class LocalDatabaseUtils {
         }
         // stuff below seems pretty unimportant to me
         if(LocalDatabase.instanceExists()){
-            LocalDatabase ldb = LocalDatabase.getInstance();
             if(firstPo!=null){
-                ldb.removePhotoObject( firstPo.getPictureId());
+                DatabaseRef.deletePhotoObjectFromDB(firstPo.getPictureId());
             }
             if(secondPo!=null){
-                ldb.removePhotoObject(secondPo.getPictureId());
+                DatabaseRef.deletePhotoObjectFromDB(secondPo.getPictureId());
             }
         }
     }

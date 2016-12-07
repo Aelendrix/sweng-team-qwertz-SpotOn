@@ -11,6 +11,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,6 +22,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -49,9 +51,10 @@ public class ViewFullSizeImageActivityTest {
     public void launchFullPictureActivity() throws Exception{
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        //onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
+        //Let the local database refresh
+        Thread.sleep(4000);
+        //onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(1000);
@@ -72,10 +75,12 @@ public class ViewFullSizeImageActivityTest {
         */
     }
 
+
+
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
+        Thread.sleep(4000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(2000);
         onView(withId(R.id.pager)).perform(swipeLeft());
@@ -87,7 +92,7 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void buttonsDisappearTest() throws InterruptedException {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(1000);
+        Thread.sleep(4000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
         //make buttons disappear
