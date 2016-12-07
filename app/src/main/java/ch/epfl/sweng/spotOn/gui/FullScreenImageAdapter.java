@@ -176,7 +176,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     voteSum--;
                 }
             }
-            mTextView.setText(Integer.toString(voteSum));
+            if(!mCurrentPicture.getAuthorId().equals(userId)) {
+                mTextView.setText(Integer.toString(voteSum));
+            }
 
             String toastMessage = mCurrentPicture.processVote(vote, userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);

@@ -106,7 +106,7 @@ public class TabActivity extends AppCompatActivity{
         viewPager.setAdapter(adapter);
     }
 
-    /** This method uses the options menu when this activity is launched     */
+    /* This method uses the options menu when this activity is launched     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
