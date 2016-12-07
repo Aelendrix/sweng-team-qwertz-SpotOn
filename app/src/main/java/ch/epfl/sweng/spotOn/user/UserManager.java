@@ -54,6 +54,14 @@ public class UserManager {
         return mUser.isLoggedIn();
     }
 
+    public boolean retrievingUserFromDatebase(){
+        if(mUser==null){
+            return false;
+        }else{
+            return !mUser.getIsRetrievedFromDB();
+        }
+    }
+
     public User getUser(){
         if(mUser == null){
             throw new IllegalStateException("User not logged in - check userIsLoggedIn() before calling getUser()");

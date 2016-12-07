@@ -90,7 +90,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
             errorMessage += "Can't localize your device\n";
         }
         if( ! mUserManagerRef.userIsLoggedIn() ){
-            if( ! mUserManagerRef.getUser().getIsRetrievedFromDB()){
+            if( mUserManagerRef.retrievingUserFromDatebase()){
                 errorMessage+= "We're processing your login informations\n";
             }else {
                 errorMessage += "You're not logged in\n";
@@ -102,6 +102,20 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
         return errorMessage;
     }
 
+    /** provides only the "most important" error message : internet connection > retrieving user information > userLoggedIn
+     */
+    public String provideLoginErrorMessage(){
+        if( ! databaseIsConnected ){
+            return "Can't connect to the database";
+        }else if( ! mUserManagerRef.userIsLoggedIn() ){
+            if( ! mUserManagerRef.getUser().getIsRetrievedFromDB()){
+                return "We're processing your login informations";
+            }else {
+                 return "You're not logged in";
+            }
+        }
+        return "";
+    }
 
 
 

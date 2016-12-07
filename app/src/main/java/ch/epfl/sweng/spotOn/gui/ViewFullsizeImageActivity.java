@@ -15,6 +15,7 @@ import android.widget.Toast;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class ViewFullsizeImageActivity extends Activity {
@@ -68,8 +69,8 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
     public void recordUpvote(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
             mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
@@ -78,8 +79,8 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
     public void recordDownvote(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
             mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
@@ -88,8 +89,8 @@ public class ViewFullsizeImageActivity extends Activity {
     }
 
     public void reportOffensivePicture(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
         }
