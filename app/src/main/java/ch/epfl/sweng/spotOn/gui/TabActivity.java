@@ -160,7 +160,13 @@ public class TabActivity extends AppCompatActivity{
     }
 
     public void onExtendOrderList(View v){
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.empty_grid_info);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.extended_list);
+        if(relativeLayout.getVisibility()==View.VISIBLE) {
+            relativeLayout.setVisibility(View.GONE);
+        }
+        else{
+            relativeLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onUpVoteOrderingClick(View v){
