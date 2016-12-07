@@ -64,7 +64,6 @@ public class LogInOutTest {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         if(UserManager.instanceExists()) {
             UserManager.getInstance().destroyUser();
-            LoginManager.getInstance().logOut();
         }
     }
 

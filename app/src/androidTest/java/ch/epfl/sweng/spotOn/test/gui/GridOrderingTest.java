@@ -49,9 +49,15 @@ public class GridOrderingTest {
         Thread.sleep(1000);
         onView(withText("Upvote")).perform(click());
         Thread.sleep(1000);
+        onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(1000);
         onView(withText("Oldest")).perform(click());
         Thread.sleep(1000);
+        onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(1000);
         onView(withText("Newest")).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
         onView(withText("Hot")).perform(click());
     }
