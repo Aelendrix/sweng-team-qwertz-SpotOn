@@ -17,6 +17,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.test.util.MockFirebaseConnectionTracker_forTests;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -48,7 +49,7 @@ public class ToastsProviderTest {
         ConcreteLocationTracker.setMockLocationTracker(mlt);
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
-        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
         displayFullSizeImageIntent = new Intent();
     }
 
@@ -65,8 +66,10 @@ public class ToastsProviderTest {
     public void launchFullPictureActivity() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
+        Thread.sleep(7);
+
         assertNoDisplayedToast();
- 
+
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         Thread.sleep(200);
