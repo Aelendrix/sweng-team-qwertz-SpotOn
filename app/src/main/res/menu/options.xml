@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:icon="@drawable/ic_account_circle"
+        android:icon="@drawable/ic_account_circle_black_24dp"
         android:id="@+id/user_profile"
         android:title="Profile"
         app:showAsAction="always"/>
 
     <item
-        android:icon="@drawable/ic_info_outline"
+        android:icon="@drawable/ic_info_outline_black_24dp"
         android:id="@+id/action_about"
         android:title="@string/about_menu"
         app:showAsAction="always"/>
 
     <item
-        android:icon="@drawable/ic_action_io"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
         android:id="@+id/log_out"
         android:title="@string/log_out"
         app:showAsAction="always"/>

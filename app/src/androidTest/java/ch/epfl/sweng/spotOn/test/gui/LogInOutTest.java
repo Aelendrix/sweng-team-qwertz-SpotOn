@@ -14,6 +14,8 @@ import android.support.test.uiautomator.Until;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.facebook.login.LoginManager;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
