@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -47,7 +48,7 @@ public class ToastsProviderTest {
         ConcreteLocationTracker.setMockLocationTracker(mlt);
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
-        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance());
+        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         displayFullSizeImageIntent = new Intent();
     }
 
