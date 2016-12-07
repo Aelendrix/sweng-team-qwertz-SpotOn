@@ -71,7 +71,7 @@
 
         <RelativeLayout
             android:id="@+id/extended_list"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_height="300dp"
             android:layout_width="80dp"
             android:layout_alignParentBottom="true"
