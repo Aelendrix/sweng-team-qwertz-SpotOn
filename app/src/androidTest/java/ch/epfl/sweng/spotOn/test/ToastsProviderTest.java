@@ -72,7 +72,7 @@ public class ToastsProviderTest {
 
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
-        Thread.sleep(200);
+        Thread.sleep(400);
         assertSomeDisplayedToast();
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
