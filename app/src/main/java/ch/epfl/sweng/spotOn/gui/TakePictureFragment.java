@@ -86,9 +86,15 @@ public class TakePictureFragment extends Fragment {
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
     public void dispatchTakePictureIntent(View view){
-        if( ! ServicesChecker.getInstance().allowedToPost() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-        }else {
+        if( ! ServicesChecker.getInstance().databaseConnected() ){
+            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
+        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
+            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
+                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+            }else {
+                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
+            }
+        } else {
         /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         mTextToDraw = bb.getString("TD", "");*/
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -104,10 +110,16 @@ public class TakePictureFragment extends Fragment {
      * on the internal storage if not already stored */
 
     public void storePictureOnInternalStorage(View view){
-        if( ! ServicesChecker.getInstance().allowedToPost() ) {
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-        }else if(mActualPhotoObject == null) {
+        if(mActualPhotoObject == null) {
             ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
+        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
+        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
+            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
+                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+            }else {
+                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
+            }
         } else {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
@@ -124,10 +136,16 @@ public class TakePictureFragment extends Fragment {
      * Uploads picture to our database/file server
      */
     public void sendPictureToServer(View view){
-        if( ! ServicesChecker.getInstance().allowedToPost() ) {
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-        } else if(mActualPhotoObject == null){
+        if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
+        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
+        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
+            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
+                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+            }else {
+                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
+            }
         } else if( mActualPhotoObject.isStoredInServer() ){
             ToastProvider.printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
         } else {
@@ -158,10 +176,16 @@ public class TakePictureFragment extends Fragment {
      * @param view
      */
     public void editPicture(View view){
-        if( ! ServicesChecker.getInstance().allowedToPost() ) {
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-        } else if(mActualPhotoObject == null){
+        if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
+        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
+        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
+            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
+                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
+            }else {
+                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
+            }
         } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
