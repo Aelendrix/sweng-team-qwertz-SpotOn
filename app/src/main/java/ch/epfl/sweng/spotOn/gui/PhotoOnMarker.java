@@ -13,9 +13,6 @@ import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by olivi on 20.10.2016.
- */
-
-/**
  * Class that will create an information window when clicking on a marker of the cluster manager on the map
  */
 public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
