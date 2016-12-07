@@ -13,9 +13,6 @@ import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by olivi on 20.10.2016.
- */
-
-/**
  * Class that will create an information window when clicking on a marker of the cluster manager on the map
  */
 public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
@@ -37,7 +34,8 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
      */
     @Override
     public View getInfoWindow(Marker marker){
-        if(mPin != null && mPin.getAccessibility()){
+        //the only marker with a title is the marker position
+        if(mPin != null && mPin.getAccessibility() && marker.getTitle()==null){
             Bitmap associatedToMarker = mPin.getPhotoObject().getThumbnail();
             pictureView.setImageBitmap(associatedToMarker);
             return pictureView;
