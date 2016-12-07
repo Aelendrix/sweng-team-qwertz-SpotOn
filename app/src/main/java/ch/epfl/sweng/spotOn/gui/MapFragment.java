@@ -266,8 +266,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
         String thumbID = pin.getPhotoObject().getPictureId();
-        if(mThumbIDs.contains(thumbID)) {
-            SeePicturesFragment.mDefaultItemPosition = mThumbIDs.indexOf(thumbID);
+        ImageAdapter imgAdapter = SeePicturesFragment.getImageAdapter();
+        if(imgAdapter.containsThumbID(thumbID)) {
+            SeePicturesFragment.mDefaultItemPosition = imgAdapter.getPositionThumbID(thumbID);
         } else {
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
@@ -275,20 +276,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 //        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
-
-    /**
-     * Clicking on the location marker does nothing. It corrects the bug that clicking on a pin and
-     * then clicking on the location marker displayed the thumbnail of the pin clicked.
-     * @param marker the location marker
-     * @return true -> clicking on the marker does nothing
-     */
-    /**@Override
-    public boolean onMarkerClick(Marker marker){
-        if(marker.equals(mLocationMarker)){
-            return true;
-        }
-        return false;
-    }*/
 
     /**
      * This methods needs to be implemented so it makes sure that clicking a marker displays nothing

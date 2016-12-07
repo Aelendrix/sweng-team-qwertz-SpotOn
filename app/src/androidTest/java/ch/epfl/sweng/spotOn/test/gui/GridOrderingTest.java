@@ -1,20 +1,17 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
-import ch.epfl.sweng.spotOn.test.util.StorageRef_Test;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -23,20 +20,22 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 public class GridOrderingTest {
-    private PhotoObject po;
-    @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
-        @Override
-        public void beforeActivityLaunched(){
-            po = PhotoObjectTestUtils.iceDivingPO();
-            po.uploadWithoutFeedback();
-            TestInitUtils.initContext();
 
-        }
-    };
+    @Rule
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
+    private Intent displayFullSizeImageIntent;
+
+    @Before
+    public void initLocalDatabase() throws InterruptedException {
+        LocalDatabaseUtils.initLocalDatabase();
+        displayFullSizeImageIntent = new Intent();
+    }
 
     @Test
     public void testChangeOrdering () throws Exception{
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        //Let the local database refresh
+        Thread.sleep(3000);
         onView(withText("Around me")).perform(click());
         Thread.sleep(1000);
         onView(withText("Upvote")).perform(click());
@@ -49,8 +48,8 @@ public class GridOrderingTest {
     }
 
     @After
-    public void clear(){
-        DatabaseRef.deletePhotoObjectFromDB(po.getPictureId());
-        StorageRef.deletePictureFromStorage(po.getPictureId());
+    public void after(){
+        LocalDatabaseUtils.afterTests();
     }
+
 }
