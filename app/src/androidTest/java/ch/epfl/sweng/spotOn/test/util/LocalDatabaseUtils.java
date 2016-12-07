@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.test.util;
 
-import android.content.Intent;
 import android.location.Location;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -10,12 +9,11 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 /**
  * Created by olivi on 07.12.2016.
  *
- * This class was created to refactor some methods that are always called when instantiating
- * the local database for the tests and deleting the elements from it after the tests are done
+ * Created this class to refactor some code for the tests when we initialize the local database
+ * and erase the photo objects from it at the end of each tests
  */
 
 public class LocalDatabaseUtils {
-
     public static PhotoObject firstPo;
     public static PhotoObject secondPo;
 

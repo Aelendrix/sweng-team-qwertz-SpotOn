@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
-import android.location.Location;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -10,7 +9,6 @@ import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.Layout;
 import android.view.View;
 
 import org.junit.After;
@@ -21,14 +19,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
