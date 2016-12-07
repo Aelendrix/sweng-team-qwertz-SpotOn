@@ -38,7 +38,6 @@ public class TabActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,7 +69,10 @@ public class TabActivity extends AppCompatActivity{
      */
     @Override
     public void onBackPressed() {
-        ToastProvider.printOverCurrent("THERE IS NO ESCAPE !", Toast.LENGTH_SHORT);
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     public void dispatchTakePictureIntent(View view) {
@@ -101,7 +103,7 @@ public class TabActivity extends AppCompatActivity{
         viewPager.setAdapter(adapter);
     }
 
-    /** This method uses the options menu when this activity is launched     */
+    /* This method uses the options menu when this activity is launched     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
