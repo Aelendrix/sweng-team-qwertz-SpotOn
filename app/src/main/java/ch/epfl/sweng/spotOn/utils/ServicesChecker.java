@@ -146,7 +146,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener {
     public void databaseConnectionUpdated(boolean isNowConnected){
         if(isNowConnected){
             if(!databaseIsConnected){ // disconnected -> connected
-                databaseIsConnected = isNowConnected;
+                databaseIsConnected = true;
                 if(allServicesOk()){
                     ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
                 }else{

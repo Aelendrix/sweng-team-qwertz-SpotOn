@@ -91,6 +91,8 @@ public class ServicesCheckerTests {
 
         // restore location
         mlt.setMockLocation(tempStoreLocation);
+
+        Thread.sleep(5000);
     }
 
     private void checkExpected(String expected){
