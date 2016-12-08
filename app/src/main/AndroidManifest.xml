@@ -86,7 +86,7 @@
             android:name=".gui.AboutPage"
             android:theme="@style/AppTheme.PopupWindow" />
         <activity android:name=".gui.UserProfileActivity" />
-        <activity android:name=".gui.ViewFullsizeImageActivity" />
+        <activity android:name=".gui.ViewFullSizeImageActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

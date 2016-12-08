@@ -11,7 +11,7 @@ import java.util.List;
 /**
  *  This class represents a photoObject in a form that allows it to be sent to a database.
  *  It is necessary since we can't send raw bitmaps (we convert thumbnail to a string) into the database
- *  It provides a method to convert it to a PhotoOBject, which is the only method that should be used
+ *  It provides a method to convert it to a PhotoObject, which is the only method that should be used
  */
 public class PhotoObjectStoredInDatabase {
 
@@ -96,7 +96,7 @@ public class PhotoObjectStoredInDatabase {
 
     // rather meant to be used for debug
     public String toString(){
-        String result="PhotoOBject";
+        String result="PhotoObject";
         result+="   ---   pictureID="+mPictureId;
         result+="   ---   fullSizePhotoLink="+mFullSizePhotoLink;
         result+="   ---   authorID="+mAuthorID;

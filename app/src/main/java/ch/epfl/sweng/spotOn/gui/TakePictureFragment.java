@@ -163,6 +163,7 @@ public class TakePictureFragment extends Fragment {
                     }
                 });
                 mActualPhotoObject.setSentToServerStatus(true);
+                colorBlackButton(mSendButton);
             }else{
                 ToastProvider.printOverCurrent("You can't post anymore photos today\n#FeelsBadMan", Toast.LENGTH_LONG);
                 Log.d("TakePictureFragment", "UserManager " + UserManager.getInstance().getUser().getUserId() + " can't post photo anymore");
@@ -383,7 +384,7 @@ public class TakePictureFragment extends Fragment {
                 }
             } else {
 
-                ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
+                ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }
         }
         else {

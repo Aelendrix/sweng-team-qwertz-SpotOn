@@ -146,7 +146,7 @@ public final class MainActivity extends AppCompatActivity {
 
     public void goToTabActivity(boolean loggedIn) {
         if( !LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists() || !UserManager.instanceExists()){
-            throw new IllegalStateException("All required singletons need to be initalized before leaving the mainActivity");
+            throw new IllegalStateException("All required singletons need to be initialized before leaving the mainActivity");
         }
         if(loggedIn) {
             UserManager.getInstance().setUserFromFacebook(mFbProfile.getFirstName(), mFbProfile.getLastName(), mFbProfile.getId());
@@ -196,7 +196,7 @@ public final class MainActivity extends AppCompatActivity {
             case REQUEST_FINE_LOCALISATION: {
                 // If request is cancelled, the result arrays are empty.
                 // permission was granted
-                if (grantResults.length > 0
+                if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //TODO: When the TakePictureFragment and MapFragment will be fragment inside MainActivity, create the LocationManager here
 

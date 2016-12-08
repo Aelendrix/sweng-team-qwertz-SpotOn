@@ -1,25 +1,20 @@
 package ch.epfl.sweng.spotOn.test;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.support.test.rule.ActivityTestRule;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.test.util.MockFirebaseConnectionTracker_forTests;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -56,10 +51,6 @@ public class ServicesCheckerTests {
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
         }
     };
-
-//    @Before
-//    public void initializeServicesChecker(){
-//    }
 
     @Test
     public void testCorrectErrorMessage() throws InterruptedException {

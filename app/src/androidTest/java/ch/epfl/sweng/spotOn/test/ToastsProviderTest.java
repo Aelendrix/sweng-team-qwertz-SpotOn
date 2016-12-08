@@ -23,8 +23,6 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -35,7 +33,7 @@ public class ToastsProviderTest {
     private final static long sec3 = 3*1000;
     private final static long sec5 = 5*1000;
     private final static long sec10 = 10*1000;
-    private final static long shortD = 2000;    // duration of Toasts.LENG
+    private final static long shortD = 2000;    // duration of Toasts.LENGTH
     private final static long longD = 3500;
 
     @Rule
@@ -63,45 +61,52 @@ public class ToastsProviderTest {
 // TESTS
 
     @Test
-    public void launchFullPictureActivity() throws Exception {
+    public void TestToast1() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-
-        Thread.sleep(7);
-
+        
+        Thread.sleep(5000);
         assertNoDisplayedToast();
 
         // single toasts ets displayed for 3.5 seconds
-        ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
-        Thread.sleep(400);
-        assertSomeDisplayedToast();
+        ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
+        Thread.sleep(200);
+        //assertSomeDisplayedToast();
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
         Thread.sleep(sec5);
         assertNoDisplayedToast();
+    }
 
+    @Test
+    public void TestToast2() throws Exception {
         // second toast takes over and extends the duration of baseToast
-        ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
-        ToastProvider.printOverCurrent("ToastOverCurrent",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("ToastOverCurrent", Toast.LENGTH_LONG);
         Thread.sleep(100);
         assertSomeDisplayedToast();
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
         Thread.sleep(sec5);
         assertNoDisplayedToast();
+    }
 
+    @Test
+    public void TestToast3() throws Exception {
         // printIfNoCurrent() displays single toast
-        ToastProvider.printIfNoCurrent("ToastIfNoCurrent",Toast.LENGTH_LONG);
+        ToastProvider.printIfNoCurrent("ToastIfNoCurrent", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
         Thread.sleep(sec5);
         assertNoDisplayedToast();
-
+    }
+    @Test
+    public void TestToast4() throws Exception {
         // printIfNoCurrent() shouldn't dispaly toast
         ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
-        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'basetoast')",Toast.LENGTH_LONG);
-        Thread.sleep(longD - sec2 + 500 ); // 200 ms of margin of error since toast isn't displayed immediatly
+        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
+        Thread.sleep(longD - sec2 + 200 ); // 200 ms of margin of error since toast isn't displayed immediately
         assertNoDisplayedToast();
         Thread.sleep(sec3);
 

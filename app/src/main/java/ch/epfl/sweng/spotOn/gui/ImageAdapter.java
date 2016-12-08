@@ -9,7 +9,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -143,6 +142,14 @@ public class ImageAdapter extends BaseAdapter {
 
         sImageView.setImageBitmap(mThumbnail.get(position));
         return sImageView;
+    }
+
+    public boolean containsThumbID(String thumbID){
+        return mThumbId.contains(thumbID);
+    }
+
+    public int getPositionThumbID(String thumbID){
+        return mThumbId.indexOf(thumbID);
     }
 
     public String getIdAtPosition(int pos){

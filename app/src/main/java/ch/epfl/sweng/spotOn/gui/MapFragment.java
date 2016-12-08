@@ -16,7 +16,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -76,7 +75,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         super.onCreate(savedInstanceState);
         // add as listener
         if(!LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists()){
-            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instanciated"));
+            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instantiated"));
         }
         ConcreteLocationTracker.getInstance().addListener(this);
         LocalDatabase.getInstance().addListener(this);
@@ -132,7 +131,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
                             .title("position")
                             .position(newLocation)
                             .anchor(0.5f,0.5f)
-                            .zIndex(100f)
+                            .zIndex(10f)
                             .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(getContext(),
                                     R.drawable.ic_position_marker_30dp))));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(newLocation));
@@ -161,8 +160,13 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Set a preference for minimum and maximum zoom.
-        mMap.setMinZoomPreference(5.0f);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
+        mMap.setMinZoomPreference(8.0f);
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConcreteLocationTracker.getInstance().getLatLng(), 12.0f));
+        }
+        else{
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 12.0f));
+        }
         setUpCluster();
         refreshMapLocation();
     }
@@ -266,29 +270,16 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
         String thumbID = pin.getPhotoObject().getPictureId();
-        if(mThumbIDs.contains(thumbID)) {
-            SeePicturesFragment.mDefaultItemPosition = mThumbIDs.indexOf(thumbID);
+        ImageAdapter imgAdapter = SeePicturesFragment.getImageAdapter();
+        if(imgAdapter.containsThumbID(thumbID)) {
+            SeePicturesFragment.mDefaultItemPosition = imgAdapter.getPositionThumbID(thumbID);
         } else {
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
-        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullSizeImageActivity.class);
+//        displayFullSizeImageIntent.putExtra(ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
-
-    /**
-     * Clicking on the location marker does nothing. It corrects the bug that clicking on a pin and
-     * then clicking on the location marker displayed the thumbnail of the pin clicked.
-     * @param marker the location marker
-     * @return true -> clicking on the marker does nothing
-     */
-    /**@Override
-    public boolean onMarkerClick(Marker marker){
-        if(marker.equals(mLocationMarker)){
-            return true;
-        }
-        return false;
-    }*/
 
     /**
      * This methods needs to be implemented so it makes sure that clicking a marker displays nothing

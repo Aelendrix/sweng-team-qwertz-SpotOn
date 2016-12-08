@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -43,7 +44,7 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 mDefaultItemPosition = position;
-                displayFullsizeImage(position);
+                displayFullSizeImage(position);
                 Log.d("Grid","matching pictureId : " + mImageAdapter.getIdAtPosition(position));
             }
         });
@@ -68,14 +69,16 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                     @Override
                     public void run() {
                         //create a new adapter and refresh the gridView
-                        LinearLayout linearLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
-                        FrameLayout frameLayout = (FrameLayout) mView.findViewById(R.id.grid_layout);
+                        LinearLayout emptyLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
+                        RelativeLayout gridLayout = (RelativeLayout) mView.findViewById(R.id.grid_layout);
+                        RelativeLayout listOrderLayout = (RelativeLayout) mView.findViewById(R.id.extended_list);
                         if (mImageAdapter.getCount() == 0) {
-                            frameLayout.setVisibility(View.GONE);
-                            linearLayout.setVisibility(View.VISIBLE);
+                            gridLayout.setVisibility(View.GONE);
+                            emptyLayout.setVisibility(View.VISIBLE);
+                            listOrderLayout.setVisibility(View.GONE);
                         } else {
-                            linearLayout.setVisibility(View.GONE);
-                            frameLayout.setVisibility(View.VISIBLE);
+                            emptyLayout.setVisibility(View.GONE);
+                            gridLayout.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -83,12 +86,13 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
         }
     }
 
-    /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked (method called by a OnClickListener in the gridview
+    /**  launches the fullSizeImageViewActivity and displays the thumbnail that has been clicked
+     * (method called by a OnClickListener in the gridView)
      */
-    public void displayFullsizeImage(int positionOfThumbnail){
-        Intent displayFullsizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-        //displayFullsizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
-        startActivity(displayFullsizeImageIntent);
+    public void displayFullSizeImage(int positionOfThumbnail){
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullSizeImageActivity.class);
+        //displayFullSizeImageIntent.putExtra(ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
+        startActivity(displayFullSizeImageIntent);
     }
 
     @Override

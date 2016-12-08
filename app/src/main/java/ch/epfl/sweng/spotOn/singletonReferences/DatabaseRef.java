@@ -1,10 +1,8 @@
 package ch.epfl.sweng.spotOn.singletonReferences;
 
-import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.maps.android.BuildConfig;
 
 /** Singleton that provides references to the database
  * Created by quentin on 03.11.16.

@@ -21,7 +21,7 @@ public class UserManager {
 
 
 
-// INITILIZE AND CONSTRUCTORS
+// INITIALIZE AND CONSTRUCTORS
     public static void initialize(){
         if(mSingleInstance==null) {
             mSingleInstance = new UserManager();
@@ -98,7 +98,7 @@ public class UserManager {
             RealUser newUser = new RealUser(firstName,lastName, userId, mSingleInstance);
             newUser.getUserAttributesFromDB();
             mUser = newUser;
-            // listeners will be notified once the user has retrieved its infos from DB
+            // listeners will be notified once the user has retrieved its info from DB
         }else{
             Log.e("UserManager","someone tried to create a new user, but an instance already exists");
         }

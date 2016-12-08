@@ -5,9 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
-import android.view.View;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +35,7 @@ public class mainActivityTest_notLoggedInButton {
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class, false, false);
 
     @Before
-    public void initSuff(){
+    public void initStuff(){
         TestInitUtils.initContextNoUser();
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         if(UserManager.instanceExists()) {

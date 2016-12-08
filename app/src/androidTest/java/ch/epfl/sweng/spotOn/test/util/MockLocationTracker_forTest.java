@@ -75,25 +75,25 @@ public class MockLocationTracker_forTest implements LocationTracker {
 
     public void forceLocationChange(Location newLoc){
         mockLocation=newLoc;
-        notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);
+        notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
     }
 
     public void forceLocationTimeout(){
-        notifyListners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
+        notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
         mockLocation = null;
     }
 
     public void setMockLocation(Location l){
         mockLocation=l;
-        notifyListners(LISTENERS_NOTIFICATION_NEW_LOCATION);
+        notifyListeners(LISTENERS_NOTIFICATION_NEW_LOCATION);
     }
 
 
 // PRIVATE METHODS
 
-    private void notifyListners(int notification){
+    private void notifyListeners(int notification){
         if(notification != LISTENERS_NOTIFICATION_LOCATION_TIMEOUT && notification != LISTENERS_NOTIFICATION_NEW_LOCATION){
-            throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
+            throw new IllegalArgumentException("Location tracker - notifyListener() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : listeners){
                 listener.locationTimedOut(mockLocation);

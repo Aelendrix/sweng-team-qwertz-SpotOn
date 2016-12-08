@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
@@ -14,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import ch.epfl.sweng.spotOn.BuildConfig;
-import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
 /**
  * Created by quentin on 17.11.16.
@@ -30,10 +28,10 @@ public class BitmapUtils {
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
-    /** creates the thumbail from this object by reducing the resolution of the fullSizeImage
+    /** creates the thumbnail from this object by reducing the resolution of the fullSizeImage
      */
-    public static Bitmap createThumbnail(Bitmap fullSizeImage, int thumbnailsize){
-        return ThumbnailUtils.extractThumbnail(fullSizeImage, thumbnailsize, thumbnailsize);
+    public static Bitmap createThumbnail(Bitmap fullSizeImage, int thumbnailSize){
+        return ThumbnailUtils.extractThumbnail(fullSizeImage, thumbnailSize, thumbnailSize);
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.localisation.LocationManagerWrapper;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 
 /**
  * Created by quentin on 23.11.16.

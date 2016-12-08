@@ -85,7 +85,7 @@ public class PhotoObject {
                        Timestamp createdDate, double latitude, double longitude){
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullsizeImage=true;
-        mFullsizeImageLink = null;  // link not avaiable yet
+        mFullsizeImageLink = null;  // link not available yet
         mThumbnail = BitmapUtils.createThumbnail(mFullsizeImage, THUMBNAIL_SIZE);
         mPictureId = DatabaseRef.getMediaDirectory().push().getKey();   //available even offline
         mPhotoName = photoName;
@@ -163,10 +163,12 @@ public class PhotoObject {
         int karmaAdded = 0;    // karma given to the photo's author
         if(mAuthorID.equals(votersId)){
             toastText="You can't vote for your own photo!";
-        }else if(mUpvotersList.contains(votersId) && vote==1) {   // illegal upvote
-            toastText = "you already upvoted this image !";
-        }else if(mDownvotersList.contains(votersId) && vote==-1){ // illegal downvote
-            toastText = "you already downvoted this image !";
+        }else if(mUpvotersList.contains(votersId) && vote==0) {   // cancel his upvote
+            voteIsValid = true;
+            toastText = "you removed your upvote !";
+        }else if(mDownvotersList.contains(votersId) && vote==0){ // cancel his downvote
+            voteIsValid = true;
+            toastText = "you removed your downvote !";
         }else{
             if(vote == 1) {
                 voteIsValid=true;
@@ -177,27 +179,40 @@ public class PhotoObject {
                 toastText = "downvoted !";
                 karmaAdded = DOWNVOTE_KARMA_GIVEN;
             }else {
-                throw new IllegalArgumentException("votes should be either 1 (upvote) or -1 (downvote)");
+                throw new IllegalArgumentException("votes should be either 1 (upvote), 0 (cancel vote) or -1 (downvote)");
             }
         }
 
         if(voteIsValid) {
-            if (vote == -1) {
+            if(vote == 0) {
+                if (mUpvotersList.contains(votersId)){
+                    mNbUpvotes -= 1;
+                    karmaAdded -= UPVOTE_KARMA_GIVEN;
+                    mUpvotersList.remove(votersId);
+                }
+                else{
+                    mNbDownvotes -= 1;
+                    karmaAdded -= DOWNVOTE_KARMA_GIVEN;
+                    mDownvotersList.remove(votersId);
+                }
+            }
+            else if (vote == -1) {
                 if (mUpvotersList.contains(votersId)) { //need to remove user's previous upvote and get back the karma from that upvote
                     mNbUpvotes -= 1;
                     karmaAdded -= UPVOTE_KARMA_GIVEN;
+                    mUpvotersList.remove(votersId);
                 }
                 mNbDownvotes += 1;
                 mDownvotersList.add(votersId);
-                mUpvotersList.remove(votersId);
+
             } else if (vote == 1) {
                 if (mDownvotersList.contains(votersId)) { //need to remove user's previous downvote and give back karma from that downvote
                     mNbDownvotes -= 1;
                     karmaAdded -= DOWNVOTE_KARMA_GIVEN;
+                    mDownvotersList.remove(votersId);
                 }
                 mNbUpvotes += 1;
                 mUpvotersList.add(votersId);
-                mDownvotersList.remove(votersId);
             }
 
             computeRadius();
@@ -207,13 +222,6 @@ public class PhotoObject {
             if(mFullsizeImageLink!=null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
                 DBref.child(mPictureId).setValue(this.convertForStorageInDatabase());
-                /*
-                DBref.child(mPictureId).child("upvotes").setValue(mNbUpvotes);
-                DBref.child(mPictureId).child("downvotes").setValue(mNbDownvotes);
-                DBref.child(mPictureId).child("upvotersList").setValue(mUpvotersList);
-                DBref.child(mPictureId).child("downvotersList").setValue(mDownvotersList);
-                DBref.child(mPictureId).child("expireDate").setValue(mExpireDate.getTime());
-                */
                 giveAuthorHisKarma(karmaAdded);
             }
         }
@@ -224,34 +232,36 @@ public class PhotoObject {
 
     public String processReport(String reporterID){
         String resultProcess = "";
-
-        if(mReportersList.contains(reporterID)){
-            resultProcess = "You unreported the picture.";
-            mNbReports --;
-            mReportersList.remove(reporterID);
-        } else {
-            resultProcess = "Thank you for reporting this picture.";
-            mNbReports++;
-            mReportersList.add(reporterID);
-        }
-
-        if(mFullsizeImageLink != null) {
-            DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-            DBref.child(mPictureId).child("reports").setValue(mNbReports);
-            DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
-        }
-
-        if(mNbReports >= MAX_NB_REPORTS){
-            if(mFullsizeImageLink != null) {
-                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                //remove picture from database
-                java.util.Date date= new java.util.Date();
-                DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
-                //decrease the karma of the picture author
-                giveAuthorHisKarma(REPORT_DECREASE_KARMA);
+        if (! reporterID.equals(mAuthorID)) {
+            if (mReportersList.contains(reporterID)) {
+                resultProcess = "You unreported the picture.";
+                mNbReports--;
+                mReportersList.remove(reporterID);
+            } else {
+                resultProcess = "Thank you for reporting this picture.";
+                mNbReports++;
+                mReportersList.add(reporterID);
             }
-        }
 
+            if (mFullsizeImageLink != null) {
+                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).child("reports").setValue(mNbReports);
+                DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+            }
+
+            if (mNbReports >= MAX_NB_REPORTS) {
+                if (mFullsizeImageLink != null) {
+                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                    //remove picture from database
+                    java.util.Date date = new java.util.Date();
+                    DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
+                    //decrease the karma of the picture author
+                    giveAuthorHisKarma(REPORT_DECREASE_KARMA);
+                }
+            }
+        } else {
+            resultProcess = "You can't report your own picture";
+        }
         return resultProcess;
     }
 
@@ -271,21 +281,21 @@ public class PhotoObject {
         try {
             gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullsizeImageLink);
         } catch (IllegalArgumentException e){
-            // getReferenceFromUrl throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+            // getReferenceFromUrl throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
             throw new IllegalArgumentException("Retrieving from improper Firebase Storage link "+mFullsizeImageLink);
         }
         final long TWO_MEGABYTE = 2 * 1024 * 1024;
-        Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(TWO_MEGABYTE);
+        Task<byte[]> retrieveFullsizeImageFromFileServer = gsReference.getBytes(TWO_MEGABYTE);
 
         // add default listener to cache the obtained image
-        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);
+        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileServer);
 
         // add optionnal (user's) listener
         if(hasOnCompleteListener){
             if(completionListener==null){
                 throw new NullPointerException("this listener is specified not to be null !");
             }
-            retrieveFullsizeImageFromFileserver.addOnCompleteListener(completionListener);
+            retrieveFullsizeImageFromFileServer.addOnCompleteListener(completionListener);
         }
     }
 
@@ -449,11 +459,11 @@ public class PhotoObject {
 
 
     /** converts This into an object that we can store in the database, by converting the thumbnail into a String
-     *  and leaving behing the fullsizeImage (which should be uploaded in fileserver, and retrieveable through the mFullsizeImageLink)
+     *  and leaving behind the fullsizeImage (which should be uploaded in fileServer, and retrievable through the mFullsizeImageLink)
      */
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
         if(mFullsizeImageLink==null){
-            throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
+            throw new AssertionError("the link should have been set after sending the fullsizeImage to fileServer - don't call this function on its own");
         }
         String linkToFullsizeImage = mFullsizeImageLink;
 

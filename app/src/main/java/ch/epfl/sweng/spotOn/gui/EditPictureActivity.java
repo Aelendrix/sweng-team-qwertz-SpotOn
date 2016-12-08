@@ -1,40 +1,31 @@
 package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import ch.epfl.sweng.spotOn.BuildConfig;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
-import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class EditPictureActivity extends AppCompatActivity {
 
@@ -46,7 +37,8 @@ public class EditPictureActivity extends AppCompatActivity {
     public String mTextToDraw;
     private Bitmap withoutTextBitmap;
     private boolean textIsDrawn = false;
-
+    private int screenWidth;
+    private int screenHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +51,11 @@ public class EditPictureActivity extends AppCompatActivity {
         mEditedBitmap = TakePictureFragment.getBitmap(mURIofBitmap, this);
         withoutTextBitmap = mEditedBitmap;
         mEditedImageView.setImageBitmap(mEditedBitmap);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
+        screenHeight = size.y;
     }
 
     @Override
@@ -171,7 +168,8 @@ public class EditPictureActivity extends AppCompatActivity {
 
     private boolean drawText(float x, float y) {
         Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Log.d("TextToDraw", mTextToDraw);
+        int imgHeight = addTextBitmap.getHeight();
+        int imgWidth = addTextBitmap.getWidth();
         if(mTextToDraw != null){
             //Edits the bitmap in a canvas
             Log.d("TextToDraw", "entered the loop");
@@ -181,7 +179,7 @@ public class EditPictureActivity extends AppCompatActivity {
             paint.setShadowLayer(10, 0, 0, Color.BLACK);
             paint.setTextSize(50);
             paint.setFakeBoldText(true);
-            canvas.drawText(mTextToDraw, x, y, paint);
+            canvas.drawText(mTextToDraw, x*imgWidth/screenWidth, y*imgHeight/screenHeight, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
             mEditedBitmap = addTextBitmap;
             return true;

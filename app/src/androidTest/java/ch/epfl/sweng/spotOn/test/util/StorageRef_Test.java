@@ -9,7 +9,7 @@ import com.google.firebase.storage.StorageReference;
 
 public class StorageRef_Test {
 
-    private final static String mStorageRefString = "Images_test";;
+    private final static String mStorageRefString = "Images_test";
     private final static StorageReference mStorageReference = FirebaseStorage.getInstance().getReference(mStorageRefString);
 
 
@@ -19,7 +19,7 @@ public class StorageRef_Test {
     }
 
 
-    // CONSTUCTOR FOR SINGLETON
+    // CONSTRUCTOR FOR SINGLETON
     private StorageRef_Test(){
         // empty
     }

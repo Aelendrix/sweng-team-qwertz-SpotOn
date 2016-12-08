@@ -11,7 +11,8 @@
             android:id="@+id/profilePictureThumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginLeft="17dp"/>
+            android:layout_marginLeft="17dp"
+            android:contentDescription="@string/contentDescriptionPictureThumbnailImage"/>
 
         <Button
             android:text="@string/userProfileListPictureDeleteButton"

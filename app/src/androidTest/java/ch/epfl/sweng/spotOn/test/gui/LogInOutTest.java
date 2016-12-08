@@ -6,13 +6,9 @@ import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
-import android.widget.Button;
-import android.widget.EditText;
+
+import com.facebook.login.LoginManager;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,12 +21,8 @@ import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 /**
@@ -69,6 +61,7 @@ public class LogInOutTest {
     //this test can fail randomly cause it depends of retrieving a webview from facebook
     public void logInAndOut() throws Exception {
         mActivityTestRule.launchActivity(new Intent());
+        Thread.sleep(5000);
         onView(withId(R.id.mainLoginButton)).perform(click());/*
         Thread.sleep(4000); // sorry... my phone is slow
 

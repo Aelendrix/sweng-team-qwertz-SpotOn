@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.Image;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,9 +41,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private int voteSum=0;
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
-    private ImageButton mUpvoteButton;
-    private ImageButton mDownvoteButton;
-    private Button mReportButton;
     private PhotoObject mDisplayedMedia;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
@@ -72,7 +66,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Log.d("instantiateItem", "called1");
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
         mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
@@ -84,7 +77,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
         }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
@@ -100,8 +93,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                     if(retrieveFullSizePicTask.getException()!=null){
                         currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                        // maybe it's better if we recover from this, and use only a log. Tell me in the Pull Request Comments (also, I left it as is to proove it passes tests
-                        throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureid : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+                        // maybe it's better if we recover from this, and use only a log
+                        throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
                         //Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
                     }else{
                         Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
@@ -113,16 +106,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         //upvotes
         if(mCurrentPicture != null) {
             voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
-        }
-
-
-        View viewFullSize = inflater.inflate(R.layout.activity_view_fullsize_image, container, false);
-        mUpvoteButton = (ImageButton) viewFullSize.findViewById(R.id.upvoteButton);
-        mDownvoteButton = (ImageButton) viewFullSize.findViewById(R.id.downvoteButton);
-        mReportButton = (Button) viewFullSize.findViewById(R.id.reportButton);
-        if(UserManager.getInstance().userIsLoggedIn() && mCurrentPicture != null) {
-            String userID = UserManager.getInstance().getUser().getUserId();
-            colorButtons(userID);
         }
 
         container.addView(viewLayout);
@@ -137,7 +120,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public void refreshVoteTextView(int position){
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : "+wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
         }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
         int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
@@ -146,11 +129,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     public void recordUpvote(View view){
-        vote(1);
+        if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else {
+            vote(1);
+        }
     }
 
-    public void recordDownvote(View view){
-        vote(-1);
+     public void recordDownvote(View view){
+        if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else{
+            vote(-1);
+        }
     }
 
 
@@ -159,23 +152,31 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
+            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
             //fake vote method to have more responsive interface
-
+            Log.d("XD","1: "+voteSum);
             if(vote==1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
-                colorIfUpvote();
                 if(alreadyDownvoted(userId)){
                     voteSum++;
                 }
             }
 
-            if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
+            else if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
-                colorIfDownvote();
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
             }
+            else if(vote == 0) {
+                if(alreadyUpvoted(userId)){
+                    voteSum--;
+                }
+                else{
+                    voteSum++;
+                }
+            }
+            Log.d("XD","2: "+voteSum);
             if(!mCurrentPicture.getAuthorId().equals(userId)) {
                 mTextView.setText(Integer.toString(voteSum));
             }
@@ -193,10 +194,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
             String userId = UserManager.getInstance().getUser().getUserId();
 
             //Change color of report button depending if the user reports or unreports the picture
-            if(alreadyReported(userId)){
-                colorIfNotReported(view);
-            } else {
-                colorIfReported(view);
+            //and if he is not the author of the picture
+            if(! userId.equals(mCurrentPicture.getAuthorId())) {
+                if (alreadyReported(userId)) {
+                    colorIfNotReported(view);
+                } else {
+                    colorIfReported(view);
+                }
             }
             String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
@@ -208,7 +212,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         Log.d("Current media position", "" + position);
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if (!LocalDatabase.getInstance().hasKey(wantedPicId)) {
-            throw new NoSuchElementException("Localdatabase does not contain wanted picture : " + wantedPicId);
+            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : " + wantedPicId);
         }
         mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
     }
@@ -218,7 +222,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has upvoted the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyUpvoted(String userID){
+    public boolean alreadyUpvoted(String userID){
         if(mCurrentPicture != null) {
             return mCurrentPicture.getUpvotersList().contains(userID);
         } else {
@@ -230,7 +234,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has downvoted the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyDownvoted(String userID){
+    public boolean alreadyDownvoted(String userID){
         if(mCurrentPicture != null){
             return mCurrentPicture.getDownvotersList().contains(userID);
         } else {
@@ -242,7 +246,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      * Checks if the user has reported the displayed picture
      * @param userID the user ID
      */
-    private boolean alreadyReported(String userID){
+    public boolean alreadyReported(String userID){
         if(mCurrentPicture != null) {
             return mCurrentPicture.getReportersList().contains(userID);
         } else {
@@ -250,25 +254,17 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-    private void colorButtons(String userID){
-        if(alreadyUpvoted(userID)){
-            colorIfUpvote();
-        } else if (alreadyDownvoted(userID)) {
-            colorIfDownvote();
+    /**
+     * Method useful for the ViewFullSizeImageActivity to make sure the buttons do not change color
+     * when the user votes for his own picture
+     * @return the author of the displayed picture
+     */
+    public String getAuthorOfDisplayedPicture(){
+        if(mCurrentPicture == null){
+            throw new NullPointerException("The photoObject is null: can't retrieve the author ID");
+        } else {
+            return mCurrentPicture.getAuthorId();
         }
-        /*if(alreadyReported(userID)){
-            colorIfReported();
-        }*/
-    }
-
-    private void colorIfUpvote(){
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote_clicked);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote);
-    }
-
-    private void colorIfDownvote(){
-        mUpvoteButton.setBackgroundResource(R.drawable.button_shape_upvote);
-        mDownvoteButton.setBackgroundResource(R.drawable.button_shape_downvote_clicked);
     }
 
     private void colorIfReported(View view){

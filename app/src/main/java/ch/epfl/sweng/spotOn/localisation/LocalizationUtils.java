@@ -9,14 +9,14 @@ import android.location.Location;
 public class LocalizationUtils {
 
     // decides if newLocation is better than currentBestLocation in term of recentness, and accuracy
-    static public boolean isBetterLocation(Location newlocation, Location currentBestLocation) {
+    static public boolean isBetterLocation(Location newLocation, Location currentBestLocation) {
         final int THRESHOLD_ONE_MINUTE = 60*1000;
         if (currentBestLocation == null) {
             return true;
         }
 
         // Filter 2 locations in function of time
-        long timeDiff = newlocation.getTime() - currentBestLocation.getTime();
+        long timeDiff = newLocation.getTime() - currentBestLocation.getTime();
         boolean isNewer = timeDiff > 0;
         if (timeDiff > THRESHOLD_ONE_MINUTE) {
             return true;
@@ -25,14 +25,14 @@ public class LocalizationUtils {
         }
 
         // Filter 2 location in function of accuracy
-        int accuracyDelta = (int) (newlocation.getAccuracy() - currentBestLocation.getAccuracy());
+        int accuracyDelta = (int) (newLocation.getAccuracy() - currentBestLocation.getAccuracy());
 
         // Determine location quality using a combination of timeliness and accuracy
         if (accuracyDelta < 0) {
             return true;
         } else if (isNewer &&
                 accuracyDelta < 200 &&
-                LocalizationUtils.isSameProvider(newlocation.getProvider(), currentBestLocation.getProvider())) {
+                LocalizationUtils.isSameProvider(newLocation.getProvider(), currentBestLocation.getProvider())) {
             return true;
         }
         return false;
