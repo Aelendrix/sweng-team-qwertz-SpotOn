@@ -17,7 +17,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
  * Created by Olivier on 31.10.2016.
  * Generate a cluster of Pin with custom condition of when it should render cluster and/or pins
  */
-class ClusterRenderer extends DefaultClusterRenderer<Pin> {
+public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
     boolean zoom = false;
     GoogleMap mMap;
@@ -28,7 +28,7 @@ class ClusterRenderer extends DefaultClusterRenderer<Pin> {
      * @param map the map on which the clusterRenderer works
      * @param clusterManager the manager of all the clusters
      */
-    ClusterRenderer(Context context, GoogleMap map,
+    public ClusterRenderer(Context context, GoogleMap map,
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
         mMap = map;
