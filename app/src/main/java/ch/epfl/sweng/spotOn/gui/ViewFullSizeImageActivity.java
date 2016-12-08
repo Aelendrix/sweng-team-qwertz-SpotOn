@@ -70,6 +70,7 @@ public class ViewFullSizeImageActivity extends Activity {
             viewPager.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    v.performClick();
                     return gestureDetector.onTouchEvent(event);
                 }
             });

@@ -44,7 +44,7 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
             LocalDatabase.getInstance().addListener(this);
             refreshVoteAndPictureLists();
-            
+
             //concatenate String is not advised in a setText, so we create the string before.
             String firstName = mFirstNameTextView.getText() + " " + mUser.getFirstName();
             String lastName = mLastNameTextView.getText() + " " + mUser.getLastName();
