@@ -16,7 +16,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -76,7 +75,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         super.onCreate(savedInstanceState);
         // add as listener
         if(!LocalDatabase.instanceExists() || !ConcreteLocationTracker.instanceExists()){
-            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instanciated"));
+            throw new IllegalStateException(("MapFragment can't function if the LocalDatabase and LocationTracker singletons aren't instantiated"));
         }
         ConcreteLocationTracker.getInstance().addListener(this);
         LocalDatabase.getInstance().addListener(this);
@@ -277,8 +276,8 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         } else {
             Log.d("Thumbnail", "thumbnail clicked not in the list");
         }
-        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullsizeImageActivity.class);
-//        displayFullSizeImageIntent.putExtra(ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
+        Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullSizeImageActivity.class);
+//        displayFullSizeImageIntent.putExtra(ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID, thumbID);
         startActivity(displayFullSizeImageIntent);
     }
 

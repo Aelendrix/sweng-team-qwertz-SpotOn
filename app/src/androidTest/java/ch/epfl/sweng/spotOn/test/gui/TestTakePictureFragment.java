@@ -9,11 +9,7 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
-import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-
 
 import org.junit.After;
 import org.junit.Rule;
@@ -26,7 +22,6 @@ import java.io.OutputStream;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;

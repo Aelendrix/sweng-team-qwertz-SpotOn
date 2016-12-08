@@ -8,10 +8,8 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -21,9 +19,9 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
-public class ViewFullsizeImageActivity extends Activity {
+public class ViewFullSizeImageActivity extends Activity {
 
-    //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullsizeImageActivity.WANTED_IMAGE_PICTUREID";
+    //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID";
 
     private FullScreenImageAdapter mFullScreenImageAdapter;
 

@@ -8,7 +8,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.user.UserManager;
@@ -45,8 +44,8 @@ public class ServicesChecker {
 
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
         if( ltref==null || ldbref==null|| userRef==null){
-            // test to enforce that all required singletons are instanciated
-            throw new IllegalStateException("Must initialize LocationTracker, Localdatabase and UserManager first");
+            // test to enforce that all required singletons are instantiated
+            throw new IllegalStateException("Must initialize LocationTracker, LocalDatabase and UserManager first");
         }
         // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
 //        mListeners = new ArrayList<>();
@@ -166,7 +165,7 @@ public class ServicesChecker {
 //    @Override
 //    public void locationTimedOut(Location old) {
 //        if(locationIsValid){           // change in services status
-//            Log.d("ServicesChecker","location timedout : listeners notified");
+//            Log.d("ServicesChecker","location timed out : listeners notified");
 //            locationIsValid = false;
 ////            notifyListeners();
 //        }

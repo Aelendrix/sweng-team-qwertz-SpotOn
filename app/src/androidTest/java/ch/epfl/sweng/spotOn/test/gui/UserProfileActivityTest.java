@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -38,7 +39,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
-    PhotoObject po;
+
+    PhotoObject po = null;
+
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
             new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
@@ -73,6 +76,7 @@ public class UserProfileActivityTest {
         Intents.init();
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         intended(hasComponent(ViewUserPhotoActivity.class.getName()));
+        Espresso.pressBack();
         Intents.release();
     }
 

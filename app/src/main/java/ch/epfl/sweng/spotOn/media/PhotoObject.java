@@ -85,7 +85,7 @@ public class PhotoObject {
                        Timestamp createdDate, double latitude, double longitude){
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
         mHasFullsizeImage=true;
-        mFullsizeImageLink = null;  // link not avaiable yet
+        mFullsizeImageLink = null;  // link not available yet
         mThumbnail = BitmapUtils.createThumbnail(mFullsizeImage, THUMBNAIL_SIZE);
         mPictureId = DatabaseRef.getMediaDirectory().push().getKey();   //available even offline
         mPhotoName = photoName;
@@ -281,21 +281,21 @@ public class PhotoObject {
         try {
             gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(mFullsizeImageLink);
         } catch (IllegalArgumentException e){
-            // getReferenceFromUrl throws an IllegalArgumentExceptino if mFullsizeImageLink isn't a valid firebase link
+            // getReferenceFromUrl throws an IllegalArgumentException if mFullsizeImageLink isn't a valid firebase link
             throw new IllegalArgumentException("Retrieving from improper Firebase Storage link "+mFullsizeImageLink);
         }
         final long TWO_MEGABYTE = 2 * 1024 * 1024;
-        Task<byte[]> retrieveFullsizeImageFromFileserver = gsReference.getBytes(TWO_MEGABYTE);
+        Task<byte[]> retrieveFullsizeImageFromFileServer = gsReference.getBytes(TWO_MEGABYTE);
 
         // add default listener to cache the obtained image
-        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileserver);
+        addRetrieveFullsizeImageDefaultListeners(retrieveFullsizeImageFromFileServer);
 
         // add optionnal (user's) listener
         if(hasOnCompleteListener){
             if(completionListener==null){
                 throw new NullPointerException("this listener is specified not to be null !");
             }
-            retrieveFullsizeImageFromFileserver.addOnCompleteListener(completionListener);
+            retrieveFullsizeImageFromFileServer.addOnCompleteListener(completionListener);
         }
     }
 
@@ -459,11 +459,11 @@ public class PhotoObject {
 
 
     /** converts This into an object that we can store in the database, by converting the thumbnail into a String
-     *  and leaving behing the fullsizeImage (which should be uploaded in fileserver, and retrieveable through the mFullsizeImageLink)
+     *  and leaving behind the fullsizeImage (which should be uploaded in fileServer, and retrievable through the mFullsizeImageLink)
      */
     private PhotoObjectStoredInDatabase convertForStorageInDatabase(){
         if(mFullsizeImageLink==null){
-            throw new AssertionError("the link should have been set after sending the fullsizeImage to fileserver - don't call this function on its own");
+            throw new AssertionError("the link should have been set after sending the fullsizeImage to fileServer - don't call this function on its own");
         }
         String linkToFullsizeImage = mFullsizeImageLink;
 

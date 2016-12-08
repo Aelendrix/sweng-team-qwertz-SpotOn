@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by Alexis Dewaele on 07/10/2016.
- * This class adapts the various fragments to viewpagers
+ * This class adapts the various fragments to viewPagers
  */
 
 public class ViewPagerAdapter extends FragmentPagerAdapter{

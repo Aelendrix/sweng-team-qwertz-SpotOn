@@ -1,20 +1,16 @@
 package ch.epfl.sweng.spotOn.test;
 
-import android.app.Activity;
 import android.location.Location;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;

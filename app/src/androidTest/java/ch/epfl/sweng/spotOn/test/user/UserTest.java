@@ -33,13 +33,13 @@ public class UserTest {
 
     @Test
     public void testSetAndGetUser() throws InterruptedException{
-        testUser = new RealUser("firstname","lastname","mlb",null);
+        testUser = new RealUser("firstName","lastName","mlb",null);
         testUser.setKarma(500);
 
         Thread.sleep(3000);
 
-        Assert.assertEquals(testUser.getFirstName(), "firstname");
-        Assert.assertEquals(testUser.getLastName(), "lastname");
+        Assert.assertEquals(testUser.getFirstName(), "firstName");
+        Assert.assertEquals(testUser.getLastName(), "lastName");
         Assert.assertEquals(testUser.getUserId(), "mlb");
         Assert.assertEquals(testUser.getKarma(), 500);
         Assert.assertEquals(testUser.computeRemainingPhotos(), RealUser.computeMaxPhotoInDay(500));
@@ -50,7 +50,7 @@ public class UserTest {
 
     @Test
     public void testAddAndRemovePhoto() throws InterruptedException{
-        testUser = new RealUser("firstname","lastname","mlb",null);
+        testUser = new RealUser("firstName","lastName","mlb",null);
 
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
         PhotoObject po = new PhotoObject(image, testUser.getUserId(), "photo1", new Timestamp(new Date().getTime()), 46.52890355757888, 6.569420238493888);

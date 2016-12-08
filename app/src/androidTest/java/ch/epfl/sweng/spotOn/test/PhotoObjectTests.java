@@ -90,14 +90,14 @@ public class PhotoObjectTests {
             p.processVote(1, "zertherth");
             p.processVote(1, "wergwasdf");
             if(p.getUpvotes()!=4){
-                throw new AssertionError("votes should all register\n"+p.toString());
+                throw new AssertionError("votes should all be registered\n"+p.toString());
             }
             p.processVote(1, sameAuthorId); // to remove the downvote this user issued during the 1st sequence of votes
             p.processVote(-1, "wefv<asdfv");
             p.processVote(-1, "zertheAFQ3RQrth");
             p.processVote(-1, "wergwasWQRFQWdf");
             if(p.getDownvotes()!=4){
-                throw new AssertionError("votes should all registern\n"+p.toString());
+                throw new AssertionError("votes should all be registered\n"+p.toString());
             }
         }
     }
@@ -196,7 +196,7 @@ public class PhotoObjectTests {
     }
 
     @Test
-    public void photoOBjectInstantiatesCorrectly(){
+    public void photoObjectInstantiatesCorrectly(){
         Bitmap fullSizePic = null;
         fullSizePic = PhotoObjectTestUtils.getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
         String authorID = "author";
@@ -227,16 +227,14 @@ public class PhotoObjectTests {
         PhotoObject po = new PhotoObject(fullSizePic, authorID, photoName,
                 createdDate, latitude, longitude);
         DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+
         assert (po.getFullSizeImage() == fullSizePic);
-        assert (po.getAuthorId() == authorID);
-        assert (po.getPhotoName() == photoName);
-        assert (po.getCreatedDate() == createdDate);
-        assert (po.getExpireDate().getTime() > createdDate.getTime());
-        assert (po.getLatitude() == latitude);
-        assert (po.getLongitude() == longitude);
-        assert (po.getPictureId().length() == DBref.push().getKey().length());
+        Assert.assertEquals(po.getAuthorId().equals(authorID), true);
+        Assert.assertEquals(po.getPhotoName().equals(photoName), true);
+        Assert.assertEquals(po.getCreatedDate(), createdDate);
+        Assert.assertEquals(po.getExpireDate().getTime() > createdDate.getTime(), true);
+        Assert.assertEquals(po.getLatitude(), latitude);
+        Assert.assertEquals(po.getLongitude(), longitude);
+        Assert.assertEquals(po.getPictureId().length(), DBref.push().getKey().length());
     }
-
-
-
 }

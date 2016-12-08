@@ -360,7 +360,7 @@ public class TakePictureFragment extends Fragment {
                 }
             } else {
 
-                ToastProvider.printOverCurrent("Internal error while creating your post : HQpicture null", Toast.LENGTH_SHORT);
+                ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }
         }
         else {
