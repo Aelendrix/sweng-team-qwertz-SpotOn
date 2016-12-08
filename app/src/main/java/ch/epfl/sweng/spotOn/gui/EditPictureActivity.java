@@ -27,6 +27,10 @@ import java.io.IOException;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 
+/**
+ * Created by Olivier and Alexis Dewaele
+ * Activity to edit a BitMap picture (rotation)
+ */
 public class EditPictureActivity extends AppCompatActivity {
 
     private final static int REQUEST_TEXT_DRAWING = 30;
@@ -58,6 +62,11 @@ public class EditPictureActivity extends AppCompatActivity {
         screenHeight = size.y;
     }
 
+    /**
+     * Listen to the touchscreen of the phone to draw the text on the finger position
+     * @param event the touch event which get triggered
+     * @return True if the event was handled (when there is a valid text to draw), false otherwise.
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float textPositionX = event.getX();
@@ -77,7 +86,7 @@ public class EditPictureActivity extends AppCompatActivity {
     /**
      * Method that will be called when clicking on the Rotate button. It will rotate the bitmap image
      * and set the image view with the rotated bitmap
-     * @param view
+     * @param view useless because called by a button
      */
     public void rotatePicture(View view){
         Matrix rotationMatrix = new Matrix();
@@ -90,8 +99,8 @@ public class EditPictureActivity extends AppCompatActivity {
     }
 
     /**
-     * Method that will be called when clicking on the "Add Text" button
-     * @param view
+     * Called when clicking on the "Add Text" button. Launch an activity popup to ask for the text
+     * @param view useless because called by a button
      */
     public void goToDrawTextActivity(View view){
             Intent intent = new Intent(this, DrawTextActivity.class);
@@ -101,7 +110,7 @@ public class EditPictureActivity extends AppCompatActivity {
     /**
      * Method that will be called when clicking on the "Done" button to get back to the
      * TakePictureFragment activity and keeping the edited changes
-     * @param view
+     * @param view useless because called by a button
      */
     public void confirmChanges(View view){
         Intent intent = new Intent();
@@ -166,6 +175,12 @@ public class EditPictureActivity extends AppCompatActivity {
         return resUri;
     }
 
+    /**
+     * Draw text on a BitMap in function of the given position
+     * @param x the position in the X axis where we draw the text
+     * @param y the position in the Y axis where we draw the text
+     * @return true if the text is drawn, false otherwise
+     */
     private boolean drawText(float x, float y) {
         Bitmap addTextBitmap = mEditedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         int imgHeight = addTextBitmap.getHeight();
@@ -179,6 +194,7 @@ public class EditPictureActivity extends AppCompatActivity {
             paint.setShadowLayer(10, 0, 0, Color.BLACK);
             paint.setTextSize(50);
             paint.setFakeBoldText(true);
+            //the parameter are scaled for the same position as the finger touch.
             canvas.drawText(mTextToDraw, x*imgWidth/screenWidth, y*imgHeight/screenHeight, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
             mEditedBitmap = addTextBitmap;

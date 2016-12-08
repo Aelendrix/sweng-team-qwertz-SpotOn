@@ -6,8 +6,14 @@ import android.util.DisplayMetrics;
 
 import ch.epfl.sweng.spotOn.R;
 
+/**
+ *  Created by Alexis Dewaele
+ *  Small popup in front of an activity, used to show text information
+ */
 public class AboutPage extends AppCompatActivity {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,9 +22,9 @@ public class AboutPage extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
+        //popup is smaller than his parent
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-
         getWindow().setLayout((int) (width*0.8), (int)(height*0.5));
     }
 }

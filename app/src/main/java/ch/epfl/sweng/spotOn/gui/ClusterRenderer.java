@@ -14,31 +14,30 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 /**
- * Get the right colors on the pins (green or yellow) for the cluster manager
- * Created by olivi on 31.10.2016.
+ * Created by Olivier on 31.10.2016.
+ * Generate a cluster of Pin with custom condition of when it should render cluster and/or pins
  */
-public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
-    /*private Context mContext;
-    private final IconGenerator mIconGenerator;
-    private ShapeDrawable mColoredCircleBackground;
-    private SparseArray<BitmapDescriptor> mIcons = new SparseArray<>();
-    private final float mDensity;*/
+class ClusterRenderer extends DefaultClusterRenderer<Pin> {
+
     boolean zoom = false;
     GoogleMap mMap;
-    public ClusterRenderer(Context context, GoogleMap map,
+
+    /**
+     * Custom clusterRenderer
+     * @param context the context of the call
+     * @param map the map on which the clusterRenderer works
+     * @param clusterManager the manager of all the clusters
+     */
+    ClusterRenderer(Context context, GoogleMap map,
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
         mMap = map;
-        /*mContext = context;
-        mIconGenerator = new IconGenerator(context);
-        mIconGenerator.setContentView(this.makeSquareTextView(context));
-        mIconGenerator.setTextAppearance(
-                com.google.maps.android.R.style.amu_ClusterIcon_TextAppearance);
-        mIconGenerator.setBackground(this.makeClusterBackground());
-        mColoredCircleBackground = new ShapeDrawable(new OvalShape());
-        mDensity = context.getResources().getDisplayMetrics().density;*/
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     protected void onBeforeClusterItemRendered(Pin pin,
                                                MarkerOptions markerOptions) {
@@ -47,19 +46,9 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
         markerOptions.icon(markerDescriptor).zIndex(pin.getZDepth());
     }
 
-    /*@Override
-    protected void onBeforeClusterRendered(Cluster<Pin> cluster,
-                                           MarkerOptions markerOptions) {
-        int bucket = getBucket(cluster);
-        BitmapDescriptor descriptor = this.mIcons.get(bucket);
-        if(descriptor == null){
-            descriptor = BitmapDescriptorFactory.fromBitmap(
-                    mIconGenerator.makeIcon(getClusterText(bucket)));
-            mIcons.put(bucket, descriptor);
-        }
-        markerOptions.icon(descriptor);
-    }*/
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean shouldRenderAsCluster(Cluster cluster) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -68,32 +57,11 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-        return cluster.getSize() >=3  && !zoom;
+        return cluster.getSize() >=4  && !zoom;
     }
 
     private void computeZoom(){
         zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
 
     }
-    /*private SquareTextView makeSquareTextView(Context context){
-        SquareTextView squareTextView = new SquareTextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(-2, -2);
-        squareTextView.setLayoutParams(layoutParams);
-        squareTextView.setId(com.google.maps.android.R.id.amu_text);
-        int dpi = (int)(12.0 * this.mDensity);
-        squareTextView.setPadding(dpi, dpi, dpi, dpi);
-        return squareTextView;
-    }
-
-    private LayerDrawable makeClusterBackground(){
-        int clusterOutlineColor = ContextCompat.getColor(mContext, R.color.cardview_light_background);
-        mColoredCircleBackground = new ShapeDrawable(new OvalShape());
-        ShapeDrawable outline = new ShapeDrawable(new OvalShape());
-        outline.getPaint().setColor(clusterOutlineColor);
-        LayerDrawable background = new LayerDrawable(
-                new Drawable[]{outline, mColoredCircleBackground});
-        int strokeWidth = (int)(mDensity * 3.0);
-        background.setLayerInset(1, strokeWidth, strokeWidth, strokeWidth, strokeWidth);
-        return background;
-    }*/
 }

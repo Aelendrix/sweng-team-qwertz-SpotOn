@@ -19,7 +19,6 @@ import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
  * launched when an alarm goes off.
  *
  */
-
 public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
 
     private final String VALUE_TO_CHECK = "expireDate";
