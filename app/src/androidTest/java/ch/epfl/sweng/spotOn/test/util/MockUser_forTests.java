@@ -100,4 +100,7 @@ public class MockUser_forTests implements User {
     public void setPhotosTaken(Map<String, Long> m) {
         mPhotosTaken=m;
     }
+
+    @Override
+    public Map<String, Long> retrieveUpdatedPhotosTaken(){ return mPhotosTaken; }
 }
