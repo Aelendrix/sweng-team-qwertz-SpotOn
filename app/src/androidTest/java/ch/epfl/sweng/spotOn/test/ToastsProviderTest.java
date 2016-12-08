@@ -12,16 +12,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
-import ch.epfl.sweng.spotOn.test.util.MockFirebaseConnectionTracker_forTests;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.user.UserManager;
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 

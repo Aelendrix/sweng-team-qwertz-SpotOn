@@ -22,7 +22,6 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
-import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -169,25 +168,25 @@ public class TabActivity extends AppCompatActivity{
     }
 
     public void onUpVoteOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
         hideOrderMenu();
     }
 
     public void onOldestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.OLDEST_ORDER);
         hideOrderMenu();
     }
 
     public void onNewestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.NEWEST_ORDER);
         hideOrderMenu();
     }
 
     public void onHottestOrderingClick(View v){
-        ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.HOTTEST_ORDER);
         hideOrderMenu();
     }

@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.test.util;
 
-import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionListener;
 import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionTracker;
 

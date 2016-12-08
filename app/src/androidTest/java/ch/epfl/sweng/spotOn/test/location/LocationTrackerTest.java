@@ -31,7 +31,7 @@ public class LocationTrackerTest{
 
     private MockLocationManagerWrapper_forTests mlm;
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
 
 
@@ -168,11 +168,7 @@ public class LocationTrackerTest{
             return false;
         } else if(l1.getLongitude() != l2.getLongitude()){
             return false;
-        } else if(l1.getLatitude() != l2.getLatitude()){
-            return false;
-        } else {
-            return true;
-        }
+        } else return l1.getLatitude() == l2.getLatitude();
     }
 
     private void initFieldLocations(){

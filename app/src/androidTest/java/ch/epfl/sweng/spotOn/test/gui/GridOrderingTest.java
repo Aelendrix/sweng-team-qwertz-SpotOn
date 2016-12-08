@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
@@ -39,28 +38,28 @@ public class GridOrderingTest {
     public void testChangeOrdering () throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         //Let the local database refresh
-        Thread.sleep(5000);
+        Thread.sleep(4000);
         onView(withText("Around me")).perform(click());
-        Thread.sleep(1000);
-        onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
-        onView(withText("Upvote")).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Oldest")).perform(click());
-        Thread.sleep(1000);
+        onView(withId(R.id.order_upvote_button)).perform(click());
+        Thread.sleep(100);
         onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Newest")).perform(click());
-        Thread.sleep(1000);
+        onView(withId(R.id.order_oldest_button)).perform(click());
+        Thread.sleep(100);
         onView(withId(R.id.extend_list_button)).perform(click());
         Thread.sleep(1000);
-        onView(withText("Hot")).perform(click());
+        onView(withId(R.id.order_newest_button)).perform(click());
+        Thread.sleep(100);
+        onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.order_hottest_button)).perform(click());
     }
 
     @After

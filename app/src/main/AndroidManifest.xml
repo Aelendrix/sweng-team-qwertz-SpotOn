@@ -98,8 +98,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".gui.EditPictureActivity"></activity>
-        <activity android:name=".gui.ViewUserPhotoActivity"></activity>
+        <activity android:name=".gui.EditPictureActivity" />
+        <activity android:name=".gui.ViewUserPhotoActivity" />
     </application>
 
 </manifest>
