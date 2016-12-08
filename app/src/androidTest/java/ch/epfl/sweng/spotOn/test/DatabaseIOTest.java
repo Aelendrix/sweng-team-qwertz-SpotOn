@@ -196,11 +196,11 @@ public class DatabaseIOTest {
         int upvotes = 9;
         int downvotes = 7;
         int reports = 1;
-        ArrayList<String> upvotersList = new ArrayList<String>();
+        ArrayList<String> upvotersList = new ArrayList<>();
         upvotersList.add("truc");
         upvotersList.add("machine");
-        ArrayList<String> downvotersList = new ArrayList<String>();
-        ArrayList<String> reportersList = new ArrayList<String>();
+        ArrayList<String> downvotersList = new ArrayList<>();
+        ArrayList<String> reportersList = new ArrayList<>();
         reportersList.add("user1");
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
                 latitude, longitude, upvotes, downvotes, reports, upvotersList, downvotersList,

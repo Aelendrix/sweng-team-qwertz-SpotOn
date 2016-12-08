@@ -98,9 +98,9 @@ public class PhotoObject {
         mNbUpvotes = 1;     // initialize at 1 to avoid any possible division by 0 later
         mNbDownvotes = 1;
         mNbReports = 0;
-        mDownvotersList = new ArrayList<String>();
-        mUpvotersList = new ArrayList<String>();
-        mReportersList = new ArrayList<String>();
+        mDownvotersList = new ArrayList<>();
+        mUpvotersList = new ArrayList<>();
+        mReportersList = new ArrayList<>();
         this.computeRadius();
         this.computeExpireDate();
     }

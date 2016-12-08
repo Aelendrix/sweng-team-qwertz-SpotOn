@@ -21,7 +21,7 @@ public class MockLocationManagerWrapper_forTests implements LocationManagerWrapp
 
     private Location mLocation;
 
-    private List<LocationListener> mListeners = new ArrayList<LocationListener>();
+    private List<LocationListener> mListeners = new ArrayList<>();
 
     private Handler fakeNewLocationHandler;
     private Runnable runForNewLocation;

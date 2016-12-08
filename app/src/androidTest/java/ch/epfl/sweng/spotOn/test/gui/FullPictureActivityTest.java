@@ -44,7 +44,7 @@ public class FullPictureActivityTest {
 
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class,true,false);
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class, true, false);
 
     @Before
     public void initLocalDatabase(){

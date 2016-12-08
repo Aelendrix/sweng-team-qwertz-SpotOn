@@ -113,8 +113,9 @@ public final class ConcreteLocationTracker implements LocationTracker {
     public boolean hasValidLocation(){
         if(mLocation==null){
             return false;
-        }else
+        }else {
             return mLocation.getTime() - Calendar.getInstance().getTime().getTime() <= TIMEOUT_LOCATION;
+        }
     }
 
     public Location getLocation(){
