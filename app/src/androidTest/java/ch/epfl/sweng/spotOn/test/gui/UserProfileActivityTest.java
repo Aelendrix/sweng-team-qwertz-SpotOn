@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
-
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
@@ -115,9 +114,8 @@ public class UserProfileActivityTest {
                 Press.FINGER);
     }
 
-
     @After
-    public void removePicture(){
+    public void clearObject(){
         DatabaseRef.deletePhotoObjectFromDB(po.getPictureId());
         StorageRef.deletePictureFromStorage(po.getPictureId());
     }
