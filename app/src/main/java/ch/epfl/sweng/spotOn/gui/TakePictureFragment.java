@@ -174,7 +174,7 @@ public class TakePictureFragment extends Fragment {
 
     /**
      * Method called when clicking the "Edit" Button, it goes to the EditPicture activity
-     * @param view
+     * @param view Unused because is a button linked method
      */
     public void editPicture(View view){
         if(mActualPhotoObject == null){
@@ -196,7 +196,7 @@ public class TakePictureFragment extends Fragment {
 
     /**
      * Checks if the application has the storage permission
-     * @return
+     * @return true if you have the permission to save file in the phone storage, false otherwise
      */
     private boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {

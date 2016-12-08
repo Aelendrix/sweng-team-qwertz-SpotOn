@@ -228,7 +228,7 @@ public class PhotoObjectTests {
                 createdDate, latitude, longitude);
         DatabaseReference DBref = DatabaseRef.getMediaDirectory();
 
-        assert (po.getFullSizeImage() == fullSizePic);
+        Assert.assertEquals(po.getFullSizeImage() == fullSizePic,true);
         Assert.assertEquals(po.getAuthorId().equals(authorID), true);
         Assert.assertEquals(po.getPhotoName().equals(photoName), true);
         Assert.assertEquals(po.getCreatedDate(), createdDate);

@@ -53,7 +53,7 @@
     <string name="contentDescriptionDownVoteImageButton">DownVoteButton</string>
     <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
     <string name="contentDescriptionLoginTextView">LoginTextView</string>
-
-
+    <string name="profile_menu">Profile</string>
+    
 </resources>
 

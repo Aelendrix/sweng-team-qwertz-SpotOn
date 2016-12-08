@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionListener;
-import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
