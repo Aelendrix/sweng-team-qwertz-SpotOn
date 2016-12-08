@@ -1,59 +1,62 @@
 
 package ch.epfl.sweng.spotOn.utils;
 
+import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionListener;
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
-import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
+import ch.epfl.sweng.spotOn.user.UserListener;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by quentin on 17.11.16.
  */
 
-//public class ServicesChecker implements LocationTrackerListener, LocalDatabaseListener, UserListener{
-public class ServicesChecker {
+public class ServicesChecker implements LocationTrackerListener, UserListener, FirebaseConnectionListener {
 
     private static ServicesChecker mSingleInstance=null;
 
     private LocationTracker mLocationTrackerRef;
     private UserManager mUserManagerRef;
+    private FirebaseConnectionTracker mFbCoTrackerRef;
 
+    private static boolean mAllowedToDisplayToasts = true;
+
+    // need to keep track of the previous state of a service to detect change in the service availability ( available -> available should not trigger anything, while unavailable -> available should)
+    private boolean locationIsValid;
+    private boolean userIsLoggedIn;
     private boolean databaseIsConnected;
-
-//    private boolean locationIsValid;
-//    private boolean userIsLoggedIn;
-
-//    private List<ServicesCheckerListener> mListeners;
 
 
 
 
 // INITIALIZE AND CONSTRUCTOR
-    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
-        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef);
-        mSingleInstance.listenForDatabaseConnectivity();
-//        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
-//        mSingleInstance.mLocalDatabaseRef.addListener(mSingleInstance);
+    public static void initialize(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef, FirebaseConnectionTracker fbCoTrackerRef){
+        mSingleInstance = new ServicesChecker(ltref, ldbref, userRef, fbCoTrackerRef);
+
+        mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
+        mSingleInstance.mUserManagerRef.addListener(mSingleInstance);
+        mSingleInstance.mFbCoTrackerRef.addListener(mSingleInstance);
     }
 
-    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef){
+    private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef, FirebaseConnectionTracker fbCoTrackerRef){
         if( ltref==null || ldbref==null|| userRef==null){
             // test to enforce that all required singletons are instantiated
             throw new IllegalStateException("Must initialize LocationTracker, LocalDatabase and UserManager first");
         }
         // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
-//        mListeners = new ArrayList<>();
         mLocationTrackerRef = ltref;
-//        databaseConnectionStatus = false;
-//        validLocationStatus = ltref.hasValidLocation();
         mUserManagerRef = userRef;
-        //userIsLoggedIn = mUserRef.userIsLoggedIn();
+        mFbCoTrackerRef = fbCoTrackerRef;
+        databaseIsConnected = fbCoTrackerRef.isConnected();
+        locationIsValid = ltref.hasValidLocation();
+        userIsLoggedIn = mUserManagerRef.userIsLoggedIn();
     }
 
 
@@ -71,22 +74,17 @@ public class ServicesChecker {
         return mSingleInstance;
     }
 
-//    public void addListener(ServicesCheckerListener l ){
-//        mListeners.add(l);
-//        l.servicesAvailabilityUpdated();
-//    }
-
     public boolean allServicesOk(){
         // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
         return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
 
-    public boolean allowedToPost(){
-        return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
+    public static void allowDisplayingToasts(boolean allowToDisplayToasts){
+        mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 
-    public boolean allowedToViewPosts(){
-        return databaseIsConnected && mLocationTrackerRef.hasValidLocation();
+    public boolean databaseConnected(){
+        return databaseIsConnected;
     }
 
     public String provideErrorMessage(){
@@ -97,95 +95,115 @@ public class ServicesChecker {
         if( ! mLocationTrackerRef.hasValidLocation() ){
             errorMessage += "Can't localize your device\n";
         }
-        if( ! mUserManagerRef.getInstance().userIsLoggedIn() ){
-            errorMessage += "You're not logged in\n";
+        if( ! mUserManagerRef.userIsLoggedIn() ){
+            if( mUserManagerRef.retrievingUserFromDatebase()){
+                errorMessage+= "We're processing your login informations\n";
+            }else {
+                errorMessage += "You're not logged in\n";
+            }
         }
         if(!allServicesOk()) {
-            errorMessage += "--  App may malfunction  --";
+            errorMessage += "--  Some features will be restricted  --";
         }
         return errorMessage;
     }
 
-
-
-
-// PRIVATE METHODS
-
-    /** adds a listener to keep track of the connection to database  */
-    private void listenForDatabaseConnectivity(){
-        DatabaseRef.getRootDirectory().child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = dataSnapshot.getValue(Boolean.class);
-                Log.d("ServicesChecker", " database connection status : "+connected);
-                if(connected){
-                    databaseIsConnected = true;
-                }else{
-                    databaseIsConnected = false;
-                }
-//                notifyListeners();
+    /** provides only the "most important" error message : internet connection > retrieving user information > userLoggedIn
+     */
+    public String provideLoginErrorMessage(){
+        if( ! databaseIsConnected ){
+            return "Can't connect to the database";
+        }else if( ! mUserManagerRef.userIsLoggedIn() ){
+            if( ! mUserManagerRef.getUser().getIsRetrievedFromDB()){
+                return "We're processing your login informations";
+            }else {
+                 return "You're not logged in";
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                databaseIsConnected = false;
-//                notifyListeners();
-                Log.d("ServicesChecker", "ERROR : cancelled database query");
-            }
-        });
+        }
+        return "";
     }
 
 
 
+// LISTENER METHODS
 
-// LISTENER PATTERN METHODS
-//    public void notifyListeners(){
-//        for( ServicesCheckerListener l : mListeners){
-//            l.servicesAvailabilityUpdated();
-//        }
-//    }
+    @Override
+    public void firebaseDatabaseConnected() {
+        Log.d("ServicesChecker","database connected");
+        if(!databaseIsConnected){ // disconnected -> connected
+            databaseIsConnected = true;
+            if(mAllowedToDisplayToasts) {
+                if (allServicesOk()) {
+                    ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+                } else {
+                    ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void firebaseDatabaseDisconnected() {
+        Log.d("ServicesChecker","database disconnected");
+        if(databaseIsConnected){ // connected -> connected
+            databaseIsConnected = false;
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
+        }
+    }
+
+    @Override
+    public void updateLocation(Location newLocation) {
+        if( ! locationIsValid){         // check for bad -> good transition
+            Log.d("ServicesChecker","location status changed : listeners notified");
+            locationIsValid = true;
+            if(mAllowedToDisplayToasts) {
+                printOkMessage();
+            }
+        }
+    }
+
+    @Override
+    public void locationTimedOut(Location old) {
+        if(locationIsValid){            // check for good -> bad transition
+            Log.d("ServicesChecker","location timedout : listeners notified");
+            locationIsValid = false;
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
+        }
+    }
+
+    @Override
+    public void userConnected() {
+        if( !userIsLoggedIn ){          // check for bad -> good transition
+            Log.d("ServicesChecker","user logged in : listeners notified");
+            userIsLoggedIn=true;
+            if(mAllowedToDisplayToasts) {
+                printOkMessage();
+            }
+        }
+    }
+
+    @Override
+    public void userDisconnected() {
+        if( userIsLoggedIn ){           // check for good -> bad transition
+            Log.d("ServicesChecker","user logged out : listeners notified");
+            userIsLoggedIn=false;
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
+        }
+    }
 
 
-
-
-// LISTENER METHODS -- todo
-//    @Override
-//    public void databaseUpdated() {
-//        // nothing to do, we have another listener for that
-//    }
-//
-//    @Override
-//    public void updateLocation(Location newLocation) {
-//        if( ! locationIsValid){            // change in services status
-//            Log.d("ServicesChecker","location status changed : listeners notified");
-//            locationIsValid = true;
-////            notifyListeners();
-//        }
-//    }
-//
-//    @Override
-//    public void locationTimedOut(Location old) {
-//        if(locationIsValid){           // change in services status
-//            Log.d("ServicesChecker","location timed out : listeners notified");
-//            locationIsValid = false;
-////            notifyListeners();
-//        }
-//    }
-
-//    @Override
-//    public void userConnected() {
-//        if( !userIsLoggedIn ){
-//            Log.d("ServicesChecker","user logged in : listeners notified");
-//            userIsLoggedIn=true;
-//            notifyListeners();
-//        }
-//    }
-//
-//    @Override
-//    public void userDisconnected() {
-//        if( userIsLoggedIn ){
-//            Log.d("ServicesChecker","user logged out : listeners notified");
-//            userIsLoggedIn=false;
-//            notifyListeners();
-//        }
-//    }
+// PRIVATE HELPERS
+    private void printOkMessage(){
+        if(allServicesOk()){
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+            }
+        }
+    }
 }

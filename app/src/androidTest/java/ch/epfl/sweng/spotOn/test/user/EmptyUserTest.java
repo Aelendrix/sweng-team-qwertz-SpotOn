@@ -22,6 +22,13 @@ public class EmptyUserTest {
         }
     }
 
+    @Test
+    public void retrievedFromDBTest(){
+        if(!emptyUser.getIsRetrievedFromDB()){
+            throw new AssertionError();
+        }
+    }
+
     @Test(expected=UnsupportedOperationException.class)
     public void computeRemainingPhotosTest(){
         emptyUser.computeRemainingPhotos();
@@ -65,11 +72,6 @@ public class EmptyUserTest {
     @Test(expected=UnsupportedOperationException.class)
     public void setIsRetrievedFromDBTest(){
         emptyUser.setIsRetrievedFromDB(true);
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
-    public void getIsRetrievedFromDBTest(){
-        emptyUser.getIsRetrievedFromDB();
     }
 
     @Test(expected=UnsupportedOperationException.class)
