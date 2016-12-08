@@ -2,7 +2,6 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
 
-import com.google.firebase.database.DatabaseReference;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;

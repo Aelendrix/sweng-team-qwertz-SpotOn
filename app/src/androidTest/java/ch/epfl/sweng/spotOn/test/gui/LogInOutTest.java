@@ -8,8 +8,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 
-import com.facebook.login.LoginManager;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
