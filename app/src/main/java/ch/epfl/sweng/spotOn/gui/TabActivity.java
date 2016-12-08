@@ -42,7 +42,6 @@ public class TabActivity extends AppCompatActivity{
 
         //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
 
-        System.out.println("refreshed");
         LocalDatabase.getInstance().refresh();
 
 
