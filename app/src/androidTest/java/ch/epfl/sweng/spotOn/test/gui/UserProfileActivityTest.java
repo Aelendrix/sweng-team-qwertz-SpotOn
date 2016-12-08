@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.content.Intent;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
@@ -46,51 +47,47 @@ public class UserProfileActivityTest {
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
             new ActivityTestRule<>(UserProfileActivity.class,true,false);
+    private Intent UserProfileIntent;
+
     @Before
-    public void init(){
+    public void init() throws InterruptedException{
 
-            po = PhotoObjectTestUtils.germaynDeryckePO();
-            po.uploadWithoutFeedback();
+        po = PhotoObjectTestUtils.germaynDeryckePO();
+        po.uploadWithoutFeedback();
+        Thread.sleep(3000);
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                System.err.print(e);
-            }
+        HashMap<String, Long> h = new HashMap<>();
+        h.put(po.getPictureId(), po.getCreatedDate().getTime());
 
-            HashMap<String, Long> h = new HashMap<>();
-            h.put(po.getPictureId(), po.getCreatedDate().getTime());
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
 
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
+        User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
+        TestInitUtils.initContextMockUser(mockUser);
 
-            User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
-            TestInitUtils.initContextMockUser(mockUser);
-
-            LocalDatabase.getInstance().addPhotoObject(po);
+        LocalDatabase.getInstance().addPhotoObject(po);
+        UserProfileIntent = new Intent();
 
     }
 
     @Test
     public void startViewUserPhotoActivity(){
-        Intents.init();
+        mActivityTestRule.launchActivity(UserProfileIntent);
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         intended(hasComponent(ViewUserPhotoActivity.class.getName()));
         Espresso.pressBack();
-        Intents.release();
     }
 
 
     @Test
     public void testPressBackButton(){
-        Intents.init();
+        mActivityTestRule.launchActivity(UserProfileIntent);
         final UserProfileActivity userProfileActivity = mActivityTestRule.getActivity();
         userProfileActivity.runOnUiThread(new Runnable() {
             public void run() {
                 userProfileActivity.onBackPressed();
             }
         });
-        Intents.release();
     }
 
 
