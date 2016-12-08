@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,9 +28,10 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by Alexis Dewaele on 08/11/2016.
+ *
  */
 
-public class FullScreenImageAdapter extends PagerAdapter {
+class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
 
     private ImageAdapter mRefToImageAdapter;
@@ -41,14 +40,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private int voteSum=0;
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
-    private PhotoObject mDisplayedMedia;
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
 
 
-    public FullScreenImageAdapter(Activity activity) {
+    FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
         mTextView = (TextView) mActivity.findViewById(R.id.UpvoteTextView);
