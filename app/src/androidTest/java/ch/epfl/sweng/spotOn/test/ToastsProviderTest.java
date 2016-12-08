@@ -19,6 +19,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.test.util.MockFirebaseConnectionTracker_forTests;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
+import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -36,18 +37,18 @@ public class ToastsProviderTest {
     private final static long shortD = 2000;    // duration of Toasts.LENGTH
     private final static long longD = 3500;
 
-    @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class, true, false);
     private Intent displayFullSizeImageIntent;
 
+    @Rule
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class, true, false){
+        @Override
+        public void beforeActivityLaunched(){
+            TestInitUtils.initContextServicesCheckSilent();
+        }
+    };
 
     @Before
-    public void initLocalDatabase() throws InterruptedException {MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-        LocalDatabase.initialize(mlt);
-        ConcreteLocationTracker.setMockLocationTracker(mlt);
-        UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
-        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
+    public void initLocalDatabase() throws InterruptedException {
         displayFullSizeImageIntent = new Intent();
     }
 
@@ -64,9 +65,7 @@ public class ToastsProviderTest {
     public void TestToast1() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
-        Thread.sleep(5000);
         assertNoDisplayedToast();
-
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
         Thread.sleep(200);
@@ -79,6 +78,8 @@ public class ToastsProviderTest {
 
     @Test
     public void TestToast2() throws Exception {
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+
         // second toast takes over and extends the duration of baseToast
         ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
@@ -93,6 +94,8 @@ public class ToastsProviderTest {
 
     @Test
     public void TestToast3() throws Exception {
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+
         // printIfNoCurrent() displays single toast
         ToastProvider.printIfNoCurrent("ToastIfNoCurrent", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
@@ -102,6 +105,8 @@ public class ToastsProviderTest {
     }
     @Test
     public void TestToast4() throws Exception {
+        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+
         // printIfNoCurrent() shouldn't dispaly toast
         ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);

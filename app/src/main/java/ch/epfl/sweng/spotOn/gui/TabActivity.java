@@ -50,13 +50,6 @@ public class TabActivity extends AppCompatActivity{
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setupWithViewPager(viewPager);
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout){
-            @Override
-            public void onPageSelected(int pageNb) {
-                checkAndDisplayServicesError();
-            }
-        });
-
     }
 
     @Override
@@ -211,18 +204,6 @@ public class TabActivity extends AppCompatActivity{
     private void refreshGrid(int ordering){
         if(mPicturesFragment!=null){
             mPicturesFragment.refreshGrid(ordering);
-        }
-    }
-
-// PRIVATE HELPERS
-    /** displays the error message if need be    */
-    public void checkAndDisplayServicesError(){
-        if( ! ServicesChecker.getInstance().allServicesOk() ){
-            String errorMessage = ServicesChecker.getInstance().provideErrorMessage();
-            if( errorMessage.isEmpty() ){
-                throw new IllegalStateException("incoherent state : error message can't be empty if status isn't good");
-            }
-            ToastProvider.printOverCurrent(errorMessage, Toast.LENGTH_LONG);
         }
     }
 

@@ -47,6 +47,16 @@ public class TestInitUtils {
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
+    public static void initContextServicesCheckSilent(){
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+        LocalDatabase.initialize(mlt);
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
+        ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
+    }
+
     public static void initContextNoServicesChecks(double latitude, double longitude){
         if(ConcreteLocationTracker.instanceExists()){
             ConcreteLocationTracker.destroyInstance();

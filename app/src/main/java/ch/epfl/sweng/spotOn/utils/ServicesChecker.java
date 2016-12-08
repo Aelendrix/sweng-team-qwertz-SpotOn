@@ -26,11 +26,12 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     private UserManager mUserManagerRef;
     private FirebaseConnectionTracker mFbCoTrackerRef;
 
-    private boolean databaseIsConnected;
+    private boolean mAllowedToDisplayToasts;
 
     // need to keep track of the previous state of a service to detect change in the service availability ( available -> available should not trigger anything, while unavailable -> available should)
     private boolean locationIsValid;
     private boolean userIsLoggedIn;
+    private boolean databaseIsConnected;
 
 
 
@@ -53,6 +54,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         mLocationTrackerRef = ltref;
         mUserManagerRef = userRef;
         mFbCoTrackerRef = fbCoTrackerRef;
+        mAllowedToDisplayToasts = true;
         databaseIsConnected = fbCoTrackerRef.isConnected();
         locationIsValid = ltref.hasValidLocation();
         userIsLoggedIn = mUserManagerRef.userIsLoggedIn();
@@ -76,6 +78,10 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     public boolean allServicesOk(){
         // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
         return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
+    }
+
+    public void allowDisplayingToasts(boolean allowToDisplayToasts){
+        mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 
     public boolean databaseConnected(){
@@ -127,10 +133,12 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         Log.d("ServicesChecker","database connected");
         if(!databaseIsConnected){ // disconnected -> connected
             databaseIsConnected = true;
-            if(allServicesOk()){
-                ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
-            }else{
-                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            if(mAllowedToDisplayToasts) {
+                if (allServicesOk()) {
+                    ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+                } else {
+                    ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                }
             }
         }
     }
@@ -140,7 +148,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         Log.d("ServicesChecker","database disconnected");
         if(databaseIsConnected){ // connected -> connected
             databaseIsConnected = false;
-            ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
         }
     }
 
@@ -149,7 +159,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if( ! locationIsValid){         // check for bad -> good transition
             Log.d("ServicesChecker","location status changed : listeners notified");
             locationIsValid = true;
-//            printOkMessage();
+            if(mAllowedToDisplayToasts) {
+                printOkMessage();
+            }
         }
     }
 
@@ -158,7 +170,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if(locationIsValid){            // check for good -> bad transition
             Log.d("ServicesChecker","location timedout : listeners notified");
             locationIsValid = false;
-            ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
         }
     }
 
@@ -167,7 +181,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if( !userIsLoggedIn ){          // check for bad -> good transition
             Log.d("ServicesChecker","user logged in : listeners notified");
             userIsLoggedIn=true;
-//            printOkMessage();
+            if(mAllowedToDisplayToasts) {
+                printOkMessage();
+            }
         }
     }
 
@@ -176,7 +192,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if( userIsLoggedIn ){           // check for good -> bad transition
             Log.d("ServicesChecker","user logged out : listeners notified");
             userIsLoggedIn=false;
-            ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+            }
         }
     }
 
