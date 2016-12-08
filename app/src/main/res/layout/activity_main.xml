@@ -44,6 +44,7 @@
         android:background="@drawable/button_shape_login"
         android:drawableStart="@mipmap/ic_launcher"
         android:paddingStart="2dp"
+        android:paddingEnd="40dp"
         android:layout_marginTop="35dp"
         android:layout_below="@+id/mainLoginButton"
         android:layout_alignStart="@+id/mainLoginTextView"
