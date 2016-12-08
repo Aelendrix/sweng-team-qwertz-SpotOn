@@ -103,17 +103,17 @@ public class PhotoObjectTests {
     }
 
     @Test
-    public void cantVoteTwice(){
+    public void CancelVote(){
         for(PhotoObject p : getAllPO()) {
             String sameAuthorId = "jeVotePlusieursFois";
             p.processVote(1, sameAuthorId);
             p.processVote(1, sameAuthorId);
-            if(p.getUpvotes()!=2){
+            if(p.getUpvotes()!=0){
                 throw new AssertionError("voted several times !\n"+p.toString());
             }
             p.processVote(-1, sameAuthorId);
             p.processVote(-1, sameAuthorId);
-            if(p.getDownvotes()!=2){
+            if(p.getDownvotes()!=0){
                 throw new AssertionError("voted several times !\n"+p.toString());
             }
         }
