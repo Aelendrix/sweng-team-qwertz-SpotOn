@@ -202,7 +202,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 // PRIVATE HELPERS
     private void printOkMessage(){
         if(allServicesOk()){
-            ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+            if(mAllowedToDisplayToasts) {
+                ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+            }
         }
     }
 }
