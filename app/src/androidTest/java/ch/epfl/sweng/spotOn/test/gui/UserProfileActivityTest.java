@@ -1,6 +1,5 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
-
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
