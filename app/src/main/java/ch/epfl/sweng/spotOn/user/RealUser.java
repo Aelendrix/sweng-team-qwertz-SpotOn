@@ -113,7 +113,7 @@ public class RealUser implements User {
     public void setIsRetrievedFromDB(boolean retrievedFromDB) {
         if(mManager!=null) {
             mIsRetrievedFromDB = retrievedFromDB;
-            mManager.notifyListeners(UserManager.USER_CONNECTED);
+            UserManager.notifyListeners(UserManager.USER_CONNECTED);
         }
     }
 

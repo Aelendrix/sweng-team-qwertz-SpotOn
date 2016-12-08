@@ -168,11 +168,7 @@ public class LocationTrackerTest{
             return false;
         } else if(l1.getLongitude() != l2.getLongitude()){
             return false;
-        } else if(l1.getLatitude() != l2.getLatitude()){
-            return false;
-        } else {
-            return true;
-        }
+        } else return l1.getLatitude() == l2.getLatitude();
     }
 
     private void initFieldLocations(){

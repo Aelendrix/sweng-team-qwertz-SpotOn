@@ -5,7 +5,7 @@ import android.location.Location;
 /** Provides methods allowing the location tracker to notify an object of location changes
  */
 
-public abstract interface LocationTrackerListener {
+public interface LocationTrackerListener {
 
     void updateLocation(Location newLocation);
 
