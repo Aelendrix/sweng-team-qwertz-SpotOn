@@ -12,6 +12,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,10 +45,10 @@ public class UserProfileActivityTest {
 
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
-            new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
-    {
-        @Override
-        public void beforeActivityLaunched(){
+            new ActivityTestRule<>(UserProfileActivity.class,true,false);
+    @Before
+    public void init(){
+
             po = PhotoObjectTestUtils.germaynDeryckePO();
             po.uploadWithoutFeedback();
 
@@ -67,9 +68,8 @@ public class UserProfileActivityTest {
             TestInitUtils.initContextMockUser(mockUser);
 
             LocalDatabase.getInstance().addPhotoObject(po);
-        }
-    };
 
+    }
 
     @Test
     public void startViewUserPhotoActivity(){
@@ -106,9 +106,8 @@ public class UserProfileActivityTest {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
 
-                        return coordinates;
+                        return new float[]{screenX, screenY};
                     }
                 },
                 Press.FINGER);

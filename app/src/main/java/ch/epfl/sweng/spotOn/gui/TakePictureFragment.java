@@ -258,11 +258,10 @@ public class TakePictureFragment extends Fragment {
      * @return The bitmap of the high quality picture
      */
     public static Bitmap getBitmap(Uri photoUri,Context context){
-        Uri uri = photoUri;
         InputStream in;
         try {
             final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
-            in = context.getContentResolver().openInputStream(uri);
+            in = context.getContentResolver().openInputStream(photoUri);
 
             // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -276,7 +275,7 @@ public class TakePictureFragment extends Fragment {
                 scale++;
             }
             Bitmap b = null;
-            in = context.getContentResolver().openInputStream(uri);
+            in = context.getContentResolver().openInputStream(photoUri);
             if (scale > 1) {
                 scale--;
                 // scale to max possible inSampleSize that still yields an image larger than target
@@ -330,9 +329,8 @@ public class TakePictureFragment extends Fragment {
             throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
         }
         Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
-        PhotoObject picObject = new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        return picObject;
+        return new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
     }
 
     /**
@@ -370,9 +368,8 @@ public class TakePictureFragment extends Fragment {
         if(imageToUploadUri != null) {
             editUri = imageToUploadUri;
             //Get our saved picture from the uri in a bitmap image
-            Uri selectedImage = imageToUploadUri;
-            getContext().getContentResolver().notifyChange(selectedImage, null);
-            Bitmap HQPicture = getBitmap(selectedImage, getContext());
+            getContext().getContentResolver().notifyChange(imageToUploadUri, null);
+            Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
                 mImageView.setImageBitmap(HQPicture);
                 //Create a PhotoObject instance of the picture and send it to the file server + database

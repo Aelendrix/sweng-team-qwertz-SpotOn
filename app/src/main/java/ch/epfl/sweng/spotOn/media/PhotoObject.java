@@ -396,8 +396,7 @@ public class PhotoObject {
         }
         double popularityRatio = upvotesRatio - downvotesRatio;             // in [-1, 1]
         */
-        double popularityRatio = (double)(mNbUpvotes-mNbDownvotes) / (double)(mNbDownvotes+mNbUpvotes);
-        return popularityRatio;
+        return (double)(mNbUpvotes-mNbDownvotes) / (double)(mNbDownvotes+mNbUpvotes);
     }
 
     /** Computes the radius of the image according to its popularity and automatically updates the value
