@@ -63,7 +63,7 @@ public class ToastsProviderTest {
     @Test
     public void launchFullPictureActivity() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-
+        Thread.sleep(5000);
         assertNoDisplayedToast();
 
         // single toasts ets displayed for 3.5 seconds
