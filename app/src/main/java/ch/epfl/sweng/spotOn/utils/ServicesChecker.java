@@ -26,7 +26,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     private UserManager mUserManagerRef;
     private FirebaseConnectionTracker mFbCoTrackerRef;
 
-    private boolean mAllowedToDisplayToasts;
+    private static boolean mAllowedToDisplayToasts = true;
 
     // need to keep track of the previous state of a service to detect change in the service availability ( available -> available should not trigger anything, while unavailable -> available should)
     private boolean locationIsValid;
@@ -54,7 +54,6 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         mLocationTrackerRef = ltref;
         mUserManagerRef = userRef;
         mFbCoTrackerRef = fbCoTrackerRef;
-        mAllowedToDisplayToasts = true;
         databaseIsConnected = fbCoTrackerRef.isConnected();
         locationIsValid = ltref.hasValidLocation();
         userIsLoggedIn = mUserManagerRef.userIsLoggedIn();
@@ -80,7 +79,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
 
-    public void allowDisplayingToasts(boolean allowToDisplayToasts){
+    public static void allowDisplayingToasts(boolean allowToDisplayToasts){
         mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 

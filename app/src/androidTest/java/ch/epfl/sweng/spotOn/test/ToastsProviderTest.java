@@ -63,7 +63,6 @@ public class ToastsProviderTest {
     @Test
     public void TestToast1() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
 
         assertNoDisplayedToast();
         // single toasts gets displayed for 3.5 seconds
@@ -79,7 +78,6 @@ public class ToastsProviderTest {
     @Test
     public void TestToast2() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
 
         // second toast takes over and extends the duration of baseToast
         ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
@@ -96,7 +94,6 @@ public class ToastsProviderTest {
     @Test
     public void TestToast3() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
 
         // printIfNoCurrent() displays single toast
         ToastProvider.printIfNoCurrent("ToastIfNoCurrent", Toast.LENGTH_LONG);
@@ -109,7 +106,6 @@ public class ToastsProviderTest {
     @Test
     public void TestToast4() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
 
         // printIfNoCurrent() shouldn't display toast
         ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);

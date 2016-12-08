@@ -76,8 +76,8 @@ public class TestInitUtils {
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
 
+        ServicesChecker.allowDisplayingToasts(false);
         ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
-        ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
 
     public static void initContextNoServicesChecks(double latitude, double longitude){
