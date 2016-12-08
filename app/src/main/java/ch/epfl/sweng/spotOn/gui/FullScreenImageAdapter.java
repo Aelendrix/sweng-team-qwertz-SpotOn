@@ -155,8 +155,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
+            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
             //fake vote method to have more responsive interface
-
+            Log.d("XD","1: "+voteSum);
             if(vote==1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
                 if(alreadyDownvoted(userId)){
@@ -164,13 +165,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
 
-            if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
+            else if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
             }
-            if(vote == 0) {
+            else if(vote == 0) {
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
@@ -178,7 +179,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     voteSum++;
                 }
             }
-
+            Log.d("XD","2: "+voteSum);
             if(!mCurrentPicture.getAuthorId().equals(userId)) {
                 mTextView.setText(Integer.toString(voteSum));
             }
