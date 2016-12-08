@@ -25,9 +25,9 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
     private User mUser = null;
 
-    private static List<String> mPictureIdList = null;
-    private static List<PhotoObject> mPhotoList = null;
-    private static PictureVoteListAdapter mPictureVoteAdapter = null;
+    private List<String> mPictureIdList = null;
+    private List<PhotoObject> mPhotoList = null;
+    private PictureVoteListAdapter mPictureVoteAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
