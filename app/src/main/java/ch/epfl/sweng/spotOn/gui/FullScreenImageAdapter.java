@@ -28,15 +28,14 @@ import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by Alexis Dewaele on 08/11/2016.
- *
+ * Adapter pattern to show fullscreen images that could be swiped like page
  */
 
-class FullScreenImageAdapter extends PagerAdapter {
+public class FullScreenImageAdapter extends PagerAdapter {
     private Activity mActivity;
 
     private ImageAdapter mRefToImageAdapter;
 
-    private ImageView mViewToSet;
     private int voteSum=0;
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
@@ -46,7 +45,7 @@ class FullScreenImageAdapter extends PagerAdapter {
 
 
 
-    FullScreenImageAdapter(Activity activity) {
+    public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
         mTextView = (TextView) mActivity.findViewById(R.id.UpvoteTextView);
@@ -66,7 +65,7 @@ class FullScreenImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
-        mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
+        ImageView mViewToSet = (ImageView) viewLayout.findViewById(R.id.fullSizeImageView);
         mViewToSet.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
 
         if(position >= mRefToImageAdapter.size()){
@@ -126,6 +125,7 @@ class FullScreenImageAdapter extends PagerAdapter {
 
     }
 
+    @SuppressWarnings("public")
     public void recordUpvote(View view){
         if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
