@@ -1,7 +1,5 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
-import android.content.Intent;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -13,7 +11,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,53 +38,55 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
-
-    PhotoObject po = null;
-
+    private PhotoObject po;
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
-            new ActivityTestRule<>(UserProfileActivity.class,true,false);
-    private Intent UserProfileIntent;
+            new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
+            {
+                @Override
+                public void beforeActivityLaunched(){
+                    po = PhotoObjectTestUtils.germaynDeryckePO();
+                    po.uploadWithoutFeedback();
 
-    @Before
-    public void init() throws InterruptedException{
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        System.err.print(e);
+                    }
 
-        po = PhotoObjectTestUtils.germaynDeryckePO();
-        po.uploadWithoutFeedback();
-        Thread.sleep(3000);
+                    HashMap<String, Long> h = new HashMap<>();
+                    h.put(po.getPictureId(), po.getCreatedDate().getTime());
 
-        HashMap<String, Long> h = new HashMap<>();
-        h.put(po.getPictureId(), po.getCreatedDate().getTime());
+                    MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+                    ConcreteLocationTracker.setMockLocationTracker(mlt);
 
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-        ConcreteLocationTracker.setMockLocationTracker(mlt);
+                    User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
+                    TestInitUtils.initContextMockUser(mockUser);
 
-        User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
-        TestInitUtils.initContextMockUser(mockUser);
+                    LocalDatabase.getInstance().addPhotoObject(po);
+                }
+            };
 
-        LocalDatabase.getInstance().addPhotoObject(po);
-        UserProfileIntent = new Intent();
-
-    }
 
     @Test
     public void startViewUserPhotoActivity(){
-        mActivityTestRule.launchActivity(UserProfileIntent);
+        Intents.init();
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         intended(hasComponent(ViewUserPhotoActivity.class.getName()));
-        Espresso.pressBack();
+        Intents.release();
     }
 
 
     @Test
     public void testPressBackButton(){
-        mActivityTestRule.launchActivity(UserProfileIntent);
+        Intents.init();
         final UserProfileActivity userProfileActivity = mActivityTestRule.getActivity();
         userProfileActivity.runOnUiThread(new Runnable() {
             public void run() {
                 userProfileActivity.onBackPressed();
             }
         });
+        Intents.release();
     }
 
 
@@ -103,8 +102,7 @@ public class UserProfileActivityTest {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-
-                        return new float[]{screenX, screenY};
+                        return new float[] {screenX, screenY};
                     }
                 },
                 Press.FINGER);
