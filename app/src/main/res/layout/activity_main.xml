@@ -17,32 +17,21 @@
         android:textStyle="normal"
         android:fontFamily="sans-serif"
         android:textColor="@color/colorPrimary"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="32dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentStart="true" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/mainLoginButton"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="18dp"
-        android:layout_above="@+id/dontLogInButton"
-        android:layout_alignStart="@+id/dontLogInButton"
-        android:layout_alignEnd="@+id/dontLogInButton" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/wayToConnectTextView"
-        android:text="@string/wayToConnect"
-        android:textSize="20sp"
-        android:textStyle="normal"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginBottom="16dp"
-        android:layout_above="@+id/mainLoginButton"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/logo"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@string/contentDescriptionLoginTextView"
+        android:layout_alignBottom="@+id/mainLoginTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="18dp" />
 
     <Button
         android:text="@string/dontLogInButton"
@@ -50,15 +39,28 @@
         android:textSize="14sp"
         android:textAllCaps="false"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:id="@+id/dontLogInButton"
         android:onClick="goToTabActivityNotLoggedIn"
         android:background="@drawable/button_shape_login"
         android:drawableStart="@mipmap/ic_launcher"
         android:paddingStart="2dp"
-        android:layout_marginBottom="14dp"
-        android:layout_above="@+id/restrictions"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/mainLoginButton"
+        android:layout_alignStart="@+id/mainLoginTextView"
+        android:layout_marginStart="14dp"
+        android:layout_toStartOf="@+id/logo" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/mainLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_alignStart="@+id/dontLogInButton"
+        android:layout_alignEnd="@+id/dontLogInButton" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,18 +71,22 @@
         android:textStyle="normal"
         android:fontFamily="sans-serif"
         android:textColor="@color/colorPrimary"
-        android:layout_marginBottom="85dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/dontLogInButton"
+        android:layout_alignStart="@+id/dontLogInButton" />
 
-    <ImageView
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/logo"
-        android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher"
-        android:layout_below="@id/mainLoginTextView"
-        android:layout_above="@id/wayToConnectTextView"
-        android:contentDescription="@string/contentDescriptionLoginTextView"/>
+        android:id="@+id/wayToConnectTextView"
+        android:text="@string/wayToConnect"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/colorPrimary"
+        android:layout_above="@+id/mainLoginButton"
+        android:layout_alignStart="@+id/mainLoginTextView"
+        android:layout_marginBottom="23dp"
+        android:layout_alignEnd="@+id/restrictions" />
 
 </RelativeLayout>
