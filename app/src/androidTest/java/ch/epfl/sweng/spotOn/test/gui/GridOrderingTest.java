@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 
 import static android.support.test.espresso.Espresso.onView;

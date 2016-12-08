@@ -11,6 +11,15 @@
         android:orientation="vertical"
         android:weightSum="8">
 
+
+        <TextView
+            android:text="@string/noPictureViewable"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/empty_grid_textView" />
+
         <ImageView
             android:layout_height="0dp"
             android:layout_width="match_parent"
@@ -20,14 +29,6 @@
             tools:ignore="ContentDescription"
             android:layout_weight="5"
             android:baselineAlignBottom="false" />
-
-        <TextView
-            android:text="@string/noPictureViewable"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:id="@+id/empty_grid_textview" />
 
         <Button
             android:text="@string/goToMap"

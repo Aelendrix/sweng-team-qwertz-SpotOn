@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-/** Singleton object providing location data to the app. Needs to be explicitely initialized
+/** Singleton object providing location data to the app. Needs to be explicitly initialized
  */
 public final class ConcreteLocationTracker implements LocationTracker {
 
@@ -50,7 +50,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
                     notifyListeners(LISTENERS_NOTIFICATION_LOCATION_TIMEOUT);
                     mLocation=null;
                 }
-                // no need to restart here, once timeout, we wait for a new location to start countdownagain
+                // no need to restart here, once timeout, we wait for a new location to start countdown again
             }
         };
         // Acquire a reference to the system Location Manager
@@ -80,7 +80,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
 
         }
 
-            /*Catch exception because location acces always need to have the localisation permission
+            /*Catch exception because location access always need to have the localisation permission
             * In our app if the permission is rejected, we can't access this activity anyway (ATM)
             */
         catch (SecurityException e) {
@@ -89,7 +89,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
     }
 
 
-    /** very needed for tests, since appearently, the singleton is not initialized once per test file, but once for ALL test files
+    /** very needed for tests, since apparently, the singleton is not initialized once per test file, but once for ALL test files
      *  And we want to have a mockLocationTracker sometimes, and sometimes test the concreteLocationTracker to which we input mock arguments
      */
     public static void destroyInstance() {
@@ -157,7 +157,7 @@ public final class ConcreteLocationTracker implements LocationTracker {
 // FOR LISTENERS
     private void notifyListeners(int notification){
         if(notification != LISTENERS_NOTIFICATION_LOCATION_TIMEOUT && notification != LISTENERS_NOTIFICATION_NEW_LOCATION){
-            throw new IllegalArgumentException("Location tracker - notifyListner() - wrong notify message : "+notification);
+            throw new IllegalArgumentException("Location tracker - notifyListener() - wrong notify message : "+notification);
         }else if (notification == LISTENERS_NOTIFICATION_LOCATION_TIMEOUT){
             for(LocationTrackerListener listener : mListenersList){
                 listener.locationTimedOut(mLocation);

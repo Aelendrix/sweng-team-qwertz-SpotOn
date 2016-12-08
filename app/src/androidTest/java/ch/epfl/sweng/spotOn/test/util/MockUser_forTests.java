@@ -4,7 +4,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.user.User;
-import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by quentin on 29.11.16.

@@ -25,27 +25,27 @@ import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getAllPO;
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getRandomPhotoObject;
 
 
-/** test the behaviour of photoObjects when sent/received from database and fileserver
+/** test the behaviour of photoObjects when sent/received from database and fileServer
  *  @author quentin
  */
 @RunWith(AndroidJUnit4.class)
 public class DatabaseIOTest {
 
-    private boolean listenerExecuted_objectIsSentAndtestWaitsForSentCompleted;
+    private boolean listenerExecuted_objectIsSentAndTestWaitsForSentCompleted;
 
-    private PhotoObject retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject=null;
+    private PhotoObject retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject =null;
 
     @Test  (timeout=10000, expected=AssertionError.class)
-    public void objectIsSentAndtestWaitsForSentCompleted() throws AssertionError, InterruptedException {
+    public void objectIsSentAndTestWaitsForSentCompleted() throws AssertionError, InterruptedException {
         PhotoObject testObject1 = getRandomPhotoObject();
 
         final Object lock = new Object();
-        listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=false;
+        listenerExecuted_objectIsSentAndTestWaitsForSentCompleted =false;
 
         testObject1.upload(true, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                listenerExecuted_objectIsSentAndtestWaitsForSentCompleted=true;
+                listenerExecuted_objectIsSentAndTestWaitsForSentCompleted =true;
                 synchronized(lock) {
                     lock.notify();
                 }
@@ -56,7 +56,7 @@ public class DatabaseIOTest {
             lock.wait();
         }
 
-        if(listenerExecuted_objectIsSentAndtestWaitsForSentCompleted) {
+        if(listenerExecuted_objectIsSentAndTestWaitsForSentCompleted) {
             DatabaseRef.deletePhotoObjectFromDB(testObject1.getPictureId());
             StorageRef.deletePictureFromStorage(testObject1.getPictureId());
             throw new AssertionError("Test made it this far - test succeeded !");
@@ -117,7 +117,7 @@ public class DatabaseIOTest {
     }
 
     @Test (timeout=30000)
-    public void retrievingFullsizeImagesWorkCorrectly() throws InterruptedException {
+    public void retrievingFullSizeImagesWorkCorrectly() throws InterruptedException {
         for(PhotoObject p : getAllPO()) {
 
             // UPLOAD PHOTOOBJECT
@@ -146,7 +146,7 @@ public class DatabaseIOTest {
                     }
                     PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
                     final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
-                    retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
+                    retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
                     synchronized (lock) {
                         lock.notify();
                     }
@@ -160,8 +160,8 @@ public class DatabaseIOTest {
                 lock.wait();
             }
             // RETRIEVE FULLSIZEIMAGE FROM FILESERVER
-            Log.d("dbio_test", "retrieved \n" + retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
-            retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
+            Log.d("dbio_test", "retrieved \n" + retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject.retrieveFullsizeImage(true, new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     synchronized (lock) {
@@ -173,9 +173,9 @@ public class DatabaseIOTest {
                 lock.wait();
             }
             // CHECK WE DID ACTUALLY RETRIEVE THE IMAGE
-            if (!retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()) {
-                throw new AssertionError("retrieved object should have fullsizeimage :\n" +
-                        retrievingFullsizeImagesWorkCorrectly_retrievedPhotoObject.toString());
+            if (!retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject.hasFullSizeImage()) {
+                throw new AssertionError("retrieved object should have fullSizeImage :\n" +
+                        retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject.toString());
             }
             else{
                 DatabaseRef.deletePhotoObjectFromDB(poId);

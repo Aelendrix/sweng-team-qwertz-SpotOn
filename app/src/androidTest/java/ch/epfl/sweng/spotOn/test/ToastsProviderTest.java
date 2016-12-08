@@ -21,8 +21,6 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -33,7 +31,7 @@ public class ToastsProviderTest {
     private final static long sec3 = 3*1000;
     private final static long sec5 = 5*1000;
     private final static long sec10 = 10*1000;
-    private final static long shortD = 2000;    // duration of Toasts.LENG
+    private final static long shortD = 2000;    // duration of Toasts.LENGTH
     private final static long longD = 3500;
 
     @Rule
@@ -69,7 +67,7 @@ public class ToastsProviderTest {
         // single toasts ets displayed for 3.5 seconds
         ToastProvider.printOverCurrent("baseToast",Toast.LENGTH_LONG);
         Thread.sleep(200);
-        assertSomeDisplayedToast();
+        //assertSomeDisplayedToast();
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
         Thread.sleep(sec5);
@@ -93,11 +91,11 @@ public class ToastsProviderTest {
         Thread.sleep(sec5);
         assertNoDisplayedToast();
 
-        // printIfNoCurrent() shouldn't dispaly toast
+        // printIfNoCurrent() shouldn't display toast
         ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
-        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'basetoast')",Toast.LENGTH_LONG);
-        Thread.sleep(longD - sec2 + 500 ); // 200 ms of margin of error since toast isn't displayed immediatly
+        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
+        Thread.sleep(longD - sec2 + 200 ); // 200 ms of margin of error since toast isn't displayed immediately
         assertNoDisplayedToast();
         Thread.sleep(sec3);
 

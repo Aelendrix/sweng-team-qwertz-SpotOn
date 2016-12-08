@@ -47,7 +47,7 @@ public class ViewUserPhotoActivity extends Activity {
                             public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                                 if (retrieveFullSizePicTask.getException() != null) {
                                     userPicture.setImageResource(RESOURCE_IMAGE_FAILURE);
-                                    throw new Error("ViewUserPhotoActivity : Retrieving fullSizePicture with pictureid : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
+                                    throw new Error("ViewUserPhotoActivity : Retrieving fullSizePicture with pictureId : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
 
                                 } else {
                                     Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);

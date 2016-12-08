@@ -1,12 +1,6 @@
 package ch.epfl.sweng.spotOn.test.fileDeletion;
 
-import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

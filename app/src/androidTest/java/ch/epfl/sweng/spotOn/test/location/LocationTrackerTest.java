@@ -113,7 +113,7 @@ public class LocationTrackerTest{
 
         Thread.sleep(500);
         if(ConcreteLocationTracker.getInstance().hasValidLocation()){
-            throw new AssertionError("Should be timedout");
+            throw new AssertionError("Should be timed out");
         }
         ConcreteLocationTracker.getInstance().getLocation(); // should throw a IllegalStateException, indicating that test is complete
     }
@@ -137,7 +137,7 @@ public class LocationTrackerTest{
             throw new AssertionError("the new location is less accurate");
         }
         if (!LocalizationUtils.isBetterLocation(location3, location2)) {
-            throw new AssertionError("the new location is less accurate but is newer from the same locationprovider");
+            throw new AssertionError("the new location is less accurate but is newer from the same location provider");
         }
     }
 
@@ -159,7 +159,7 @@ public class LocationTrackerTest{
 
     // compares latitude, longitude, altitude, accuracy, time, elapsedTime
     private static boolean locationsAtSamePlace(Location l1, Location l2){
-        if(l1.getProvider() != l2.getProvider()){
+        if(!(l1.getProvider().equals(l2.getProvider()))){
             return false;
         }  else  if(l1.getAccuracy() != l2.getAccuracy()){
             return false;
