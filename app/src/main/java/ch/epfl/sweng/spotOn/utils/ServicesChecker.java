@@ -180,64 +180,11 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         }
     }
 
-<<<<<<< HEAD
+
 // PRIVATE HELPERS
     private void printOkMessage(){
         if(allServicesOk()){
             ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
         }
     }
-=======
-// LISTENER PATTERN METHODS
-//    public void notifyListeners(){
-//        for( ServicesCheckerListener l : mListeners){
-//            l.servicesAvailabilityUpdated();
-//        }
-//    }
-
-
-
-
-// LISTENER METHODS -- todo
-//    @Override
-//    public void databaseUpdated() {
-//        // nothing to do, we have another listener for that
-//    }
-//
-//    @Override
-//    public void updateLocation(Location newLocation) {
-//        if( ! locationIsValid){            // change in services status
-//            Log.d("ServicesChecker","location status changed : listeners notified");
-//            locationIsValid = true;
-////            notifyListeners();
-//        }
-//    }
-//
-//    @Override
-//    public void locationTimedOut(Location old) {
-//        if(locationIsValid){           // change in services status
-//            Log.d("ServicesChecker","location timed out : listeners notified");
-//            locationIsValid = false;
-////            notifyListeners();
-//        }
-//    }
-
-//    @Override
-//    public void userConnected() {
-//        if( !userIsLoggedIn ){
-//            Log.d("ServicesChecker","user logged in : listeners notified");
-//            userIsLoggedIn=true;
-//            notifyListeners();
-//        }
-//    }
-//
-//    @Override
-//    public void userDisconnected() {
-//        if( userIsLoggedIn ){
-//            Log.d("ServicesChecker","user logged out : listeners notified");
-//            userIsLoggedIn=false;
-//            notifyListeners();
-//        }
-//    }
->>>>>>> 6404f3e3e733c2c0e05b3d041c8b91a8b40cacca
 }

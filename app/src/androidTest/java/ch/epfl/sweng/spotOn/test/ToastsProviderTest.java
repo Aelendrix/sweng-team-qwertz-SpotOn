@@ -63,7 +63,7 @@ public class ToastsProviderTest {
     @Test
     public void TestToast1() throws Exception {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        
+
         Thread.sleep(5000);
         assertNoDisplayedToast();
 
