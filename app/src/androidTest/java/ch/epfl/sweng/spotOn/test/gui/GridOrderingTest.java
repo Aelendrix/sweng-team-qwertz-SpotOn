@@ -66,5 +66,4 @@ public class GridOrderingTest {
     public void after(){
         LocalDatabaseUtils.afterTests();
     }
-
 }
