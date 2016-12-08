@@ -19,6 +19,7 @@ import com.facebook.login.LoginManager;
 
 import ch.epfl.sweng.spotOn.R;
 
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
@@ -38,6 +39,12 @@ public class TabActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
+
+        //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
+
+        System.out.println("refreshed");
+        LocalDatabase.getInstance().refresh();
+
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
