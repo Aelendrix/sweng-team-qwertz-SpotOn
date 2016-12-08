@@ -127,7 +127,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     }
 
-    @SuppressWarnings("public")
     public void recordUpvote(View view){
         if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
