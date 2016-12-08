@@ -58,13 +58,14 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
     }
 
     private void refreshVoteAndPictureLists(){
-        List<String> mPictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
+        List<String> mPictureIdList = new ArrayList<>(mUser.retrieveUpdatedPhotosTaken().keySet());
         ArrayList<PhotoObject> mPhotoList = new ArrayList<>();
 
         for(int i=0; i<mPictureIdList.size(); i++){
             PhotoObject PO = LocalDatabase.getInstance().get(mPictureIdList.get(i));
-            if(PO!=null)
-            mPhotoList.add(PO);
+            if(PO != null) {
+                mPhotoList.add(PO);
+            }
         }
 
         PictureVoteListAdapter mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);

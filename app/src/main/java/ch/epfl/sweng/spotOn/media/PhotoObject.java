@@ -561,6 +561,5 @@ public class PhotoObject {
 
         });
     }
-
 }
 
