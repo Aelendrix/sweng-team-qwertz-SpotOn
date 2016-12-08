@@ -62,7 +62,7 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
         deleteButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(UserManager.getInstance().getUser().getPhotosTaken().containsKey(pictureID)) {
+                if(UserManager.getInstance().getUser().retrieveUpdatedPhotosTaken().containsKey(pictureID)) {
                     DatabaseRef.deletePhotoObjectFromDB(pictureID);
                     StorageRef.deletePictureFromStorage(pictureID);
                     UserManager.getInstance().getUser().removePhoto(pictureID);

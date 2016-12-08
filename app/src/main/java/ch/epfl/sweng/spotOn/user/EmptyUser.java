@@ -55,6 +55,11 @@ public class EmptyUser implements User {
     }
 
     @Override
+    public Map<String, Long> retrieveUpdatedPhotosTaken() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean getIsRetrievedFromDB() {
         return true;
     }
