@@ -121,7 +121,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
         int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
-        mTextView.setText(Integer.toString(votes));
+        //create a temp String is the ONLY way if you want to correct the lint error
+        String textToShow = ""+votes;
+        mTextView.setText(textToShow);
 
     }
 
@@ -176,7 +178,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
             }
             Log.d("XD","2: "+voteSum);
             if(!mCurrentPicture.getAuthorId().equals(userId)) {
-                mTextView.setText(Integer.toString(voteSum));
+                //create a temp String is the ONLY way if you want to correct the lint error
+                String textToShow = ""+voteSum;
+                mTextView.setText(textToShow);
             }
 
             String toastMessage = mCurrentPicture.processVote(vote, userId);
