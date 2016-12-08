@@ -31,7 +31,7 @@ public class LocationTrackerTest{
 
     private MockLocationManagerWrapper_forTests mlm;
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
 
 
