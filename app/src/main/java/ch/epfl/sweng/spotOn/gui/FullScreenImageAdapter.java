@@ -94,8 +94,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     if(retrieveFullSizePicTask.getException()!=null){
                         currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
                         // maybe it's better if we recover from this, and use only a log
-                        throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
-                        //Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
+                        //  throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+                        Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
                     }else{
                         Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
                         currentView.setImageBitmap(obtainedImage);
