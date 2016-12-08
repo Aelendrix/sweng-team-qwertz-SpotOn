@@ -201,10 +201,9 @@ public class LocalDatabase implements LocationTrackerListener{
                         mLocationTempCopy = new Location(mCachedLocation);
                     }
                     LocalDatabase.getInstance().clear();
-                    User user = UserManager.getInstance().getUser();
-                    String userID ;
-                    if(user.isLoggedIn()) {
-                        userID = user.getUserId();
+                    String userID;
+                    if(UserManager.getInstance().userIsLoggedIn()) {
+                        userID = UserManager.getInstance().getUser().getUserId();
                     }
                     else{
                         userID = null;
@@ -249,10 +248,9 @@ public class LocalDatabase implements LocationTrackerListener{
                     synchronized (this) {
                         mLocationTempCopy = new Location(mCachedLocation);
                     }
-                    User user = UserManager.getInstance().getUser();
-                    String userID ;
-                    if(user.isLoggedIn()) {
-                        userID = user.getUserId();
+                    String userID;
+                    if(UserManager.getInstance().userIsLoggedIn()) {
+                        userID = UserManager.getInstance().getUser().getUserId();
                     }
                     else{
                         userID = null;
