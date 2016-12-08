@@ -82,8 +82,8 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 
-    public boolean databaseConnected(){
-        return databaseIsConnected;
+    public boolean databaseNotConnected(){
+        return !databaseIsConnected;
     }
 
     public String provideErrorMessage(){

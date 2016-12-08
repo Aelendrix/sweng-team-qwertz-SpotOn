@@ -86,7 +86,7 @@ public class TakePictureFragment extends Fragment {
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
     public void dispatchTakePictureIntent(){
-        if( ! ServicesChecker.getInstance().databaseConnected() ){
+        if(ServicesChecker.getInstance().databaseNotConnected()){
             ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
         } if( ! UserManager.getInstance().userIsLoggedIn() ) {
             if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
@@ -112,7 +112,7 @@ public class TakePictureFragment extends Fragment {
     public void storePictureOnInternalStorage(){
         if(mActualPhotoObject == null) {
             ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
-        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+        } else if(ServicesChecker.getInstance().databaseNotConnected()){
             ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
         } if( ! UserManager.getInstance().userIsLoggedIn() ) {
             if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
@@ -138,7 +138,7 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
-        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+        } else if(ServicesChecker.getInstance().databaseNotConnected()){
             ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
         } if( ! UserManager.getInstance().userIsLoggedIn() ) {
             if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
@@ -178,7 +178,7 @@ public class TakePictureFragment extends Fragment {
     public void editPicture(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
-        } else if( ! ServicesChecker.getInstance().databaseConnected() ){
+        } else if(ServicesChecker.getInstance().databaseNotConnected()){
             ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
         } if( ! UserManager.getInstance().userIsLoggedIn() ) {
             if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
