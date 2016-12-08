@@ -383,7 +383,6 @@ public class TakePictureFragment extends Fragment {
                     mActualPhotoObject = createPhotoObject(HQPicture);
                 }
             } else {
-
                 ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }
         }

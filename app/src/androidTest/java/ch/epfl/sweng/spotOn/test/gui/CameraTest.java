@@ -71,12 +71,16 @@ public class CameraTest{
         onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
         
         onView(withId(R.id.captureButton)).perform(click());
+        Thread.sleep(1000);
         //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
         //Test all behavior: before and after rotating picture
+        Thread.sleep(1000);
         onView(withId(R.id.storeButton)).perform(click());
         // should fix this
+        Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
         // should fix this
+        Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
     }
 
