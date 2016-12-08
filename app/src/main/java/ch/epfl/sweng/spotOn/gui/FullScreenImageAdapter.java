@@ -127,11 +127,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     public void recordUpvote(View view){
-        vote(1);
+        if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else {
+            vote(1);
+        }
     }
 
-    public void recordDownvote(View view){
-        vote(-1);
+     public void recordDownvote(View view){
+        if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else{
+            vote(-1);
+        }
     }
 
 
@@ -140,8 +150,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
             throw new NullPointerException("FullScreenImageAdapter : trying to vote on a null media");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
+            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
             //fake vote method to have more responsive interface
-
+            Log.d("XD","1: "+voteSum);
             if(vote==1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyUpvoted(userId)){
                 voteSum++;
                 if(alreadyDownvoted(userId)){
@@ -149,12 +160,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
 
-            if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
+            else if(vote==-1 && !mCurrentPicture.getAuthorId().equals(userId) && !alreadyDownvoted(userId)){
                 voteSum--;
                 if(alreadyUpvoted(userId)){
                     voteSum--;
                 }
             }
+            else if(vote == 0) {
+                if(alreadyUpvoted(userId)){
+                    voteSum--;
+                }
+                else{
+                    voteSum++;
+                }
+            }
+            Log.d("XD","2: "+voteSum);
             if(!mCurrentPicture.getAuthorId().equals(userId)) {
                 mTextView.setText(Integer.toString(voteSum));
             }

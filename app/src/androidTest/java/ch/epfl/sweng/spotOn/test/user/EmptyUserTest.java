@@ -81,4 +81,9 @@ public class EmptyUserTest {
     public void getPhotoTakenTest(){
         emptyUser.getPhotosTaken();
     }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void retrieveUpdatedPhotoTakenTest(){
+        emptyUser.retrieveUpdatedPhotosTaken();
+    }
 }

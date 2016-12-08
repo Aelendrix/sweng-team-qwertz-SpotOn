@@ -78,9 +78,8 @@ public class RealUser implements User {
     }
 
     public void addPhoto(PhotoObject photo){
-        Long currentTime = photo.getCreatedDate().getTime();
         if(mPhotosTaken != null) {
-            mPhotosTaken.put(photo.getPictureId(), currentTime);
+            mPhotosTaken.put(photo.getPictureId(), photo.getCreatedDate().getTime());
         }
         DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
     }
@@ -90,6 +89,10 @@ public class RealUser implements User {
         DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
     }
 
+    public Map<String, Long> retrieveUpdatedPhotosTaken() {
+        updatePhotosTaken();
+        return mPhotosTaken;
+    }
 
 
 //PUBLIC GETTERS
@@ -97,12 +100,8 @@ public class RealUser implements User {
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
-    public Map<String, Long> getPhotosTaken() {
-        return mPhotosTaken;
-    }
+    public Map<String, Long> getPhotosTaken() { return mPhotosTaken; }
     public boolean getIsRetrievedFromDB() { return mIsRetrievedFromDB; }
-
-
 
 
 //PUBLIC SETTERS
@@ -135,8 +134,10 @@ public class RealUser implements User {
             for (String id : toRemoveIds){
                 mPhotosTaken.remove(id);
             }
+            DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
         }
     }
+
 
     /* Method to check if the user is already defined in the database and if not it creates it */
     private void lookUpUserInDatabase(){
@@ -169,6 +170,7 @@ public class RealUser implements User {
                             }
                             else {
                                 refToThis.setPhotosTaken(mPhotosTaken);
+                                refToThis.updatePhotosTaken();
                             }
                             refToThis.setKarma(mKarma);
                             refToThis.setIsRetrievedFromDB(true);

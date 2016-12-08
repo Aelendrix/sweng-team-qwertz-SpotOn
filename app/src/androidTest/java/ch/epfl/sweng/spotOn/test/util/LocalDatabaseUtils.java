@@ -2,11 +2,11 @@ package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
 
-
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 
 /**
  * Created by olivi on 07.12.2016.
@@ -29,12 +29,21 @@ public class LocalDatabaseUtils {
         TestInitUtils.initContext(location);
 
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
+        secondPo = PhotoObjectTestUtils.paulVanDykPO();
+
+        final Object lock1 = new Object();
+        final Object lock2 = new Object();
+
         firstPo.uploadWithoutFeedback();
 
-        secondPo = PhotoObjectTestUtils.paulVanDykPO();
         secondPo.uploadWithoutFeedback();
+        //synchronized (lock1)
+        //{lock1.wait();}
+        //synchronized (lock2)
+        //{lock2.wait();}
+        //LocalDatabase.getInstance().addPhotoObject(firstPo);
+        //LocalDatabase.getInstance().addPhotoObject(secondPo);
 
-        LocalDatabase.getInstance().notifyListeners();
     }
 
     public static void afterTests(){
@@ -46,9 +55,12 @@ public class LocalDatabaseUtils {
         if(LocalDatabase.instanceExists()){
             if(firstPo!=null){
                 DatabaseRef.deletePhotoObjectFromDB(firstPo.getPictureId());
+                StorageRef.deletePictureFromStorage(firstPo.getPictureId());
             }
             if(secondPo!=null){
                 DatabaseRef.deletePhotoObjectFromDB(secondPo.getPictureId());
+                StorageRef.deletePictureFromStorage(secondPo.getPictureId());
+
             }
         }
     }

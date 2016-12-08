@@ -51,7 +51,7 @@ public class ViewFullSizeImageActivityTest {
 
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         //Let the local database refresh
-        Thread.sleep(4000);
+        Thread.sleep(5000);
         //onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         Thread.sleep(1000);
@@ -79,7 +79,7 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
+        Thread.sleep(5000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(2000);
         onView(withId(R.id.pager)).perform(swipeLeft());
@@ -91,7 +91,7 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void buttonsDisappearTest() throws InterruptedException {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        Thread.sleep(4000);
+        Thread.sleep(5000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(1000);
         //make buttons disappear

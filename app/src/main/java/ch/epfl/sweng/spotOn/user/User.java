@@ -32,6 +32,7 @@ public interface User {
     String getUserId();
     long getKarma();
     Map<String, Long> getPhotosTaken();
+    Map<String, Long> retrieveUpdatedPhotosTaken();
     boolean getIsRetrievedFromDB();
 
 

@@ -18,16 +18,9 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 
 public class UserProfileActivity extends AppCompatActivity implements LocalDatabaseListener {
 
-    private TextView mFirstNameTextView = null;
-    private TextView mLastNameTextView = null;
-    private TextView mKarmaTextView = null;
     private ListView mPicturesListView = null;
 
     private User mUser = null;
-
-    private static List<String> mPictureIdList = null;
-    private static List<PhotoObject> mPhotoList = null;
-    private PictureVoteListAdapter mPictureVoteAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +36,9 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
         }
         else {
 
-            mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
-            mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
-            mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
+            TextView mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
+            TextView mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
+            TextView mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
 
             mPicturesListView = (ListView) findViewById(R.id.profilePicturesListView);
 
@@ -64,19 +57,18 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
         refreshVoteAndPictureLists();
     }
 
-
     private void refreshVoteAndPictureLists(){
-        mPictureIdList = new ArrayList<>(mUser.getPhotosTaken().keySet());
-        mPhotoList = new ArrayList<>();
+        List<String> mPictureIdList = new ArrayList<>(mUser.retrieveUpdatedPhotosTaken().keySet());
+        ArrayList<PhotoObject> mPhotoList = new ArrayList<>();
 
         for(int i=0; i<mPictureIdList.size(); i++){
-            Log.d("pictureIdList", mPictureIdList.get(i));
-            Log.d("photoListSize", Integer.toString(mPhotoList.size()));
-            mPhotoList.add(LocalDatabase.getInstance().get(mPictureIdList.get(i)));
-            Log.d("photoListSize", Integer.toString(mPhotoList.size()));
+            PhotoObject PO = LocalDatabase.getInstance().get(mPictureIdList.get(i));
+            if(PO != null) {
+                mPhotoList.add(PO);
+            }
         }
 
-        mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
+        PictureVoteListAdapter mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
         mPicturesListView.setAdapter(mPictureVoteAdapter);
     }
 

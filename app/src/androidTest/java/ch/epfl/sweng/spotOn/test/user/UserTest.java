@@ -60,11 +60,13 @@ public class UserTest {
         Thread.sleep(3000);
 
         Assert.assertEquals(testUser.getPhotosTaken().containsKey(po.getPictureId()), true);
+        Assert.assertEquals(testUser.retrieveUpdatedPhotosTaken().containsKey(po.getPictureId()), true);
 
         testUser.removePhoto(po.getPictureId());
         Thread.sleep(3000);
 
         Assert.assertEquals(testUser.getPhotosTaken().isEmpty(), true);
+        Assert.assertEquals(testUser.retrieveUpdatedPhotosTaken().isEmpty(), true);
     }
 }
 

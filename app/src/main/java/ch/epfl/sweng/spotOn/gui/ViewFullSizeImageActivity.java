@@ -137,7 +137,13 @@ public class ViewFullSizeImageActivity extends Activity {
             mFullScreenImageAdapter.recordUpvote(view);
             //Change color of buttons only if the user is not th author of the picture
             if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                colorForUpvote();
+                if(!mFullScreenImageAdapter.alreadyUpvoted(mUserID))
+                {
+                    colorNone();
+                }
+                else {
+                    colorForUpvote();
+                }
             }
         }
     }
@@ -148,7 +154,13 @@ public class ViewFullSizeImageActivity extends Activity {
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
             if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                colorForDownvote();
+                if(!mFullScreenImageAdapter.alreadyDownvoted(mUserID))
+                {
+                    colorNone();
+                }
+                else {
+                    colorForDownvote();
+                }
             }
         }
     }

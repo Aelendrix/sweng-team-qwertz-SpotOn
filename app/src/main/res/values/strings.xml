@@ -34,7 +34,7 @@
     <string name="userProfileLastName">Last Name:</string>
     <string name="userProfileKarma">Karma:</string>
     <string name="profilePictureListText">Votes:</string>
-    <string name="userProfileListPictureDeleteButton">Delete!</string>
+    <string name="userProfileListPictureDeleteButton">Delete !</string>
 
     <string name="fullSizeImage">Thumbnail in full size</string>
 

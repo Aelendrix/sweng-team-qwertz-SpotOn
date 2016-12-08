@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
@@ -29,7 +30,7 @@ public class GridOrderingTest {
     private Intent displayFullSizeImageIntent;
 
     @Before
-    public void initLocalDatabase() throws InterruptedException {
+    public void initLocalDatabase() throws InterruptedException  {
         LocalDatabaseUtils.initLocalDatabase();
         displayFullSizeImageIntent = new Intent();
     }
@@ -38,7 +39,7 @@ public class GridOrderingTest {
     public void testChangeOrdering () throws Exception{
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
         //Let the local database refresh
-        Thread.sleep(3000);
+        Thread.sleep(5000);
         onView(withText("Around me")).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.extend_list_button)).perform(click());
@@ -66,5 +67,4 @@ public class GridOrderingTest {
     public void after(){
         LocalDatabaseUtils.afterTests();
     }
-
 }
