@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Date;
 
+import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MapFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
@@ -47,7 +48,7 @@ public class MapTest {
 
             LocalDatabase.initialize(mMockLocationTracker);
             UserManager.initialize();
-            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance());
+            ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
             UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         }
     };

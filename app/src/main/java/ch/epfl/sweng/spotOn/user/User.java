@@ -16,6 +16,7 @@ public interface User {
     long ONE_DAY = 24 * 60 * 60 * 1000;
 
     String NOT_LOGGED_in_MESSAGE = "You need to be logged in to use this feature";
+    String NOT_RETRIEVED_FROM_DB_MESSAGE = "We're processing your login information, sit tight";
 
 
 // PUBLIC METHODS
