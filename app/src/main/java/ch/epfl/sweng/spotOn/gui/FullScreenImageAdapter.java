@@ -131,12 +131,22 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     }
 
-    public void recordUpvote(View view){
-        vote(1);
+    void recordUpvote(View view){
+        if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else {
+            vote(1);
+        }
     }
 
-    public void recordDownvote(View view){
-        vote(-1);
+     void recordDownvote(View view){
+        if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
+            vote(0);
+        }
+        else{
+            vote(-1);
+        }
     }
 
 
@@ -160,6 +170,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     voteSum--;
                 }
             }
+            if(vote == 0) {
+                if(alreadyUpvoted(userId)){
+                    voteSum--;
+                }
+                else{
+                    voteSum++;
+                }
+            }
+
             if(!mCurrentPicture.getAuthorId().equals(userId)) {
                 mTextView.setText(Integer.toString(voteSum));
             }
