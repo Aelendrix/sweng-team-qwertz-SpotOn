@@ -75,9 +75,9 @@ public class CameraTest{
         //Test all behavior: before and after rotating picture
         onView(withId(R.id.storeButton)).perform(click());
         // should fix this
-        // onView(withId(R.id.sendButton)).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
         // should fix this
-        // onView(withId(R.id.sendButton)).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
     }
 
     private ActivityResult createImageCaptureStub() {
