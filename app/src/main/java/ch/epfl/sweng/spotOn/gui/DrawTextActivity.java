@@ -13,9 +13,10 @@ import ch.epfl.sweng.spotOn.R;
  * Created by Alexis Dewaele on 16/11/2016.
  * This activity receives text to draw on picture from user.
  */
-
 public class DrawTextActivity extends AppCompatActivity{
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +31,10 @@ public class DrawTextActivity extends AppCompatActivity{
         getWindow().setLayout((int) (width * 0.8), (int) (height * 0.3));
     }
 
-    //Stores the string (limited to 30 characters) typed by user in the shared preferences
+    /**
+     * Stores the string (limited to 30 characters) typed by user in the shared preferences
+     * @param view useless parameter, but needed since it's called from a button
+     */
     public void sendTextToDraw(View view) {
         Intent intent = new Intent();
         EditText inputText = (EditText) findViewById(R.id.textToDraw);
@@ -38,10 +42,6 @@ public class DrawTextActivity extends AppCompatActivity{
         intent.putExtra("textToDraw", text);
         setResult(RESULT_OK, intent);
         finish();
-        /**SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putString("TD", text);
-        edit.apply();*/
 
         super.onBackPressed();
     }

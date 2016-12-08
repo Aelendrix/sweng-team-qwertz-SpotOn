@@ -61,7 +61,7 @@ public class EmptyUser implements User {
 
     @Override
     public boolean getIsRetrievedFromDB() {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override

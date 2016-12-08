@@ -5,8 +5,8 @@
     <item
         android:icon="@drawable/ic_account_circle_black_24dp"
         android:id="@+id/user_profile"
-        android:title="@string/userProfileTitle"
-        app:showAsAction="always"/>
+        android:title="@string/profile_menu"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:icon="@drawable/ic_info_outline_black_24dp"

@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class ViewFullSizeImageActivity extends Activity {
@@ -131,8 +131,8 @@ public class ViewFullSizeImageActivity extends Activity {
     }
 
     public void recordUpvote(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
             //Change color of buttons only if the user is not th author of the picture
@@ -149,8 +149,8 @@ public class ViewFullSizeImageActivity extends Activity {
     }
 
     public void recordDownvote(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
             if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
@@ -166,8 +166,8 @@ public class ViewFullSizeImageActivity extends Activity {
     }
 
     public void reportOffensivePicture(View view) {
-        if( !UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+        if( ! UserManager.getInstance().userIsLoggedIn() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
             //The color change of button is done in the above method reportOffensivePicture(view)
