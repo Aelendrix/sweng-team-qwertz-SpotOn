@@ -161,8 +161,13 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Set a preference for minimum and maximum zoom.
-        mMap.setMinZoomPreference(5.0f);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION,10.0f));
+        mMap.setMinZoomPreference(8.0f);
+        if(ConcreteLocationTracker.getInstance().hasValidLocation()) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConcreteLocationTracker.getInstance().getLatLng(), 12.0f));
+        }
+        else{
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 12.0f));
+        }
         setUpCluster();
         refreshMapLocation();
     }
