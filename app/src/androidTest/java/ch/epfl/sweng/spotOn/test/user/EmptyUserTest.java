@@ -75,11 +75,6 @@ public class EmptyUserTest {
     }
 
     @Test(expected=UnsupportedOperationException.class)
-    public void getIsRetrievedFromDBTest(){
-        emptyUser.getIsRetrievedFromDB();
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
     public void setPhotoTakenTest(){
         emptyUser.setPhotosTaken(new HashMap<String, Long>());
     }

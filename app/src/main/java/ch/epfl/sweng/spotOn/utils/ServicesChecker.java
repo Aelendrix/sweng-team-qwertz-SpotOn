@@ -149,7 +149,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if( ! locationIsValid){         // check for bad -> good transition
             Log.d("ServicesChecker","location status changed : listeners notified");
             locationIsValid = true;
-            printOkMessage();
+//            printOkMessage();
         }
     }
 
@@ -167,7 +167,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if( !userIsLoggedIn ){          // check for bad -> good transition
             Log.d("ServicesChecker","user logged in : listeners notified");
             userIsLoggedIn=true;
-            printOkMessage();
+//            printOkMessage();
         }
     }
 
