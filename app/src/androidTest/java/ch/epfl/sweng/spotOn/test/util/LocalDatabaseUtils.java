@@ -39,27 +39,13 @@ public class LocalDatabaseUtils {
         final Object lock1 = new Object();
         final Object lock2 = new Object();
 
-        firstPo.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                synchronized(lock1) {
-                    lock1.notify();
-                }
-            }
-        });
+        firstPo.uploadWithoutFeedback();
 
-        secondPo.upload(true, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                synchronized(lock2) {
-                    lock2.notify();
-                }
-            }
-        });
-        synchronized (lock1)
-        {lock1.wait();}
-        synchronized (lock2)
-        {lock2.wait();}
+        secondPo.uploadWithoutFeedback();
+        //synchronized (lock1)
+        //{lock1.wait();}
+        //synchronized (lock2)
+        //{lock2.wait();}
         //LocalDatabase.getInstance().addPhotoObject(firstPo);
         //LocalDatabase.getInstance().addPhotoObject(secondPo);
 
