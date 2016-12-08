@@ -47,7 +47,7 @@ public class ServicesCheckerTests {
         mMockUser = new MockUser_forTests("some","name","UUID",0l,new HashMap<String, Long>(), true, true);
         UserManager.getInstance().setMockUser(mMockUser);
 
-
+        ServicesChecker.allowDisplayingToasts(false);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
         }
     };

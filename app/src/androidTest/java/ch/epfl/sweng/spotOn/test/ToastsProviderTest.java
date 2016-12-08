@@ -44,6 +44,8 @@ public class ToastsProviderTest {
         @Override
         public void beforeActivityLaunched(){
             TestInitUtils.initContextServicesCheckSilent();
+            try { Thread.sleep(5000);}
+            catch (InterruptedException e) { throw new Error();}
         }
     };
 
