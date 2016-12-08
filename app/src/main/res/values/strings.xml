@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">SpotOn</string>
     <string name="wayToConnect">Choose a way to log in:</string>
-    <string name="logIn">Log in with SpotOn</string>
     <string name="restrictions">You won\'t be able to send pictures by not logging in</string>
     <string name="facebook_app_id">348409365495965</string>
-    <string name="options_menu">Options</string>
     <string name="log_out">Log out</string>
     <string name="about_menu">About</string>
     <string name="tab_aroundme">Around me</string>
@@ -14,8 +12,6 @@
     <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
-    <string name="upvoteButtonText">Upvote Picture</string>
-    <string name="downvoteButtonText">Downvote Picture</string>
     <string name="reportButton">Report the picture</string>
     <string name="sendButton">Send the photo to the server</string>
     <string name="storeButton">Save the photo to your gallery</string>
@@ -23,7 +19,6 @@
     <string name="rotateButton">Rotate the picture</string>
     <string name="editButton">Edit the picture</string>
     <string name="confirmButton">Confirm the changes</string>
-    <string name="tryButton">Try Rotation</string>
     <string name="about_text">
         This amazing application is the fruit of the hard work of an ambitious team. What started as a simple Software Engineering project became so much more !
         \nTeam Qwertz is composed of Alexis, Marie-Laure, Olivier, Quentin, Nicolas and Bruno.
@@ -54,6 +49,6 @@
     <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
     <string name="contentDescriptionLoginTextView">LoginTextView</string>
     <string name="profile_menu">Profile</string>
-    
+
 </resources>
 
