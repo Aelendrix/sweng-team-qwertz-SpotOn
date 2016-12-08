@@ -47,7 +47,7 @@ public class CameraTest{
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
         public void beforeActivityLaunched(){
-            TestInitUtils.initContext();
+            TestInitUtils.initContextServicesCheckSilent();
         }
     };
 

@@ -47,12 +47,35 @@ public class TestInitUtils {
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
-    public static void initContextServicesCheckSilent(){
+    public static void initContext(){   // same with MockLocationTracker default location
+        // destroy LocationTrackerSingleton if need be
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+
         MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-        LocalDatabase.initialize(mlt);
         ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+        LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("René", "Coty", "cestDoncTonAmi");
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
+    }
+
+    public static void initContextServicesCheckSilent(){
+        // destroy LocationTrackerSingleton if need be
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+        LocalDatabase.initialize(mlt);
+
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
+
         ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
         ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
@@ -67,21 +90,6 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-    }
-
-    public static void initContext(){   // same with MockLocationTracker default location
-        // destroy LocationTrackerSingleton if need be
-        if(ConcreteLocationTracker.instanceExists()){
-            ConcreteLocationTracker.destroyInstance();
-        }
-
-        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-        ConcreteLocationTracker.setMockLocationTracker(mlt);
-
-        LocalDatabase.initialize(mlt);
-        UserManager.initialize();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
