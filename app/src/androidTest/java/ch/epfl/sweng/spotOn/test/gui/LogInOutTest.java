@@ -8,6 +8,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 
+import com.facebook.login.LoginManager;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,6 +61,7 @@ public class LogInOutTest {
     //this test can fail randomly cause it depends of retrieving a webview from facebook
     public void logInAndOut() throws Exception {
         mActivityTestRule.launchActivity(new Intent());
+        Thread.sleep(5000);
         onView(withId(R.id.mainLoginButton)).perform(click());/*
         Thread.sleep(4000); // sorry... my phone is slow
 
@@ -77,8 +80,7 @@ public class LogInOutTest {
         //wait the mainActivity to start TabActivity
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withText("Log out")).perform(click());
+        onView(withId(R.id.log_out)).perform(click());
 
         */
     }

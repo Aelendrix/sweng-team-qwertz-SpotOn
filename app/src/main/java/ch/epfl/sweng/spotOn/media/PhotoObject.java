@@ -224,34 +224,36 @@ public class PhotoObject {
 
     public String processReport(String reporterID){
         String resultProcess = "";
-
-        if(mReportersList.contains(reporterID)){
-            resultProcess = "You unreported the picture.";
-            mNbReports --;
-            mReportersList.remove(reporterID);
-        } else {
-            resultProcess = "Thank you for reporting this picture.";
-            mNbReports++;
-            mReportersList.add(reporterID);
-        }
-
-        if(mFullsizeImageLink != null) {
-            DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-            DBref.child(mPictureId).child("reports").setValue(mNbReports);
-            DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
-        }
-
-        if(mNbReports >= MAX_NB_REPORTS){
-            if(mFullsizeImageLink != null) {
-                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                //remove picture from database
-                java.util.Date date= new java.util.Date();
-                DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
-                //decrease the karma of the picture author
-                giveAuthorHisKarma(REPORT_DECREASE_KARMA);
+        if (! reporterID.equals(mAuthorID)) {
+            if (mReportersList.contains(reporterID)) {
+                resultProcess = "You unreported the picture.";
+                mNbReports--;
+                mReportersList.remove(reporterID);
+            } else {
+                resultProcess = "Thank you for reporting this picture.";
+                mNbReports++;
+                mReportersList.add(reporterID);
             }
-        }
 
+            if (mFullsizeImageLink != null) {
+                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).child("reports").setValue(mNbReports);
+                DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+            }
+
+            if (mNbReports >= MAX_NB_REPORTS) {
+                if (mFullsizeImageLink != null) {
+                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                    //remove picture from database
+                    java.util.Date date = new java.util.Date();
+                    DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
+                    //decrease the karma of the picture author
+                    giveAuthorHisKarma(REPORT_DECREASE_KARMA);
+                }
+            }
+        } else {
+            resultProcess = "You can't report your own picture";
+        }
         return resultProcess;
     }
 

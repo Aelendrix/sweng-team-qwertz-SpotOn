@@ -10,6 +10,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -103,7 +106,7 @@ public class TabActivity extends AppCompatActivity{
         viewPager.setAdapter(adapter);
     }
 
-    /** This method uses the options menu when this activity is launched     */
+    /* This method uses the options menu when this activity is launched     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -157,27 +160,53 @@ public class TabActivity extends AppCompatActivity{
         mTabLayout.getTabAt(2).select();
     }
 
+    public void onExtendOrderList(View v){
+        RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
+        ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
+        orderListButton.setImageResource(android.R.color.transparent);
+        if(OrderListLayout.getVisibility()==View.VISIBLE) {
+            OrderListLayout.setVisibility(View.GONE);
+            orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
+        }
+        else{
+            OrderListLayout.setVisibility(View.VISIBLE);
+            orderListButton.setImageResource(R.drawable.ic_clear_black_32dp);
+
+
+        }
+    }
+
     public void onUpVoteOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_LONG);
         refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
+        hideOrderMenu();
     }
 
     public void onOldestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_LONG);
-
         refreshGrid(SeePicturesFragment.OLDEST_ORDER);
+        hideOrderMenu();
     }
 
     public void onNewestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_LONG);
-
         refreshGrid(SeePicturesFragment.NEWEST_ORDER);
+        hideOrderMenu();
     }
 
     public void onHottestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_LONG);
-
         refreshGrid(SeePicturesFragment.HOTTEST_ORDER);
+        hideOrderMenu();
+    }
+
+    private void hideOrderMenu(){
+        RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
+        ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
+        OrderListLayout.setVisibility(View.GONE);
+        orderListButton.setImageResource(android.R.color.transparent);
+        orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
+
     }
 
     private void refreshGrid(int ordering){
