@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
@@ -63,10 +64,12 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
             @Override
             public void onClick(View v) {
                 if(UserManager.getInstance().getUser().getPhotosTaken().containsKey(pictureID)) {
-                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
-                    StorageRef.deletePictureFromStorage(pictureID);
+                    LocalDatabase.getInstance().removePhotoObject(pictureID);
                     UserManager.getInstance().getUser().removePhoto(pictureID);
                     mPhotoList.remove(mPhotoList.get(position));
+                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
+                    StorageRef.deletePictureFromStorage(pictureID);
+                    LocalDatabase.getInstance().notifyListeners();
                     ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
 
                 }

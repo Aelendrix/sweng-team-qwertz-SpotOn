@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.utils.BitmapUtils;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
@@ -231,36 +232,31 @@ public class PhotoObject {
 
 
     public String processReport(String reporterID){
-        String resultProcess = "";
-        if (! reporterID.equals(mAuthorID)) {
-            if (mReportersList.contains(reporterID)) {
-                resultProcess = "You unreported the picture.";
-                mNbReports--;
-                mReportersList.remove(reporterID);
-            } else {
-                resultProcess = "Thank you for reporting this picture.";
-                mNbReports++;
-                mReportersList.add(reporterID);
-            }
+        String resultProcess  = "";
+        if(reporterID.equals(mAuthorID)){
+            resultProcess = "It's your Picture, you could delete it instead of reporting";
+        }
+        else{
+            resultProcess = "Thank you for reporting this picture.";
+            mNbReports++;
+            mReportersList.add(reporterID);
 
             if (mFullsizeImageLink != null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
                 DBref.child(mPictureId).child("reports").setValue(mNbReports);
                 DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
             }
-
             if (mNbReports >= MAX_NB_REPORTS) {
                 if (mFullsizeImageLink != null) {
-                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                    //remove picture from database
-                    java.util.Date date = new java.util.Date();
-                    DBref.child(mPictureId).child("expireDate").setValue(date.getTime());
-                    //decrease the karma of the picture author
+                    DatabaseRef.deletePhotoObjectFromDB(mPictureId);
+                    StorageRef.deletePictureFromStorage(mPictureId);
                     giveAuthorHisKarma(REPORT_DECREASE_KARMA);
                 }
             }
-        } else {
-            resultProcess = "You can't report your own picture";
+
+            LocalDatabase.getInstance().removePhotoObject(mPictureId);
+            LocalDatabase.getInstance().notifyListeners();
+
         }
         return resultProcess;
     }

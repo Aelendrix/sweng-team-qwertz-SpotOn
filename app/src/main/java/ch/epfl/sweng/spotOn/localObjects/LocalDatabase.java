@@ -21,6 +21,7 @@ import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 
 public class LocalDatabase implements LocationTrackerListener{
@@ -197,9 +198,12 @@ public class LocalDatabase implements LocationTrackerListener{
                         mLocationTempCopy = new Location(mCachedLocation);
                     }
                     LocalDatabase.getInstance().clear();
+                    String userID = UserManager.getInstance().getUser().getUserId();
                     for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                         PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                        if(!(photoObject.getReportersList().contains(userID))) {
+                            LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                        }
                     }
                     // refresh last refresh date
                     mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
@@ -232,9 +236,12 @@ public class LocalDatabase implements LocationTrackerListener{
                     synchronized (this) {
                         mLocationTempCopy = new Location(mCachedLocation);
                     }
+                    String userID = UserManager.getInstance().getUser().getUserId();
                     for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
                         PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                        LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                        if(!(photoObject.getReportersList().contains(userID))) {
+                            LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                        }
                     }
                     // refresh last refresh date
                     mLastRefreshDate = Calendar.getInstance().getTimeInMillis();
