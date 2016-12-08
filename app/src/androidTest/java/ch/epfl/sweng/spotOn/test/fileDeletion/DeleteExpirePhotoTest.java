@@ -10,6 +10,7 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 /**
  * Created by nico on 23.11.16.
  */
+@SuppressWarnings("unused")
 @RunWith(AndroidJUnit4.class)
 public class DeleteExpirePhotoTest {
     String pictureID;

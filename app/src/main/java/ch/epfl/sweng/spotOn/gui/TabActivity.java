@@ -69,24 +69,28 @@ public class TabActivity extends AppCompatActivity{
         startActivity(startMain);
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void dispatchTakePictureIntent(View view) {
-        mCameraFragment.dispatchTakePictureIntent(view);
+        mCameraFragment.dispatchTakePictureIntent();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void storePictureOnInternalStorage(View view) {
-        mCameraFragment.storePictureOnInternalStorage(view);
+        mCameraFragment.storePictureOnInternalStorage();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void sendPictureToServer(View view){
-        mCameraFragment.sendPictureToServer(view);
+        mCameraFragment.sendPictureToServer();
     }
 
     /*
      * Rotates the picture by 90°
      */
 
+    @SuppressWarnings("UnusedParameters")
     public void editPicture(View view){
-        mCameraFragment.editPicture(view);
+        mCameraFragment.editPicture();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -147,10 +151,12 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
         mTabLayout.getTabAt(2).select();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onExtendOrderList(View v){
         RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
         ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
@@ -167,24 +173,28 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onUpVoteOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by most upvoted Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.UPVOTE_ORDER);
         hideOrderMenu();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onOldestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by oldest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.OLDEST_ORDER);
         hideOrderMenu();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onNewestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by newest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.NEWEST_ORDER);
         hideOrderMenu();
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onHottestOrderingClick(View v){
         ToastProvider.printOverCurrent("Ordered by hottest Picture",Toast.LENGTH_SHORT);
         refreshGrid(SeePicturesFragment.HOTTEST_ORDER);

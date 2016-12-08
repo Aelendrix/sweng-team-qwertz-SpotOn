@@ -31,8 +31,8 @@ public class LocalDatabaseUtils {
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
         secondPo = PhotoObjectTestUtils.paulVanDykPO();
 
-        final Object lock1 = new Object();
-        final Object lock2 = new Object();
+        //final Object lock1 = new Object();
+        //final Object lock2 = new Object();
 
         firstPo.uploadWithoutFeedback();
 

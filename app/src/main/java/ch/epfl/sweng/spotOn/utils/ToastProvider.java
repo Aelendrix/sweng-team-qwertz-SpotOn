@@ -89,7 +89,6 @@ public class ToastProvider {
     private static void checkNonnullActivity(){
         if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
         }
     }
 

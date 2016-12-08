@@ -84,7 +84,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         } else {
             // want these final variable, because the fields of the class may change if we swipe
             final ImageView currentView = mViewToSet;
-            final String currentPicId = new String(wantedPicId);
+            final String currentPicId = wantedPicId;
             mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
                 @Override
                 public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
@@ -128,6 +128,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void recordUpvote(View view){
         if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
@@ -137,6 +138,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
+     @SuppressWarnings("UnusedParameters")
      public void recordDownvote(View view){
         if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);

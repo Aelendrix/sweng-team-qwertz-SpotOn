@@ -85,7 +85,7 @@ public class TakePictureFragment extends Fragment {
 
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
-    public void dispatchTakePictureIntent(View view){
+    public void dispatchTakePictureIntent(){
         if( ! ServicesChecker.getInstance().databaseConnected() ){
             ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
         } if( ! UserManager.getInstance().userIsLoggedIn() ) {
@@ -109,7 +109,7 @@ public class TakePictureFragment extends Fragment {
     /** Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored */
 
-    public void storePictureOnInternalStorage(View view){
+    public void storePictureOnInternalStorage(){
         if(mActualPhotoObject == null) {
             ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
         } else if( ! ServicesChecker.getInstance().databaseConnected() ){
@@ -135,7 +135,7 @@ public class TakePictureFragment extends Fragment {
     /**
      * Uploads picture to our database/file server
      */
-    public void sendPictureToServer(View view){
+    public void sendPictureToServer(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
         } else if( ! ServicesChecker.getInstance().databaseConnected() ){
@@ -174,9 +174,8 @@ public class TakePictureFragment extends Fragment {
 
     /**
      * Method called when clicking the "Edit" Button, it goes to the EditPicture activity
-     * @param view Unused because is a button linked method
      */
-    public void editPicture(View view){
+    public void editPicture(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
         } else if( ! ServicesChecker.getInstance().databaseConnected() ){
