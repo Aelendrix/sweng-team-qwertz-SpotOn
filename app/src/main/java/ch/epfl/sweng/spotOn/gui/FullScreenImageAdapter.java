@@ -131,7 +131,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     }
 
-    void recordUpvote(View view){
+    public void recordUpvote(View view){
         if(alreadyUpvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
         }
@@ -140,7 +140,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-     void recordDownvote(View view){
+     public void recordDownvote(View view){
         if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
         }

@@ -11,6 +11,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,8 @@ import ch.epfl.sweng.spotOn.gui.ViewUserPhotoActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
+import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
@@ -36,14 +39,14 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
-
+    PhotoObject po;
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
             new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
     {
         @Override
         public void beforeActivityLaunched(){
-            PhotoObject po = PhotoObjectTestUtils.germaynDeryckePO();
+            po = PhotoObjectTestUtils.germaynDeryckePO();
             po.uploadWithoutFeedback();
 
             try {
@@ -106,5 +109,11 @@ public class UserProfileActivityTest {
                     }
                 },
                 Press.FINGER);
+    }
+
+    @After
+    public void clearObject(){
+        DatabaseRef.deletePhotoObjectFromDB(po.getPictureId());
+        StorageRef.deletePictureFromStorage(po.getPictureId());
     }
 }
