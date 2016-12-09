@@ -186,7 +186,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             }
 
             String toastMessage = mCurrentPicture.processVote(vote, userId);
-            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+            ToastProvider.get().printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
@@ -197,7 +197,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mCurrentPicture.processReport(userId);
-            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+            ToastProvider.get().printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 

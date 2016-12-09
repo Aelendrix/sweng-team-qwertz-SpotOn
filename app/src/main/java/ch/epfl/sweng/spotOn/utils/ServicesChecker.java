@@ -180,9 +180,9 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             databaseIsConnected = true;
             if(mAllowedToDisplayToasts) {
                 if (allServicesOk()) {
-                    ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+                    ToastProvider.get().printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
                 } else {
-                    ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                    ToastProvider.get().printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
                 }
             }
         }
@@ -194,7 +194,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if(databaseIsConnected){ // connected -> connected
             databaseIsConnected = false;
             if(mAllowedToDisplayToasts) {
-                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                ToastProvider.get().printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
             }
         }
     }
@@ -216,7 +216,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             Log.d("ServicesChecker","location timedout : listeners notified");
             locationIsValid = false;
             if(mAllowedToDisplayToasts) {
-                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                ToastProvider.get().printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
             }
         }
     }
@@ -238,7 +238,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             Log.d("ServicesChecker","user logged out : listeners notified");
             userIsLoggedIn=false;
             if(mAllowedToDisplayToasts) {
-                ToastProvider.printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
+                ToastProvider.get().printOverCurrent(provideErrorMessage(), Toast.LENGTH_LONG);
             }
         }
     }
@@ -248,7 +248,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     private void printOkMessage(){
         if(allServicesOk()){
             if(mAllowedToDisplayToasts) {
-                ToastProvider.printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
+                ToastProvider.get().printOverCurrent("All services are now OK", Toast.LENGTH_SHORT);
             }
         }
     }
