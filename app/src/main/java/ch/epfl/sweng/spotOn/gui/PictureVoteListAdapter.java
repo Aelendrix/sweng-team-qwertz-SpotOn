@@ -71,11 +71,11 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
                     UserManager.getInstance().getUser().removePhoto(pictureID);
                     mPhotoList.remove(mPhotoList.get(position));
                     LocalDatabase.getInstance().notifyListeners();
-                    ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
+                    ToastProvider.get().printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
 
                 }
                 else {
-                    ToastProvider.printOverCurrent("This picture has already been deleted, please refresh!", Toast.LENGTH_SHORT);
+                    ToastProvider.get().printOverCurrent("This picture has already been deleted, please refresh!", Toast.LENGTH_SHORT);
                 }
                 notifyDataSetChanged();
             }

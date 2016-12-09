@@ -40,8 +40,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
 
-    private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
-    private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
+    private final static int RESOURCE_IMAGE_DOWNLOADING = R.mipmap.image_downloading;
+    private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
 
 
 
@@ -186,7 +186,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             }
 
             String toastMessage = mCurrentPicture.processVote(vote, userId);
-            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+            ToastProvider.get().printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 
@@ -197,7 +197,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mCurrentPicture.processReport(userId);
-            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
+            ToastProvider.get().printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 

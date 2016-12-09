@@ -116,7 +116,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        ToastProvider.update(this);
+        ToastProvider.get().update(this);
     }
 
 
@@ -222,6 +222,7 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-        ToastProvider.update(this);
+        ToastProvider.initialize();
+        ToastProvider.get().update(this);
     }
 }
