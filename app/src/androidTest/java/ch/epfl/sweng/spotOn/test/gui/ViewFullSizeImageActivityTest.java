@@ -63,8 +63,8 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.reportButton)).perform(click());
         Thread.sleep(1000);
         //unreport
-        onView(withId(R.id.reportButton)).perform(click());
-        Thread.sleep(1000);
+        /*onView(withId(R.id.reportButton)).perform(click());
+        Thread.sleep(1000);*/
         /*
         //come back an reperform the action with an already downloaded picture
         mActivityTestRule.getActivity().onBackPressed();
