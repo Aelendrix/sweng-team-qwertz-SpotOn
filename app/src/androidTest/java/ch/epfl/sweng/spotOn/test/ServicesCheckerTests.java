@@ -86,6 +86,8 @@ public class ServicesCheckerTests {
         Thread.sleep(5000);
     }
 
+
+
     private void checkExpected(String expected){
         String errMsg = ServicesChecker.getInstance().provideErrorMessage();
         if( ! errMsg.equals(expected)){
