@@ -196,16 +196,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
             String userId = UserManager.getInstance().getUser().getUserId();
-
-            //Change color of report button depending if the user reports or unreports the picture
-            //and if he is not the author of the picture
-            if(! userId.equals(mCurrentPicture.getAuthorId())) {
-                if (alreadyReported(userId)) {
-                    colorIfNotReported(view);
-                } else {
-                    colorIfReported(view);
-                }
-            }
             String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }

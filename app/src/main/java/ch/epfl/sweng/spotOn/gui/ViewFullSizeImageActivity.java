@@ -171,7 +171,9 @@ public class ViewFullSizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
-            //The color change of button is done in the above method reportOffensivePicture(view)
+            if(! mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                finish();
+            }
         }
     }
 
