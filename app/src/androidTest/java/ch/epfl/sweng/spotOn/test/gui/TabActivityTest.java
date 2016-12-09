@@ -90,7 +90,6 @@ public class TabActivityTest {
         Intents.release();
     }
 
-
     @Test
     public void startUserProfileActivity() {
         Intents.init();
