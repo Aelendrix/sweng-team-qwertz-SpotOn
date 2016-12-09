@@ -103,7 +103,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             }
         }
         if(!allServicesOk()) {
-            errorMessage += "--  Some features will be restricted  --";
+            errorMessage += "--  Some features may be restricted  --";
         }
         return errorMessage;
     }
