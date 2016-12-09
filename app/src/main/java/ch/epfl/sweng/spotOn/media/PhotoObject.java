@@ -234,7 +234,7 @@ public class PhotoObject {
     public String processReport(String reporterID){
         String resultProcess  = "";
         if(reporterID.equals(mAuthorID)){
-            resultProcess = "It's your Picture, you could delete it instead of reporting";
+            resultProcess = "You can't report this picture! please delete it from your profile";
         }
         else{
             resultProcess = "Thank you for reporting this picture.";
