@@ -64,7 +64,7 @@ public class TakePictureFragment extends Fragment {
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     private static final int REQUEST_EDITION = 20;
-    private static final int REQUEST_STORAGE = 30;
+    private static final int REQUEST_PERMISSIONS = 30;
     private boolean permissionToCapture;
     private ImageView mImageView;
     private Uri mImageToUploadUri;
@@ -99,19 +99,11 @@ public class TakePictureFragment extends Fragment {
             if (capturePermissionGiven() && storagePermissionGiven()) {
                 invokeCamera();
             } else {
-                String[] permissionToCapture = {Manifest.permission.CAMERA};
-                String[] permissionToStore = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                if (!capturePermissionGiven()) {
-                    //ask permission to capture + ask permission to store
-                    ActivityCompat.requestPermissions(getActivity(), permissionToCapture, REQUEST_IMAGE_CAPTURE);
-                    Log.d("DoYouComeBack", "yes");
-                    if(capturePermissionGiven()){
-                        Log.d("DoYouEnter", "yes");
-                        ActivityCompat.requestPermissions(getActivity(), permissionToStore, REQUEST_STORAGE);
-                    }
-                } else {
-                    ActivityCompat.requestPermissions(getActivity(), permissionToStore, REQUEST_STORAGE);
-                }
+                //Ask the permission to capture and store
+                String[] permissionsToCaptureAndStore = {Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                requestPermissions(permissionsToCaptureAndStore,
+                        REQUEST_PERMISSIONS);
             }
         }
     }
@@ -195,7 +187,7 @@ public class TakePictureFragment extends Fragment {
 
                 Log.v("Storage","Permission is revoked");
                 ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
@@ -207,7 +199,7 @@ public class TakePictureFragment extends Fragment {
 
     /**
      * Method called after the user answered the pop-up messages about permissions.
-     * It checks the user's answers and if positive, the app invokes the camera
+     * It checks the user gave the right permissions and if positives, the app invokes the camera
      *
      * @param requestCode  the request code to access the camera
      * @param permissions  the permissions we asked to the user
@@ -216,12 +208,10 @@ public class TakePictureFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (capturePermissionGiven()) {
-            if(storagePermissionGiven()){
-                invokeCamera();
-            } else {
-                ToastProvider.printOverCurrent("You need to accept the permissions to take pictures", Toast.LENGTH_LONG);
-            }
+        Log.d("Access", "All Good 1");
+        if (capturePermissionGiven() && storagePermissionGiven()) {
+            Log.d("Access", "All Good 2");
+            invokeCamera();
         } else {
             ToastProvider.printOverCurrent("You need to accept the permissions to take pictures", Toast.LENGTH_LONG);
         }
