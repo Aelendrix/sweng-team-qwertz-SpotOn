@@ -39,36 +39,34 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
-
-    PhotoObject po = null;
-
+    private PhotoObject po;
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
             new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
-    {
-        @Override
-        public void beforeActivityLaunched(){
-            po = PhotoObjectTestUtils.germaynDeryckePO();
-            po.uploadWithoutFeedback();
+            {
+                @Override
+                public void beforeActivityLaunched(){
+                    po = PhotoObjectTestUtils.germaynDeryckePO();
+                    po.uploadWithoutFeedback();
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                System.err.print(e);
-            }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        System.err.print(e);
+                    }
 
-            HashMap<String, Long> h = new HashMap<>();
-            h.put(po.getPictureId(), po.getCreatedDate().getTime());
+                    HashMap<String, Long> h = new HashMap<>();
+                    h.put(po.getPictureId(), po.getCreatedDate().getTime());
 
-            MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-            ConcreteLocationTracker.setMockLocationTracker(mlt);
+                    MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+                    ConcreteLocationTracker.setMockLocationTracker(mlt);
 
-            User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
-            TestInitUtils.initContextMockUser(mockUser);
+                    User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
+                    TestInitUtils.initContextMockUser(mockUser);
 
-            LocalDatabase.getInstance().addPhotoObject(po);
-        }
-    };
+                    LocalDatabase.getInstance().addPhotoObject(po);
+                }
+            };
 
 
     @Test
@@ -106,9 +104,7 @@ public class UserProfileActivityTest {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
-
-                        return coordinates;
+                        return new float[] {screenX, screenY};
                     }
                 },
                 Press.FINGER);

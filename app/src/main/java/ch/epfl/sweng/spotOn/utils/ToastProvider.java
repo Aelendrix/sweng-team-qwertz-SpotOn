@@ -10,7 +10,6 @@ import android.widget.Toast;
  */
 public class ToastProvider {
 
-    //    private static Context mCurrentContext = null;
     private static Activity currentActivity = null;
     private static Toast mCurrentlyDisplayedToast = null;
 
@@ -90,7 +89,6 @@ public class ToastProvider {
     private static void checkNonnullActivity(){
         if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
-            return;
         }
     }
 

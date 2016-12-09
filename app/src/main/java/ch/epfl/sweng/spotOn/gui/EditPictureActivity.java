@@ -88,6 +88,7 @@ public class EditPictureActivity extends AppCompatActivity {
      * and set the image view with the rotated bitmap
      * @param view useless because called by a button
      */
+    @SuppressWarnings("UnusedParameters")
     public void rotatePicture(View view){
         Matrix rotationMatrix = new Matrix();
         rotationMatrix.postRotate(90);
@@ -102,6 +103,7 @@ public class EditPictureActivity extends AppCompatActivity {
      * Called when clicking on the "Add Text" button. Launch an activity popup to ask for the text
      * @param view useless because called by a button
      */
+    @SuppressWarnings("UnusedParameters")
     public void goToDrawTextActivity(View view){
             Intent intent = new Intent(this, DrawTextActivity.class);
             startActivityForResult(intent, REQUEST_TEXT_DRAWING);
@@ -112,6 +114,7 @@ public class EditPictureActivity extends AppCompatActivity {
      * TakePictureFragment activity and keeping the edited changes
      * @param view useless because called by a button
      */
+    @SuppressWarnings("UnusedParameters")
     public void confirmChanges(View view){
         Intent intent = new Intent();
         mURIofBitmap = storeAndGetImageUri(mEditedBitmap);

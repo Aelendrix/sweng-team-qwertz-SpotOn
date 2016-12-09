@@ -29,7 +29,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
         newMockLocation.setLatitude(latitude);
         newMockLocation.setLongitude(longitude);
         newMockLocation.setAltitude(10);
-        newMockLocation.setAccuracy(new Float(0.90));
+        newMockLocation.setAccuracy(0.90f);
         newMockLocation.setTime(new Date().getTime());
         mockLocation=newMockLocation;
     }
@@ -39,7 +39,7 @@ public class MockLocationTracker_forTest implements LocationTracker {
         newMockLocation.setLatitude(46.52942111671832);
         newMockLocation.setLongitude(6.569539974900668);
         newMockLocation.setAltitude(10);
-        newMockLocation.setAccuracy(new Float(0.90));
+        newMockLocation.setAccuracy(0.90f);
         newMockLocation.setTime(new Date().getTime());
         mockLocation=newMockLocation;
     }

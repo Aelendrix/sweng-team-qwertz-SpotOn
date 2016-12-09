@@ -31,7 +31,7 @@ public class mainActivityTest_notLoggedInButton {
     UiDevice mDevice;
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class, false, false);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
 
     @Before
     public void initStuff(){

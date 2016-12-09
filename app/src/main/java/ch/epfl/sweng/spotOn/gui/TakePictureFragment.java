@@ -88,7 +88,7 @@ public class TakePictureFragment extends Fragment {
 
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
-    public void dispatchTakePictureIntent(View view){
+    public void dispatchTakePictureIntent(){
         if( ! ServicesChecker.getInstance().canTakePicture() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().takePictureErrorMessage(), Toast.LENGTH_LONG);
         } else {
@@ -106,7 +106,7 @@ public class TakePictureFragment extends Fragment {
     /** Method called when clicking the "Store" button, it will store the picture
      * on the internal storage if not already stored */
 
-    public void storePictureOnInternalStorage(View view){
+    public void storePictureOnInternalStorage(){
         if(mActualPhotoObject == null) {
             ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
         } else {
@@ -124,7 +124,7 @@ public class TakePictureFragment extends Fragment {
     /**
      * Uploads picture to our database/file server
      */
-    public void sendPictureToServer(View view){
+    public void sendPictureToServer(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
         } else if( mActualPhotoObject.isStoredInServer() ){
@@ -157,9 +157,8 @@ public class TakePictureFragment extends Fragment {
 
     /**
      * Method called when clicking the "Edit" Button, it goes to the EditPicture activity
-     * @param view Unused because is a button linked method
      */
-    public void editPicture(View view){
+    public void editPicture(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
         } else {
@@ -234,11 +233,10 @@ public class TakePictureFragment extends Fragment {
      * @return The bitmap of the high quality picture
      */
     public static Bitmap getBitmap(Uri photoUri,Context context){
-        Uri uri = photoUri;
         InputStream in;
         try {
             final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
-            in = context.getContentResolver().openInputStream(uri);
+            in = context.getContentResolver().openInputStream(photoUri);
 
             // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -252,7 +250,7 @@ public class TakePictureFragment extends Fragment {
                 scale++;
             }
             Bitmap b = null;
-            in = context.getContentResolver().openInputStream(uri);
+            in = context.getContentResolver().openInputStream(photoUri);
             if (scale > 1) {
                 scale--;
                 // scale to max possible inSampleSize that still yields an image larger than target
@@ -305,9 +303,8 @@ public class TakePictureFragment extends Fragment {
         }else {
             currentLocation = ConcreteLocationTracker.getInstance().getLocation();
         }
-        PhotoObject picObject = new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, createdTime, currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        return picObject;
+        return new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, createdTime, currentLocation.getLatitude(), currentLocation.getLongitude());
     }
 
     /**
@@ -345,9 +342,8 @@ public class TakePictureFragment extends Fragment {
         if(imageToUploadUri != null) {
             editUri = imageToUploadUri;
             //Get our saved picture from the uri in a bitmap image
-            Uri selectedImage = imageToUploadUri;
-            getContext().getContentResolver().notifyChange(selectedImage, null);
-            Bitmap HQPicture = getBitmap(selectedImage, getContext());
+            getContext().getContentResolver().notifyChange(imageToUploadUri, null);
+            Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
                 mImageView.setImageBitmap(HQPicture);
                 mActualPhotoObject = createPhotoObject(HQPicture);

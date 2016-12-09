@@ -50,13 +50,12 @@ public class PhotoObjectTestUtils {
     }
 
     public static PhotoObjectStoredInDatabase convertToStoredInDatabase(PhotoObject po){
-        PhotoObjectStoredInDatabase posd = new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(),
+        return new PhotoObjectStoredInDatabase(po.getFullsizeImageLink(),
                 BitmapUtils.encodeBitmapAsString(po.getThumbnail()), po.getPictureId(),
                 po.getAuthorId(), po.getPhotoName(), po.getCreatedDate(), po.getExpireDate(),
                 po.getLatitude(), po.getLongitude(), po.getUpvotes(), po.getDownvotes(),
                 po.getReports(), po.getUpvotersList(), po.getDownvotersList(),
                 po.getReportersList());
-        return posd;
     }
 
 
@@ -123,8 +122,7 @@ public class PhotoObjectTestUtils {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             throw new Error("Couldn't fetch image from the internet");
         }

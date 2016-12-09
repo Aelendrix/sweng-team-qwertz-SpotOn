@@ -159,6 +159,7 @@ public class LocationTrackerTest{
 // HELPERS
 
     // compares latitude, longitude, altitude, accuracy, time, elapsedTime
+    @SuppressWarnings("SimplifiableIfStatement")
     private static boolean locationsAtSamePlace(Location l1, Location l2){
         if(!(l1.getProvider().equals(l2.getProvider()))){
             return false;

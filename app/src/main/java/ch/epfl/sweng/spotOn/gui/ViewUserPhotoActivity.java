@@ -40,7 +40,7 @@ public class ViewUserPhotoActivity extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
-                    if(photoSnapshot.getKey().toString().equals(pictureId)) {
+                    if(photoSnapshot.getKey().equals(pictureId)) {
                         PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
                         photoObject.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
                             @Override

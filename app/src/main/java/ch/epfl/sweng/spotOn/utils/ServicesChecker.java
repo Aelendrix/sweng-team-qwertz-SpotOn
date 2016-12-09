@@ -83,8 +83,8 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 
-    public boolean databaseConnected(){
-        return databaseIsConnected;
+    public boolean databaseNotConnected(){
+        return !databaseIsConnected;
     }
 
     public String provideErrorMessage(){
@@ -96,7 +96,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             errorMessage += "Can't localize your device\n";
         }
         if( ! mUserManagerRef.userIsLoggedIn() ){
-            if( mUserManagerRef.retrievingUserFromDatebase()){
+            if( mUserManagerRef.retrievingUserFromDatabase()){
                 errorMessage+= "We're processing your login informations\n";
             }else {
                 errorMessage += "You're not logged in\n";
@@ -137,7 +137,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     public String takePictureErrorMessage() {
         String message = "";
         if (!mUserManagerRef.userIsLoggedIn()) {
-            if (!ServicesChecker.getInstance().databaseConnected()) {
+            if (ServicesChecker.getInstance().databaseNotConnected()) {
                 message += User.LOGIN_NO_DATABASE_CONNECTION_MESSAGE+"\n";
             } else if (!UserManager.getInstance().getUser().getIsRetrievedFromDB()) {
                 message += User.LOGIN_NOT_RETRIEVED_FROM_DB_MESSAGE+"\n";

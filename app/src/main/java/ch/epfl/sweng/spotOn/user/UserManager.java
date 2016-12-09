@@ -47,19 +47,12 @@ public class UserManager {
         }
     }
 
-    public boolean userIsLoggedIn(){
-        if(mUser == null){
-            return false;
-        }
-        return mUser.isLoggedIn();
+    public boolean userIsLoggedIn() {
+        return mUser != null && mUser.isLoggedIn();
     }
 
-    public boolean retrievingUserFromDatebase(){
-        if(mUser==null){
-            return false;
-        }else{
-            return !mUser.getIsRetrievedFromDB();
-        }
+    public boolean retrievingUserFromDatabase() {
+        return mUser != null && !mUser.getIsRetrievedFromDB();
     }
 
     public User getUser(){

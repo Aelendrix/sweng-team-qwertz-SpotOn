@@ -44,7 +44,7 @@ public class MockUser_forTests implements User {
 
     @Override
     public void addPhoto(PhotoObject photo) {
-        mPhotosTaken.put(photo.getPictureId(), 0l);
+        mPhotosTaken.put(photo.getPictureId(), 0L);
     }
 
     @Override

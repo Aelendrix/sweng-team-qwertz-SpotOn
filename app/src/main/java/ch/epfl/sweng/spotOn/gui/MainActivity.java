@@ -140,6 +140,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     public void goToTabActivityNotLoggedIn(View view){
         goToTabActivity(false);
     }
