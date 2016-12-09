@@ -217,13 +217,21 @@ public class TakePictureFragment extends Fragment {
      */
     private void invokeCamera() {
         //Needed to store the last picture taken on the user's storage in order to have HQ picture
-        if(isStoragePermissionGranted()) {
+        File storage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "/SpotOn");
+        //Create storage directory to save the last take picture in high quality
+        boolean storageExists = storage.exists();
+        if (!storageExists) {
+            storageExists = storage.mkdirs();
+        }
+        if(storageExists) {
+            File tempPicture = new File(storage + File.separator + "LAST_PICTURE_TAKEN.jpg");
             Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                    "/SpotOn/TEMP_PICTURE.jpg");
-            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), temporalStorage);
+            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), tempPicture);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } else {
+            Log.d("Storage", "error while creating the file");
         }
     }
 
