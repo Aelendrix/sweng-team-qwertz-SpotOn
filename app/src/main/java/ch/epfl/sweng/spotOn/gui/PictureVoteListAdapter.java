@@ -42,8 +42,12 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
-        LayoutInflater inflater = mActivityContext.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.content_profile_list_pictures, parent, true);
+        View rowView = view;
+        if (rowView == null) {
+            LayoutInflater inflater = mActivityContext.getLayoutInflater();
+            rowView = inflater.inflate(R.layout.content_profile_list_pictures, parent, true);
+        }
+
         TextView voteTextView = (TextView) rowView.findViewById(R.id.profilePictureVotes);
 
         final String pictureID = mPhotoList.get(position).getPictureId();
