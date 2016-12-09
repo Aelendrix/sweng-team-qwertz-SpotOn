@@ -15,8 +15,8 @@ public interface User {
     long MIN_POST_PER_DAY = 1;
     long ONE_DAY = 24 * 60 * 60 * 1000;
 
-    public final static String LOGIN_NO_DATABASE_CONNECTION_MESSAGE = "We couldn't verify your login informations, please ensure you are connected to the internet";
-    public final static String LOGIN_NOT_LOGGED_in_MESSAGE = "You need to be logged in to use this feature";
+    public final static String LOGIN_NO_DATABASE_CONNECTION_MESSAGE = "Couldn't verify your login informations, please ensure you are connected to the internet";
+    public final static String LOGIN_NOT_LOGGED_in_MESSAGE = "You are not logged in";
     public final static String LOGIN_NOT_RETRIEVED_FROM_DB_MESSAGE = "We're processing your login information, please wait";
 
 

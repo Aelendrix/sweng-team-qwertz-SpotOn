@@ -151,7 +151,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         if(message.equals("")){
             return "takePictureErrorMessage : all good";
         }else{
-            return message+" --  We can't let you take a photo  -- ";
+            return message+" --  Feature unavailable  -- ";
         }
     }
 
@@ -164,7 +164,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 
     public String sendToServerErrorMessage(){
         if( ! mFirebaseConnectionTracker.isConnected() ){
-            return "You seem to be disconnected from the internet\n --  You cannot post your photo right now  -- ";
+            return "You seem to be disconnected from the internet\n --  Feature unavailable  -- ";
         }else{
             return "sendToServerErrorMessage : all good";
         }
