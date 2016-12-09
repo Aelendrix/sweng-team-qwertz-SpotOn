@@ -9,6 +9,7 @@ android {
         applicationId "ch.epfl.sweng.spotOn"
         //Need minSdkVersion to be at least 18 (15 before) to be able to use UI Automator test for the map
         minSdkVersion 18
+        //noinspection OldTargetApi
         targetSdkVersion 24
 
         versionCode 1
