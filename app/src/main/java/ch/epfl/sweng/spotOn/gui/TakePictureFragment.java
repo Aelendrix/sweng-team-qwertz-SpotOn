@@ -64,6 +64,8 @@ public class TakePictureFragment extends Fragment {
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     private static final int REQUEST_EDITION = 20;
+    private static final int REQUEST_STORAGE = 30;
+    private boolean permissionToCapture;
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
@@ -94,11 +96,22 @@ public class TakePictureFragment extends Fragment {
         } else {
             // store last location, to prevent bug if we lose location in the meantime
             mBackupLocation = ConcreteLocationTracker.getInstance().getLocation();
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (capturePermissionGiven() && storagePermissionGiven()) {
                 invokeCamera();
             } else {
-                String[] permissionRequested = {Manifest.permission.CAMERA};
-                ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
+                String[] permissionToCapture = {Manifest.permission.CAMERA};
+                String[] permissionToStore = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                if (!capturePermissionGiven()) {
+                    //ask permission to capture + ask permission to store
+                    ActivityCompat.requestPermissions(getActivity(), permissionToCapture, REQUEST_IMAGE_CAPTURE);
+                    Log.d("DoYouComeBack", "yes");
+                    if(capturePermissionGiven()){
+                        Log.d("DoYouEnter", "yes");
+                        ActivityCompat.requestPermissions(getActivity(), permissionToStore, REQUEST_STORAGE);
+                    }
+                } else {
+                    ActivityCompat.requestPermissions(getActivity(), permissionToStore, REQUEST_STORAGE);
+                }
             }
         }
     }
@@ -181,7 +194,8 @@ public class TakePictureFragment extends Fragment {
             } else {
 
                 Log.v("Storage","Permission is revoked");
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
@@ -192,8 +206,8 @@ public class TakePictureFragment extends Fragment {
 
 
     /**
-     * Method called if the user never gave the permission. It checks the user's answer
-     * and if positive, the app invokes the camera
+     * Method called after the user answered the pop-up messages about permissions.
+     * It checks the user's answers and if positive, the app invokes the camera
      *
      * @param requestCode  the request code to access the camera
      * @param permissions  the permissions we asked to the user
@@ -201,13 +215,15 @@ public class TakePictureFragment extends Fragment {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (capturePermissionGiven()) {
+            if(storagePermissionGiven()){
                 invokeCamera();
             } else {
-                ToastProvider.printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
+                ToastProvider.printOverCurrent("You need to accept the permissions to take pictures", Toast.LENGTH_LONG);
             }
+        } else {
+            ToastProvider.printOverCurrent("You need to accept the permissions to take pictures", Toast.LENGTH_LONG);
         }
     }
 
@@ -366,6 +382,16 @@ public class TakePictureFragment extends Fragment {
 
     public PhotoObject getActualPhotoObject(){
         return mActualPhotoObject;
+    }
+
+    private boolean capturePermissionGiven(){
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean storagePermissionGiven(){
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED;
     }
 
     /** Method that will store the image in the Pictures file in the internal storage
