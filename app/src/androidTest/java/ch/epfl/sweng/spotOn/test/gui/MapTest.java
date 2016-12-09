@@ -20,7 +20,6 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
-import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -52,7 +51,6 @@ public class MapTest {
             UserManager.initialize();
             ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
             UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-            ToastProvider.initialize();
         }
     };
 

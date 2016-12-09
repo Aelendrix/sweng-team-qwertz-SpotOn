@@ -133,7 +133,7 @@ public class ViewFullSizeImageActivity extends Activity {
 
     public void recordUpvote(View view) {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.get().printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
             //Change color of buttons only if the user is not th author of the picture
@@ -151,7 +151,7 @@ public class ViewFullSizeImageActivity extends Activity {
 
     public void recordDownvote(View view) {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.get().printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordDownvote(view);
             if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
@@ -168,7 +168,7 @@ public class ViewFullSizeImageActivity extends Activity {
 
     public void reportOffensivePicture(View view) {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
-            ToastProvider.get().printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
             if(! mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
