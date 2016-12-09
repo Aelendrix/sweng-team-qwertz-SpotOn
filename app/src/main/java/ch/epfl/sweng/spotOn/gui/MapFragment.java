@@ -172,10 +172,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-    @Override
     public void onResume() {
         super.onResume();
         if (mMap == null) {

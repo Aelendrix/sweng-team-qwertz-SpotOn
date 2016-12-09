@@ -27,6 +27,7 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
+ * Unit test of the map methods, currently no global test of the map
  * Created by nico on 16.11.16.
  */
 @RunWith(AndroidJUnit4.class)

@@ -4,7 +4,6 @@
     android:id="@+id/activity_tab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
     tools:context="ch.epfl.sweng.spotOn.gui.MainActivity">
 
     <TextView
@@ -44,6 +43,7 @@
         android:background="@drawable/button_shape_login"
         android:drawableStart="@mipmap/ic_launcher"
         android:paddingStart="2dp"
+        android:paddingEnd="40dp"
         android:layout_marginTop="35dp"
         android:layout_below="@+id/mainLoginButton"
         android:layout_alignStart="@+id/mainLoginTextView"

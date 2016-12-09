@@ -121,10 +121,9 @@ public class DatabaseIOTest {
         for(PhotoObject p : getAllPO()) {
 
             // UPLOAD PHOTOOBJECT
-            final PhotoObject original = p;
-            final String poId = original.getPictureId();
+            final String poId = p.getPictureId();
             final Object lock = new Object();
-            original.upload(true, new OnCompleteListener<Void>() {
+            p.upload(true, new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     synchronized (lock) {
@@ -145,8 +144,7 @@ public class DatabaseIOTest {
                         throw new AssertionError("nothing in the database at this spot : " + wantedNode.toString());
                     }
                     PhotoObjectStoredInDatabase databaseRetrievedObject = wantedNode.getValue(PhotoObjectStoredInDatabase.class);
-                    final PhotoObject retrieved = databaseRetrievedObject.convertToPhotoObject();
-                    retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject = retrieved;
+                    retrievingFullSizeImagesWorkCorrectly_retrievedPhotoObject = databaseRetrievedObject.convertToPhotoObject();
                     synchronized (lock) {
                         lock.notify();
                     }
@@ -196,11 +194,11 @@ public class DatabaseIOTest {
         int upvotes = 9;
         int downvotes = 7;
         int reports = 1;
-        ArrayList<String> upvotersList = new ArrayList<String>();
+        ArrayList<String> upvotersList = new ArrayList<>();
         upvotersList.add("truc");
         upvotersList.add("machine");
-        ArrayList<String> downvotersList = new ArrayList<String>();
-        ArrayList<String> reportersList = new ArrayList<String>();
+        ArrayList<String> downvotersList = new ArrayList<>();
+        ArrayList<String> reportersList = new ArrayList<>();
         reportersList.add("user1");
         PhotoObject photo1 = new PhotoObject(imageLink, null, "key1", author, photoName, createdDate,
                 latitude, longitude, upvotes, downvotes, reports, upvotersList, downvotersList,

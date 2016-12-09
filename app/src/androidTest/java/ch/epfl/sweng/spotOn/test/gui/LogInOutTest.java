@@ -24,6 +24,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
 /**
+ * Test of the main activity
  * Created by nico on 22.11.16.
  */
 

@@ -82,8 +82,8 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         mAllowedToDisplayToasts = allowToDisplayToasts;
     }
 
-    public boolean databaseConnected(){
-        return databaseIsConnected;
+    public boolean databaseNotConnected(){
+        return !databaseIsConnected;
     }
 
     public String provideErrorMessage(){
@@ -95,7 +95,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             errorMessage += "Can't localize your device\n";
         }
         if( ! mUserManagerRef.userIsLoggedIn() ){
-            if( mUserManagerRef.retrievingUserFromDatebase()){
+            if( mUserManagerRef.retrievingUserFromDatabase()){
                 errorMessage+= "We're processing your login informations\n";
             }else {
                 errorMessage += "You're not logged in\n";

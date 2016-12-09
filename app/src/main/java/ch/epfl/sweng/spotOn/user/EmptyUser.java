@@ -5,6 +5,7 @@ import java.util.Map;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 /**
+ * Empty User implemented if you are not connected in the app
  * Created by quentin on 24.11.16.
  */
 

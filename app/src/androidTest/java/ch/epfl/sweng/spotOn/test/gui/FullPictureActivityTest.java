@@ -44,7 +44,7 @@ public class FullPictureActivityTest {
 
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class,true,false);
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class, true, false);
 
     @Before
     public void initLocalDatabase(){
@@ -88,9 +88,8 @@ public class FullPictureActivityTest {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
 
-                        return coordinates;
+                        return new float[]{screenX, screenY};
                     }
                 },
                 Press.FINGER);

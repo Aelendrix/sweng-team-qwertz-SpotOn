@@ -35,6 +35,7 @@ public class DrawTextActivity extends AppCompatActivity{
      * Stores the string (limited to 30 characters) typed by user in the shared preferences
      * @param view useless parameter, but needed since it's called from a button
      */
+    @SuppressWarnings("UnusedParameters")
     public void sendTextToDraw(View view) {
         Intent intent = new Intent();
         EditText inputText = (EditText) findViewById(R.id.textToDraw);

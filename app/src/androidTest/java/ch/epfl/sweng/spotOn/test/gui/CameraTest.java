@@ -32,7 +32,6 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -42,7 +41,6 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 @LargeTest
 public class CameraTest{
 
-    private UserManager user = null;
     @Rule
     public IntentsTestRule<TabActivity> intentsRule = new IntentsTestRule<TabActivity>(TabActivity.class){
         @Override
@@ -53,7 +51,6 @@ public class CameraTest{
 
     @Before
     public void stubCameraIntent() {
-        UserManager user = UserManager.getInstance();
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }

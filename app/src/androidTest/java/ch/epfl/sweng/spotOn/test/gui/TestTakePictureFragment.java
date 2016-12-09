@@ -136,9 +136,8 @@ public class TestTakePictureFragment {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
 
-                        return coordinates;
+                        return new float[]{screenX, screenY};
                     }
                 },
                 Press.FINGER);

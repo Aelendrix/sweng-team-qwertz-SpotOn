@@ -29,7 +29,6 @@
         android:layout_marginTop="20dp"
         android:id="@+id/profileFirstNameTextView"
         android:textStyle="normal|bold"
-        android:layout_marginLeft="17dp"
         android:layout_marginStart="17dp"
         android:layout_below="@+id/profileTitleTextView" />
 
@@ -40,7 +39,6 @@
         android:id="@+id/profileLastNameTextView"
         android:textStyle="normal|bold"
         android:layout_below="@+id/profileFirstNameTextView"
-        android:layout_alignLeft="@+id/profileFirstNameTextView"
         android:layout_alignStart="@+id/profileFirstNameTextView"
         android:layout_marginTop="20dp" />
 
@@ -50,7 +48,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileLastNameTextView"
         android:layout_marginTop="20dp"
-        android:layout_alignLeft="@+id/profileFirstNameTextView"
         android:layout_alignStart="@+id/profileFirstNameTextView"
         android:textStyle="normal|bold"
         android:id="@+id/profileKarmaTextView" />
