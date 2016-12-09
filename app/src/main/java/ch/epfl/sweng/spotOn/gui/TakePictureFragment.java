@@ -350,12 +350,7 @@ public class TakePictureFragment extends Fragment {
             Bitmap HQPicture = getBitmap(selectedImage, getContext());
             if(HQPicture != null){
                 mImageView.setImageBitmap(HQPicture);
-                //Create a PhotoObject instance of the picture and send it to the file server + database
-                if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-                    ToastProvider.printOverCurrent("Can't create post without proper Location data", Toast.LENGTH_LONG);
-                } else {
-                    mActualPhotoObject = createPhotoObject(HQPicture);
-                }
+                mActualPhotoObject = createPhotoObject(HQPicture);
             } else {
                 ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }

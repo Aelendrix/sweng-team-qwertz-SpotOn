@@ -164,7 +164,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 
     public String sendToServerErrorMessage(){
         if( ! mFirebaseConnectionTracker.isConnected() ){
-            return "You seem to be disconnected from the internet\n --  Feature unavailable  -- ";
+            return "You seem to be disconnected from the internet\n --  Can't send your photo right now  -- ";
         }else{
             return "sendToServerErrorMessage : all good";
         }

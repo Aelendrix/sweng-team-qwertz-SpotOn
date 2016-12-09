@@ -61,11 +61,10 @@ public class ServicesCheckerTests {
 
         String expected = "";
 
-
         // no correct user
         UserManager.getInstance().destroyUser();
         UserManager.getInstance().setEmptyUser();
-        expected = "You're not logged in\n"+"--  Some features will be restricted  --";
+        expected = "You're not logged in\n"+"--  Some features may be disabled  --";
         checkExpected(expected);
 
         // correct state
@@ -77,7 +76,7 @@ public class ServicesCheckerTests {
         // no correct Location
         Location tempStoreLocation = mlt.getLocation();
         mlt.forceLocationTimeout();
-        expected = "Can't localize your device\n"+"--  Some features will be restricted  --";
+        expected = "Can't localize your device\n"+"--  Some features may be disabled  --";
         checkExpected(expected);
 
         // restore location
