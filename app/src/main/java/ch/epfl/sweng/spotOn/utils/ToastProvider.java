@@ -10,43 +10,23 @@ import android.widget.Toast;
  */
 public class ToastProvider {
 
-    private static ToastProvider mSingleInstance;
-
-    private Activity currentActivity;
-    private Toast mCurrentlyDisplayedToast;
-
-
-// INIT METHODS AND CONSTRUCTOR
-    public static void initialize(){
-        if(mSingleInstance==null) {
-            mSingleInstance = new ToastProvider();
-        }else{
-            Log.d("ToastProvider","WARNING : tried to initialized ToastProvider, but an instance already exists");
-        }
-    }
+    private static Activity currentActivity = null;
+    private static Toast mCurrentlyDisplayedToast = null;
 
     private ToastProvider(){
-        currentActivity = null;
-        mCurrentlyDisplayedToast = null;
+        //empty default constructor
     }
 
 
-// PUBLIC METHODS
-    public static ToastProvider get(){
-        if(mSingleInstance==null){
-            throw new IllegalStateException("ToastProvider wasn't initialized");
-        }
-        return mSingleInstance;
-    }
-
-    public void update(Activity activity){
+    // PUBLIC METHODS
+    public static void update(Activity activity){
         if(activity==null){
             throw new IllegalArgumentException();
         }
         currentActivity=activity;
     }
 
-    public void printOverCurrent(String message, int duration){
+    public static void printOverCurrent(String message, int duration){
         checkNonnullActivity();
         checkDuration(duration);
         if(toastBeingDisplayed()){
@@ -68,7 +48,7 @@ public class ToastProvider {
 //        displayToast(message, duration);
 //    }
 
-    public void printIfNoCurrent(String message, int duration){
+    public static void printIfNoCurrent(String message, int duration){
         checkNonnullActivity();
         checkDuration(duration);
         if(!toastBeingDisplayed()){
@@ -76,7 +56,7 @@ public class ToastProvider {
         }
     }
 
-    public boolean toastBeingDisplayed(){
+    public static boolean toastBeingDisplayed(){
         if(mCurrentlyDisplayedToast==null){
             return false;
         }else{
@@ -84,29 +64,29 @@ public class ToastProvider {
         }
     }
 
-    public void setDisplayedToast(Toast t){
+    public static void setDisplayedToast(Toast t){
         mCurrentlyDisplayedToast = t;
     }
 
 
     // PRIVATE HELPERS
-    private void displayToast(final String message, final int duration){
+    private static void displayToast(final String message, final int duration){
         currentActivity.runOnUiThread( new Runnable() {
             public void run() {
                 Toast newToast = Toast.makeText(currentActivity, message, duration);
-                setDisplayedToast(newToast);
+                ToastProvider.setDisplayedToast(newToast);
                 newToast.show();
             }
         });
     }
 
-    private void checkDuration(int duration){
+    private static void checkDuration(int duration){
         if(!(duration==Toast.LENGTH_LONG || duration==Toast.LENGTH_SHORT)){
             throw new IllegalArgumentException("Invalid duration");
         }
     }
 
-    private void checkNonnullActivity(){
+    private static void checkNonnullActivity(){
         if(currentActivity==null){
             Log.d("ToastProvider", "ToastProvider has no current context");
         }
