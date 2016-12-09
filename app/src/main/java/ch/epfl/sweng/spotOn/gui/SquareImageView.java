@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
+ * ImageView which is forced to be square, used to create the elements in the grid
  * Created by nico on 09.11.16.
  */
 

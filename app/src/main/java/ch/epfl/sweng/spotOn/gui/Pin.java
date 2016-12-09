@@ -7,6 +7,7 @@ import com.google.maps.android.clustering.ClusterItem;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 /**
+ * Marker represented as a item inside the cluster, it can be green, yellow, or invisible (if currently grouped inside a cluster)
  * Created by olivi on 31.10.2016.
  */
 
