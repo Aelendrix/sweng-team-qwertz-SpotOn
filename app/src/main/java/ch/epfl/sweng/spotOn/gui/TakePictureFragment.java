@@ -41,6 +41,7 @@ import java.sql.Timestamp;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
@@ -72,6 +73,8 @@ public class TakePictureFragment extends Fragment {
     private ImageButton mStoreButton;
     private ImageButton mSendButton;
 
+    private Location mBackupLocation;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,17 +89,11 @@ public class TakePictureFragment extends Fragment {
     /** Method that checks if the app has the permission to use the camera
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
     public void dispatchTakePictureIntent(){
-        if(ServicesChecker.getInstance().databaseNotConnected()){
-            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
-        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
-            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
-                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-            }else {
-                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
-            }
+        if( ! ServicesChecker.getInstance().canTakePicture() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().takePictureErrorMessage(), Toast.LENGTH_LONG);
         } else {
-        /*SharedPreferences bb = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        mTextToDraw = bb.getString("TD", "");*/
+            // store last location, to prevent bug if we lose location in the meantime
+            mBackupLocation = ConcreteLocationTracker.getInstance().getLocation();
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 invokeCamera();
             } else {
@@ -112,14 +109,6 @@ public class TakePictureFragment extends Fragment {
     public void storePictureOnInternalStorage(){
         if(mActualPhotoObject == null) {
             ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
-        } else if(ServicesChecker.getInstance().databaseNotConnected()){
-            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
-        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
-            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
-                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-            }else {
-                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
-            }
         } else {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
@@ -138,17 +127,11 @@ public class TakePictureFragment extends Fragment {
     public void sendPictureToServer(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
-        } else if(ServicesChecker.getInstance().databaseNotConnected()){
-            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
-        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
-            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
-                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-            }else {
-                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
-            }
         } else if( mActualPhotoObject.isStoredInServer() ){
             ToastProvider.printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
-        } else {
+        }else if( ! ServicesChecker.getInstance().canSendToServer() ){
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().sendToServerErrorMessage(), Toast.LENGTH_LONG);
+        }  else {
             final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
             if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
                 mActualPhotoObject.upload(true, new OnCompleteListener() {
@@ -178,14 +161,6 @@ public class TakePictureFragment extends Fragment {
     public void editPicture(){
         if(mActualPhotoObject == null){
             ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
-        } else if(ServicesChecker.getInstance().databaseNotConnected()){
-            ToastProvider.printOverCurrent("You're not connected to the internet, sorry", Toast.LENGTH_LONG);
-        } if( ! UserManager.getInstance().userIsLoggedIn() ) {
-            if(UserManager.getInstance().getUser().getIsRetrievedFromDB()){
-                ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_LONG);
-            }else {
-                ToastProvider.printOverCurrent(User.NOT_RETRIEVED_FROM_DB_MESSAGE, Toast.LENGTH_LONG);
-            }
         } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
@@ -313,24 +288,23 @@ public class TakePictureFragment extends Fragment {
      * @return a PhotoObject instance
      */
     private PhotoObject createPhotoObject(Bitmap imageBitmap){
-        String USER_ID = UserManager.getInstance().getUser().getUserId();
         //Get the creation date for the timestamp
-        java.util.Date date= new java.util.Date();
-        Timestamp created = new Timestamp(date.getTime());
+        long currentTime = System.currentTimeMillis();
+        Timestamp createdTime = new Timestamp(currentTime);
         //Name the picture
-        long timestamp = System.currentTimeMillis();
-        String imageName = "PIC_" + timestamp + ".jpeg";
-
-        if(!ConcreteLocationTracker.instanceExists()){
-            throw new AssertionError("Location tracker should be started");
-        }
+        String imageName = "PIC_" + currentTime + ".jpeg";
+        // find location
+        Location currentLocation = mBackupLocation;
         if(!ConcreteLocationTracker.getInstance().hasValidLocation()){
+            // we can recover from this with mBackupLocation
             // was checked for in the calling method
-            throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
+            //throw new IllegalStateException("can't create new object without a valid location (should be tested before calling createPhotoObject");
+            Log.d("TakePictureFragment","WARNING : lost location while taking photo, using backupLocation instead");
+        }else {
+            currentLocation = ConcreteLocationTracker.getInstance().getLocation();
         }
-        Location currentLocation = ConcreteLocationTracker.getInstance().getLocation();
 
-        return new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, created, currentLocation.getLatitude(), currentLocation.getLongitude());
+        return new PhotoObject(imageBitmap, UserManager.getInstance().getUser().getUserId(), imageName, createdTime, currentLocation.getLatitude(), currentLocation.getLongitude());
     }
 
     /**
@@ -372,12 +346,7 @@ public class TakePictureFragment extends Fragment {
             Bitmap HQPicture = getBitmap(imageToUploadUri, getContext());
             if(HQPicture != null){
                 mImageView.setImageBitmap(HQPicture);
-                //Create a PhotoObject instance of the picture and send it to the file server + database
-                if(!ConcreteLocationTracker.instanceExists() || !ConcreteLocationTracker.getInstance().hasValidLocation()){
-                    ToastProvider.printOverCurrent("Can't create post without proper Location data", Toast.LENGTH_LONG);
-                } else {
-                    mActualPhotoObject = createPhotoObject(HQPicture);
-                }
+                mActualPhotoObject = createPhotoObject(HQPicture);
             } else {
                 ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }

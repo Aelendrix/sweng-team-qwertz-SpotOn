@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
+import android.app.Service;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -23,6 +24,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -136,7 +138,7 @@ public class TabActivity extends AppCompatActivity{
                 return true;
             case R.id.user_profile:
                 if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    ToastProvider.printOverCurrent(User.NOT_LOGGED_in_MESSAGE, Toast.LENGTH_SHORT);
+                    ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_SHORT);
                     return false;
                 }else {
                     Intent profileIntent = new Intent(this, UserProfileActivity.class);

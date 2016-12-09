@@ -10,6 +10,7 @@ import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.FirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
+import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserListener;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
@@ -23,7 +24,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 
     private LocationTracker mLocationTrackerRef;
     private UserManager mUserManagerRef;
-    private FirebaseConnectionTracker mFbCoTrackerRef;
+    private FirebaseConnectionTracker mFirebaseConnectionTracker;
 
     private static boolean mAllowedToDisplayToasts = true;
 
@@ -41,7 +42,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 
         mSingleInstance.mLocationTrackerRef.addListener(mSingleInstance);
         mSingleInstance.mUserManagerRef.addListener(mSingleInstance);
-        mSingleInstance.mFbCoTrackerRef.addListener(mSingleInstance);
+        mSingleInstance.mFirebaseConnectionTracker.addListener(mSingleInstance);
     }
 
     private ServicesChecker(LocationTracker ltref, LocalDatabase ldbref, UserManager userRef, FirebaseConnectionTracker fbCoTrackerRef){
@@ -52,7 +53,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         // we keep the LocalDatabase reference in the method prototype, to enforce that ServicesChecker relies on an existing instance of LocalDatabase
         mLocationTrackerRef = ltref;
         mUserManagerRef = userRef;
-        mFbCoTrackerRef = fbCoTrackerRef;
+        mFirebaseConnectionTracker = fbCoTrackerRef;
         databaseIsConnected = fbCoTrackerRef.isConnected();
         locationIsValid = ltref.hasValidLocation();
         userIsLoggedIn = mUserManagerRef.userIsLoggedIn();
@@ -102,7 +103,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             }
         }
         if(!allServicesOk()) {
-            errorMessage += "--  Some features will be restricted  --";
+            errorMessage += "--  Some features may be disabled  --";
         }
         return errorMessage;
     }
@@ -122,6 +123,52 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         return "";
     }
 
+    /** Determines wether or not user is allowed to take a picture, i.e. has location and is logged in
+     *  @return true if user is allowed to take picture, false else
+     */
+    public boolean canTakePicture(){
+        return mUserManagerRef.userIsLoggedIn() && mLocationTrackerRef.hasValidLocation();
+    }
+
+    /**
+     *  Creates the right error message explaining why the user isn't allowed to take a picture
+     * @return the error message
+     */
+    public String takePictureErrorMessage() {
+        String message = "";
+        if (!mUserManagerRef.userIsLoggedIn()) {
+            if (ServicesChecker.getInstance().databaseNotConnected()) {
+                message += User.LOGIN_NO_DATABASE_CONNECTION_MESSAGE+"\n";
+            } else if (!UserManager.getInstance().getUser().getIsRetrievedFromDB()) {
+                message += User.LOGIN_NOT_RETRIEVED_FROM_DB_MESSAGE+"\n";
+            } else {
+                message += User.LOGIN_NOT_LOGGED_in_MESSAGE+"\n";
+            }
+        }
+        if(!mLocationTrackerRef.hasValidLocation()){
+            message += "Can't find your GPS location";
+        }
+        if(message.equals("")){
+            return "takePictureErrorMessage : all good";
+        }else{
+            return message+" --  Feature unavailable  -- ";
+        }
+    }
+
+    /** Determines wether or not user is can send a picture to database, i.e is logged in and has database connection
+     *  @return true if user is able to send picture, false else
+     */
+    public boolean canSendToServer(){
+        return mUserManagerRef.userIsLoggedIn() && mFirebaseConnectionTracker.isConnected();
+    }
+
+    public String sendToServerErrorMessage(){
+        if( ! mFirebaseConnectionTracker.isConnected() ){
+            return "You seem to be disconnected from the internet\n --  Can't send your photo right now  -- ";
+        }else{
+            return "sendToServerErrorMessage : all good";
+        }
+    }
 
 
 // LISTENER METHODS
