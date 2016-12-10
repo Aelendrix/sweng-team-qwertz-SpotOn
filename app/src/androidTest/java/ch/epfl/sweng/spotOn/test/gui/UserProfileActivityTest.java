@@ -68,17 +68,6 @@ public class UserProfileActivityTest {
                 }
             };
 
-
-    @Test
-    public void startViewUserPhotoActivity(){
-        Intents.init();
-        onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
-        intended(hasComponent(ViewUserPhotoActivity.class.getName()));
-        Espresso.pressBack();
-        Intents.release();
-    }
-
-
     @Test
     public void testPressBackButton(){
         Intents.init();
@@ -91,6 +80,14 @@ public class UserProfileActivityTest {
         Intents.release();
     }
 
+    @Test
+    public void startViewUserPhotoActivity(){
+        Intents.init();
+        onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
+        intended(hasComponent(ViewUserPhotoActivity.class.getName()));
+        Espresso.pressBack();
+        Intents.release();
+    }
 
     public static ViewAction clickXY(final int x, final int y){
         return new GeneralClickAction(
