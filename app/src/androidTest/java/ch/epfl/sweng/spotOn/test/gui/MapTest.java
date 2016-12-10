@@ -22,9 +22,13 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Unit test of the map methods, currently no global test of the map
@@ -55,13 +59,14 @@ public class MapTest {
     };
 
     @Test
-    public void refreshLocalisationMarker() throws Exception{
-        onView(withId(R.id.viewpager)).perform(swipeRight());
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(2000);
+    public void refreshLocalisationMarker(){
+
+        onView(withText(R.string.tab_aroundme)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_camera)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_map)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_aroundme)).perform(click());
+        onView(withText(R.string.tab_camera)).perform(click());
+        onView(withText(R.string.tab_map)).perform(click());
 
         final MapFragment mapFragment = (MapFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(2);
 
