@@ -9,7 +9,6 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
-import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by quentin on 23.11.16.
@@ -32,7 +31,6 @@ public class TestInitUtils {
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-        ToastProvider.initialize();
     }
 
     public static void initContext(double latitude, double longitude){
@@ -47,7 +45,6 @@ public class TestInitUtils {
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-        ToastProvider.initialize();
     }
 
     public static void initContext(){   // same with MockLocationTracker default location
@@ -63,7 +60,6 @@ public class TestInitUtils {
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-        ToastProvider.initialize();
     }
 
     public static void initContextServicesCheckSilent(){
@@ -82,7 +78,6 @@ public class TestInitUtils {
 
         ServicesChecker.allowDisplayingToasts(false);
         ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
-        ToastProvider.initialize();
     }
 
     public static void initContextNoServicesChecks(double latitude, double longitude){
@@ -96,7 +91,6 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-        ToastProvider.initialize();
     }
 
     public static void initContextMockUser(User user){   // same with MockLocationTracker default location
@@ -112,7 +106,6 @@ public class TestInitUtils {
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         UserManager.getInstance().setMockUser(user);
-        ToastProvider.initialize();
     }
 
     public static void initContextNoUser(Location location){
@@ -127,7 +120,6 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-        ToastProvider.initialize();
     }
 
     public static void initContextNoUser(){
@@ -142,6 +134,5 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
         UserManager.initialize();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-        ToastProvider.initialize();
     }
 }

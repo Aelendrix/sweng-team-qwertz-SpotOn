@@ -61,7 +61,7 @@ public class ToastsProviderTest {
 
         assertNoDisplayedToast();
         // single toasts gets displayed for 3.5 seconds
-        ToastProvider.get().printOverCurrent("baseToast", Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
         Thread.sleep(200);
         //assertSomeDisplayedToast();
         Thread.sleep(sec2);
@@ -75,9 +75,9 @@ public class ToastsProviderTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
         // second toast takes over and extends the duration of baseToast
-        ToastProvider.get().printOverCurrent("baseToast", Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("baseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
-        ToastProvider.get().printOverCurrent("ToastOverCurrent", Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("ToastOverCurrent", Toast.LENGTH_LONG);
         Thread.sleep(100);
         assertSomeDisplayedToast();
         Thread.sleep(sec2);
@@ -91,7 +91,7 @@ public class ToastsProviderTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
         // printIfNoCurrent() displays single toast
-        ToastProvider.get().printIfNoCurrent("ToastIfNoCurrent", Toast.LENGTH_LONG);
+        ToastProvider.printIfNoCurrent("ToastIfNoCurrent", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
         assertSomeDisplayedToast();
         Thread.sleep(sec5);
@@ -103,14 +103,14 @@ public class ToastsProviderTest {
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
 
         // printIfNoCurrent() shouldn't display toast
-        ToastProvider.get().printOverCurrent("BaseToast", Toast.LENGTH_LONG);
+        ToastProvider.printOverCurrent("BaseToast", Toast.LENGTH_LONG);
         Thread.sleep(sec2);
-        ToastProvider.get().printIfNoCurrent("(there should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
+        ToastProvider.printIfNoCurrent("(there should have been no toast after this 'baseToast')",Toast.LENGTH_LONG);
         Thread.sleep(longD - sec2 + 200 ); // 200 ms of margin of error since toast isn't displayed immediately
         assertNoDisplayedToast();
         Thread.sleep(sec3);
 
-        ToastProvider.get().printIfNoCurrent("finished", Toast.LENGTH_LONG);
+        ToastProvider.printIfNoCurrent("finished", Toast.LENGTH_LONG);
 
         Thread.sleep(sec1);
     }
@@ -119,18 +119,18 @@ public class ToastsProviderTest {
     @Test (expected = IllegalArgumentException.class)
     public void invalidDurationToast_printOverCurrent(){
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        ToastProvider.get().printOverCurrent("hello",100);
+        ToastProvider.printOverCurrent("hello",100);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void invalidDurationToast_printIfNoCurrent(){
         mActivityTestRule.launchActivity(displayFullSizeImageIntent);
-        ToastProvider.get().printIfNoCurrent("hello",100);
+        ToastProvider.printIfNoCurrent("hello",100);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void badlyUpdatedToastProviderThrowsException(){
-        ToastProvider.get().update(null);
+        ToastProvider.update(null);
     }
 
 
@@ -138,7 +138,7 @@ public class ToastsProviderTest {
 // PRIVATE HELPERS
 
     private void assertNoDisplayedToast(String message){
-        if(ToastProvider.get().toastBeingDisplayed()){
+        if(ToastProvider.toastBeingDisplayed()){
             throw new AssertionError(message);
         }
     }
@@ -147,7 +147,7 @@ public class ToastsProviderTest {
     }
 
     private void assertSomeDisplayedToast(String message){
-        if(!ToastProvider.get().toastBeingDisplayed()){
+        if(!ToastProvider.toastBeingDisplayed()){
             throw new AssertionError(message);
         }
     }

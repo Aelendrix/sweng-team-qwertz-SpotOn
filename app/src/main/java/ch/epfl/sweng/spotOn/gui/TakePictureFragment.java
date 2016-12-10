@@ -90,7 +90,7 @@ public class TakePictureFragment extends Fragment {
      * if not, it asks the permission to use it, else it calls the method invokeCamera() */
     public void dispatchTakePictureIntent(){
         if( ! ServicesChecker.getInstance().canTakePicture() ){
-            ToastProvider.get().printOverCurrent(ServicesChecker.getInstance().takePictureErrorMessage(), Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().takePictureErrorMessage(), Toast.LENGTH_LONG);
         } else {
             // store last location, to prevent bug if we lose location in the meantime
             mBackupLocation = ConcreteLocationTracker.getInstance().getLocation();
@@ -108,15 +108,15 @@ public class TakePictureFragment extends Fragment {
 
     public void storePictureOnInternalStorage(){
         if(mActualPhotoObject == null) {
-            ToastProvider.get().printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
+            ToastProvider.printOverCurrent("Store Button : Take a picture first !", Toast.LENGTH_SHORT);
         } else {
             if(!mActualPhotoObject.isStoredInternally()) {
                 storeImage(mActualPhotoObject);
                 mActualPhotoObject.setStoredInternallyStatus(true);
-                ToastProvider.get().printOverCurrent("Picture stored in your gallery", Toast.LENGTH_LONG);
+                ToastProvider.printOverCurrent("Picture stored in your gallery", Toast.LENGTH_LONG);
                 colorBlackButton(mStoreButton);
             } else {
-                ToastProvider.get().printOverCurrent("Picture already stored", Toast.LENGTH_LONG);
+                ToastProvider.printOverCurrent("Picture already stored", Toast.LENGTH_LONG);
             }
         }
     }
@@ -126,29 +126,29 @@ public class TakePictureFragment extends Fragment {
      */
     public void sendPictureToServer(){
         if(mActualPhotoObject == null){
-            ToastProvider.get().printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent("Send Button : Take a picture first", Toast.LENGTH_LONG);
         } else if( mActualPhotoObject.isStoredInServer() ){
-            ToastProvider.get().printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent( "This picture is already online", Toast.LENGTH_LONG);
         }else if( ! ServicesChecker.getInstance().canSendToServer() ){
-            ToastProvider.get().printOverCurrent(ServicesChecker.getInstance().sendToServerErrorMessage(), Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent(ServicesChecker.getInstance().sendToServerErrorMessage(), Toast.LENGTH_LONG);
         }  else {
             final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
             if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
                 mActualPhotoObject.upload(true, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {if(task.getException()!=null){
-                        ToastProvider.get().printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
+                        ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
                     }else {
                         UserManager.getInstance().getUser().addPhoto(mActualPhotoObject);
                         Log.d("TakePictureActivity", "uploaded picture");
-                        ToastProvider.get().printOverCurrent("Your pic is online ! \n You can still post " + (remainingPhotos - 1) + " today", Toast.LENGTH_LONG);
+                        ToastProvider.printOverCurrent("Your pic is online ! \n You can still post " + (remainingPhotos - 1) + " today", Toast.LENGTH_LONG);
                     }
                     }
                 });
                 mActualPhotoObject.setSentToServerStatus(true);
                 colorBlackButton(mSendButton);
             }else{
-                ToastProvider.get().printOverCurrent("You can't post anymore photos today\n#FeelsBadMan", Toast.LENGTH_LONG);
+                ToastProvider.printOverCurrent("You can't post anymore photos today\n#FeelsBadMan", Toast.LENGTH_LONG);
                 Log.d("TakePictureFragment", "UserManager " + UserManager.getInstance().getUser().getUserId() + " can't post photo anymore");
             }
         }
@@ -160,7 +160,7 @@ public class TakePictureFragment extends Fragment {
      */
     public void editPicture(){
         if(mActualPhotoObject == null){
-            ToastProvider.get().printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
+            ToastProvider.printOverCurrent("Edit Button : Take a picture first", Toast.LENGTH_LONG);
         } else {
             Intent editPictureIntent = new Intent(getContext(), EditPictureActivity.class);
             editPictureIntent.putExtra("bitmapToEdit", editUri.toString());
@@ -206,7 +206,7 @@ public class TakePictureFragment extends Fragment {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 invokeCamera();
             } else {
-                ToastProvider.get().printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
+                ToastProvider.printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
             }
         }
     }
@@ -348,11 +348,11 @@ public class TakePictureFragment extends Fragment {
                 mImageView.setImageBitmap(HQPicture);
                 mActualPhotoObject = createPhotoObject(HQPicture);
             } else {
-                ToastProvider.get().printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
+                ToastProvider.printOverCurrent("Internal error while creating your post : HQPicture null", Toast.LENGTH_SHORT);
             }
         }
         else {
-            ToastProvider.get().printOverCurrent("Internal error while creating your post : URI null", Toast.LENGTH_SHORT);
+            ToastProvider.printOverCurrent("Internal error while creating your post : URI null", Toast.LENGTH_SHORT);
         }
     }
 
