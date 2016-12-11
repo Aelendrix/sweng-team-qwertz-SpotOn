@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.gui.ViewFullSizeImageActivity;
+import ch.epfl.sweng.spotOn.gui.ViewUserPhotoActivity;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 
 import static android.support.test.espresso.Espresso.onData;
@@ -29,13 +31,16 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.anything;
 
 /**
- * Created by Alexis Dewaele on 09/11/2016.
+ * Tests used to try the gui interaction in the pager of full size images
+ * Created by Alexis Dewaele,  Nicolas Brunner  on 09/11/2016.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -53,7 +58,9 @@ public class ViewFullSizeImageActivityTest {
     public void swipeBetweenPicturesTest() throws InterruptedException{
         mActivityTestRule.launchActivity(new Intent());
         Thread.sleep(3000);
+        //go to the pager from the first grid item click
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
+        //swipe between the page
         onView(withId(R.id.pager)).perform(swipeLeft());
         onView(withId(R.id.pager)).perform(swipeRight());
     }
@@ -61,6 +68,7 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void buttonsDisappearTest() throws InterruptedException {
         mActivityTestRule.launchActivity(new Intent());
+        //got to the pager from the first grid item click
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //make buttons disappear
         onView(withId(R.id.pager)).perform(click());

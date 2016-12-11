@@ -53,7 +53,7 @@ public class FullPictureActivityTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class, true, false);
 
     @Before
-    public void initLocalDatabase(){
+    public void initLocalDatabase() throws InterruptedException{
         LocalDatabaseUtils.initLocalDatabase(true);
     }
 

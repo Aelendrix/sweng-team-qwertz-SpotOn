@@ -36,7 +36,6 @@ public class GridOrderingTest {
     public void testChangeOrdering () throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         //Let the local database refresh
-        Thread.sleep(4000);
         onView(withText("Around me")).perform(click());
         //extend the list and close
         onView(withId(R.id.extend_list_button)).perform(click());
