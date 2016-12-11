@@ -60,6 +60,7 @@ public class UserProfileActivityTest {
 
                     User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
                     TestInitUtils.initContextMockUser(mockUser);
+                    LocalDatabase.getInstance().addPhotoObject(po);
                 }
             };
 
