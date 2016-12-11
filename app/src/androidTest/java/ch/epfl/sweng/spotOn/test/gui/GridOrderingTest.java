@@ -40,25 +40,20 @@ public class GridOrderingTest {
         //Let the local database refresh
         Thread.sleep(4000);
         onView(withText("Around me")).perform(click());
-        Thread.sleep(1000);
+        //extend the list and close
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(500);
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(500);
+        //order by upvote
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.order_upvote_button)).perform(click());
-        Thread.sleep(100);
+        //order by oldest
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.order_oldest_button)).perform(click());
-        Thread.sleep(100);
+        //order by newest
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.order_newest_button)).perform(click());
-        Thread.sleep(100);
+        //order by oldest
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.order_hottest_button)).perform(click());
     }
 

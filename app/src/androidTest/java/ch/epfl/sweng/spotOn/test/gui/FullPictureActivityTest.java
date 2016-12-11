@@ -20,6 +20,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.AboutPage;
+import ch.epfl.sweng.spotOn.gui.SeePicturesFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -29,6 +31,8 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 
@@ -66,9 +70,9 @@ public class FullPictureActivityTest {
     @Test
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        Thread.sleep(1000);
         onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
+        Thread.sleep(10000);
+
         onView(withId(R.id.upvoteButton)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
