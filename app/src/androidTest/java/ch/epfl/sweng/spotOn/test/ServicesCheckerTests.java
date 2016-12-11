@@ -57,8 +57,6 @@ public class ServicesCheckerTests {
 
         mActivityTestRule.launchActivity(new Intent());
 
-        Thread.sleep(500);
-
         String expected = "";
 
         // no correct user
@@ -81,8 +79,6 @@ public class ServicesCheckerTests {
 
         // restore location
         mlt.setMockLocation(tempStoreLocation);
-
-        Thread.sleep(5000);
     }
 
 
