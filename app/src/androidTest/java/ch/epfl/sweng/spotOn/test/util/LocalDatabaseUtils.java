@@ -16,10 +16,10 @@ import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
  */
 
 public class LocalDatabaseUtils {
-    public static PhotoObject firstPo;
-    public static PhotoObject secondPo;
+    private static PhotoObject firstPo=null;
+    private static PhotoObject secondPo=null;
 
-    public static void initLocalDatabase() {
+    public static void initLocalDatabase(boolean onlyOnePhoto) throws InterruptedException {
         Location location = new Location("testLocationProvider");
         location.setLatitude(46.52890355757567);
         location.setLongitude(6.569420238493345);
@@ -29,14 +29,15 @@ public class LocalDatabaseUtils {
         TestInitUtils.initContext(location);
 
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
-        secondPo = PhotoObjectTestUtils.paulVanDykPO();
+        firstPo.uploadWithoutFeedback();
+        if(!onlyOnePhoto) {
+            secondPo = PhotoObjectTestUtils.paulVanDykPO();
+            secondPo.uploadWithoutFeedback();
 
+        }
+        Thread.sleep(3000);
         //final Object lock1 = new Object();
         //final Object lock2 = new Object();
-
-        firstPo.uploadWithoutFeedback();
-
-        secondPo.uploadWithoutFeedback();
         //synchronized (lock1)
         //{lock1.wait();}
         //synchronized (lock2)

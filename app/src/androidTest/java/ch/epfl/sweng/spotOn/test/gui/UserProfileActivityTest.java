@@ -31,6 +31,7 @@ import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -58,26 +59,12 @@ public class UserProfileActivityTest {
                     HashMap<String, Long> h = new HashMap<>();
                     h.put(po.getPictureId(), po.getCreatedDate().getTime());
 
-                    MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
-                    ConcreteLocationTracker.setMockLocationTracker(mlt);
-
                     User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
                     TestInitUtils.initContextMockUser(mockUser);
-
+                    ServicesChecker.getInstance().allowDisplayingToasts(false);
                     LocalDatabase.getInstance().addPhotoObject(po);
                 }
             };
-
-
-    @Test
-    public void startViewUserPhotoActivity(){
-        Intents.init();
-        onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
-        intended(hasComponent(ViewUserPhotoActivity.class.getName()));
-        Espresso.pressBack();
-        Intents.release();
-    }
-
 
     @Test
     public void testPressBackButton(){
@@ -91,8 +78,16 @@ public class UserProfileActivityTest {
         Intents.release();
     }
 
+    @Test
+    public void startViewUserPhotoActivity(){
+        Intents.init();
+        onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
+        //intended(hasComponent(ViewUserPhotoActivity.class.getName()));
+        Espresso.pressBack();
+        Intents.release();
+    }
 
-    public static ViewAction clickXY(final int x, final int y){
+    public ViewAction clickXY(final int x, final int y){
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {
