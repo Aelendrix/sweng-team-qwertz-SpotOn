@@ -26,6 +26,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
@@ -52,32 +53,27 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase(){
-
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-
-        TestInitUtils.initContext(location);
-
-        PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
-        LocalDatabase.getInstance().addPhotoObject(po);
-
-        LocalDatabase.getInstance().notifyListeners();
+        LocalDatabaseUtils.initLocalDatabase(true);
     }
 
     @Test
     public void launchFullPictureActivity() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
         Thread.sleep(10000);
 
+        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        //upvote and cancel the upvote
         onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
+        //downvote and cancel the downvote
         onView(withId(R.id.downvoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
+        //upvote then downvote
+        onView(withId(R.id.upvoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
+        //downvote then upvote
+        onView(withId(R.id.downvoteButton)).perform(click());
+        onView(withId(R.id.upvoteButton)).perform(click());
     }
 
     public static ViewAction clickXY(final int x, final int y){
@@ -100,9 +96,6 @@ public class FullPictureActivityTest {
     }
     @After
     public void after(){
-        ConcreteLocationTracker.destroyInstance();
-        if( ConcreteLocationTracker.instanceExists()){
-            throw new AssertionError("FullPictureActivityTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
-        }
+        LocalDatabaseUtils.afterTests();
     }
 }

@@ -30,7 +30,7 @@ public class GridOrderingTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException  {
-        LocalDatabaseUtils.initLocalDatabase();
+        LocalDatabaseUtils.initLocalDatabase(false);
         displayFullSizeImageIntent = new Intent();
     }
 
