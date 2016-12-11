@@ -31,6 +31,7 @@ import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -60,6 +61,7 @@ public class UserProfileActivityTest {
 
                     User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
                     TestInitUtils.initContextMockUser(mockUser);
+                    ServicesChecker.getInstance().allowDisplayingToasts(false);
                     LocalDatabase.getInstance().addPhotoObject(po);
                 }
             };
