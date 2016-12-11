@@ -6,6 +6,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.FacebookSdk;
@@ -19,6 +20,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -120,18 +123,17 @@ public final class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
+    /*@Override
     protected void onStart() {
         super.onStart();
         //check every time the MainActivity is started if we have the permission: ACCESS_FINE_LOCATION
         // and throw the user input in onRequestPermissionsResult
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("MainActivity","No Permission");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_DENIED ){
+            Log.d("MainActivity","No GPS Permission");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCALISATION);
         }
-
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -155,17 +157,25 @@ public final class MainActivity extends AppCompatActivity {
             UserManager.getInstance().setEmptyUser();
         }
 
-        //start the TabActivity
-        Intent intent = new Intent(this, TabActivity.class);
-        startActivity(intent);
+        // We only check here the location permission and not at the opening of the app because, it
+        // caused a bug: if the phone went in stand-by mode before accepting/refusing the permission
+        // the app wouldn't open anymore and this toast would be displayed: "This app needs this
+        // permission to be open"
+        if(locationPermissionGiven()) {
+            //start the TabActivity
+            Intent intent = new Intent(this, TabActivity.class);
+            startActivity(intent);
+        } else {
+            askForLocationPermission();
+        }
     }
 
 
     /* Method to get the Facebook profile of the user */
     public void getFbProfile(){
         //get current Facebook profile
-        if(Profile.getCurrentProfile() == null){
-            mFbProfileTracker = new ProfileTracker(){
+        if (Profile.getCurrentProfile() == null) {
+            mFbProfileTracker = new ProfileTracker() {
                 @Override
                 protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
                     //update the variable of the Facebook profile
@@ -177,41 +187,35 @@ public final class MainActivity extends AppCompatActivity {
                     mFbProfileTracker.stopTracking();
                 }
             };
-        }
-        else {
+        } else {
             //get the current profile if profile not null
             mFbProfile = Profile.getCurrentProfile();
 
             //login done so call to goToTabActivity
             goToTabActivity(true);
-
         }
     }
 
 
-
-    //read the result of the permission request, leave the app if we don't have the gps permission
+    /**
+     * Read the result of the location permission request, stay in the main activity if the user
+     * refuses the permission or go to the TabActivity otherwise
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_FINE_LOCALISATION: {
-                // If request is cancelled, the result arrays are empty.
-                // permission was granted
-                if(grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //TODO: When the TakePictureFragment and MapFragment will be fragment inside MainActivity, create the LocationManager here
-
-                }
-                //permission denied
-                else {
-                    Toast.makeText(this, getString(R.string.gps_not_permitted), Toast.LENGTH_LONG).show();
-
-                    // leave the app
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        if(locationPermissionGiven()){
+            //start the tab activity
+            Intent intent = new Intent(this, TabActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getString(R.string.gps_not_permitted), Toast.LENGTH_LONG).show();
+            //TODO: find a way to trigger the permission before the user logs in
+            if(UserManager.getInstance().userIsLoggedIn()){
+                //Unlog user from facebook -> not annoying if you have facebook on your phone, you'll
+                // log again instantly by pressing the login button
+                LoginManager.getInstance().logOut();
+                UserManager user = UserManager.getInstance();
+                user.destroyUser();
             }
         }
     }
@@ -223,5 +227,15 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
         ToastProvider.update(this);
+    }
+
+    private void askForLocationPermission(){
+            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(this, locationPermission, REQUEST_FINE_LOCALISATION);
+    }
+
+    private boolean locationPermissionGiven(){
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED;
     }
 }
