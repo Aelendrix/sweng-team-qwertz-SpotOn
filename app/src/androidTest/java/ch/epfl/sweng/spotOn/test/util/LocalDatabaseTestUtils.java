@@ -23,7 +23,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
  * and erase the photo objects from it at the end of each tests
  */
 
-public class LocalDatabaseUtils {
+public class LocalDatabaseTestUtils {
     private static PhotoObject firstPo=null;
     private static PhotoObject secondPo=null;
 
@@ -47,7 +47,7 @@ public class LocalDatabaseUtils {
             public void onComplete(@NonNull Task task) {
                 if(task.getException()!=null){
                     lock1.notify();
-                    throw new IOError(new IOException("LocalDatabaseUtils : ERROR - uploading first testPhotoObject failed"));
+                    throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading first testPhotoObject failed"));
                 }else{
                     synchronized (lock1){
                         lock1.notify();
@@ -63,7 +63,7 @@ public class LocalDatabaseUtils {
             public void onComplete(@NonNull Task task) {
                 if(task.getException()!=null){
                     lock2.notify();
-                    throw new IOError(new IOException("LocalDatabaseUtils : ERROR - uploading second testPhotoObject failed"));
+                    throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading second testPhotoObject failed"));
                 }else{
                     synchronized (lock2){
                         lock2.notify();

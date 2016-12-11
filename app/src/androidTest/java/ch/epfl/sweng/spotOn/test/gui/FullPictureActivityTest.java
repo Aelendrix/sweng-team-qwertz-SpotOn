@@ -2,16 +2,9 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 
 import android.content.Intent;
-import android.location.Location;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.action.CoordinatesProvider;
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,15 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.gui.AboutPage;
-import ch.epfl.sweng.spotOn.gui.SeePicturesFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
-import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
-import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
-import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -54,7 +40,7 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
-        LocalDatabaseUtils.initLocalDatabase(true);
+        LocalDatabaseTestUtils.initLocalDatabase(true);
     }
 
     @Test
@@ -78,6 +64,6 @@ public class FullPictureActivityTest {
 
     @After
     public void after(){
-        LocalDatabaseUtils.afterTests();
+        LocalDatabaseTestUtils.afterTests();
     }
 }
