@@ -59,7 +59,6 @@ public class mainActivityTest_notLoggedInButton {
 
         //in the MainActivity
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
-
     }
 
 
