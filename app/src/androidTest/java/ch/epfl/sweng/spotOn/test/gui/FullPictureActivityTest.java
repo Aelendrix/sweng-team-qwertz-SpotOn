@@ -30,12 +30,13 @@ import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
+import static org.hamcrest.Matchers.anything;
 
 
 /**
@@ -57,11 +58,11 @@ public class FullPictureActivityTest {
     }
 
     @Test
-    public void launchFullPictureActivity() throws Exception{
+    public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
         Thread.sleep(10000);
 
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
+        onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote
         onView(withId(R.id.upvoteButton)).perform(click());
         onView(withId(R.id.upvoteButton)).perform(click());
@@ -76,24 +77,6 @@ public class FullPictureActivityTest {
         onView(withId(R.id.upvoteButton)).perform(click());
     }
 
-    public static ViewAction clickXY(final int x, final int y){
-        return new GeneralClickAction(
-                Tap.SINGLE,
-                new CoordinatesProvider() {
-                    @Override
-                    public float[] calculateCoordinates(View view) {
-
-                        final int[] screenPos = new int[2];
-                        view.getLocationOnScreen(screenPos);
-
-                        final float screenX = screenPos[0] + x;
-                        final float screenY = screenPos[1] + y;
-
-                        return new float[]{screenX, screenY};
-                    }
-                },
-                Press.FINGER);
-    }
     @After
     public void after(){
         LocalDatabaseUtils.afterTests();

@@ -26,17 +26,15 @@ public class GridOrderingTest {
 
     @Rule
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class,true,false);
-    private Intent displayFullSizeImageIntent;
 
     @Before
     public void initLocalDatabase() throws InterruptedException  {
         LocalDatabaseUtils.initLocalDatabase(false);
-        displayFullSizeImageIntent = new Intent();
     }
 
     @Test
     public void testChangeOrdering () throws Exception{
-        mActivityTestRule.launchActivity(displayFullSizeImageIntent);
+        mActivityTestRule.launchActivity(new Intent());
         //Let the local database refresh
         Thread.sleep(4000);
         onView(withText("Around me")).perform(click());
