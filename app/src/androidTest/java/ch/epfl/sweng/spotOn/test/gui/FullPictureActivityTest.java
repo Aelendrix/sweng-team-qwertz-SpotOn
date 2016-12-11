@@ -60,7 +60,6 @@ public class FullPictureActivityTest {
     @Test
     public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        Thread.sleep(10000);
 
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote

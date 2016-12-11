@@ -57,7 +57,6 @@ public class ViewFullSizeImageActivityTest {
     @Test
     public void swipeBetweenPicturesTest() throws InterruptedException{
         mActivityTestRule.launchActivity(new Intent());
-        Thread.sleep(3000);
         //go to the pager from the first grid item click
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //swipe between the page
