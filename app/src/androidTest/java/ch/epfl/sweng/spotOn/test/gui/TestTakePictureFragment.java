@@ -33,10 +33,15 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-
+/**
+ * Created by Nico
+ * Test fakes the phone to take a picture, and then modifies the picture using the user UI.
+ */
 public class TestTakePictureFragment {
 
     @Rule
@@ -53,8 +58,7 @@ public class TestTakePictureFragment {
     @Test
     public void StoreFunctionWorking() throws Exception{
         onView(withText("Camera")).perform(click());
-
-        Thread.sleep(1000);
+        //create a bitmap that will fake a picture taken by the camera of the phone
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
@@ -66,8 +70,6 @@ public class TestTakePictureFragment {
         pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
         fOut.flush(); // Not really required
         fOut.close(); // do not forget to close the stream
-
-        //mImageToUploadUri = Uri.fromFile(file);
         mImageToUploadUri = BitmapUtils.getUriFromFile(pictureFragment.getContext(), file);
 
         mActivityTestRule.getActivity().runOnUiThread(new Runnable() {
@@ -77,28 +79,31 @@ public class TestTakePictureFragment {
 
             }
         });
-
+        //at this point we are in the tabActivity and the phone "took" a full black picture
 
         onView(withId(R.id.editButton)).perform(click());
-        Thread.sleep(1000);
-        onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
-        Thread.sleep(1000);
+        //in the editActivity button check
+        onView(withId(R.id.addTextButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.rotateButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
+        //modifiy the actual picture
         onView(withId(R.id.addTextButton)).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
-        Thread.sleep(1000);
         onView(withId(R.id.rotateButton)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.confirmButton)).perform(click());
-        Thread.sleep(1000);
-        
+        //in the tabActivity button are there check
+        onView(withId(R.id.storeButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.sendButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.captureButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.editButton)).check(matches(isDisplayed()));
+        //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.sendButton)).perform(click());
-        Thread.sleep(2000);
         mActualPhotoObject = pictureFragment.getActualPhotoObject();
+
+        onView(withId(R.id.captureButton)).perform(click());
 
         /*
 
@@ -124,7 +129,7 @@ public class TestTakePictureFragment {
         StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
     }
 
-    private static ViewAction clickXY(final float x, final float y){
+    private ViewAction clickXY(final float x, final float y){
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {
