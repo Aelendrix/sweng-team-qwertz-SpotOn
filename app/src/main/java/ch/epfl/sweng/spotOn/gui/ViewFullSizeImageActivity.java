@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.gui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,7 +43,7 @@ public class ViewFullSizeImageActivity extends Activity {
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
         mReportButton = (Button) findViewById(R.id.reportButton);
         mButtonsAreVisible = true;
-
+        
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
         //if user logged in he can make buttons appear or disappear by tapping on the screen
@@ -81,10 +82,21 @@ public class ViewFullSizeImageActivity extends Activity {
 
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
+
+        Intent displayImageIntent = getIntent();
+        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
+        viewPager.setCurrentItem(position);
+        updateCurrentMedia(position);
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                //if the picture we are swapping to just got deleted from the DB (from local DB as well)
+                /*if(! mFullScreenImageAdapter.displayedPictureIsInLocalDB()){
+                    finish();
+                    ToastProvider.printOverCurrent("The picture you tried to watch is not available anymore",
+                            Toast.LENGTH_LONG);
+                }*/
             }
 
             @Override
@@ -98,11 +110,6 @@ public class ViewFullSizeImageActivity extends Activity {
 
             }
         });
-
-        Intent displayImageIntent = getIntent();
-        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
-        viewPager.setCurrentItem(position);
-        updateCurrentMedia(position);
     }
 
     private void updateCurrentMedia(int position) {
@@ -113,7 +120,6 @@ public class ViewFullSizeImageActivity extends Activity {
         if(mUserID != null) {
             boolean upvoted = mFullScreenImageAdapter.alreadyUpvoted(mUserID);
             boolean downvoted = mFullScreenImageAdapter.alreadyDownvoted(mUserID);
-            boolean reported = mFullScreenImageAdapter.alreadyReported(mUserID);
 
             if (upvoted) {
                 colorForUpvote();
@@ -121,12 +127,6 @@ public class ViewFullSizeImageActivity extends Activity {
                 colorForDownvote();
             } else {
                 colorNone();
-            }
-
-            if (reported) {
-                mReportButton.setBackgroundResource(R.drawable.button_shape_report_clicked);
-            } else {
-                mReportButton.setBackgroundResource(R.drawable.button_shape_report);
             }
         }
     }
@@ -171,7 +171,7 @@ public class ViewFullSizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.reportOffensivePicture(view);
-            if(! mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                 finish();
             }
         }
@@ -197,6 +197,4 @@ public class ViewFullSizeImageActivity extends Activity {
         mDownvoteButton.setVisibility(View.GONE);
         mReportButton.setVisibility(View.GONE);
     }
-
-
 }

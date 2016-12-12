@@ -201,6 +201,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
+    public boolean displayedPictureIsInLocalDB(){
+        return LocalDatabase.getInstance().hasKey(mCurrentPicture.getPictureId());
+    }
 
     public void setCurrentMedia(int position) {
         Log.d("Current media position", "" + position);
@@ -210,7 +213,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
         mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
     }
-
 
     /**
      * Checks if the user has upvoted the displayed picture
@@ -237,18 +239,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     /**
-     * Checks if the user has reported the displayed picture
-     * @param userID the user ID
-     */
-    public boolean alreadyReported(String userID){
-        if(mCurrentPicture != null) {
-            return mCurrentPicture.getReportersList().contains(userID);
-        } else {
-            throw new NullPointerException("The photoObject is null");
-        }
-    }
-
-    /**
      * Method useful for the ViewFullSizeImageActivity to make sure the buttons do not change color
      * when the user votes for his own picture
      * @return the author of the displayed picture
@@ -259,13 +249,5 @@ public class FullScreenImageAdapter extends PagerAdapter {
         } else {
             return mCurrentPicture.getAuthorId();
         }
-    }
-
-    private void colorIfReported(View view){
-        view.setBackgroundResource(R.drawable.button_shape_report_clicked);
-    }
-
-    private void colorIfNotReported(View view){
-        view.setBackgroundResource(R.drawable.button_shape_report);
     }
 }
