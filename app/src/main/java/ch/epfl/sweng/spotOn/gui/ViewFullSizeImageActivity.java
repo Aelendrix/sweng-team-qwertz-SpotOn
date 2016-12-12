@@ -12,6 +12,7 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -43,7 +44,7 @@ public class ViewFullSizeImageActivity extends Activity {
         mDownvoteButton = (ImageButton) findViewById(R.id.downvoteButton);
         mReportButton = (Button) findViewById(R.id.reportButton);
         mButtonsAreVisible = true;
-        
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
         //if user logged in he can make buttons appear or disappear by tapping on the screen

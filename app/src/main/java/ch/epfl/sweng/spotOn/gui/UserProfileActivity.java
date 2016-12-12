@@ -19,7 +19,6 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 public class UserProfileActivity extends AppCompatActivity implements LocalDatabaseListener {
 
     private ListView mPicturesListView = null;
-
     private User mUser = null;
 
     @Override
@@ -36,9 +35,8 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
         }
         else {
 
-            TextView mFirstNameTextView = (TextView) findViewById(R.id.profileFirstNameTextView);
-            TextView mLastNameTextView = (TextView) findViewById(R.id.profileLastNameTextView);
             TextView mKarmaTextView = (TextView) findViewById(R.id.profileKarmaTextView);
+            TextView mHelloTextView = (TextView) findViewById(R.id.profileTitleTextView);
 
             mPicturesListView = (ListView) findViewById(R.id.profilePicturesListView);
 
@@ -46,12 +44,10 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
             refreshVoteAndPictureLists();
 
             //concatenate String is not advised in a setText, so we create the string before.
-            String firstName = mFirstNameTextView.getText() + " " + mUser.getFirstName();
-            String lastName = mLastNameTextView.getText() + " " + mUser.getLastName();
-            String karmaValue = mKarmaTextView.getText() + " " + mUser.getKarma();
-            mFirstNameTextView.setText(firstName);
-            mLastNameTextView.setText(lastName);
+            String karmaValue = mKarmaTextView.getText() + " " + mUser.getKarma() + " points";
+            String helloMessage = mHelloTextView.getText() + " " + mUser.getFirstName() + " !";
             mKarmaTextView.setText(karmaValue);
+            mHelloTextView.setText(helloMessage);
         }
     }
 
