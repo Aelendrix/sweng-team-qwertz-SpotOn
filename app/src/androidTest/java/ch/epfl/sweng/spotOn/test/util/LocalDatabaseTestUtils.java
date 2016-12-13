@@ -37,10 +37,7 @@ public class LocalDatabaseTestUtils {
         TestInitUtils.initContext(location);
 
         final Object lock1 = new Object();
-        final Object lock2 = new Object();
-
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
-        secondPo = PhotoObjectTestUtils.paulVanDykPO();
 
         firstPo.upload(true, new OnCompleteListener() {
             @Override
@@ -57,8 +54,11 @@ public class LocalDatabaseTestUtils {
         });
         synchronized (lock1)
         {lock1.wait();}
+        LocalDatabase.getInstance().addPhotoObject(firstPo);
 
         if( ! onlyOnePhoto ) {
+            final Object lock2 = new Object();
+            secondPo = PhotoObjectTestUtils.paulVanDykPO();
             secondPo.upload(true, new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
@@ -75,10 +75,9 @@ public class LocalDatabaseTestUtils {
             synchronized (lock2) {
                 lock2.wait();
             }
+            LocalDatabase.getInstance().addPhotoObject(secondPo);
         }
 
-        LocalDatabase.getInstance().addPhotoObject(firstPo);
-        LocalDatabase.getInstance().addPhotoObject(secondPo);
 
     }
 
