@@ -58,21 +58,24 @@ public class LocalDatabaseTestUtils {
         synchronized (lock1)
         {lock1.wait();}
 
-        secondPo.upload(true, new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                if(task.getException()!=null){
-                    lock2.notify();
-                    throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading second testPhotoObject failed"));
-                }else{
-                    synchronized (lock2){
+        if( ! onlyOnePhoto ) {
+            secondPo.upload(true, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.getException() != null) {
                         lock2.notify();
+                        throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading second testPhotoObject failed"));
+                    } else {
+                        synchronized (lock2) {
+                            lock2.notify();
+                        }
                     }
                 }
+            });
+            synchronized (lock2) {
+                lock2.wait();
             }
-        });
-        synchronized (lock2)
-        {lock2.wait();}
+        }
 
         LocalDatabase.getInstance().addPhotoObject(firstPo);
         LocalDatabase.getInstance().addPhotoObject(secondPo);
