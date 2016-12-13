@@ -155,6 +155,8 @@ public final class MainActivity extends AppCompatActivity {
             UserManager.getInstance().setEmptyUser();
         }
 
+        // allow toasts to display erro rmessaes
+        ServicesChecker.allowDisplayingToasts(true);
         //start the TabActivity
         Intent intent = new Intent(this, TabActivity.class);
         startActivity(intent);
@@ -222,6 +224,7 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.allowDisplayingToasts(false);
         ToastProvider.update(this);
     }
 }
