@@ -65,13 +65,16 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
             public void onClick(View v) {
 
                 if(UserManager.getInstance().getUser().retrieveUpdatedPhotosTaken().containsKey(pictureID)) {
-                    LocalDatabase.getInstance().removePhotoObject(pictureID);
+                    /*LocalDatabase.getInstance().removePhotoObject(pictureID);
                     DatabaseRef.deletePhotoObjectFromDB(pictureID);
                     StorageRef.deletePictureFromStorage(pictureID);
-                    UserManager.getInstance().getUser().removePhoto(pictureID);
+                    UserManager.getInstance().getUser().removePhoto(pictureID);*/
+                    Intent strongActionIntent = new Intent(mActivityContext, StrongActionActivity.class);
+                    strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Delete Picture");
+                    strongActionIntent.putExtra("currentPictureID", pictureID);
+                    mActivityContext.startActivity(strongActionIntent);
                     mPhotoList.remove(mPhotoList.get(position));
                     LocalDatabase.getInstance().notifyListeners();
-                    ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
 
                 }
                 else {

@@ -49,6 +49,10 @@
     <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
     <string name="contentDescriptionLoginTextView">LoginTextView</string>
     <string name="profile_menu">Profile</string>
+    <string name="title_activity_strong_action">StrongActionActivity</string>
+    <string name="strong_action_message">Are you sure you want to do this ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>
 

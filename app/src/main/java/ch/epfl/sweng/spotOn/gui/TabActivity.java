@@ -122,7 +122,7 @@ public class TabActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-                if( ! UserManager.getInstance().userIsLoggedIn() ){
+               /* if( ! UserManager.getInstance().userIsLoggedIn() ){
                     // to provide a way to log back in - needs to be improved todo
                     finish();
                     return true;
@@ -131,7 +131,11 @@ public class TabActivity extends AppCompatActivity{
                     UserManager user = UserManager.getInstance();
                     user.destroyUser();
                     return true;
-                }
+                }*/
+                Intent strongActionIntent = new Intent(this, StrongActionActivity.class);
+                strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Log out");
+                startActivity(strongActionIntent);
+                return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
