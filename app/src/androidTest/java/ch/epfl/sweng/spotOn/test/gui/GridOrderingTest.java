@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 
-import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -29,7 +29,7 @@ public class GridOrderingTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException  {
-        LocalDatabaseUtils.initLocalDatabase(false);
+        LocalDatabaseTestUtils.initLocalDatabase(false);
     }
 
     @Test
@@ -56,6 +56,6 @@ public class GridOrderingTest {
 
     @After
     public void after(){
-        LocalDatabaseUtils.afterTests();
+        LocalDatabaseTestUtils.afterTests();
     }
 }
