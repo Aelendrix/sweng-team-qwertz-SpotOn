@@ -5,6 +5,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -66,17 +67,16 @@ public class CameraTest{
 
         onView(withText("Camera")).perform(click());
         onView(withId(R.id.image_view)).check(matches(not(hasDrawable())));
-        
+
+        onView(withId(R.id.storeButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.sendButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.editButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.captureButton)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.storeButton)).perform(click());
+        onView(withId(R.id.sendButton)).perform(click());
+        onView(withId(R.id.editButton)).perform(click());
         onView(withId(R.id.captureButton)).perform(click());
-        Thread.sleep(1000);
-        //onView(withId(R.id.image_view)).check(matches(hasDrawable()));
-        //Test all behavior: before and after rotating picture              <- this should be fixed
-//        Thread.sleep(1000);
-//        onView(withId(R.id.storeButton)).perform(click());
-//        Thread.sleep(1000);
-//        onView(withId(R.id.sendButton)).perform(click());
-//        Thread.sleep(1000);
-//        onView(withId(R.id.sendButton)).perform(click());
     }
 
     private ActivityResult createImageCaptureStub() {

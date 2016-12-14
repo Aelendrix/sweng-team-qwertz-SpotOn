@@ -23,7 +23,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class ViewUserPhotoActivity extends Activity {
 
-    private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
+    private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

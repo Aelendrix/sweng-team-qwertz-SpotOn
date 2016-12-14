@@ -36,8 +36,6 @@ public class UserTest {
         testUser = new RealUser("firstName","lastName","mlb",null);
         testUser.setKarma(500);
 
-        Thread.sleep(3000);
-
         Assert.assertEquals(testUser.getFirstName(), "firstName");
         Assert.assertEquals(testUser.getLastName(), "lastName");
         Assert.assertEquals(testUser.getUserId(), "mlb");
@@ -55,15 +53,12 @@ public class UserTest {
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
         PhotoObject po = new PhotoObject(image, testUser.getUserId(), "photo1", new Timestamp(new Date().getTime()), 46.52890355757888, 6.569420238493888);
 
-
         testUser.addPhoto(po);
-        Thread.sleep(3000);
 
         Assert.assertEquals(testUser.getPhotosTaken().containsKey(po.getPictureId()), true);
         Assert.assertEquals(testUser.retrieveUpdatedPhotosTaken().containsKey(po.getPictureId()), true);
 
         testUser.removePhoto(po.getPictureId());
-        Thread.sleep(3000);
 
         Assert.assertEquals(testUser.getPhotosTaken().isEmpty(), true);
         Assert.assertEquals(testUser.retrieveUpdatedPhotosTaken().isEmpty(), true);

@@ -20,17 +20,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.gui.AboutPage;
+import ch.epfl.sweng.spotOn.gui.SeePicturesFragment;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
+import static org.hamcrest.Matchers.anything;
 
 
 /**
@@ -47,58 +53,31 @@ public class FullPictureActivityTest {
     public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<>(TabActivity.class, true, false);
 
     @Before
-    public void initLocalDatabase(){
-
-        Location location = new Location("testLocationProvider");
-        location.setLatitude(46.52890355757567);
-        location.setLongitude(6.569420238493345);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-
-        TestInitUtils.initContext(location);
-
-        PhotoObject po = PhotoObjectTestUtils.paulVanDykPO();
-        LocalDatabase.getInstance().addPhotoObject(po);
-
-        LocalDatabase.getInstance().notifyListeners();
+    public void initLocalDatabase() throws InterruptedException{
+        LocalDatabaseUtils.initLocalDatabase(true);
     }
 
     @Test
-    public void launchFullPictureActivity() throws Exception{
+    public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(clickXY(50, 50));
-        Thread.sleep(500);
+
+        onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
+        //upvote and cancel the upvote
         onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).perform(click());
-        Thread.sleep(500);
+        //downvote and cancel the downvote
         onView(withId(R.id.downvoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
+        //upvote then downvote
+        onView(withId(R.id.upvoteButton)).perform(click());
+        onView(withId(R.id.downvoteButton)).perform(click());
+        //downvote then upvote
+        onView(withId(R.id.downvoteButton)).perform(click());
+        onView(withId(R.id.upvoteButton)).perform(click());
     }
 
-    public static ViewAction clickXY(final int x, final int y){
-        return new GeneralClickAction(
-                Tap.SINGLE,
-                new CoordinatesProvider() {
-                    @Override
-                    public float[] calculateCoordinates(View view) {
-
-                        final int[] screenPos = new int[2];
-                        view.getLocationOnScreen(screenPos);
-
-                        final float screenX = screenPos[0] + x;
-                        final float screenY = screenPos[1] + y;
-
-                        return new float[]{screenX, screenY};
-                    }
-                },
-                Press.FINGER);
-    }
     @After
     public void after(){
-        ConcreteLocationTracker.destroyInstance();
-        if( ConcreteLocationTracker.instanceExists()){
-            throw new AssertionError("FullPictureActivityTest : concreteLocationTracker mock instance not deleted : "+ConcreteLocationTracker.getInstance().getLocation());
-        }
+        LocalDatabaseUtils.afterTests();
     }
 }

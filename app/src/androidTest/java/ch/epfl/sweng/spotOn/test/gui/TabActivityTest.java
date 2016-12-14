@@ -17,8 +17,10 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -59,14 +61,13 @@ public class TabActivityTest {
 //    }
 
     @Test
-    public void swipe_between_fragments() throws Exception {
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        Thread.sleep(1000);
-        onView(withText("Camera")).perform(click());
-        Thread.sleep(1000);
-        onView(withId(R.id.viewpager)).perform(swipeRight());
+    public void swipe_between_fragments() {
+        onView(withText(R.string.tab_aroundme)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_camera)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_map)).check(matches(isDisplayed()));
+        onView(withText(R.string.tab_aroundme)).perform(click());
+        onView(withText(R.string.tab_camera)).perform(click());
+        onView(withText(R.string.tab_map)).perform(click());
     }
 
     @Test
@@ -89,7 +90,6 @@ public class TabActivityTest {
         intended(hasComponent(AboutPage.class.getName()));
         Intents.release();
     }
-
 
     @Test
     public void startUserProfileActivity() {

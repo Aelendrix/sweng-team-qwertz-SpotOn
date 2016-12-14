@@ -40,8 +40,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private TextView mTextView;
     private PhotoObject mCurrentPicture;
 
-    private final static int RESOURCE_IMAGE_DOWNLOADING = R.drawable.image_downloading;
-    private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
+    private final static int RESOURCE_IMAGE_DOWNLOADING = R.mipmap.image_downloading;
+    private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
 
 
     public FullScreenImageAdapter(Activity activity) {
