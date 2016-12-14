@@ -9,7 +9,6 @@
     <string name="tab_camera">Camera</string>
     <string name="tab_map">Map</string>
     <string name="captureButton">Capture</string>
-    <string name="unable_to_invoke_camera">Unable to invoke camera without permission</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
     <string name="reportButton">Report the picture</string>
@@ -25,8 +24,6 @@
     </string>
 
     <string name="userProfileTitle">Hello</string>
-    <string name="userProfileFirstName">First Name:</string>
-    <string name="userProfileLastName">Last Name:</string>
     <string name="userProfileKarma">Your karma:</string>
     <string name="userFollowingPictures">Here are your pictures that are still online:</string>
     <string name="profilePictureListText">Votes:</string>
