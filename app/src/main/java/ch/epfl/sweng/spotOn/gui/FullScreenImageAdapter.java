@@ -44,7 +44,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private final static int RESOURCE_IMAGE_FAILURE =  R.drawable.image_failure;
 
 
-
     public FullScreenImageAdapter(Activity activity) {
         mActivity = activity;
         mRefToImageAdapter = SeePicturesFragment.getImageAdapter();
@@ -74,40 +73,45 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
-        }
-        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
-
-        if (mDisplayedMedia.hasFullSizeImage()) {
-            Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
-            mViewToSet.setImageBitmap(imageToDisplay);
+            mActivity.finish();
+            String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
+            return null;
+            //throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
         } else {
-            // want these final variable, because the fields of the class may change if we swipe
-            final ImageView currentView = mViewToSet;
-            final String currentPicId = wantedPicId;
-            mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
-                @Override
-                public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
-                    if(retrieveFullSizePicTask.getException()!=null){
-                        currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                        // maybe it's better if we recover from this, and use only a log
-                        //throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+            PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
-                        Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
-                    }else{
-                        Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
-                        currentView.setImageBitmap(obtainedImage);
+            if (mDisplayedMedia.hasFullSizeImage()) {
+                Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
+                mViewToSet.setImageBitmap(imageToDisplay);
+            } else {
+                // want these final variable, because the fields of the class may change if we swipe
+                final ImageView currentView = mViewToSet;
+                final String currentPicId = wantedPicId;
+                mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
+                    @Override
+                    public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
+                        if (retrieveFullSizePicTask.getException() != null) {
+                            currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
+                            // maybe it's better if we recover from this, and use only a log
+                            //throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+
+                            Log.d("FullScreenImageAdapter", "ERROR : couldn't get fullSizeImage for picture " + currentPicId);
+                        } else {
+                            Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
+                            currentView.setImageBitmap(obtainedImage);
+                        }
                     }
-                }
-            });
-        }
-        //upvotes
-        if(mCurrentPicture != null) {
-            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
-        }
+                });
+            }
+            //upvotes
+            if (mCurrentPicture != null) {
+                voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
+            }
 
-        container.addView(viewLayout);
-        return viewLayout;
+            container.addView(viewLayout);
+            return viewLayout;
+        }
     }
 
     @Override
@@ -115,17 +119,21 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
+    /**
+     * Useful for ViewFullSizeImageActivity to check if the picture the user is looking at is still
+     * in the local database
+     */
+    public String getPicIdAtPosition(int position){
+        return mRefToImageAdapter.getIdAtPosition(position);
+    }
+
     public void refreshVoteTextView(int position){
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
-        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
-        }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
         int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
         //create a temp String is the ONLY way if you want to correct the lint error
-        String textToShow = ""+votes;
+        String textToShow = "" + votes;
         mTextView.setText(textToShow);
-
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -201,16 +209,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-    public boolean displayedPictureIsInLocalDB(){
-        return LocalDatabase.getInstance().hasKey(mCurrentPicture.getPictureId());
-    }
-
     public void setCurrentMedia(int position) {
         Log.d("Current media position", "" + position);
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
-        if (!LocalDatabase.getInstance().hasKey(wantedPicId)) {
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : " + wantedPicId);
-        }
         mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
     }
 

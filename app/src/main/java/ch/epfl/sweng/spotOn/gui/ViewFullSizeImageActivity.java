@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -92,18 +93,21 @@ public class ViewFullSizeImageActivity extends Activity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //if the picture we are swapping to just got deleted from the DB (from local DB as well)
-                /*if(! mFullScreenImageAdapter.displayedPictureIsInLocalDB()){
-                    finish();
-                    ToastProvider.printOverCurrent("The picture you tried to watch is not available anymore",
-                            Toast.LENGTH_LONG);
-                }*/
+
             }
 
             @Override
             public void onPageSelected(int position) {
-                Log.d("Picture position", " : " + position);
-                updateCurrentMedia(position);
+                String wantedPicId = mFullScreenImageAdapter.getPicIdAtPosition(position);
+                // If the picture is not in the local database anymore (author of the piture just erased it,
+                // or the user is walking and the picture he is watching is not in range anymore...)
+                if(!LocalDatabase.getInstance().hasKey(wantedPicId)) {
+                    Log.d("PictureInLocal", "false");
+                    endActivity();
+                } else {
+                    Log.d("PictureInLocal", "true");
+                    updateCurrentMedia(position);
+                }
             }
 
             @Override
@@ -137,7 +141,7 @@ public class ViewFullSizeImageActivity extends Activity {
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             mFullScreenImageAdapter.recordUpvote(view);
-            //Change color of buttons only if the user is not th author of the picture
+            //Change color of buttons only if the user is not the author of the picture
             if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                 if(!mFullScreenImageAdapter.alreadyUpvoted(mUserID))
                 {
@@ -197,5 +201,15 @@ public class ViewFullSizeImageActivity extends Activity {
         mUpvoteButton.setVisibility(View.GONE);
         mDownvoteButton.setVisibility(View.GONE);
         mReportButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Method that finishes the activity (ViewFullSizeImage) to go back to the avtivity with the grid
+     * of pictures and displays a toast message to the user
+     */
+    public void endActivity(){
+        this.finish();
+        String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
+        ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
     }
 }
