@@ -28,7 +28,7 @@
     <string name="userProfileFirstName">First Name:</string>
     <string name="userProfileLastName">Last Name:</string>
     <string name="userProfileKarma">Your karma:</string>
-    <string name="userFollowingPictures">Here are the following pictures that are still online:</string>
+    <string name="userFollowingPictures">Here are your pictures that are still online:</string>
     <string name="profilePictureListText">Votes:</string>
     <string name="userProfileListPictureDeleteButton">Delete !</string>
 

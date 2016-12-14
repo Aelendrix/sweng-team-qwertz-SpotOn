@@ -140,16 +140,22 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.recordUpvote(view);
-            //Change color of buttons only if the user is not the author of the picture
-            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                if(!mFullScreenImageAdapter.alreadyUpvoted(mUserID))
-                {
-                    colorNone();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.recordUpvote(view);
+                //Change color of buttons only if the user is not the author of the picture
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    if (!mFullScreenImageAdapter.alreadyUpvoted(mUserID)) {
+                        colorNone();
+                    } else {
+                        colorForUpvote();
+                    }
                 }
-                else {
-                    colorForUpvote();
-                }
+            } else {
+                // You come in this loop only if the user is trying to upvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -158,15 +164,21 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.recordDownvote(view);
-            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                if(!mFullScreenImageAdapter.alreadyDownvoted(mUserID))
-                {
-                    colorNone();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.recordDownvote(view);
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    if (!mFullScreenImageAdapter.alreadyDownvoted(mUserID)) {
+                        colorNone();
+                    } else {
+                        colorForDownvote();
+                    }
                 }
-                else {
-                    colorForDownvote();
-                }
+            } else {
+                // You come in this loop only if the user is trying to downvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -175,9 +187,17 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.reportOffensivePicture(view);
-            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                finish();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.reportOffensivePicture(view);
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    finish();
+                }
+            } else {
+                // You come in this loop only if the user is trying to downvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -204,7 +224,7 @@ public class ViewFullSizeImageActivity extends Activity {
     }
 
     /**
-     * Method that finishes the activity (ViewFullSizeImage) to go back to the avtivity with the grid
+     * Method that finishes the activity (ViewFullSizeImage) to go back to the activity with the grid
      * of pictures and displays a toast message to the user
      */
     public void endActivity(){

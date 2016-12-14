@@ -127,6 +127,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
         return mRefToImageAdapter.getIdAtPosition(position);
     }
 
+    public String getPicId(){
+        if(mCurrentPicture != null){
+            return mCurrentPicture.getPictureId();
+        } else {
+            throw new NullPointerException("Picture not instantiated, you can't obtain its id");
+        }
+    }
+
     public void refreshVoteTextView(int position){
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
