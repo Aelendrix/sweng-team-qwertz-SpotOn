@@ -1,6 +1,14 @@
 package ch.epfl.sweng.spotOn.test.util;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseException;
+
+import java.io.IOError;
+import java.io.IOException;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
@@ -15,7 +23,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
  * and erase the photo objects from it at the end of each tests
  */
 
-public class LocalDatabaseUtils {
+public class LocalDatabaseTestUtils {
     private static PhotoObject firstPo=null;
     private static PhotoObject secondPo=null;
 
@@ -28,22 +36,48 @@ public class LocalDatabaseUtils {
 
         TestInitUtils.initContext(location);
 
+        final Object lock1 = new Object();
         firstPo = PhotoObjectTestUtils.germaynDeryckePO();
-        firstPo.uploadWithoutFeedback();
-        if(!onlyOnePhoto) {
-            secondPo = PhotoObjectTestUtils.paulVanDykPO();
-            secondPo.uploadWithoutFeedback();
 
+        firstPo.upload(true, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if(task.getException()!=null){
+                    lock1.notify();
+                    throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading first testPhotoObject failed"));
+                }else{
+                    synchronized (lock1){
+                        lock1.notify();
+                    }
+                }
+            }
+        });
+        synchronized (lock1)
+        {lock1.wait();}
+        LocalDatabase.getInstance().addPhotoObject(firstPo);
+
+        if( ! onlyOnePhoto ) {
+            final Object lock2 = new Object();
+            secondPo = PhotoObjectTestUtils.paulVanDykPO();
+            secondPo.upload(true, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.getException() != null) {
+                        lock2.notify();
+                        throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading second testPhotoObject failed"));
+                    } else {
+                        synchronized (lock2) {
+                            lock2.notify();
+                        }
+                    }
+                }
+            });
+            synchronized (lock2) {
+                lock2.wait();
+            }
+            LocalDatabase.getInstance().addPhotoObject(secondPo);
         }
-        Thread.sleep(3000);
-        //final Object lock1 = new Object();
-        //final Object lock2 = new Object();
-        //synchronized (lock1)
-        //{lock1.wait();}
-        //synchronized (lock2)
-        //{lock2.wait();}
-        //LocalDatabase.getInstance().addPhotoObject(firstPo);
-        //LocalDatabase.getInstance().addPhotoObject(secondPo);
+
 
     }
 
