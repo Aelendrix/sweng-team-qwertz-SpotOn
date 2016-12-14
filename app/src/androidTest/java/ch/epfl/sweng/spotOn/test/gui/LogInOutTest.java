@@ -79,6 +79,7 @@ public class LogInOutTest {
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
         onView(withId(R.id.log_out)).perform(click());
+        onView(withId(R.id.strongActionOk)).perform(click());
 
         */
     }

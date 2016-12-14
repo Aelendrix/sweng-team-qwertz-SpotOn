@@ -22,6 +22,7 @@ public class StrongActionActivity extends AppCompatActivity {
 
     private String strongActionCode;
     private String pictureID;
+    public static boolean report = false;
 
 
     @Override
@@ -67,6 +68,9 @@ public class StrongActionActivity extends AppCompatActivity {
                 UserManager.getInstance().getUser().removePhoto(pictureID);
                 ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
                 finish();
+                break;
+            case "Report":
+                report = true;
                 break;
             default:
                 ToastProvider.printIfNoCurrent("Not a valid strong action", Toast.LENGTH_SHORT);
