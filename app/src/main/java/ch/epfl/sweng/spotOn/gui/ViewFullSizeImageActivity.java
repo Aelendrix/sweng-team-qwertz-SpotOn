@@ -101,9 +101,10 @@ public class ViewFullSizeImageActivity extends Activity {
                 String wantedPicId = mFullScreenImageAdapter.getPicIdAtPosition(position);
                 // If the picture is not in the local database anymore (author of the piture just erased it,
                 // or the user is walking and the picture he is watching is not in range anymore...)
-                if(!LocalDatabase.getInstance().hasKey(wantedPicId)) {
-                    Log.d("PictureInLocal", "false");
-                    endActivity();
+                if( ! LocalDatabase.getInstance().hasKey(wantedPicId)) {
+                    Log.d("ViewFullSizeImage", "Swipe on a picture which was removed from database while browsing");
+                    makeButtonsDisappear();
+                    findViewById(R.id.UpvoteTextView).setVisibility(View.GONE);
                 } else {
                     Log.d("PictureInLocal", "true");
                     updateCurrentMedia(position);
@@ -134,6 +135,7 @@ public class ViewFullSizeImageActivity extends Activity {
                 colorNone();
             }
         }
+        makeButtonsAppear();
     }
 
     public void recordUpvote(View view) {
@@ -221,6 +223,13 @@ public class ViewFullSizeImageActivity extends Activity {
         mUpvoteButton.setVisibility(View.GONE);
         mDownvoteButton.setVisibility(View.GONE);
         mReportButton.setVisibility(View.GONE);
+    }
+
+    private void makeButtonsAppear(){
+        findViewById(R.id.UpvoteTextView).setVisibility(View.VISIBLE);
+        mUpvoteButton.setVisibility(View.VISIBLE);
+        mDownvoteButton.setVisibility(View.VISIBLE);
+        mReportButton.setVisibility(View.VISIBLE);
     }
 
     /**
