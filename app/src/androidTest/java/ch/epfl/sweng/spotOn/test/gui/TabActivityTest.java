@@ -35,7 +35,6 @@ import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
-
 /**
  * Created by Alexis Dewaele on 26/10/2016.
  * This class tests the TabActivity
