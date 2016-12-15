@@ -61,7 +61,7 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
     private void refreshVoteAndPictureLists(){
         List<String> mPictureIdList = new ArrayList<>(mUser.retrieveUpdatedPhotosTaken().keySet());
-        final ArrayList<PhotoObject> mPhotoList = new ArrayList<>();
+        ArrayList<PhotoObject> mPhotoList = new ArrayList<>();
 
         for(int i=0; i<mPictureIdList.size(); i++){
             PhotoObject PO = LocalDatabase.getInstance().get(mPictureIdList.get(i));
