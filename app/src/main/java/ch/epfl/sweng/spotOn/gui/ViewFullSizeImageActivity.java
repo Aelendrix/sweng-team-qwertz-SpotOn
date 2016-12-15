@@ -135,6 +135,7 @@ public class ViewFullSizeImageActivity extends Activity {
                 colorNone();
             }
         }
+        makeButtonsAppear();
     }
 
     public void recordUpvote(View view) {
@@ -222,6 +223,13 @@ public class ViewFullSizeImageActivity extends Activity {
         mUpvoteButton.setVisibility(View.GONE);
         mDownvoteButton.setVisibility(View.GONE);
         mReportButton.setVisibility(View.GONE);
+    }
+
+    private void makeButtonsAppear(){
+        findViewById(R.id.UpvoteTextView).setVisibility(View.VISIBLE);
+        mUpvoteButton.setVisibility(View.VISIBLE);
+        mDownvoteButton.setVisibility(View.VISIBLE);
+        mReportButton.setVisibility(View.VISIBLE);
     }
 
     /**
