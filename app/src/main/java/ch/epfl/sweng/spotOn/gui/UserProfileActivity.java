@@ -7,6 +7,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ch.epfl.sweng.spotOn.R;
@@ -67,6 +69,17 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
                 mPhotoList.add(PO);
             }
         }
+        Comparator<PhotoObject> mostUpVoteComparator = new Comparator<PhotoObject>(){
+            @Override
+            public int compare(PhotoObject po1, PhotoObject po2)
+            {
+                int vote1 = po1.getUpvotes() - po1.getDownvotes();
+                int vote2 = po2.getUpvotes() - po2.getDownvotes();
+                return ((Integer)vote2).compareTo(vote1);
+            }
+        };
+
+        Collections.sort(mPhotoList, mostUpVoteComparator);
 
         PictureVoteListAdapter mPictureVoteAdapter = new PictureVoteListAdapter(UserProfileActivity.this, mPhotoList);
         mPicturesListView.setAdapter(mPictureVoteAdapter);
