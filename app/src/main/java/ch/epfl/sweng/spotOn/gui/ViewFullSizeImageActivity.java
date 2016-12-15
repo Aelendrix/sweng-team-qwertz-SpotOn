@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.gui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -11,10 +12,12 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
@@ -81,6 +84,12 @@ public class ViewFullSizeImageActivity extends Activity {
 
         mFullScreenImageAdapter = new FullScreenImageAdapter(this);
         viewPager.setAdapter(mFullScreenImageAdapter);
+
+        Intent displayImageIntent = getIntent();
+        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
+        viewPager.setCurrentItem(position);
+        updateCurrentMedia(position);
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -89,8 +98,16 @@ public class ViewFullSizeImageActivity extends Activity {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d("Picture position", " : " + position);
-                updateCurrentMedia(position);
+                String wantedPicId = mFullScreenImageAdapter.getPicIdAtPosition(position);
+                // If the picture is not in the local database anymore (author of the piture just erased it,
+                // or the user is walking and the picture he is watching is not in range anymore...)
+                if(!LocalDatabase.getInstance().hasKey(wantedPicId)) {
+                    Log.d("PictureInLocal", "false");
+                    endActivity();
+                } else {
+                    Log.d("PictureInLocal", "true");
+                    updateCurrentMedia(position);
+                }
             }
 
             @Override
@@ -98,11 +115,6 @@ public class ViewFullSizeImageActivity extends Activity {
 
             }
         });
-
-        Intent displayImageIntent = getIntent();
-        int position = displayImageIntent.getIntExtra("position", SeePicturesFragment.mDefaultItemPosition);
-        viewPager.setCurrentItem(position);
-        updateCurrentMedia(position);
     }
 
     private void updateCurrentMedia(int position) {
@@ -113,7 +125,6 @@ public class ViewFullSizeImageActivity extends Activity {
         if(mUserID != null) {
             boolean upvoted = mFullScreenImageAdapter.alreadyUpvoted(mUserID);
             boolean downvoted = mFullScreenImageAdapter.alreadyDownvoted(mUserID);
-            boolean reported = mFullScreenImageAdapter.alreadyReported(mUserID);
 
             if (upvoted) {
                 colorForUpvote();
@@ -122,12 +133,6 @@ public class ViewFullSizeImageActivity extends Activity {
             } else {
                 colorNone();
             }
-
-            if (reported) {
-                mReportButton.setBackgroundResource(R.drawable.button_shape_report_clicked);
-            } else {
-                mReportButton.setBackgroundResource(R.drawable.button_shape_report);
-            }
         }
     }
 
@@ -135,16 +140,22 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.recordUpvote(view);
-            //Change color of buttons only if the user is not th author of the picture
-            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                if(!mFullScreenImageAdapter.alreadyUpvoted(mUserID))
-                {
-                    colorNone();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.recordUpvote(view);
+                //Change color of buttons only if the user is not the author of the picture
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    if (!mFullScreenImageAdapter.alreadyUpvoted(mUserID)) {
+                        colorNone();
+                    } else {
+                        colorForUpvote();
+                    }
                 }
-                else {
-                    colorForUpvote();
-                }
+            } else {
+                // You come in this loop only if the user is trying to upvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -153,15 +164,21 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.recordDownvote(view);
-            if(!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                if(!mFullScreenImageAdapter.alreadyDownvoted(mUserID))
-                {
-                    colorNone();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.recordDownvote(view);
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    if (!mFullScreenImageAdapter.alreadyDownvoted(mUserID)) {
+                        colorNone();
+                    } else {
+                        colorForDownvote();
+                    }
                 }
-                else {
-                    colorForDownvote();
-                }
+            } else {
+                // You come in this loop only if the user is trying to downvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -170,9 +187,17 @@ public class ViewFullSizeImageActivity extends Activity {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
-            mFullScreenImageAdapter.reportOffensivePicture(view);
-            if(! mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
-                finish();
+            String picId = mFullScreenImageAdapter.getPicId();
+            //If picture is in local database
+            if(LocalDatabase.getInstance().hasKey(picId)) {
+                mFullScreenImageAdapter.reportOffensivePicture(view);
+                if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
+                    finish();
+                }
+            } else {
+                // You come in this loop only if the user is trying to downvote for a picture that is not
+                // in his local database anymore (rare case)
+                endActivity();
             }
         }
     }
@@ -198,5 +223,13 @@ public class ViewFullSizeImageActivity extends Activity {
         mReportButton.setVisibility(View.GONE);
     }
 
-
+    /**
+     * Method that finishes the activity (ViewFullSizeImage) to go back to the activity with the grid
+     * of pictures and displays a toast message to the user
+     */
+    public void endActivity(){
+        this.finish();
+        String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
+        ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
+    }
 }
