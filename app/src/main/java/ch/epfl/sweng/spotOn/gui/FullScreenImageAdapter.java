@@ -18,8 +18,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.NoSuchElementException;
-
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -42,6 +40,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.mipmap.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
+    private final static int RESOURCE_IMAGE_DELETED =  R.mipmap.image_deleted;
 
 
     public FullScreenImageAdapter(Activity activity) {
@@ -73,11 +72,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            mActivity.finish();
+            Log.d("FullScreenImageAdapter","Image was deleted from database while viewing, displaying error tile");
+            mViewToSet.setImageResource(RESOURCE_IMAGE_DELETED);
+/*            mActivity.finish();
             String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
-            return null;
-            //throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
+            return null;*/
         } else {
             PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
@@ -93,9 +93,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                         if (retrieveFullSizePicTask.getException() != null) {
                             currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                            // maybe it's better if we recover from this, and use only a log
-                            //throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
-
                             Log.d("FullScreenImageAdapter", "ERROR : couldn't get fullSizeImage for picture " + currentPicId);
                         } else {
                             Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
@@ -108,10 +105,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
             if (mCurrentPicture != null) {
                 voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
             }
-
-            container.addView(viewLayout);
-            return viewLayout;
         }
+        container.addView(viewLayout);
+        return viewLayout;
     }
 
     @Override
