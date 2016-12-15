@@ -69,7 +69,7 @@ public class PhotoObject {
     private Timestamp mExpireDate;
     private double mLatitude;
     private double mLongitude;
-    private int mRadius;
+    private long mRadius;
     private boolean mStoredInternally;
     private boolean mStoredInServer;
     private int mNbUpvotes;
@@ -302,6 +302,16 @@ public class PhotoObject {
         return l;
     }
 
+    /**
+     * Helper method that computes the radius that a photo has in function of its score
+     * public because we need it in the tests
+     * @param score the score of the photo
+     * @return the radius in function of the score rounded
+     */
+    public long radius(long score){
+        return Math.round(0.141 * Math.pow(score, 2) + 6.412 * score + 70);
+    }
+
 
 
 //ALL THE GETTER FUNCTIONS
@@ -331,7 +341,7 @@ public class PhotoObject {
     public double getLongitude(){
         return mLongitude;
     }
-    public int getRadius(){
+    public long getRadius(){
         return mRadius;
     }
     public String getAuthorId(){
@@ -395,22 +405,15 @@ public class PhotoObject {
         return (double)(mNbUpvotes-mNbDownvotes) / (double)(mNbDownvotes+mNbUpvotes);
     }
 
-    /** Computes the radius of the image according to its popularity and automatically updates the value
+    /** Computes the radius of the image according to its score and automatically set the values
      */
-    private int computeRadius(){
-        int computedRadius = DEFAULT_VIEW_RADIUS;
-        double popularityRatio = computePopularityRatio();
-        if(popularityRatio>0){
-            computedRadius =  (int)Math.ceil(DEFAULT_VIEW_RADIUS + popularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));  // scale between default and max if popular
-        }else if (popularityRatio<0){
-            double unpopularityRatio = -popularityRatio;
-            computedRadius =  (int)Math.ceil(MIN_VIEW_RADIUS + unpopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));  // scale between min and default if unpopular
-        }
-        if(computedRadius < MIN_VIEW_RADIUS){
-            throw new AssertionError("can't be < MIN_LIFETIME : computed "+computedRadius+"\n"+this.toString());
-        }
-        mRadius=computedRadius;
-        return computedRadius;
+
+
+    private long computeRadius(){
+        long score = mNbUpvotes - mNbDownvotes;
+        long computedRadius =  Math.round(radius(score));
+        mRadius = Math.max(MIN_VIEW_RADIUS, Math.min(MAX_VIEW_RADIUS, computedRadius));
+        return mRadius;
     }
 
     private Timestamp computeExpireDate(){
