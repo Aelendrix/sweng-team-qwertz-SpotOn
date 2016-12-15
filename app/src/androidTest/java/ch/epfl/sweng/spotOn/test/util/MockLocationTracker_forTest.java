@@ -36,8 +36,8 @@ public class MockLocationTracker_forTest implements LocationTracker {
     public MockLocationTracker_forTest(){
         Location newMockLocation = new Location("MLT_FT_mockProvider");
         newMockLocation.setProvider("MLT_FT_mockProvider");
-        newMockLocation.setLatitude(46.52942111671832);
-        newMockLocation.setLongitude(6.569539974900668);
+        newMockLocation.setLatitude(0.52942111671832);
+        newMockLocation.setLongitude(0.569539974900668);
         newMockLocation.setAltitude(10);
         newMockLocation.setAccuracy(0.90f);
         newMockLocation.setTime(new Date().getTime());
