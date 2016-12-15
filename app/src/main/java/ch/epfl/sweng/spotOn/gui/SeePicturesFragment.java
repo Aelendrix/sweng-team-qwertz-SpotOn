@@ -90,7 +90,6 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
      */
     public void displayFullSizeImage(){
         Intent displayFullSizeImageIntent = new Intent(this.getActivity(), ViewFullSizeImageActivity.class);
-        //displayFullSizeImageIntent.putExtra(ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID, mImageAdapter.getIdAtPosition(positionOfThumbnail));
         startActivity(displayFullSizeImageIntent);
     }
 
