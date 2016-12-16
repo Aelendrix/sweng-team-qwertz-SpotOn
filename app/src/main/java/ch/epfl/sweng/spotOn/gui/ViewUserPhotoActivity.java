@@ -17,6 +17,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import ch.epfl.sweng.spotOn.R;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
@@ -34,36 +35,47 @@ public class ViewUserPhotoActivity extends Activity {
         final String pictureId = intent.getStringExtra(PictureVoteListAdapter.EXTRA_USER_PICTURE_ID);
 
         final ImageView userPicture = (ImageView) findViewById(R.id.imageViewUserPicture);
+        final LocalDatabase localDB= LocalDatabase.getInstance();
+        boolean retrieveFromServer = true;
+        if(localDB.hasKey(pictureId)){
+            if(localDB.get(pictureId).hasFullSizeImage()) {
+                userPicture.setImageBitmap(localDB.get(pictureId).getFullSizeImage());
+                retrieveFromServer = false;
+            }
+        }
+        if(retrieveFromServer) {
+            Query photoByPictureId = DatabaseRef.getMediaDirectory().orderByChild("pictureId").equalTo(pictureId);
+            photoByPictureId.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
+                        if (photoSnapshot.getKey().equals(pictureId)) {
+                            PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
+                            photoObject.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
+                                @Override
+                                public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
+                                    if (retrieveFullSizePicTask.getException() != null) {
+                                        userPicture.setImageResource(RESOURCE_IMAGE_FAILURE);
+                                        throw new Error("ViewUserPhotoActivity : Retrieving fullSizePicture with pictureId : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
 
-        Query photoByPictureId = DatabaseRef.getMediaDirectory().orderByChild("pictureId").equalTo(pictureId);
-        photoByPictureId.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot photoSnapshot : dataSnapshot.getChildren()) {
-                    if(photoSnapshot.getKey().equals(pictureId)) {
-                        PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
-                        photoObject.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
-                            @Override
-                            public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
-                                if (retrieveFullSizePicTask.getException() != null) {
-                                    userPicture.setImageResource(RESOURCE_IMAGE_FAILURE);
-                                    throw new Error("ViewUserPhotoActivity : Retrieving fullSizePicture with pictureId : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
-
-                                } else {
-                                    Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
-                                    userPicture.setImageBitmap(obtainedImage);
+                                    } else {
+                                        Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
+                                        userPicture.setImageBitmap(obtainedImage);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                            localDB.addPhotoObject(photoObject);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
     }
 

@@ -84,6 +84,11 @@ public class UserProfileActivityTest {
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         //intended(hasComponent(ViewUserPhotoActivity.class.getName()));
         Espresso.pressBack();
+
+        //view this image a second time, because now, it should retrieve it from LocalDatabase
+        /*onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
+        Espresso.pressBack();*/
+
         Intents.release();
     }
 
