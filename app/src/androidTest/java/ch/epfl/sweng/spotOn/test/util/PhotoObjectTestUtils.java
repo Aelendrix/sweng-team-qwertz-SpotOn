@@ -93,22 +93,22 @@ public class PhotoObjectTestUtils {
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");
-        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 46.52890355757777, 6.569420238493777);
+        return new PhotoObject(image, "Test", "cc", new Timestamp(new Date().getTime()), 0.52890355757777, 0.569420238493777);
     }
 
     public static PhotoObject germaynDeryckePO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Germain_Derycke_%281954%29.jpg/450px-Germain_Derycke_%281954%29.jpg");
-        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 46.52890355757888, 6.569420238493888);
+        return new PhotoObject(image, "Test", "photo1", new Timestamp(new Date().getTime()), 0.52890355757888, 0.569420238493888);
     }
 
     public static PhotoObject iceDivingPO(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 46.52890355757999, 6.569420238493999);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(new Date().getTime()), 0.52890355757999, 0.569420238493999);
     }
 
     public static PhotoObject veryOldTimestampPicture(){
         Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
-        return new PhotoObject(image, "Test", "icediving", new Timestamp(0), 46.520013, 6.566721);
+        return new PhotoObject(image, "Test", "icediving", new Timestamp(0), 0.520013, 0.566721);
 
     }
 

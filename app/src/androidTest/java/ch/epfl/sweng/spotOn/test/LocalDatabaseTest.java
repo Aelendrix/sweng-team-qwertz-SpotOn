@@ -28,7 +28,7 @@ public class LocalDatabaseTest {
     @Before
     public void init(){
         // call new MockLocationTracker with the passed latitude, longitude
-        TestInitUtils.initContextNoServicesChecks(46.52890355757567, 6.569420238493345);
+        TestInitUtils.initContextNoServicesChecks(0.52890355757567, 0.569420238493345);
     }
 
     @Test

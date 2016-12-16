@@ -64,6 +64,8 @@ public class TakePictureFragment extends Fragment {
     //id to access to the camera
     private static final int REQUEST_IMAGE_CAPTURE = 10;
     private static final int REQUEST_EDITION = 20;
+    private static final int REQUEST_PERMISSIONS = 30;
+    private boolean permissionToCapture;
     private ImageView mImageView;
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
@@ -94,11 +96,15 @@ public class TakePictureFragment extends Fragment {
         } else {
             // store last location, to prevent bug if we lose location in the meantime
             mBackupLocation = ConcreteLocationTracker.getInstance().getLocation();
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            //No need of permissions if API version is below 23
+            if ((capturePermissionGiven() && storagePermissionGiven()) || Build.VERSION.SDK_INT < 23) {
                 invokeCamera();
             } else {
-                String[] permissionRequested = {Manifest.permission.CAMERA};
-                ActivityCompat.requestPermissions(getActivity(), permissionRequested, REQUEST_IMAGE_CAPTURE);
+                //Ask the permission to capture and store
+                String[] permissionsToCaptureAndStore = {Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                requestPermissions(permissionsToCaptureAndStore,
+                        REQUEST_PERMISSIONS);
             }
         }
     }
@@ -169,31 +175,8 @@ public class TakePictureFragment extends Fragment {
     }
 
     /**
-     * Checks if the application has the storage permission
-     * @return true if you have the permission to save file in the phone storage, false otherwise
-     */
-    private boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v("Storage", "Permission is granted");
-                return true;
-            } else {
-
-                Log.v("Storage","Permission is revoked");
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("Storage", "Permission is granted");
-            return true;
-        }
-    }
-
-
-    /**
-     * Method called if the user never gave the permission. It checks the user's answer
-     * and if positive, the app invokes the camera
+     * Method called after the user answered the pop-up messages about permissions.
+     * It checks the user gave the right permissions and if positives, the app invokes the camera
      *
      * @param requestCode  the request code to access the camera
      * @param permissions  the permissions we asked to the user
@@ -201,13 +184,11 @@ public class TakePictureFragment extends Fragment {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                invokeCamera();
-            } else {
-                ToastProvider.printOverCurrent(getString(R.string.unable_to_invoke_camera), Toast.LENGTH_LONG);
-            }
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (capturePermissionGiven() && storagePermissionGiven()) {
+            invokeCamera();
+        } else {
+            ToastProvider.printOverCurrent("You need to accept the permissions to take pictures", Toast.LENGTH_LONG);
         }
     }
 
@@ -217,13 +198,21 @@ public class TakePictureFragment extends Fragment {
      */
     private void invokeCamera() {
         //Needed to store the last picture taken on the user's storage in order to have HQ picture
-        if(isStoragePermissionGranted()) {
+        File storage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "/SpotOn");
+        //Create storage directory to save the last take picture in high quality
+        boolean storageExists = storage.exists();
+        if (!storageExists) {
+            storageExists = storage.mkdirs();
+        }
+        if(storageExists) {
+            File tempPicture = new File(storage + File.separator + "LAST_PICTURE_TAKEN.jpg");
             Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            File temporalStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                    "/SpotOn/TEMP_PICTURE.jpg");
-            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), temporalStorage);
+            mImageToUploadUri = BitmapUtils.getUriFromFile(getContext(), tempPicture);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageToUploadUri);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } else {
+            Log.d("Storage", "error while creating the file");
         }
     }
 
@@ -360,10 +349,20 @@ public class TakePictureFragment extends Fragment {
         return mActualPhotoObject;
     }
 
+    private boolean capturePermissionGiven(){
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean storagePermissionGiven(){
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED;
+    }
+
     /** Method that will store the image in the Pictures file in the internal storage
      * @param photo a PhotoObject to get its full size picture to store in Pictures file   */
     private void storeImage(PhotoObject photo){
-        if(isStoragePermissionGranted()) {
+        if(storagePermissionGiven()) {
             File pictureFile = getOutputMediaFile(photo);
 
             if (pictureFile == null) {

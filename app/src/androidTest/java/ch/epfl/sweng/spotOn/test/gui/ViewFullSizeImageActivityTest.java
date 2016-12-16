@@ -1,16 +1,10 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.action.CoordinatesProvider;
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,16 +14,13 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
-import ch.epfl.sweng.spotOn.gui.ViewFullSizeImageActivity;
-import ch.epfl.sweng.spotOn.gui.ViewUserPhotoActivity;
-import ch.epfl.sweng.spotOn.test.util.LocalDatabaseUtils;
+import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -51,7 +42,7 @@ public class ViewFullSizeImageActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException {
-        LocalDatabaseUtils.initLocalDatabase(false);
+        LocalDatabaseTestUtils.initLocalDatabase(false);
     }
 
     @Test
@@ -86,6 +77,6 @@ public class ViewFullSizeImageActivityTest {
 
     @After
     public void after() {
-        LocalDatabaseUtils.afterTests();
+        LocalDatabaseTestUtils.afterTests();
     }
 }
