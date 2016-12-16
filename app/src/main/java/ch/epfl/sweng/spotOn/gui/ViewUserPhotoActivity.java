@@ -64,6 +64,9 @@ public class ViewUserPhotoActivity extends Activity {
                                     }
                                 }
                             });
+                            //If there is a photoObject with this picture Id, we delete it from local database because it doesn't have
+                            //a full-size picture (else it would have retrieved from database)
+                            localDB.removePhotoObject(pictureId);
                             localDB.addPhotoObject(photoObject);
                         }
                     }
