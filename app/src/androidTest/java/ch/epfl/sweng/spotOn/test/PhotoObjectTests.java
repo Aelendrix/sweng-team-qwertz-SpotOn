@@ -132,8 +132,7 @@ public class PhotoObjectTests {
             p.processVote(1, "user9981204598263");
             p.processVote(1, "user99ertz4598263");
 
-            double newPopularityRatio = ((double)(3-1))/((double)4);
-            int expectedRadius = (int)Math.ceil(DEFAULT_VIEW_RADIUS + newPopularityRatio*(MAX_VIEW_RADIUS-DEFAULT_VIEW_RADIUS));
+            long expectedRadius = p.radius(2);
             if (p.getRadius()!= expectedRadius || p.getRadius() <= DEFAULT_VIEW_RADIUS) {
                 throw new AssertionError("new radius incorrect : expected="+expectedRadius+" computed="+p.getRadius());
             }
@@ -150,8 +149,7 @@ public class PhotoObjectTests {
             p.processVote(-1, "user99ertz4598263");
 
 
-            double newPopularityRatio = ((double)(1-3))/((double)4);
-            int expectedRadius = (int)Math.ceil(MIN_VIEW_RADIUS + (-1)*newPopularityRatio*(DEFAULT_VIEW_RADIUS-MIN_VIEW_RADIUS));
+            long expectedRadius = p.radius(-2);
 
             if (p.getRadius()!= expectedRadius || p.getRadius() >= DEFAULT_VIEW_RADIUS) {
                 throw new AssertionError("new radius incorrect : expected="+expectedRadius+" computed="+p.getRadius());
