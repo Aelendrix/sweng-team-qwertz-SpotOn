@@ -14,10 +14,10 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserListener;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
-/**
- * Created by quentin on 17.11.16.
+/** A class that keeps track of all states of external services (Location, connection to database, user login) and has the ability to notify listeners
+ * when state changes.
+ * Also provides helper function to determine if a user is allowed to perform some action, and helpers to provide the matchin error message if necessary
  */
-
 public class ServicesChecker implements LocationTrackerListener, UserListener, FirebaseConnectionListener {
 
     private static ServicesChecker mSingleInstance=null;
