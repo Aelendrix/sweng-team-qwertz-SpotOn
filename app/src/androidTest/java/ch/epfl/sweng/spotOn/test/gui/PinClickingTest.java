@@ -2,6 +2,9 @@ package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiSelector;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,8 +13,13 @@ import org.junit.Test;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
+import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
+import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -35,9 +43,12 @@ public class PinClickingTest {
     @Test
     public void clickOnPinTest() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        Thread.sleep(5000);
         onView(withText(R.string.tab_map)).check(matches(isDisplayed()));
         onView(withText(R.string.tab_map)).perform(click());
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        String markerTitle = PhotoObjectTestUtils.germaynDeryckePO().getPictureId();
+        UiObject marker = device.findObject(new UiSelector().descriptionContains(markerTitle));
+        marker.click();
     }
 
     @After

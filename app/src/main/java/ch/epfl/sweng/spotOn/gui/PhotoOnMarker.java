@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -34,7 +35,9 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoWindow(Marker marker){
         //the only marker with a title is the marker position
-        if(mPin != null && mPin.getAccessibility() && marker.getTitle()==null){
+        Log.d("infoWindow", "accessed");
+        if(mPin != null && mPin.getAccessibility() && !marker.getTitle().equals("position")){
+            Log.d("infoWindow", "accessed again");
             Bitmap associatedToMarker = mPin.getPhotoObject().getThumbnail();
             pictureView.setImageBitmap(associatedToMarker);
             return pictureView;
