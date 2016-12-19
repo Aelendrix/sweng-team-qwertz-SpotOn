@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -168,7 +169,14 @@ public class TabActivity extends AppCompatActivity{
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
-        mTabLayout.getTabAt(2).select();
+        //click on the rightmost tab everytime
+        Log.d("xD",mTabLayout.getTabCount()+" ");
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            mTabLayout.getTabAt(2).select();
+        }
+        else{
+            mTabLayout.getTabAt(1).select();
+        }
     }
 
     @SuppressWarnings("UnusedParameters")
