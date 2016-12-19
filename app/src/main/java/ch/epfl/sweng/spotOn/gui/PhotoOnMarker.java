@@ -35,7 +35,7 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoWindow(Marker marker){
         //the only marker with a title is the marker position
-        Log.d("infoWindow", "accessed");
+        Log.d("infoWindow", "accessed3");
         if(mPin != null && mPin.getAccessibility() && !marker.getTitle().equals("position")){
             Log.d("infoWindow", "accessed again");
             Bitmap associatedToMarker = mPin.getPhotoObject().getThumbnail();

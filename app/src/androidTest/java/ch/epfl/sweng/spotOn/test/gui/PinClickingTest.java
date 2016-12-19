@@ -45,10 +45,13 @@ public class PinClickingTest {
         mActivityTestRule.launchActivity(new Intent());
         onView(withText(R.string.tab_map)).check(matches(isDisplayed()));
         onView(withText(R.string.tab_map)).perform(click());
+        Thread.sleep(2000);
         UiDevice device = UiDevice.getInstance(getInstrumentation());
-        String markerTitle = PhotoObjectTestUtils.germaynDeryckePO().getPictureId();
+        //Picture ID of the first element in the localDatabase
+        String markerTitle = LocalDatabase.getInstance().getViewableMedias().keySet().iterator().next();
         UiObject marker = device.findObject(new UiSelector().descriptionContains(markerTitle));
         marker.click();
+        Thread.sleep(2000);
     }
 
     @After

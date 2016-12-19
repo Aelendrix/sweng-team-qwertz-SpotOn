@@ -39,7 +39,9 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -50,7 +52,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 
 public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin> {
+        ClusterManager.OnClusterClickListener<Pin>, GoogleMap.OnMarkerClickListener {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -60,9 +62,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     //list of photoObject
     private List<PhotoObject> mListPhoto;
+
     private List<String> mThumbIDs;
     private ClusterManager<Pin> mClusterManager;
-    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -183,17 +185,19 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      * Set up the cluster manager
      */
     private void setUpCluster(){
-            mClusterManager = new ClusterManager<>(getContext(), mMap);
-            //The cluster manager takes care when the user clicks on a marker and regroups the markers together
-            mMap.setOnCameraIdleListener(mClusterManager);
-            mMap.setOnMarkerClickListener(mClusterManager);
-            mMap.setOnInfoWindowClickListener(mClusterManager);
-            //Displays the right color to the markers (green or yellow)
-            mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
-            mClusterManager.setOnClusterItemClickListener(this);
-            mClusterManager.setOnClusterClickListener(this);
-            mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-            addDBMarkers();
+        mClusterManager = new ClusterManager<>(getContext(), mMap);
+
+        //Displays the right color to the markers (green or yellow)
+        mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+
+        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        addDBMarkers();
     }
 
     /**
@@ -207,13 +211,15 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
             mThumbIDs = new ArrayList<>(LocalDatabase.getViewableThumbnails().keySet());
             // old if(mMap!=null && currLoc!=null) {
             if(mMap!=null) {
-                //empty the cluster manager
+                //empty the cluster manager and the map of markers to pins
                 mClusterManager.clearItems();
-                //add the new markers on the Cluster Manager
+                //mMarkersToPin = new HashMap<>();
+
+                //add the new pins on the Cluster Manager
                 for (PhotoObject photo : mListPhoto) {
                     boolean canActivateIt = photo.isInPictureCircle(currLoc);
                     Pin pinForPicture = new Pin(photo, canActivateIt);
-                    //add the marker to the cluster manager
+                    //add the pin to the cluster manager
                     mClusterManager.addItem(pinForPicture);
                     //Re-cluster the cluster at each addition of a pin
                     mClusterManager.cluster();
@@ -232,14 +238,21 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
-        mClickedClusterPin = pin;
+        Log.d("onClusterItemClick", "accessed1");
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
+        Log.d("onClusterItemClick", "accessed2");
         //If the marker clicked is yellow
         if (!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker){
+        Log.d("onMarkerClick", "please yes");
+        return true;
     }
 
     // LISTENER METHODS
