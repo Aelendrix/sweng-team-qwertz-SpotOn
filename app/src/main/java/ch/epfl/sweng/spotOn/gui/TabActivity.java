@@ -116,7 +116,12 @@ public class TabActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            inflater.inflate(R.menu.options, menu);
+        }
+        else{
+            inflater.inflate(R.menu.options_no_user, menu);
+        }
         return true;
     }
 
@@ -126,7 +131,6 @@ public class TabActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case R.id.log_out:
                 if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    // to provide a way to log back in - needs to be improved todo
                     finish();
                     return true;
                 } else {
