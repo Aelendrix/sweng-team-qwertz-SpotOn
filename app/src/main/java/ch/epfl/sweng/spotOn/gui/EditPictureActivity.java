@@ -198,10 +198,10 @@ public class EditPictureActivity extends AppCompatActivity {
             int textSize = 50;
             paint.setTextSize(textSize);
             paint.setFakeBoldText(true);
-            int offsetX = textSize/2;
-            int offsetY = (int) paint.measureText(mTextToDraw);
+            int offsetY = (int)(textSize*2.5);
+            int offsetX = (int) paint.measureText(mTextToDraw)/2;
             //the parameter are scaled for the same position as the finger touch.
-            canvas.drawText(mTextToDraw, x*(imgWidth+offsetX)/screenWidth, y*(imgHeight+offsetY)/screenHeight, paint);
+            canvas.drawText(mTextToDraw, (x-offsetX)*imgWidth/screenWidth, (y-offsetY)*imgHeight/screenHeight, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
             mEditedBitmap = addTextBitmap;
             return true;
