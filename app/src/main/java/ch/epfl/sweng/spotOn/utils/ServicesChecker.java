@@ -14,10 +14,10 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserListener;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
-/**
- * Created by quentin on 17.11.16.
+/** A class that keeps track of all states of external services (Location, connection to database, user login) and has the ability to notify listeners
+ * when state changes.
+ * Also provides helper function to determine if a user is allowed to perform some action, and helpers to provide the matchin error message if necessary
  */
-
 public class ServicesChecker implements LocationTrackerListener, UserListener, FirebaseConnectionListener {
 
     private static ServicesChecker mSingleInstance=null;
@@ -63,6 +63,10 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
 
 
 // PUBLIC METHODS
+
+    /** Determines wether the singleton has been initialized correctly
+     * @return true if initialized correctly, false otherwise
+     */
     public static  boolean instanceExists(){
         return mSingleInstance!=null;
     }
@@ -78,6 +82,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
         // duplicates allowedToPost for new, but I'd like to keep it that way (1) for the abstraction and (2) because it might change later and I'd like to keep the same name
         return databaseIsConnected && mLocationTrackerRef.hasValidLocation() && mUserManagerRef.userIsLoggedIn();
     }
+
 
     public static void allowDisplayingToasts(boolean allowToDisplayToasts){
         mAllowedToDisplayToasts = allowToDisplayToasts;
@@ -109,6 +114,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
     }
 
     /** provides only the "most important" error message : internet connection > retrieving user information > userLoggedIn
+     * @return error message
      */
     public String provideLoginErrorMessage(){
         if( ! databaseIsConnected ){

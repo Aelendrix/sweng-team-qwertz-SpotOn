@@ -19,8 +19,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.NoSuchElementException;
-
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
@@ -43,7 +41,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     private final static int RESOURCE_IMAGE_DOWNLOADING = R.mipmap.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
-
+    private final static int RESOURCE_IMAGE_DELETED =  R.mipmap.image_deleted;
 
 
     public FullScreenImageAdapter(Activity activity) {
@@ -75,38 +73,40 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
-        }
-        PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
-
-        if (mDisplayedMedia.hasFullSizeImage()) {
-            Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
-            mViewToSet.setImageBitmap(imageToDisplay);
+            Log.d("FullScreenImageAdapter","Image was deleted from database while viewing, displaying error tile");
+            mViewToSet.setImageResource(RESOURCE_IMAGE_DELETED);
+/*            mActivity.finish();
+            String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
+            return null;*/
         } else {
-            // want these final variable, because the fields of the class may change if we swipe
-            final ImageView currentView = mViewToSet;
-            final String currentPicId = wantedPicId;
-            mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
-                @Override
-                public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
-                    if(retrieveFullSizePicTask.getException()!=null){
-                        currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
-                        // maybe it's better if we recover from this, and use only a log
-                        //throw new Error("FullScreenImageAdapter : Retrieving fullSizePicture with pictureId : \n"+currentPicId+"failed due to :\n "+retrieveFullSizePicTask.getException());
+            PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 
-                        Log.d("FullScreenImageAdapter","ERROR : couldn't get fullSizeImage for picture "+currentPicId);
-                    }else{
-                        Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
-                        currentView.setImageBitmap(obtainedImage);
+            if (mDisplayedMedia.hasFullSizeImage()) {
+                Bitmap imageToDisplay = mDisplayedMedia.getFullSizeImage();
+                mViewToSet.setImageBitmap(imageToDisplay);
+            } else {
+                // want these final variable, because the fields of the class may change if we swipe
+                final ImageView currentView = mViewToSet;
+                final String currentPicId = wantedPicId;
+                mDisplayedMedia.retrieveFullsizeImage(true, new OnCompleteListener<byte[]>() {
+                    @Override
+                    public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
+                        if (retrieveFullSizePicTask.getException() != null) {
+                            currentView.setImageResource(RESOURCE_IMAGE_FAILURE);
+                            Log.d("FullScreenImageAdapter", "ERROR : couldn't get fullSizeImage for picture " + currentPicId);
+                        } else {
+                            Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
+                            currentView.setImageBitmap(obtainedImage);
+                        }
                     }
-                }
-            });
+                });
+            }
+            //upvotes
+            if (mCurrentPicture != null) {
+                voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
+            }
         }
-        //upvotes
-        if(mCurrentPicture != null) {
-            voteSum = mCurrentPicture.getUpvotes() - mCurrentPicture.getDownvotes();
-        }
-
         container.addView(viewLayout);
         return viewLayout;
     }
@@ -116,17 +116,29 @@ public class FullScreenImageAdapter extends PagerAdapter {
         container.removeView((RelativeLayout) object);
     }
 
+    /**
+     * Useful for ViewFullSizeImageActivity to check if the picture the user is looking at is still
+     * in the local database
+     */
+    public String getPicIdAtPosition(int position){
+        return mRefToImageAdapter.getIdAtPosition(position);
+    }
+
+    public String getPicId(){
+        if(mCurrentPicture != null){
+            return mCurrentPicture.getPictureId();
+        } else {
+            throw new NullPointerException("Picture not instantiated, you can't obtain its id");
+        }
+    }
+
     public void refreshVoteTextView(int position){
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
-        if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : "+wantedPicId);
-        }
         PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
         int votes = mDisplayedMedia.getUpvotes() - mDisplayedMedia.getDownvotes();
         //create a temp String is the ONLY way if you want to correct the lint error
-        String textToShow = ""+votes;
+        String textToShow = "" + votes;
         mTextView.setText(textToShow);
-
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -207,16 +219,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-
     public void setCurrentMedia(int position) {
         Log.d("Current media position", "" + position);
         String wantedPicId = mRefToImageAdapter.getIdAtPosition(position);
-        if (!LocalDatabase.getInstance().hasKey(wantedPicId)) {
-            throw new NoSuchElementException("LocalDatabase does not contain wanted picture : " + wantedPicId);
-        }
         mCurrentPicture = LocalDatabase.getInstance().get(wantedPicId);
     }
-
 
     /**
      * Checks if the user has upvoted the displayed picture
@@ -243,18 +250,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     /**
-     * Checks if the user has reported the displayed picture
-     * @param userID the user ID
-     */
-    public boolean alreadyReported(String userID){
-        if(mCurrentPicture != null) {
-            return mCurrentPicture.getReportersList().contains(userID);
-        } else {
-            throw new NullPointerException("The photoObject is null");
-        }
-    }
-
-    /**
      * Method useful for the ViewFullSizeImageActivity to make sure the buttons do not change color
      * when the user votes for his own picture
      * @return the author of the displayed picture
@@ -265,13 +260,5 @@ public class FullScreenImageAdapter extends PagerAdapter {
         } else {
             return mCurrentPicture.getAuthorId();
         }
-    }
-
-    private void colorIfReported(View view){
-        view.setBackgroundResource(R.drawable.button_shape_report_clicked);
-    }
-
-    private void colorIfNotReported(View view){
-        view.setBackgroundResource(R.drawable.button_shape_report);
     }
 }

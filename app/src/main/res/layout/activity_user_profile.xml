@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/profileTitleTextView"
-        android:textSize="18sp"
+        android:textSize="30sp"
         android:textColor="@android:color/holo_orange_dark"
         android:textStyle="normal|bold"
         android:layout_alignParentTop="true"
@@ -23,39 +23,29 @@
         android:layout_marginTop="13dp" />
 
     <TextView
-        android:text="@string/userProfileFirstName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:id="@+id/profileFirstNameTextView"
-        android:textStyle="normal|bold"
-        android:layout_marginStart="17dp"
-        android:layout_below="@+id/profileTitleTextView" />
-
-    <TextView
-        android:text="@string/userProfileLastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/profileLastNameTextView"
-        android:textStyle="normal|bold"
-        android:layout_below="@+id/profileFirstNameTextView"
-        android:layout_alignStart="@+id/profileFirstNameTextView"
-        android:layout_marginTop="20dp" />
-
-    <TextView
         android:text="@string/userProfileKarma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileLastNameTextView"
         android:layout_marginTop="20dp"
-        android:layout_alignStart="@+id/profileFirstNameTextView"
+        android:textColor="@color/colorPrimary"
         android:textStyle="normal|bold"
+        android:layout_below="@id/profileTitleTextView"
         android:id="@+id/profileKarmaTextView" />
+
+    <TextView
+        android:text="@string/userFollowingPictures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold"
+        android:layout_below="@id/profileKarmaTextView"
+        android:id="@+id/followingPicturesTextView" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileKarmaTextView"
+        android:layout_below="@+id/followingPicturesTextView"
         android:layout_marginTop="20dp"
         android:id="@+id/profilePicturesListView" />
 

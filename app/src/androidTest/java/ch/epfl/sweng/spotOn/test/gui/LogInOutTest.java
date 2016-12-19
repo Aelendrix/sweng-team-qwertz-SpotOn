@@ -37,8 +37,8 @@ public class LogInOutTest {
         @Override
         public void beforeActivityLaunched(){
             Location location = new Location("testLocationProvider");
-            location.setLatitude(46.52890355757567);
-            location.setLongitude(6.569420238493345);
+            location.setLatitude(0.52890355757567);
+            location.setLongitude(0.569420238493345);
             location.setAltitude(0);
             location.setTime(System.currentTimeMillis());
 
