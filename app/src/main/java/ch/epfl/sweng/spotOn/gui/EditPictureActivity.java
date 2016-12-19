@@ -195,10 +195,13 @@ public class EditPictureActivity extends AppCompatActivity {
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
             paint.setShadowLayer(10, 0, 0, Color.BLACK);
-            paint.setTextSize(50);
+            int textSize = 50;
+            paint.setTextSize(textSize);
             paint.setFakeBoldText(true);
+            int offsetX = textSize/2;
+            int offsetY = (int) paint.measureText(mTextToDraw);
             //the parameter are scaled for the same position as the finger touch.
-            canvas.drawText(mTextToDraw, x*imgWidth/screenWidth, y*imgHeight/screenHeight, paint);
+            canvas.drawText(mTextToDraw, x*(imgWidth+offsetX)/screenWidth, y*(imgHeight+offsetY)/screenHeight, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
             mEditedBitmap = addTextBitmap;
             return true;
