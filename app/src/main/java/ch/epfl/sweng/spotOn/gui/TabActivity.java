@@ -170,6 +170,7 @@ public class TabActivity extends AppCompatActivity{
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
         //click on the rightmost tab everytime
+        //TODO maybe change this
         Log.d("xD",mTabLayout.getTabCount()+" ");
         if(UserManager.getInstance().isLogInThroughFacebook()) {
             mTabLayout.getTabAt(2).select();
