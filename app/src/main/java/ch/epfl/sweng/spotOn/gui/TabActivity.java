@@ -104,7 +104,10 @@ public class TabActivity extends AppCompatActivity{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mPicturesFragment, getResources().getString(R.string.tab_aroundme));
-        adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        //this tab is useless if you are not logged-in
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        }
         adapter.addFragment(mMapFragment, getResources().getString(R.string.tab_map));
         viewPager.setAdapter(adapter);
     }

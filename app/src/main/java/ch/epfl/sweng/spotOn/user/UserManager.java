@@ -13,7 +13,7 @@ public class UserManager {
 
     private static UserManager mSingleInstance = null;
     private static User mUser = null;
-
+    private boolean isLogInThroughFacebook = false;
 
     private List<UserListener> listeners;
     public final static int USER_CONNECTED = 1;
@@ -80,7 +80,9 @@ public class UserManager {
         notifyListeners(USER_CONNECTED);
     }
 
-
+    public boolean isLogInThroughFacebook() {
+        return isLogInThroughFacebook;
+    }
 
 // SET USERS METHODS
     public void setUserFromFacebook(String firstName, String lastName, String userId) {
@@ -88,6 +90,7 @@ public class UserManager {
             throw new IllegalStateException("UserManager should be initialized");
         }
         if(mUser == null || !mUser.isLoggedIn()){
+            isLogInThroughFacebook = true;
             RealUser newUser = new RealUser(firstName,lastName, userId, mSingleInstance);
             newUser.getUserAttributesFromDB();
             mUser = newUser;
@@ -102,6 +105,7 @@ public class UserManager {
             throw new IllegalStateException("UserManager should be initialized");
         }
         if(mUser==null || !mUser.isLoggedIn()){
+            isLogInThroughFacebook = false;
             mUser = new EmptyUser();
         }else{
             Log.e("UserManager","someone tried to create a new user, but an instance already exists");
