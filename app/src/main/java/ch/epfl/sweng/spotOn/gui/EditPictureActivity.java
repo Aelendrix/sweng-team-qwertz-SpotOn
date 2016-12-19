@@ -92,8 +92,8 @@ public class EditPictureActivity extends AppCompatActivity {
     public void rotatePicture(View view){
         Matrix rotationMatrix = new Matrix();
         rotationMatrix.postRotate(90);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(mEditedBitmap, 0, 0, mEditedBitmap.getWidth(),
-                mEditedBitmap.getHeight(), rotationMatrix, true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(withoutTextBitmap, 0, 0, withoutTextBitmap.getWidth(),
+                withoutTextBitmap.getHeight(), rotationMatrix, true);
         mEditedBitmap = rotatedBitmap;
         withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
