@@ -97,6 +97,7 @@ public class EditPictureActivity extends AppCompatActivity {
         mEditedBitmap = rotatedBitmap;
         withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
+
     }
 
     /**
