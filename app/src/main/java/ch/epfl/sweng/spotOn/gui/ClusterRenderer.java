@@ -64,6 +64,5 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
     private void computeZoom(){
         zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
-
     }
 }

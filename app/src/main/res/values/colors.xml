@@ -6,6 +6,7 @@
     <color name="colorPrimary">#854442</color>
     <color name="colorPrimaryDark">#4B3832</color>
     <color name="colorPrimaryClicked">#4f2827</color>
+    <color name="colorDeleteButton">#cc9a99</color>
     <color name="colorAccent">#FFF4E6</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#ffffff</color>

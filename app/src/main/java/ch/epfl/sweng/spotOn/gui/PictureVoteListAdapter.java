@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +60,7 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
         String textVote = voteTextView.getText() + " " + vote;
         voteTextView.setText(textVote);
 
-        Button deleteButton = (Button) rowView.findViewById(R.id.deletePictureButton);
+        ImageButton deleteButton = (ImageButton) rowView.findViewById(R.id.deletePictureButton);
         deleteButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
