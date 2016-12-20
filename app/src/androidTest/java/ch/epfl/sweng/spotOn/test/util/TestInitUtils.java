@@ -19,6 +19,9 @@ public class TestInitUtils {
 
 
     public static void initContext(Location location){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         // destroy LocationTrackerSingleton if need be
@@ -35,6 +38,9 @@ public class TestInitUtils {
     }
 
     public static void initContext(double latitude, double longitude){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
 
@@ -51,6 +57,9 @@ public class TestInitUtils {
     }
 
     public static void initContext(){   // same with MockLocationTracker default location
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         // destroy LocationTrackerSingleton if need be
@@ -66,6 +75,9 @@ public class TestInitUtils {
     }
 
     public static void initContextServicesCheckSilent(){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         // destroy LocationTrackerSingleton if need be
@@ -83,6 +95,9 @@ public class TestInitUtils {
     }
 
     public static void initContextNoServicesChecks(double latitude, double longitude){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         if(ConcreteLocationTracker.instanceExists()){
@@ -96,6 +111,9 @@ public class TestInitUtils {
     }
 
     public static void initContextMockUser(User user){   // same with MockLocationTracker default location
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setMockUser(user);
         // destroy LocationTrackerSingleton if need be
@@ -112,6 +130,9 @@ public class TestInitUtils {
     }
 
     public static void initContextNoUser(Location location){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
@@ -126,6 +147,9 @@ public class TestInitUtils {
     }
 
     public static void initContextNoUser(){
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
