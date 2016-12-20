@@ -25,15 +25,12 @@ public class RealUser implements User {
     private String mUserId;
     private long mKarma;
     private Map<String, Long> mPhotosTaken;
+    private UserManager mManager;
 
     private static boolean mIsRetrievedFromDB;
 
-    private UserManager mManager;
 
-
-
-
-// CONSTRUCTOR
+    // CONSTRUCTOR
     public RealUser(String firstName, String lastName, String userId, UserManager manager){
         mFirstName = firstName;
         mLastName = lastName;
@@ -47,7 +44,7 @@ public class RealUser implements User {
 
 
 
-// PUBLIC METHODS
+    // PUBLIC METHODS
     public void getUserAttributesFromDB() {
         mIsRetrievedFromDB = false;
         // will trigger the refresh from database
@@ -95,7 +92,7 @@ public class RealUser implements User {
     }
 
 
-//PUBLIC GETTERS
+    //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
@@ -104,7 +101,7 @@ public class RealUser implements User {
     public boolean getIsRetrievedFromDB() { return mIsRetrievedFromDB; }
 
 
-//PUBLIC SETTERS
+    //PUBLIC SETTERS
     public void setKarma(long karma){ mKarma = karma; }
     public void setPhotosTaken(Map<String, Long> m) {
         mPhotosTaken = m;
@@ -116,11 +113,7 @@ public class RealUser implements User {
         }
     }
 
-
-
-
-// PRIVATE HELPERS
-
+    // PRIVATE HELPERS
     private void updatePhotosTaken(){
         long limitTime = System.currentTimeMillis() - User.ONE_DAY;
         if(mPhotosTaken != null) {
@@ -137,7 +130,6 @@ public class RealUser implements User {
             DatabaseRef.getUsersDirectory().child(mUserId).child("photosTaken").setValue(mPhotosTaken);
         }
     }
-
 
     /* Method to check if the user is already defined in the database and if not it creates it */
     private void lookUpUserInDatabase(){

@@ -20,8 +20,7 @@ public class UserManager {
     public final static int USER_DISCONNECTED = 0;
 
 
-
-// INITIALIZE AND CONSTRUCTORS
+    // INITIALIZE AND CONSTRUCTORS
     public static void initialize(){
         if(mSingleInstance==null) {
             mSingleInstance = new UserManager();
@@ -33,8 +32,7 @@ public class UserManager {
 
 
 
-// PUBLIC METHODS
-
+    // PUBLIC METHODS
     public static boolean instanceExists(){
         return mSingleInstance!=null;
     }
@@ -85,7 +83,7 @@ public class UserManager {
         return isLogInThroughFacebook;
     }
 
-// SET USERS METHODS
+    // SET USERS METHODS
     public void setUserFromFacebook(String firstName, String lastName, String userId) {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
@@ -111,7 +109,6 @@ public class UserManager {
         }else{
             Log.e("UserManager","someone tried to create a new user, but an instance already exists");
         }
-
     }
 
 
