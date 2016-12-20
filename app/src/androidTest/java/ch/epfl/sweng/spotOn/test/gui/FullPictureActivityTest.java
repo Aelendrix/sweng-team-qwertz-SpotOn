@@ -41,6 +41,8 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         LocalDatabaseTestUtils.initLocalDatabase(true);
     }
 
