@@ -38,6 +38,10 @@ import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
+/**
+ * created by Marie-Laure
+ * In the userProfileActivity, test if you can view the full size image and the back button
+ */
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
     private PhotoObject po;

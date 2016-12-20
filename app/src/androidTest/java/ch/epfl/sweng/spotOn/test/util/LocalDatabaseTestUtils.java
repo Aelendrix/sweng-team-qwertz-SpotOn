@@ -15,6 +15,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
+import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Created by olivi on 07.12.2016.
@@ -28,6 +29,7 @@ public class LocalDatabaseTestUtils {
     private static PhotoObject secondPo=null;
 
     public static void initLocalDatabase(boolean onlyOnePhoto) throws InterruptedException {
+        ServicesChecker.allowDisplayingToasts(false);
         Location location = new Location("testLocationProvider");
         location.setLatitude(0.52890355757567);
         location.setLongitude(0.569420238493345);

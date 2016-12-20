@@ -33,6 +33,7 @@ import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
@@ -61,6 +62,9 @@ public class CameraTest{
 
     @Test
     public void testTakePhoto() throws Exception{
+        if(!UserManager.getInstance().isLogInThroughFacebook()){
+            throw new AssertionError("User not logged in");
+        }
         if(!LocalDatabase.instanceExists()){
             throw new AssertionError("LocalDatabase incorrectly initialized");
         }
