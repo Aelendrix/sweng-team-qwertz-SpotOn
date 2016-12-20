@@ -11,7 +11,7 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
- * Created by quentin on 23.11.16.
+ * Utlity class, to initialise the post condition of your test and create all the needed singleton
  */
 
 public class TestInitUtils {
