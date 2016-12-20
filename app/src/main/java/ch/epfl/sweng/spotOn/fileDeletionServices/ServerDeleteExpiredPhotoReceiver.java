@@ -34,13 +34,11 @@ public class ServerDeleteExpiredPhotoReceiver extends BroadcastReceiver {
                     String pictureID = child.getKey();
                     DatabaseRef.deletePhotoObjectFromDB(pictureID);
                     StorageRef.deletePictureFromStorage(pictureID);
-
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
