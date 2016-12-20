@@ -15,7 +15,7 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
  */
 
 public class TestInitUtils {
-    
+
     public static void initContext(Location location){
         if(UserManager.instanceExists()){
             UserManager.getInstance().destroyUser();
