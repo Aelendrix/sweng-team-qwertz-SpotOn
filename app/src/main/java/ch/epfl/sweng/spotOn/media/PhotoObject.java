@@ -160,8 +160,11 @@ public class PhotoObject {
 
 //FUNCTIONS PROVIDED BY THIS CLASS
 
-    /** uploads the object to our online services
-     *  
+
+    /**
+     * uploads the object to our online services
+     * @param hasListener true if you want to use a listener in parameter
+     * @param completionListener listener registered for the upload of the object
      */
     public void upload(boolean hasListener, OnCompleteListener completionListener){
         // sendToFileServer calls sendToDatabase on success
@@ -171,7 +174,9 @@ public class PhotoObject {
         upload(false, null);
     }
 
-    /** return true if the coordinates in parameters are in the scope of the picture}
+    /**
+     *  return true if the coordinates in parameters are in the scope of the picture
+     *  @param position the position to test if it's in the radius of the picture
      */
     public boolean isInPictureCircle(LatLng position){
         return computeDistanceBetween(
