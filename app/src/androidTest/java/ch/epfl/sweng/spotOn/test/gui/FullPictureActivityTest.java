@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
+import ch.epfl.sweng.spotOn.user.UserManager;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -46,7 +47,9 @@ public class FullPictureActivityTest {
     @Test
     public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-
+        if(!UserManager.getInstance().isLogInThroughFacebook()){
+            throw new AssertionError("User not logged in, need to be logged-in for this test");
+        }
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote
         onView(withId(R.id.upvoteButton)).perform(click());
