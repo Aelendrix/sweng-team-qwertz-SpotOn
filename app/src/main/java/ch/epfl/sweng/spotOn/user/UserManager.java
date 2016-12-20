@@ -67,6 +67,7 @@ public class UserManager {
             mUser.removeManager();
             mUser = null;
             notifyListeners(USER_DISCONNECTED);
+            isLogInThroughFacebook = false;
         }
     }
 

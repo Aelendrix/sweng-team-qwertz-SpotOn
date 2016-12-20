@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.anything;
 
 
 /**
- * Created by nico on 09.11.16.
+ * In a full sized image activity, test the user interface (upVote and downVote)
  */
 
 
@@ -41,6 +41,9 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }
         UserManager.initialize();
         UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
         LocalDatabaseTestUtils.initLocalDatabase(true);
