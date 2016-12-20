@@ -111,9 +111,6 @@ public class TestInitUtils {
     }
 
     public static void initContextMockUser(User user){   // same with MockLocationTracker default location
-        if(UserManager.instanceExists()){
-            UserManager.getInstance().destroyUser();
-        }
         UserManager.initialize();
         UserManager.getInstance().setMockUser(user);
         // destroy LocationTrackerSingleton if need be
