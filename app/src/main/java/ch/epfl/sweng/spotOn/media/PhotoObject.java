@@ -80,8 +80,15 @@ public class PhotoObject {
     private ArrayList<String> mReportersList;
 
 
-    /** This constructor will be used when the user takes a photo with his device, and create the object from locally obtained information
-     *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored */
+    /** This constructor is used when the user takes a photo with his device, and create the object from locally obtained information
+     *  pictureId should be created by calling .push().getKey() on the DatabaseReference where the object should be stored
+     * @param fullSizePic the bitmap of the real sized picture
+     * @param authorID  the unique ID of the author
+     * @param photoName the name of the picture
+     * @param createdDate the date of creation of the picture
+     * @param latitude the latitude coordinate on the map of when the picture was created
+     * @param longitude the longitude coordinate on the map of when the picture was created
+     */
     public PhotoObject(Bitmap fullSizePic, String authorID, String photoName,
                        Timestamp createdDate, double latitude, double longitude){
         mFullsizeImage = fullSizePic.copy(fullSizePic.getConfig(), true);
@@ -106,11 +113,26 @@ public class PhotoObject {
         this.computeExpireDate();
     }
 
-    /** This constructor is called to convert an object retrieved from the database into a PhotoObject.     */
+    /** This constructor is called to convert an object retrieved from the database into a PhotoObject.
+     * @param fullSizeImageLink the internet url of the picture
+     * @param thumbnail the bitmap of the picture, reduced in size
+     * @param pictureId the unique reference ID of the picture in the firebase DB
+     * @param authorID the author unique ID
+     * @param photoName the name of the picture
+     * @param createdDate the date of creation of the picture
+     * @param latitude the latitude coordinate on the map of when the picture was created
+     * @param longitude the longitude coordinate on the map of when the picture was created
+     * @param nbUpVotes the amount of upVotes on this picture
+     * @param nbDownVotes the amount of downVotes on this picture
+     * @param nbReports the amount users whom reported this picture
+     * @param upVoters the list of users whom upVoted this picture
+     * @param downVoters the list of users whom downVoted this picture
+     * @param reporters the list of users whom reported this picture
+     */
     public PhotoObject(String fullSizeImageLink, Bitmap thumbnail, String pictureId, String authorID,
                        String photoName, long createdDate, double latitude, double longitude,
-                       int nbUpvotes, int nbDownvotes, int nbReports, List<String> upvoters,
-                       List<String> downvoters, List<String> reporters){
+                       int nbUpVotes, int nbDownVotes, int nbReports, List<String> upVoters,
+                       List<String> downVoters, List<String> reporters){
         mFullsizeImage = null;
         mHasFullsizeImage=false;
         mFullsizeImageLink=fullSizeImageLink;
@@ -123,11 +145,11 @@ public class PhotoObject {
         mAuthorID = authorID;
         mStoredInternally = false;
         mStoredInServer = false;
-        mNbUpvotes = nbUpvotes;
-        mNbDownvotes = nbDownvotes;
+        mNbUpvotes = nbUpVotes;
+        mNbDownvotes = nbDownVotes;
         mNbReports = nbReports;
-        mUpvotersList = new ArrayList<>(upvoters);
-        mDownvotersList = new ArrayList<>(downvoters);
+        mUpvotersList = new ArrayList<>(upVoters);
+        mDownvotersList = new ArrayList<>(downVoters);
         mReportersList = new ArrayList<>(reporters);
         this.computeRadius();
         this.computeExpireDate();
@@ -139,7 +161,7 @@ public class PhotoObject {
 //FUNCTIONS PROVIDED BY THIS CLASS
 
     /** uploads the object to our online services
-     *  prove
+     *  
      */
     public void upload(boolean hasListener, OnCompleteListener completionListener){
         // sendToFileServer calls sendToDatabase on success
@@ -159,7 +181,7 @@ public class PhotoObject {
     }
 
     public String processVote(int vote, String votersId){
-        String toastText="";   // message that will be displayed as the action's result
+        String toastText;   // message that will be displayed as the action's result
         boolean voteIsValid=false;
         int karmaAdded = 0;    // karma given to the photo's author
         if(mAuthorID.equals(votersId)){

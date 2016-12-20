@@ -13,8 +13,7 @@ public class StorageRef {
     private final static String mMediaDirectoryString = "Images";
     private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
-
-// PUBLIC METHODS
+    // PUBLIC METHODS
     public static StorageReference getMediaDirectory(){
         return mMediaDirectory;
     }
@@ -33,7 +32,7 @@ public class StorageRef {
         }
     }
 
-// CONSTRUCTOR FOR SINGLETON
+    // CONSTRUCTOR FOR SINGLETON
     private StorageRef(){
     }
 
