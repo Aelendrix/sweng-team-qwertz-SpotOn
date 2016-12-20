@@ -185,6 +185,12 @@ public class PhotoObject {
         ) <= mRadius;
     }
 
+    /**
+     * function to compute the vote of an use on this photoObject
+     * @param vote {-1,0,1} represent a downVote, cancelVote or upVote
+     * @param votersId the ID of the person upVoting this photoObject
+     * @return the String message to be printed on the toast when upVoting or downVoting a picture
+     */
     public String processVote(int vote, String votersId){
         String toastText;   // message that will be displayed as the action's result
         boolean voteIsValid=false;
@@ -257,7 +263,11 @@ public class PhotoObject {
         return toastText;
     }
 
-
+    /**
+     * function to compute a report on this photoObject
+     * @param reporterID the ID of the user reporting the picture
+     * @return the String message to be printed on the toast when reporting a picture
+     */
     public String processReport(String reporterID){
         String resultProcess  = "";
         if(reporterID.equals(mAuthorID)){
