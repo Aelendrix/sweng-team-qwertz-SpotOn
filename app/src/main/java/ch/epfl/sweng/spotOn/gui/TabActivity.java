@@ -66,12 +66,12 @@ public class TabActivity extends AppCompatActivity{
         ToastProvider.update(this);
     }
 
-    /*
+
     @Override
-    public void onStop(){
+    public void onDestroy(){
+        super.onDestroy();
         unloadLocalDataSingleton();
     }
-    */
 
     /*
     Disables the hardware back button of the phone
@@ -138,7 +138,6 @@ public class TabActivity extends AppCompatActivity{
         //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
-                unloadLocalDataSingleton();
                 if(UserManager.getInstance().userIsLoggedIn()) {
                     disconnectFacebook();
                 }
@@ -180,7 +179,7 @@ public class TabActivity extends AppCompatActivity{
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
-        //click on the rightmost tab everytime
+        //click on the rightmost tab every time
             mTabLayout.getTabAt(mTabLayout.getTabCount()-1).select();
     }
 
