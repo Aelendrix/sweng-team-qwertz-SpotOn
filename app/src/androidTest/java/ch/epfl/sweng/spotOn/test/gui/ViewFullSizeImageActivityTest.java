@@ -62,14 +62,17 @@ public class ViewFullSizeImageActivityTest {
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //make buttons disappear
         onView(withId(R.id.pager)).perform(click());
+        Thread.sleep(500);
         onData(withId(R.id.upvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-        onData(withId(R.id.downvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-        onData(withId(R.id.reportButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.downvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.reportButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         //make buttons reappear
         onView(withId(R.id.pager)).perform(click());
-        onData(withId(R.id.upvoteButton)).check(matches(isDisplayed()));
-        onData(withId(R.id.downvoteButton)).check(matches(isDisplayed()));
-        onData(withId(R.id.reportButton)).check(matches(isDisplayed()));
+        Thread.sleep(500);
+        onView(withId(R.id.upvoteButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.downvoteButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.reportButton)).check(matches(isDisplayed()));
+
 
     }
 
