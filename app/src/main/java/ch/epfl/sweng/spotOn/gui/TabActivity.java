@@ -138,7 +138,7 @@ public class TabActivity extends AppCompatActivity{
         //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
-                if(UserManager.getInstance().userIsLoggedIn()) {
+                if(UserManager.getInstance().isLogInThroughFacebook()) {
                     disconnectFacebook();
                 }
                 UserManager.getInstance().destroyUser();
