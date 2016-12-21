@@ -129,17 +129,18 @@ public class TabActivity extends AppCompatActivity{
     /* Handles what action to take when the user clicks on a menu item in the options menu     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
-                if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    finish();
-                    return true;
-                } else {
+                unloadLocalDataSingleton();
+                if(UserManager.getInstance().userIsLoggedIn()) {
                     disconnectFacebook();
-                    UserManager user = UserManager.getInstance();
-                    user.destroyUser();
-                    return true;
                 }
+                UserManager.getInstance().destroyUser();
+                //go to the mainActivity in the activity stack
+                finish();
+                return true;
+
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
@@ -157,13 +158,17 @@ public class TabActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+    private void unloadLocalDataSingleton(){
+        //disable the service checker to remove the toast
+        ServicesChecker.allowDisplayingToasts(false);
+        //TODO: firebase.reset
+        LocalDatabase.getInstance().clear();
+    }
 
     private void disconnectFacebook() {
         Profile profile = Profile.getCurrentProfile();
         if (profile != null) {
             LoginManager.getInstance().logOut();
-            //go to the mainActivity in the activity stack
-            finish();
         }
     }
 
