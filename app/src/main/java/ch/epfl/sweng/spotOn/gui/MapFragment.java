@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -49,10 +50,11 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin>, GoogleMap.OnMarkerClickListener {
+        ClusterManager.OnClusterClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -185,18 +187,42 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      * Set up the cluster manager
      */
     private void setUpCluster(){
-        mClusterManager = new ClusterManager<>(getContext(), mMap);
 
-        //Displays the right color to the markers (green or yellow)
+        mClusterManager = new ClusterManager<>(getContext(), mMap, new MarkerManager(mMap){
+
+            /**
+             * Method called when clicking a marker that belongs in the mClusterManager: resolves
+             * the bug that clicking on a marker from a non rendered cluster displayed nothing.
+             * @param marker the clicked marker
+             * @return the result of onClusterItemClick on the pin associated to the marker.
+             */
+            @Override
+            public boolean onMarkerClick(Marker marker){
+                //Get the map matching each marker (title) to the corresponding pin
+                Map<String, Pin> markerPinMap = ClusterRenderer.getMarkerPinMap();
+                Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
+                if(markerPinMap.containsKey(marker.getTitle())) {
+                    //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
+                    Pin associatedPin = markerPinMap.get(marker.getTitle());
+                    return onClusterItemClick(associatedPin);
+                } else {
+                    throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
+                }
+            }
+        });
+
+        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+        mMap.setOnCameraIdleListener(mClusterManager);
         mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
-        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
         addDBMarkers();
     }
 
@@ -240,19 +266,12 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     public boolean onClusterItemClick(Pin pin) {
         Log.d("onClusterItemClick", "accessed1");
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
-        Log.d("onClusterItemClick", "accessed2");
         //If the marker clicked is yellow
         if (!pin.getAccessibility()) {
             Toast.makeText(getContext(), "Get closer to this point to see the picture", Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker){
-        Log.d("onMarkerClick", "please yes");
-        return true;
     }
 
     // LISTENER METHODS

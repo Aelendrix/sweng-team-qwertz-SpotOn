@@ -7,9 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.Cluster;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by olivi on 20.10.2016.
@@ -17,14 +24,14 @@ import com.google.android.gms.maps.model.Marker;
  */
 public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
 
-    private ImageView pictureView;
-    private Pin mPin;
+    private ImageView mPictureView;
+    private Pin clickedPin;
 
     public PhotoOnMarker(Context context, Pin pin){
-        mPin = pin;
-        pictureView = new ImageView(context);
+        clickedPin = pin;
+        mPictureView = new ImageView(context);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        pictureView.setLayoutParams(layoutParams);
+        mPictureView.setLayoutParams(layoutParams);
     }
 
     /**
@@ -34,14 +41,14 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
      */
     @Override
     public View getInfoWindow(Marker marker){
-        //the only marker with a title is the marker position
         Log.d("infoWindow", "accessed3");
-        if(mPin != null && mPin.getAccessibility() && !marker.getTitle().equals("position")){
-            Log.d("infoWindow", "accessed again");
-            Bitmap associatedToMarker = mPin.getPhotoObject().getThumbnail();
-            pictureView.setImageBitmap(associatedToMarker);
-            return pictureView;
+        //if the marker is green
+        if(clickedPin != null && clickedPin.getAccessibility() && !marker.getTitle().equals("position")){
+            Bitmap associatedToMarker = clickedPin.getPhotoObject().getThumbnail();
+            mPictureView.setImageBitmap(associatedToMarker);
+            return mPictureView;
         } else {
+            //the marker is yellow: display nothing
             return null;
         }
     }
