@@ -63,7 +63,7 @@ public class ViewFullSizeImageActivityTest {
         //make buttons disappear
         onView(withId(R.id.pager)).perform(click());
         Thread.sleep(500);
-        onData(withId(R.id.upvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.upvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.downvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.reportButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         //make buttons reappear
