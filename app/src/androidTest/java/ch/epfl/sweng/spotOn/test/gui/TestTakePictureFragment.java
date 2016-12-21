@@ -87,8 +87,8 @@ public class TestTakePictureFragment {
         onView(withId(R.id.rotateButton)).check(matches(isDisplayed()));
         onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
         //modifiy the actual picture
-        onView(withId(R.id.addTextButton)).perform(click());
         onView(withId(R.id.rotateButton)).perform(click());
+        onView(withId(R.id.addTextButton)).perform(click());
         onView(withId(R.id.textToDraw)).perform(typeText("Hello !")).perform(closeSoftKeyboard());
         onView(withId(R.id.sendTextToDrawButton)).perform(click());
         onView(withId(R.id.activity_edit_picture)).perform(clickXY(500, 500));
