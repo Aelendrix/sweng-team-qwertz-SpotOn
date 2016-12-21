@@ -72,8 +72,6 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.upvoteButton)).check(matches(isDisplayed()));
         onView(withId(R.id.downvoteButton)).check(matches(isDisplayed()));
         onView(withId(R.id.reportButton)).check(matches(isDisplayed()));
-
-
     }
 
     @After
