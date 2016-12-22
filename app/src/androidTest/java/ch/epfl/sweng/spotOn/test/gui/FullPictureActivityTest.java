@@ -49,7 +49,7 @@ public class FullPictureActivityTest {
     @Test
     public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        if(!UserManager.getInstance().isLogInThroughFacebook()){
+        if(!UserManager.getInstance().isLogInThroughFacebook() | !UserManager.getInstance().userIsLoggedIn()){
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());

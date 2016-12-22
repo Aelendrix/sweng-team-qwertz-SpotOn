@@ -162,4 +162,26 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
     }
+
+    public static void initContextMockUserAndLocation(User user, Location location){   // same with MockLocationTracker default location
+        if(UserManager.instanceExists()) {
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
+        UserManager.getInstance().setMockUser(user);
+        UserManager.getInstance().setIsLoginThroughFacebook(true);
+        // destroy LocationTrackerSingleton if need be
+        if(ConcreteLocationTracker.instanceExists()){
+            ConcreteLocationTracker.destroyInstance();
+        }
+
+        MockLocationTracker_forTest mlt = new MockLocationTracker_forTest();
+        ConcreteLocationTracker.setMockLocationTracker(mlt);
+
+        LocalDatabase.initialize(mlt);
+
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+    }
+
 }
