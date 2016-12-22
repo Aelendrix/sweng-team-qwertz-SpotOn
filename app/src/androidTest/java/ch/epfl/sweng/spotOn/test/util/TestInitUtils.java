@@ -21,7 +21,7 @@ public class TestInitUtils {
             UserManager.getInstance().destroyUser();
         }
         UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
+        UserManager.getInstance().setUserFromFacebook("Jean", "Test", "114110565725226");
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
             ConcreteLocationTracker.destroyInstance();
