@@ -22,7 +22,11 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testGetUserStoredInDB(){
-        UserManager.initialize();
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
         UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
@@ -38,7 +42,11 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testSetUserStoredInDB(){
-        UserManager.initialize();
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
         UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
