@@ -21,6 +21,7 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 /**
@@ -79,9 +80,11 @@ public class LogInOutTest {
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
         onView(withId(R.id.log_out)).perform(click());
-        onView(withId(R.id.strongActionOk)).perform(click());
-
+        onView(withText("CANCEL")).perform(click());
+        onView(withId(R.id.log_out)).perform(click());
+        onView(withText("LOG OUT")).perform(click());
         */
+
     }
 }
 

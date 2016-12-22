@@ -27,6 +27,7 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
 /**
@@ -59,6 +60,8 @@ public class ViewFullSizeImageActivityTest {
     public void buttonsDisappearTest() throws InterruptedException {
         mActivityTestRule.launchActivity(new Intent());
         //got to the pager from the first grid item click
+        onView(withId(R.id.extend_list_button)).perform(click());
+        onView(withId(R.id.order_newest_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //make buttons disappear
         onView(withId(R.id.pager)).perform(click());
@@ -72,7 +75,6 @@ public class ViewFullSizeImageActivityTest {
         onView(withId(R.id.upvoteButton)).check(matches(isDisplayed()));
         onView(withId(R.id.downvoteButton)).check(matches(isDisplayed()));
         onView(withId(R.id.reportButton)).check(matches(isDisplayed()));
-
     }
 
     @After
