@@ -31,7 +31,7 @@ public class UserStoredInDatabase {
     }
 
     /**
-     * Add a new user in the database with its karma instantiated to a arbitrary value
+     * Add a new user in the database with its karma instantiated to an arbitrary value
      */
     public void upload(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
