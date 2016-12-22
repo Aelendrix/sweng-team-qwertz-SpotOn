@@ -50,7 +50,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  */
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
-    private PhotoObject po;
+    private PhotoObject po1;
+    private PhotoObject po2;
+
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityTestRule =
             new ActivityTestRule<UserProfileActivity>(UserProfileActivity.class)
@@ -58,9 +60,10 @@ public class UserProfileActivityTest {
                 @Override
                 public void beforeActivityLaunched(){
 
+                    //Add 1st photoObject
                     final Object lock1 = new Object();
-                    po = PhotoObjectTestUtils.germaynDeryckePO();
-                    po.upload(true, new OnCompleteListener() {
+                    po1 = PhotoObjectTestUtils.germaynDeryckePO();
+                    po1.upload(true, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
                             if(task.getException()!=null){
@@ -83,12 +86,40 @@ public class UserProfileActivityTest {
                         throw new AssertionError("Interrupted Exception");
                     }
                     HashMap<String, Long> h = new HashMap<>();
-                    h.put(po.getPictureId(), po.getCreatedDate().getTime());
+                    h.put(po1.getPictureId(), po1.getCreatedDate().getTime());
+
+                    //Add 2nd photoObject
+                    final Object lock2 = new Object();
+                    po2 = PhotoObjectTestUtils.iceDivingPO();
+                    po2.upload(true, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if(task.getException()!=null){
+                                lock2.notify();
+                                throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading first testPhotoObject failed"));
+                            }else{
+                                synchronized (lock2){
+                                    lock2.notify();
+                                }
+                            }
+                        }
+                    });
+                    try {
+                        synchronized (lock2) {
+                            lock2.wait();
+                        }
+                    }
+                    catch(InterruptedException e)
+                    {
+                        throw new AssertionError("Interrupted Exception");
+                    }
+                    h.put(po2.getPictureId(), po2.getCreatedDate().getTime());
 
                     User mockUser = new MockUser_forTests("julius","caius","Test", 1000, h, true, true);
                     TestInitUtils.initContextMockUser(mockUser);
                     ServicesChecker.getInstance().allowDisplayingToasts(false);
-                    LocalDatabase.getInstance().addPhotoObject(po);
+                    LocalDatabase.getInstance().addPhotoObject(po1);
+                    LocalDatabase.getInstance().addPhotoObject(po2);
                 }
             };
 
@@ -109,7 +140,7 @@ public class UserProfileActivityTest {
         Intents.init();
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         //intended(hasComponent(ViewUserPhotoActivity.class.getName()));
-        //this need to be changed, because the pressback occured before going into the FullSizeImage view
+        //this need to be changed, because the pressBack occurred before going into the FullSizeImage view
         //Espresso.pressBack();
         Intents.release();
     }
@@ -132,7 +163,10 @@ public class UserProfileActivityTest {
 
     @After
     public void clearObject(){
-        DatabaseRef.deletePhotoObjectFromDB(po.getPictureId());
-        StorageRef.deletePictureFromStorage(po.getPictureId());
+        DatabaseRef.deletePhotoObjectFromDB(po1.getPictureId());
+        StorageRef.deletePictureFromStorage(po1.getPictureId());
+
+        DatabaseRef.deletePhotoObjectFromDB(po2.getPictureId());
+        StorageRef.deletePictureFromStorage(po2.getPictureId());
     }
 }
