@@ -282,21 +282,19 @@ public class PhotoObject {
                 mReportersList.add(reporterID);
                 mNbReports = mReportersList.size();
 
-                    DatabaseReference DBref = DatabaseRef.getMediaDirectory();
-                    DBref.child(mPictureId).child("reports").setValue(mNbReports);
-                    DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
+                DatabaseReference DBref = DatabaseRef.getMediaDirectory();
+                DBref.child(mPictureId).child("reports").setValue(mNbReports);
+                DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
 
                 if (mNbReports >= MAX_NB_REPORTS) {
-                        DatabaseRef.deletePhotoObjectFromDB(mPictureId);
-                        StorageRef.deletePictureFromStorage(mPictureId);
-                        giveAuthorHisKarma(REPORT_DECREASE_KARMA);
-
+                    DatabaseRef.deletePhotoObjectFromDB(mPictureId);
+                    StorageRef.deletePictureFromStorage(mPictureId);
+                    giveAuthorHisKarma(REPORT_DECREASE_KARMA);
                 }
             }
 
             LocalDatabase.getInstance().removePhotoObject(mPictureId);
             LocalDatabase.getInstance().notifyListeners();
-
         }
         return resultProcess;
     }
