@@ -20,6 +20,8 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
@@ -50,6 +52,8 @@ public class FullPictureActivityTest {
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         onView(withId(R.id.extend_list_button)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.order_newest_button)).check(matches(isDisplayed()));
         onView(withId(R.id.order_newest_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote
@@ -65,9 +69,9 @@ public class FullPictureActivityTest {
         onView(withId(R.id.downvoteButton)).perform(click());
         onView(withId(R.id.upvoteButton)).perform(click());
         onView(withId(R.id.reportButton)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.reportButton)).perform(click());
-        onView(withText("REPORT")).perform(click());
+        onView(withText("Report")).perform(click());
     }
 
     @After
