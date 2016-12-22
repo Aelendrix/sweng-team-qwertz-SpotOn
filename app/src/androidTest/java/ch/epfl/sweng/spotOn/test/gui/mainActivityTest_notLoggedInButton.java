@@ -57,9 +57,9 @@ public class mainActivityTest_notLoggedInButton {
         //in the TabActivity
         onView(withId(R.id.log_out)).check(matches(isDisplayed()));
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("LOG OUT")).perform(click());
+        onView(withText("Log out")).perform(click());
 
         //in the MainActivity
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
