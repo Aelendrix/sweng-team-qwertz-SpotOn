@@ -45,7 +45,7 @@ public class mainActivityTest_notLoggedInButton {
     public void mainActivityNotLoggedInTest() throws InterruptedException {
         mActivityTestRule.launchActivity(new Intent());
         //in the MainActivity
-        Thread.sleep(2000);
+        Thread.sleep(4000);
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
         onView(withId(R.id.dontLogInButton)).perform(click());
 

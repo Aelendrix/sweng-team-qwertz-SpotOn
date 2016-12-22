@@ -58,7 +58,7 @@ public class ViewFullSizeImageActivityTest {
         mActivityTestRule.launchActivity(new Intent());
         //got to the pager from the first grid item click
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(4000);
         onView(withId(R.id.order_newest_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //make buttons disappear
