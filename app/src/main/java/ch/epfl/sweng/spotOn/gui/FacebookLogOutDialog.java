@@ -32,8 +32,7 @@ public class FacebookLogOutDialog extends DialogFragment {
                     disconnectFacebook();
                 }
                 UserManager.getInstance().destroyUser();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                getActivity().finish();
             }
         })
         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
