@@ -40,14 +40,14 @@ public class TabActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // if some singletons were destroyed, re-initialize them
+        SingletonUtils.initializeSingletons(getApplicationContext());
+        //We need to refresh the Local Database so if the user is logged in to hide the pictures he reported
+        LocalDatabase.getInstance().refresh();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-        //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
-        LocalDatabase.getInstance().refresh();
-
-        // if some singletons were destroyed, re-initialize them
-        SingletonUtils.initializeSingletons(getApplicationContext());
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
