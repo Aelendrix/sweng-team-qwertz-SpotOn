@@ -4,6 +4,7 @@ import android.content.Context;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -19,8 +20,9 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
  */
 public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
-    boolean zoom = false;
-    GoogleMap mMap;
+    private boolean isVeryZoomed = false;
+    //private boolean isVeryUnZoomed = false;
+    private GoogleMap mMap;
 
     /**
      * Custom clusterRenderer
@@ -57,11 +59,14 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-        return cluster.getSize() >=4  && !zoom;
+
+        //return isVeryUnZoomed || cluster.getSize() >=4  && !isVeryZoomed;
+        return cluster.getSize() >=4  && !isVeryZoomed;
     }
 
     private void computeZoom(){
-        zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
-
+        float zoomLevel = mMap.getCameraPosition().zoom;
+        isVeryZoomed = mMap.getMaxZoomLevel()-3 < zoomLevel;
+        //isVeryUnZoomed = 12.5 >= zoomLevel;
     }
 }

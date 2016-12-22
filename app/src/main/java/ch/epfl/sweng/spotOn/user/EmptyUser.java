@@ -18,7 +18,6 @@ public class EmptyUser implements User {
 
     @Override
     public void removeManager() {
-        // nothing
     }
 
 
@@ -69,6 +68,7 @@ public class EmptyUser implements User {
     public void setKarma(long karma) {
         throw new UnsupportedOperationException();
     }
+
     @Override
     public void setIsRetrievedFromDB(boolean retrievedFromDB) {
         throw new UnsupportedOperationException();

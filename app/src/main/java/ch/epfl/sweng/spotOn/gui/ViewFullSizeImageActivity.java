@@ -60,10 +60,8 @@ public class ViewFullSizeImageActivity extends Activity {
                             if (mButtonsAreVisible) {
                                 makeButtonsDisappear();
                                 mButtonsAreVisible = false;
-                            } else {
-                                mUpvoteButton.setVisibility(View.VISIBLE);
-                                mDownvoteButton.setVisibility(View.VISIBLE);
-                                mReportButton.setVisibility(View.VISIBLE);
+                            } else if(UserManager.getInstance().isLogInThroughFacebook()) {
+                                makeButtonsAppear();
                                 mButtonsAreVisible = true;
                             }
                             return true;
@@ -135,7 +133,9 @@ public class ViewFullSizeImageActivity extends Activity {
                 colorNone();
             }
         }
-        makeButtonsAppear();
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            makeButtonsAppear();
+        }
     }
 
     public void recordUpvote(View view) {
