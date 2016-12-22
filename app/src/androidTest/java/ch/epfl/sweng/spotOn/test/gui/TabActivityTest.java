@@ -91,9 +91,10 @@ public class TabActivityTest {
     @Test
     public void startUserProfileActivity() {
         Intents.init();
-        if(!UserManager.getInstance().userIsLoggedIn()){
+        if(!UserManager.getInstance().userIsLoggedIn() || !UserManager.getInstance().getUser().getIsRetrievedFromDB() || !UserManager.getInstance().isLogInThroughFacebook()){
             throw new AssertionError();
         }
+
 
         onView(withId(R.id.user_profile)).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
@@ -107,5 +108,6 @@ public class TabActivityTest {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TabActivityTest : concreteLocationTracker mock instance not deleted");
         }
+        UserManager.getInstance().destroyUser();
     }
 }

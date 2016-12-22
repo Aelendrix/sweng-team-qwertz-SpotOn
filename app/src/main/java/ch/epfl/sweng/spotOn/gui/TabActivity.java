@@ -25,6 +25,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.SingletonUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -39,12 +40,13 @@ public class TabActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // if some singletons were destroyed, re-initialize them
+        SingletonUtils.initializeSingletons(getApplicationContext());
+        //We need to refresh the Local Database so if the user is logged in to hide the pictures he reported
+        LocalDatabase.getInstance().refresh();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
-
-        //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
-
-        LocalDatabase.getInstance().refresh();
 
 
         //Set up the toolbar where the different tabs will be located
@@ -97,10 +99,6 @@ public class TabActivity extends AppCompatActivity{
     public void sendPictureToServer(View view){
         mCameraFragment.sendPictureToServer();
     }
-
-    /*
-     * Rotates the picture by 90°
-     */
 
     @SuppressWarnings("UnusedParameters")
     public void editPicture(View view){
@@ -157,6 +155,7 @@ public class TabActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+
     private void unloadLocalDataSingleton(){
         //disable the service checker to remove the toast
         ServicesChecker.allowDisplayingToasts(false);

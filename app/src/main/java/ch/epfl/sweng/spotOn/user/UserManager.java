@@ -83,12 +83,16 @@ public class UserManager {
         return isLogInThroughFacebook;
     }
 
+    public void setIsLoginThroughFacebook(boolean b){
+        isLogInThroughFacebook = b;
+    }
+
     // SET USERS METHODS
     public void setUserFromFacebook(String firstName, String lastName, String userId) {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser == null || !mUser.isLoggedIn()){
+        if(mUser == null){
             isLogInThroughFacebook = true;
             RealUser newUser = new RealUser(firstName,lastName, userId, mSingleInstance);
             newUser.getUserAttributesFromDB();
@@ -103,7 +107,7 @@ public class UserManager {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser==null || !mUser.isLoggedIn()){
+        if(mUser==null){
             isLogInThroughFacebook = false;
             mUser = new EmptyUser();
         }else{
