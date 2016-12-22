@@ -19,7 +19,7 @@ public class SingletonUtils {
         ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) c.getSystemService(Context.LOCATION_SERVICE)));
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         UserManager.initialize();
-        UserManager.getInstance().setEmptyUser();
+        //UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
     }
 }
