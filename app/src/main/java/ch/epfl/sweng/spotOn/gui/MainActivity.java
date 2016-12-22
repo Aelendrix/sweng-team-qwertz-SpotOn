@@ -40,6 +40,7 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.SingletonUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -61,7 +62,10 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initializeSingletons();
+        SingletonUtils.initializeSingletons(getApplicationContext());
+        ToastProvider.update(this);
+        ServicesChecker.allowDisplayingToasts(false);
+
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -222,19 +226,9 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeSingletons(){
-        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        UserManager.initialize();
-        UserManager.getInstance().setEmptyUser();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-        ServicesChecker.allowDisplayingToasts(false);
-        ToastProvider.update(this);
-    }
-
     private void askForLocationPermission(){
-            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, locationPermission, REQUEST_FINE_LOCALISATION);
+        String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
+        ActivityCompat.requestPermissions(this, locationPermission, REQUEST_FINE_LOCALISATION);
     }
 
     private boolean locationPermissionGiven(){

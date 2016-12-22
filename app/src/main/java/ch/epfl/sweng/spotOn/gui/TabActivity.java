@@ -25,6 +25,7 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.SingletonUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -43,9 +44,10 @@ public class TabActivity extends AppCompatActivity{
         setContentView(R.layout.activity_tab);
 
         //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
-
         LocalDatabase.getInstance().refresh();
 
+        // if some singletons were destroyed, re-initialize them
+        SingletonUtils.initializeSingletons(getApplicationContext());
 
         //Set up the toolbar where the different tabs will be located
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
