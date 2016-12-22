@@ -57,6 +57,8 @@ public final class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
+    public final static String STRONG_ACTION_REQUEST = "ch.epfl.sweng.spotOn.gui.STRONG_ACTION";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

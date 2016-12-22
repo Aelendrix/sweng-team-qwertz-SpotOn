@@ -1,6 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.app.Service;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -22,7 +22,6 @@ import com.facebook.login.LoginManager;
 import ch.epfl.sweng.spotOn.R;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -136,12 +135,7 @@ public class TabActivity extends AppCompatActivity{
         //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
-                if(UserManager.getInstance().isLogInThroughFacebook()) {
-                    disconnectFacebook();
-                }
-                UserManager.getInstance().destroyUser();
-                //go to the mainActivity in the activity stack
-                finish();
+                showDialog();
                 return true;
 
             case R.id.action_about:
@@ -169,12 +163,6 @@ public class TabActivity extends AppCompatActivity{
         LocalDatabase.getInstance().clear();
     }
 
-    private void disconnectFacebook() {
-        Profile profile = Profile.getCurrentProfile();
-        if (profile != null) {
-            LoginManager.getInstance().logOut();
-        }
-    }
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
@@ -242,5 +230,9 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
+    public void showDialog() {
+        DialogFragment dialog = new FacebookLogOutDialog();
+        dialog.show(getFragmentManager(), "FacebookLogOut");
+    }
 
 }
