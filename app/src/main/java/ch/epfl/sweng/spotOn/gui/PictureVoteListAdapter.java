@@ -2,7 +2,9 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 
+import android.app.DialogFragment;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,8 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
 
     private final Activity mActivityContext;
     private List<PhotoObject> mPhotoList;
+    private Bundle bundle = new Bundle();
+
 
     public PictureVoteListAdapter(Activity context, List<PhotoObject> photoList) {
         super(context, R.layout.content_profile_list_pictures, photoList);
@@ -65,13 +69,10 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
             public void onClick(View v) {
 
                 if(UserManager.getInstance().getUser().retrieveUpdatedPhotosTaken().containsKey(pictureID)) {
-                    LocalDatabase.getInstance().removePhotoObject(pictureID);
-                    DatabaseRef.deletePhotoObjectFromDB(pictureID);
-                    StorageRef.deletePictureFromStorage(pictureID);
-                    UserManager.getInstance().getUser().removePhoto(pictureID);
+                    bundle.putString("pictureID", pictureID);
+                    deletePictureDialog();
                     mPhotoList.remove(mPhotoList.get(position));
                     LocalDatabase.getInstance().notifyListeners();
-                    ToastProvider.printOverCurrent("Your picture has been deleted!", Toast.LENGTH_SHORT);
 
                 }
                 else {
@@ -89,5 +90,11 @@ public class PictureVoteListAdapter extends ArrayAdapter<PhotoObject> {
         Intent intent = new Intent(mActivityContext, ViewUserPhotoActivity.class);
         intent.putExtra(EXTRA_USER_PICTURE_ID, pictureId);
         mActivityContext.startActivity(intent);
+    }
+
+    public void deletePictureDialog() {
+        DialogFragment dialog = new DeletePictureDialog();
+        dialog.setArguments(bundle);
+        dialog.show(mActivityContext.getFragmentManager(), "DeletePicture");
     }
 }
