@@ -15,8 +15,6 @@ import java.util.HashMap;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -93,9 +91,10 @@ public class TabActivityTest {
     @Test
     public void startUserProfileActivity() {
         Intents.init();
-        if(!UserManager.getInstance().userIsLoggedIn()){
+        if(!UserManager.getInstance().userIsLoggedIn() || !UserManager.getInstance().getUser().getIsRetrievedFromDB() || !UserManager.getInstance().isLogInThroughFacebook()){
             throw new AssertionError();
         }
+
 
         onView(withId(R.id.user_profile)).perform(click());
         intended(hasComponent(UserProfileActivity.class.getName()));
@@ -109,5 +108,6 @@ public class TabActivityTest {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TabActivityTest : concreteLocationTracker mock instance not deleted");
         }
+        UserManager.getInstance().destroyUser();
     }
 }

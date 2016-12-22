@@ -92,11 +92,12 @@ public class EditPictureActivity extends AppCompatActivity {
     public void rotatePicture(View view){
         Matrix rotationMatrix = new Matrix();
         rotationMatrix.postRotate(90);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(mEditedBitmap, 0, 0, mEditedBitmap.getWidth(),
-                mEditedBitmap.getHeight(), rotationMatrix, true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(withoutTextBitmap, 0, 0, withoutTextBitmap.getWidth(),
+                withoutTextBitmap.getHeight(), rotationMatrix, true);
         mEditedBitmap = rotatedBitmap;
         withoutTextBitmap = rotatedBitmap;
         mEditedImageView.setImageBitmap(rotatedBitmap);
+
     }
 
     /**
@@ -195,10 +196,13 @@ public class EditPictureActivity extends AppCompatActivity {
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
             paint.setShadowLayer(10, 0, 0, Color.BLACK);
-            paint.setTextSize(50);
+            int textSize = 50;
+            paint.setTextSize(textSize);
             paint.setFakeBoldText(true);
+            int offsetY = (int)(textSize*2.5);
+            int offsetX = (int) paint.measureText(mTextToDraw)/2;
             //the parameter are scaled for the same position as the finger touch.
-            canvas.drawText(mTextToDraw, x*imgWidth/screenWidth, y*imgHeight/screenHeight, paint);
+            canvas.drawText(mTextToDraw, (x-offsetX)*imgWidth/screenWidth, (y-offsetY)*imgHeight/screenHeight, paint);
             mEditedImageView.setImageBitmap(addTextBitmap);
             mEditedBitmap = addTextBitmap;
             return true;

@@ -23,11 +23,8 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
@@ -46,6 +43,9 @@ public class MapTest {
             // DON'T USE TESTUTILS to initialize - here, we need a reference to mlm
             if(ConcreteLocationTracker.instanceExists()){
                 ConcreteLocationTracker.destroyInstance();
+            }
+            if(UserManager.instanceExists()){
+                UserManager.getInstance().destroyUser();
             }
 
             mMockLocationTracker = new MockLocationTracker_forTest();

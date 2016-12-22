@@ -19,8 +19,6 @@ import android.app.PendingIntent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,15 +29,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-
-import ch.epfl.sweng.spotOn.FirebaseConnectionTracker.ConcreteFirebaseConnectionTracker;
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationManagerWrapper;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.SingletonUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -56,12 +52,17 @@ public final class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_FINE_LOCALISATION = 9;
 
+    public final static String STRONG_ACTION_REQUEST = "ch.epfl.sweng.spotOn.gui.STRONG_ACTION";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initializeSingletons();
+        SingletonUtils.initializeSingletons(getApplicationContext());
+        ToastProvider.update(this);
+        ServicesChecker.allowDisplayingToasts(false);
+
 
         // Initialize the SDK before executing any other operations,
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -162,6 +163,8 @@ public final class MainActivity extends AppCompatActivity {
         // the app wouldn't open anymore and this toast would be displayed: "This app needs this
         // permission to be open"
         if(locationPermissionGiven()) {
+            // allow toasts to display error rmessaes
+            ServicesChecker.allowDisplayingToasts(true);
             //start the TabActivity
             Intent intent = new Intent(this, TabActivity.class);
             startActivity(intent);
@@ -220,18 +223,9 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeSingletons(){
-        ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE)));
-        LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
-        UserManager.initialize();
-        UserManager.getInstance().setEmptyUser();
-        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-        ToastProvider.update(this);
-    }
-
     private void askForLocationPermission(){
-            String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, locationPermission, REQUEST_FINE_LOCALISATION);
+        String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION};
+        ActivityCompat.requestPermissions(this, locationPermission, REQUEST_FINE_LOCALISATION);
     }
 
     private boolean locationPermissionGiven(){

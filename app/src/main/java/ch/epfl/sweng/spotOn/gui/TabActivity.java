@@ -1,6 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.app.Service;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -15,16 +15,14 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.facebook.Profile;
-import com.facebook.login.LoginManager;
 
 import ch.epfl.sweng.spotOn.R;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+import ch.epfl.sweng.spotOn.utils.SingletonUtils;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 
@@ -39,12 +37,13 @@ public class TabActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // if some singletons were destroyed, re-initialize them
+        SingletonUtils.initializeSingletons(getApplicationContext());
+        //We need to refresh the Local Database so if the user is logged in to hide the pictures he reported
+        LocalDatabase.getInstance().refresh();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
-
-        //We need to refresh the Local Database so if the user is looged in to hide the pictures he reported
-
-        LocalDatabase.getInstance().refresh();
 
 
         //Set up the toolbar where the different tabs will be located
@@ -65,6 +64,12 @@ public class TabActivity extends AppCompatActivity{
         ToastProvider.update(this);
     }
 
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unloadLocalDataSingleton();
+    }
 
     /*
     Disables the hardware back button of the phone
@@ -92,10 +97,6 @@ public class TabActivity extends AppCompatActivity{
         mCameraFragment.sendPictureToServer();
     }
 
-    /*
-     * Rotates the picture by 90°
-     */
-
     @SuppressWarnings("UnusedParameters")
     public void editPicture(View view){
         mCameraFragment.editPicture();
@@ -104,7 +105,10 @@ public class TabActivity extends AppCompatActivity{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mPicturesFragment, getResources().getString(R.string.tab_aroundme));
-        adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        //this tab is useless if you are not logged-in
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        }
         adapter.addFragment(mMapFragment, getResources().getString(R.string.tab_map));
         viewPager.setAdapter(adapter);
     }
@@ -113,25 +117,24 @@ public class TabActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            inflater.inflate(R.menu.options, menu);
+        }
+        else{
+            inflater.inflate(R.menu.options_no_user, menu);
+        }
         return true;
     }
 
     /* Handles what action to take when the user clicks on a menu item in the options menu     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
-                if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    // to provide a way to log back in - needs to be improved todo
-                    finish();
-                    return true;
-                } else {
-                    disconnectFacebook();
-                    UserManager user = UserManager.getInstance();
-                    user.destroyUser();
-                    return true;
-                }
+                showDialog();
+                return true;
+
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
@@ -150,18 +153,18 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
-    private void disconnectFacebook() {
-        Profile profile = Profile.getCurrentProfile();
-        if (profile != null) {
-            LoginManager.getInstance().logOut();
-            //go to the mainActivity in the activity stack
-            finish();
-        }
+    private void unloadLocalDataSingleton(){
+        //disable the service checker to remove the toast
+        ServicesChecker.allowDisplayingToasts(false);
+        //TODO: firebase.reset
+        LocalDatabase.getInstance().clear();
     }
+
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
-        mTabLayout.getTabAt(2).select();
+        //click on the rightmost tab every time
+            mTabLayout.getTabAt(mTabLayout.getTabCount()-1).select();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -224,5 +227,9 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
+    public void showDialog() {
+        DialogFragment dialog = new FacebookLogOutDialog();
+        dialog.show(getFragmentManager(), "FacebookLogOut");
+    }
 
 }

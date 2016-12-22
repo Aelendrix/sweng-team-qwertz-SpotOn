@@ -13,12 +13,15 @@ public class StorageRef {
     private final static String mMediaDirectoryString = "Images";
     private final static StorageReference mMediaDirectory = FirebaseStorage.getInstance().getReference(mMediaDirectoryString);
 
-
-// PUBLIC METHODS
+    // PUBLIC METHODS
     public static StorageReference getMediaDirectory(){
         return mMediaDirectory;
     }
 
+    /**
+     * delete a the picture file from the storage depending of his pictureID
+     * @param pictureID a unique ID linked to a picture in the firebase DB
+     */
     public static void deletePictureFromStorage(String pictureID){
         if(pictureID == null)
         {
@@ -29,9 +32,8 @@ public class StorageRef {
         }
     }
 
-// CONSTRUCTOR FOR SINGLETON
+    // CONSTRUCTOR FOR SINGLETON
     private StorageRef(){
-        // empty
     }
 
 

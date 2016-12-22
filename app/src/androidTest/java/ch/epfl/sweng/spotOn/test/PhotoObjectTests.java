@@ -23,9 +23,7 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_LIFETIME;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.DEFAULT_VIEW_RADIUS;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_LIFETIME;
-import static ch.epfl.sweng.spotOn.media.PhotoObject.MAX_VIEW_RADIUS;
 import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_LIFETIME;
-import static ch.epfl.sweng.spotOn.media.PhotoObject.MIN_VIEW_RADIUS;
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getAllPO;
 import static ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils.getRandomPhotoObject;
 

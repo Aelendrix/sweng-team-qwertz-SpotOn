@@ -13,15 +13,14 @@ public class UserManager {
 
     private static UserManager mSingleInstance = null;
     private static User mUser = null;
-
+    private boolean isLogInThroughFacebook = false;
 
     private List<UserListener> listeners;
     public final static int USER_CONNECTED = 1;
     public final static int USER_DISCONNECTED = 0;
 
 
-
-// INITIALIZE AND CONSTRUCTORS
+    // INITIALIZE AND CONSTRUCTORS
     public static void initialize(){
         if(mSingleInstance==null) {
             mSingleInstance = new UserManager();
@@ -33,8 +32,7 @@ public class UserManager {
 
 
 
-// PUBLIC METHODS
-
+    // PUBLIC METHODS
     public static boolean instanceExists(){
         return mSingleInstance!=null;
     }
@@ -67,6 +65,7 @@ public class UserManager {
             mUser.removeManager();
             mUser = null;
             notifyListeners(USER_DISCONNECTED);
+            isLogInThroughFacebook = false;
         }
     }
 
@@ -80,14 +79,21 @@ public class UserManager {
         notifyListeners(USER_CONNECTED);
     }
 
+    public boolean isLogInThroughFacebook() {
+        return isLogInThroughFacebook;
+    }
 
+    public void setIsLoginThroughFacebook(boolean b){
+        isLogInThroughFacebook = b;
+    }
 
-// SET USERS METHODS
+    // SET USERS METHODS
     public void setUserFromFacebook(String firstName, String lastName, String userId) {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser == null || !mUser.isLoggedIn()){
+        if(mUser == null){
+            isLogInThroughFacebook = true;
             RealUser newUser = new RealUser(firstName,lastName, userId, mSingleInstance);
             newUser.getUserAttributesFromDB();
             mUser = newUser;
@@ -101,12 +107,12 @@ public class UserManager {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser==null || !mUser.isLoggedIn()){
+        if(mUser==null){
+            isLogInThroughFacebook = false;
             mUser = new EmptyUser();
         }else{
             Log.e("UserManager","someone tried to create a new user, but an instance already exists");
         }
-
     }
 
 

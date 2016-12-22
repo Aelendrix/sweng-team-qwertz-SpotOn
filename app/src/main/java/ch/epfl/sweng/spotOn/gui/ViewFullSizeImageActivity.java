@@ -3,7 +3,6 @@ package ch.epfl.sweng.spotOn.gui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,7 +11,6 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -60,10 +58,8 @@ public class ViewFullSizeImageActivity extends Activity {
                             if (mButtonsAreVisible) {
                                 makeButtonsDisappear();
                                 mButtonsAreVisible = false;
-                            } else {
-                                mUpvoteButton.setVisibility(View.VISIBLE);
-                                mDownvoteButton.setVisibility(View.VISIBLE);
-                                mReportButton.setVisibility(View.VISIBLE);
+                            } else if(UserManager.getInstance().isLogInThroughFacebook()) {
+                                makeButtonsAppear();
                                 mButtonsAreVisible = true;
                             }
                             return true;
@@ -135,7 +131,9 @@ public class ViewFullSizeImageActivity extends Activity {
                 colorNone();
             }
         }
-        makeButtonsAppear();
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            makeButtonsAppear();
+        }
     }
 
     public void recordUpvote(View view) {
@@ -184,15 +182,18 @@ public class ViewFullSizeImageActivity extends Activity {
             }
         }
     }
-
     public void reportOffensivePicture(View view) {
+        reportDialog();
+    }
+
+    public void reportPicture() {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             String picId = mFullScreenImageAdapter.getPicId();
             //If picture is in local database
             if(LocalDatabase.getInstance().hasKey(picId)) {
-                mFullScreenImageAdapter.reportOffensivePicture(view);
+                mFullScreenImageAdapter.reportOffensivePicture();
                 if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                     finish();
                 }
@@ -240,5 +241,10 @@ public class ViewFullSizeImageActivity extends Activity {
         this.finish();
         String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
         ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
+    }
+
+    public void reportDialog() {
+        ReportPictureDialog dialog = new ReportPictureDialog();
+        dialog.show(getFragmentManager(), "ReportPicture");
     }
 }

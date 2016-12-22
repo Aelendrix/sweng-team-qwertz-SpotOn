@@ -49,13 +49,10 @@
             android:theme="@style/com_facebook_activity_theme" />
 
         <receiver android:name=".fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
+        <receiver android:name=".fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
 
-
-        <receiver android:name="ch.epfl.sweng.spotOn.fileDeletionServices.ServerDeleteExpiredPhotoReceiver" />
-
-
-
-        <activity android:name="ch.epfl.sweng.spotOn.gui.TabActivity"
+        <activity
+            android:name=".gui.TabActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

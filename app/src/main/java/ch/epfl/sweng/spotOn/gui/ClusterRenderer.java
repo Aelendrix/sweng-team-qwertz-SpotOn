@@ -24,11 +24,10 @@ import java.util.Map;
  */
 public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
-    private boolean zoom = false;
     private GoogleMap mMap;
-    private ClusterManager mClusterManager;
     //Map of marker titles -> pins
     private Map<String, Pin> mMarkerPinMap;
+    private boolean isVeryZoomed = false;
 
     /**
      * Custom clusterRenderer
@@ -40,7 +39,6 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
         mMap = map;
-        mClusterManager = clusterManager;
         mMarkerPinMap = new HashMap<>();
     }
 
@@ -87,10 +85,13 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-        return cluster.getSize() >= 5  && !zoom;
+        //return isVeryUnZoomed || cluster.getSize() >=4  && !isVeryZoomed;
+        return cluster.getSize() >= 5  && !isVeryZoomed;
     }
 
     private void computeZoom(){
-        zoom = mMap.getMaxZoomLevel()-3 < mMap.getCameraPosition().zoom;
+        float zoomLevel = mMap.getCameraPosition().zoom;
+        isVeryZoomed = mMap.getMaxZoomLevel()-3 < zoomLevel;
+        //isVeryUnZoomed = 12.5 >= zoomLevel;
     }
 }

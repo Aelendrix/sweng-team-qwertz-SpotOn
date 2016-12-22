@@ -114,23 +114,12 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     }
 
-    /*
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Fragment f = this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
-        if (f != null) {
-            getFragmentManager().beginTransaction().remove(f).commit();
-            public void onProviderDisabled(String provider) {}
-        };
-    */
-
     /** function used to refresh the local location variable
      *  and apply it to our special marker on the map   */
     public void refreshMapLocation() {
         if(ConcreteLocationTracker.getInstance().hasValidLocation()){
             final LatLng newLocation = ConcreteLocationTracker.getInstance().getLatLng();
-            if(mMap!=null){
+            if(mMap!=null&&getContext()!=null){
                 Handler tempHandler = new Handler(Looper.getMainLooper());
                 if(mLocationMarker==null){
                     mLocationMarker = mMap.addMarker(new MarkerOptions()
@@ -288,7 +277,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     // LISTENER METHODS
     @Override
     public void updateLocation(Location newLocation) {
-        refreshMapLocation();
+            refreshMapLocation();
     }
 
     @Override

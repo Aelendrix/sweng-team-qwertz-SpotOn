@@ -22,7 +22,11 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testGetUserStoredInDB(){
-        UserManager.initialize();
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
         UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
@@ -38,7 +42,11 @@ public class UserStoredInDatabaseTest {
 
     @Test
     public void testSetUserStoredInDB(){
-        UserManager.initialize();
+        if(UserManager.instanceExists()){
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
         UserManager.getInstance().setUserFromFacebook("firstName", "lastName", "mlb");
         User user = UserManager.getInstance().getUser();
         userInDB = new UserStoredInDatabase(user);
@@ -59,6 +67,21 @@ public class UserStoredInDatabaseTest {
         Assert.assertEquals(userInDB.getUserId(), "mlb_test");
         Assert.assertEquals(userInDB.getKarma(), 12);
         Assert.assertEquals(userInDB.getPhotosTaken().equals(mapPhotoTaken), true);
+
+        DatabaseRef.deleteUserFromDB(user.getUserId());
+        UserManager.getInstance().destroyUser();
+    }
+
+    @Test
+    public void testUploadUserStoredInDB(){
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("first", "last", "ml");
+        User user = UserManager.getInstance().getUser();
+        userInDB = new UserStoredInDatabase(user);
+
+        userInDB.upload();
+
+        Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
 
         DatabaseRef.deleteUserFromDB(user.getUserId());
         UserManager.getInstance().destroyUser();
