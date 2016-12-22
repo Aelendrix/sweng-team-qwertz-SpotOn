@@ -63,4 +63,19 @@ public class UserStoredInDatabaseTest {
         DatabaseRef.deleteUserFromDB(user.getUserId());
         UserManager.getInstance().destroyUser();
     }
+
+    @Test
+    public void testUploadUserStoredInDB(){
+        UserManager.initialize();
+        UserManager.getInstance().setUserFromFacebook("first", "last", "ml");
+        User user = UserManager.getInstance().getUser();
+        userInDB = new UserStoredInDatabase(user);
+
+        userInDB.upload();
+
+        Assert.assertEquals(userInDB.getKarma(), User.INITIAL_KARMA);
+
+        DatabaseRef.deleteUserFromDB(user.getUserId());
+        UserManager.getInstance().destroyUser();
+    }
 }
