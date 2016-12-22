@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.gui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -150,8 +151,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-     @SuppressWarnings("UnusedParameters")
-     public void recordDownvote(View view){
+    @SuppressWarnings("UnusedParameters")
+    public void recordDownvote(View view){
         if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
         }
@@ -203,7 +204,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    public void reportOffensivePicture(View view){
+    public void reportOffensivePicture(){
         if(mCurrentPicture == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
