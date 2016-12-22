@@ -40,7 +40,7 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
-        LocalDatabaseTestUtils.initLocalDatabaseMockUser(true);
+        LocalDatabaseTestUtils.initLocalDatabaseMockUser(false);
     }
 
     @Test
@@ -49,8 +49,6 @@ public class FullPictureActivityTest {
         if(!UserManager.getInstance().isLogInThroughFacebook() || !UserManager.getInstance().userIsLoggedIn()){
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
-        onView(withId(R.id.extend_list_button)).perform(click());
-        onView(withId(R.id.order_newest_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote
         onView(withId(R.id.upvoteButton)).perform(click());
