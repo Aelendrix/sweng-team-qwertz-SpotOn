@@ -47,7 +47,6 @@
     <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
     <string name="contentDescriptionLoginTextView">LoginTextView</string>
     <string name="profile_menu">Profile</string>
-    <string name="title_activity_strong_action">StrongActionActivity</string>
     <string name="log_out_question">Do you want to log out ?</string>
     <string name="cancel">Cancel</string>
     <string name="report_question">Do you want to report this picture ?</string>

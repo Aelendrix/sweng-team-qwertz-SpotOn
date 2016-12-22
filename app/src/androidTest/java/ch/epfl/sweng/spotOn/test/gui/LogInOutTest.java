@@ -86,9 +86,9 @@ public class LogInOutTest {
         mDevice.waitForWindowUpdate(null,10000);
         Thread.sleep(2000);
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("LOG OUT")).perform(click());
+        onView(withText("Log Out")).perform(click());
 
 
     }

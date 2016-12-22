@@ -120,9 +120,9 @@ public class UserProfileActivityTest {
     public void deletePictureUserProfileActivity() {
         Intents.init();
         onView(withId(R.id.deletePictureButton)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.deletePictureButton)).perform(click());
-        onView(withText("DELETE")).perform(click());
+        onView(withText("Delete")).perform(click());
     }
 
     public ViewAction clickXY(final int x, final int y){

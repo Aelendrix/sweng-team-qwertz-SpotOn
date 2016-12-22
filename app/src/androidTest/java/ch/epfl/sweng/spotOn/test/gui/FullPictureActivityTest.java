@@ -70,9 +70,9 @@ public class FullPictureActivityTest {
         onView(withId(R.id.downvoteButton)).perform(click());
         onView(withId(R.id.upvoteButton)).perform(click());
         onView(withId(R.id.reportButton)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.reportButton)).perform(click());
-        onView(withText("REPORT")).perform(click());
+        onView(withText("Report")).perform(click());
     }
 
     @After
