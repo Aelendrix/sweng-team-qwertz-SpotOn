@@ -55,7 +55,6 @@ public class FullPictureActivityTest {
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         onView(withId(R.id.extend_list_button)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.order_newest_button)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //upvote and cancel the upvote
