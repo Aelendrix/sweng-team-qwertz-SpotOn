@@ -40,9 +40,11 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * created by Marie-Laure
@@ -112,6 +114,15 @@ public class UserProfileActivityTest {
         //this need to be changed, because the pressback occured before going into the FullSizeImage view
         //Espresso.pressBack();
         Intents.release();
+    }
+
+    @Test
+    public void deletePictureUserProfileActivity() {
+        Intents.init();
+        onView(withId(R.id.deletePictureButton)).perform(click());
+        onView(withText("CANCEL")).perform(click());
+        onView(withId(R.id.deletePictureButton)).perform(click());
+        onView(withText("DELETE")).perform(click());
     }
 
     public ViewAction clickXY(final int x, final int y){
