@@ -24,6 +24,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 public class ViewUserPhotoActivity extends Activity {
 
+    private final static int RESOURCE_IMAGE_DOWNLOADING = R.mipmap.image_downloading;
     private final static int RESOURCE_IMAGE_FAILURE =  R.mipmap.image_failure;
 
     @Override
@@ -35,6 +36,8 @@ public class ViewUserPhotoActivity extends Activity {
         final String pictureId = intent.getStringExtra(PictureVoteListAdapter.EXTRA_USER_PICTURE_ID);
 
         final ImageView userPicture = (ImageView) findViewById(R.id.imageViewUserPicture);
+        userPicture.setImageResource(RESOURCE_IMAGE_DOWNLOADING);
+
         final LocalDatabase localDB= LocalDatabase.getInstance();
         boolean retrieveFromServer = true;
         if(localDB.hasKey(pictureId)){

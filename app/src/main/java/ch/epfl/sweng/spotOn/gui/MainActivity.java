@@ -162,6 +162,8 @@ public final class MainActivity extends AppCompatActivity {
         // the app wouldn't open anymore and this toast would be displayed: "This app needs this
         // permission to be open"
         if(locationPermissionGiven()) {
+            // allow toasts to display error rmessaes
+            ServicesChecker.allowDisplayingToasts(true);
             //start the TabActivity
             Intent intent = new Intent(this, TabActivity.class);
             startActivity(intent);
@@ -226,6 +228,7 @@ public final class MainActivity extends AppCompatActivity {
         UserManager.initialize();
         UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.allowDisplayingToasts(false);
         ToastProvider.update(this);
     }
 
