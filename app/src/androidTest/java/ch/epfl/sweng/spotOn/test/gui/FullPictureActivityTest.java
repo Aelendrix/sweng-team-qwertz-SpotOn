@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
+import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
+import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.test.util.LocalDatabaseTestUtils;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
@@ -40,18 +42,13 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
-        if(UserManager.instanceExists()){
-            UserManager.getInstance().destroyUser();
-        }
-        UserManager.initialize();
-        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
-        LocalDatabaseTestUtils.initLocalDatabase(true);
+        LocalDatabaseTestUtils.initLocalDatabaseMockUser(true);
     }
 
     @Test
     public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        if(!UserManager.getInstance().isLogInThroughFacebook()){
+        if(!UserManager.getInstance().isLogInThroughFacebook() || !UserManager.getInstance().userIsLoggedIn()){
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         onView(withId(R.id.extend_list_button)).perform(click());

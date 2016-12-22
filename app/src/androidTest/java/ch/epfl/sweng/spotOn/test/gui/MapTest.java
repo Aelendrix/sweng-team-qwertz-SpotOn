@@ -47,6 +47,9 @@ public class MapTest {
             if(ConcreteLocationTracker.instanceExists()){
                 ConcreteLocationTracker.destroyInstance();
             }
+            if(UserManager.instanceExists()){
+                UserManager.getInstance().destroyUser();
+            }
 
             mMockLocationTracker = new MockLocationTracker_forTest();
             ConcreteLocationTracker.setMockLocationTracker(mMockLocationTracker);
