@@ -21,24 +21,6 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 
 public class FacebookLogOutDialog extends DialogFragment {
 
-    /*public interface StrongActionDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
-    }
-
-    StrongActionDialogListener mListener;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mListener = (StrongActionDialogListener) context;
-        }catch(ClassCastException e){
-            throw new ClassCastException(context.toString() + " must implement StrongActionDialogListener");
-        }
-    }*/
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
