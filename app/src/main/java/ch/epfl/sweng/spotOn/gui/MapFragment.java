@@ -41,8 +41,10 @@ import com.google.maps.android.clustering.ClusterManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -191,22 +193,32 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         mClusterManager = new ClusterManager<>(getContext(), mMap, new MarkerManager(mMap){
 
             /**
-             * Method called when clicking a marker that belongs in the mClusterManager: resolves
+             * Method called when clicking a marker: resolves
              * the bug that clicking on a marker from a non rendered cluster displayed nothing.
              * @param marker the clicked marker
              * @return the result of onClusterItemClick on the pin associated to the marker.
              */
             @Override
             public boolean onMarkerClick(Marker marker){
-                //Get the map matching each marker (title) to the corresponding pin
-                Map<String, Pin> markerPinMap = ClusterRenderer.getMarkerPinMap();
-                Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
-                if(markerPinMap.containsKey(marker.getTitle())) {
-                    //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
-                    Pin associatedPin = markerPinMap.get(marker.getTitle());
-                    return onClusterItemClick(associatedPin);
+                Set<Marker> setOfClusters = new HashSet<Marker>(mClusterManager.getClusterMarkerCollection().getMarkers());
+                if(setOfClusters.contains(marker)) {
+                    ToastProvider.printOverCurrent("onClusterClick working", Toast.LENGTH_LONG);
+                    return true;
                 } else {
-                    throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
+                    if (marker.getTitle().equals("position")) {
+                        return false;
+                    } else {
+                        //Get the map matching each marker (title) to the corresponding pin
+                        Map<String, Pin> markerPinMap = ((ClusterRenderer) mClusterManager.getRenderer()).getMarkerPinMap();
+                        Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
+                        if (markerPinMap.containsKey(marker.getTitle())) {
+                            //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
+                            Pin associatedPin = markerPinMap.get(marker.getTitle());
+                            return onClusterItemClick(associatedPin);
+                        } else {
+                            throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
+                        }
+                    }
                 }
             }
         });
@@ -264,7 +276,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
-        Log.d("onClusterItemClick", "accessed1");
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
         if (!pin.getAccessibility()) {
@@ -297,6 +308,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
+        Log.d("onClusterItemInfoWindow", "all good");
         String thumbID = pin.getPhotoObject().getPictureId();
         ImageAdapter imgAdapter = SeePicturesFragment.getImageAdapter();
         if(imgAdapter.containsThumbID(thumbID)) {

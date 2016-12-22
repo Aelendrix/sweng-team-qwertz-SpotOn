@@ -3,6 +3,7 @@ package ch.epfl.sweng.spotOn.gui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.google.maps.android.clustering.Cluster;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
@@ -29,9 +31,9 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
 
     public PhotoOnMarker(Context context, Pin pin){
         clickedPin = pin;
-        mPictureView = new ImageView(context);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPictureView.setLayoutParams(layoutParams);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        View view = inflater.inflate( R.layout.layout_googlemaps_info_window, null );
+        mPictureView = (ImageView) view.findViewById(R.id.infoWindow);
     }
 
     /**

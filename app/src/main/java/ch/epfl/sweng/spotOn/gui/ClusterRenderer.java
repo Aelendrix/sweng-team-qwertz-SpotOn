@@ -26,8 +26,9 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
     private boolean zoom = false;
     private GoogleMap mMap;
+    private ClusterManager mClusterManager;
     //Map of marker titles -> pins
-    private static Map<String, Pin> mMarkerPinMap;
+    private Map<String, Pin> mMarkerPinMap;
 
     /**
      * Custom clusterRenderer
@@ -39,13 +40,14 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
         mMap = map;
+        mClusterManager = clusterManager;
         mMarkerPinMap = new HashMap<>();
     }
 
     /**
-     * @return a copy of the markers, pins map
+     * @return a copy of the marker->pin map
      */
-    public static Map<String, Pin> getMarkerPinMap(){
+    public Map<String, Pin> getMarkerPinMap(){
         return new HashMap<>(mMarkerPinMap);
     }
 
@@ -63,18 +65,14 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
     }
 
     /**
-     * Add a marker (title) and its corresponding pin to the mMarkerPinMap
-     * @param pin
-     * @param marker
+     * Method called at each addition of a marker in the clusterManager
      */
     @Override
     protected void onClusterItemRendered(Pin pin, Marker marker){
-        // Needs to be the title of the marker and not the marker itself because the title won't
-        // change but the marker reference can change overtime so we would add the same element multiple times in the map.
-        if(!mMarkerPinMap.containsKey(marker.getTitle())){
-            mMarkerPinMap.put(marker.getTitle(), pin);
-        }
-        Log.d("onClusterItemRendered", String.valueOf(mMarkerPinMap.size()));
+        //Add a marker (title) and its corresponding pin to the mMarkerPinMap
+        //Needs to be the title of the marker and not the marker itself because the title won't change
+        //but the marker reference can change overtime so we would add the same element multiple times in the map.
+        mMarkerPinMap.put(marker.getTitle(), pin);
     }
 
 
@@ -89,7 +87,7 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-        return cluster.getSize() >=4  && !zoom;
+        return cluster.getSize() >= 5  && !zoom;
     }
 
     private void computeZoom(){
