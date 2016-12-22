@@ -123,6 +123,16 @@ public class LocalDatabase implements LocationTrackerListener{
         }
     }
 
+    /** adds the PhotoObject 'newObject' - used only when it is a picture from the user
+     *  NB : listeners need to be updated manually after that  */
+    public void addUserPictures(PhotoObject newObject) {
+        if (!mediaDataMap.containsKey(newObject.getPictureId())) {
+                    addPhotoObject(newObject);
+        }else{
+            Log.d("LocalDatabase", "WARNING - called addUserPictures(), but mediaDataMap does not contain key");
+        }
+    }
+
     /** notifies all listeners of a change of the database content - public as it needs to be called in tests after manually adding objects*/
     public void notifyListeners(){
         if( ! mListeners.isEmpty() ){
@@ -216,6 +226,9 @@ public class LocalDatabase implements LocationTrackerListener{
                         if(userID == null){
                             LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                         }
+                        else if(photoObject.getAuthorId().equals(userID)){
+                            LocalDatabase.getInstance().addUserPictures(photoObject);
+                        }
                         else if(!(photoObject.getReportersList().contains(userID))) {
                             LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
                         }
@@ -262,6 +275,9 @@ public class LocalDatabase implements LocationTrackerListener{
                         PhotoObject photoObject = photoSnapshot.getValue(PhotoObjectStoredInDatabase.class).convertToPhotoObject();
                         if(userID == null){
                             LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);
+                        }
+                        else if(photoObject.getAuthorId().equals(userID)){
+                            LocalDatabase.getInstance().addUserPictures(photoObject);
                         }
                         else if(!(photoObject.getReportersList().contains(userID))) {
                             LocalDatabase.getInstance().addIfWithinFetchRadius(photoObject, mLocationTempCopy);

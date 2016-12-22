@@ -30,7 +30,7 @@ public class UserProfileActivity extends AppCompatActivity implements LocalDatab
 
         mUser = UserManager.getInstance().getUser();
 
-        if( !mUser.isLoggedIn() || mUser.getUserId()==null){
+        if( !mUser.isLoggedIn() || mUser.getUserId() == null){
             Log.e("UserProfileActivity", "UserId is null");
             throw new IllegalStateException("UserProfileActivity userId is null");
 
