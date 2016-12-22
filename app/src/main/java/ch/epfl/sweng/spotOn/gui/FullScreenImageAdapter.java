@@ -151,8 +151,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
     }
 
-     @SuppressWarnings("UnusedParameters")
-     public void recordDownvote(View view){
+    @SuppressWarnings("UnusedParameters")
+    public void recordDownvote(View view){
         if(alreadyDownvoted(UserManager.getInstance().getUser().getUserId())){
             vote(0);
         }
@@ -208,14 +208,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(mCurrentPicture == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            Intent strongActionIntent = new Intent(mActivity, StrongActionActivity.class);
-            strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Report");
-            mActivity.startActivity(strongActionIntent);
-            if(StrongActionActivity.report) {
-                String userId = UserManager.getInstance().getUser().getUserId();
-                String toastMessage = mCurrentPicture.processReport(userId);
-                ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
-            }
+            //Intent strongActionIntent = new Intent(mActivity, StrongActionActivity.class);
+            //strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Report");
+            //mActivity.startActivity(strongActionIntent);
+            String userId = UserManager.getInstance().getUser().getUserId();
+            String toastMessage = mCurrentPicture.processReport(userId);
+            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
         }
     }
 

@@ -1,6 +1,6 @@
 package ch.epfl.sweng.spotOn.gui;
 
-import android.app.Service;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -22,7 +22,6 @@ import com.facebook.login.LoginManager;
 import ch.epfl.sweng.spotOn.R;
 
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
@@ -131,9 +130,10 @@ public class TabActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-                Intent strongActionIntent = new Intent(this, StrongActionActivity.class);
-                strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Log out");
-                startActivity(strongActionIntent);
+                //Intent strongActionIntent = new Intent(this, StrongActionActivity.class);
+                //strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Log out");
+                //startActivity(strongActionIntent);
+                showDialog();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
@@ -235,5 +235,23 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
+    public void showDialog() {
+        DialogFragment dialog = new FacebookLogOutDialog();
+        dialog.show(getFragmentManager(), "FacebookLogOut");
+    }
+/*
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        disconnectFacebook();
+        UserManager user = UserManager.getInstance();
+        user.destroyUser();
+        Log.d("Dialog", "Used method");
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog){
+        dialog.dismiss();
+    }
+    */
 
 }
