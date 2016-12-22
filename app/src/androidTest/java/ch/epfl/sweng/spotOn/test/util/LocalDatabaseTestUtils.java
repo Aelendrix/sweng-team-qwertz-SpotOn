@@ -31,8 +31,8 @@ public class LocalDatabaseTestUtils {
     public static void initLocalDatabase(boolean onlyOnePhoto) throws InterruptedException {
         ServicesChecker.allowDisplayingToasts(false);
         Location location = new Location("testLocationProvider");
-        location.setLatitude(0.52890355757567);
-        location.setLongitude(0.569420238493345);
+        location.setLatitude(0.52890355757888);
+        location.setLongitude(0.569420238493888);
         location.setAltitude(0);
         location.setTime(System.currentTimeMillis());
 

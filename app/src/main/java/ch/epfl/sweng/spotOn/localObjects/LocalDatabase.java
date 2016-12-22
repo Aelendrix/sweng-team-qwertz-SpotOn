@@ -51,9 +51,13 @@ public class LocalDatabase implements LocationTrackerListener{
 
     // CONSTRUCTOR / INITIALIZE()
     public static void initialize(LocationTracker l){
+        if(mSingleInstance==null) {
             mSingleInstance = new LocalDatabase(l);
             l.addListener(mSingleInstance);
             mSingleInstance.setAutoRefresh();
+        }else{
+            Log.d("LocalDatabase","tried to initialize, but an instance already exists");
+        }
     }
 
     private LocalDatabase(LocationTracker l) {
