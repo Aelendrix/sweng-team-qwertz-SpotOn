@@ -19,6 +19,7 @@ import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.UserManager;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -51,8 +52,10 @@ public class mainActivityTest_notLoggedInButton {
     public void mainActivityNotLoggedInTest() throws InterruptedException {
         mActivityTestRule.launchActivity(new Intent());
         //in the MainActivity
-        onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.dontLogInButton)).perform(click());
+        onData(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
+        onData(withId(R.id.dontLogInButton)).perform(click());
+        //onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
+        //onView(withId(R.id.dontLogInButton)).perform(click());
 
         //in the TabActivity
         onView(withId(R.id.log_out)).check(matches(isDisplayed()));
@@ -65,7 +68,7 @@ public class mainActivityTest_notLoggedInButton {
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
     }
 
-    
+
 
 
 }
