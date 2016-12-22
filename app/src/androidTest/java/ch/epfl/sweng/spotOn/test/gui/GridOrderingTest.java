@@ -52,6 +52,7 @@ public class GridOrderingTest {
         //order by oldest
         onView(withId(R.id.extend_list_button)).perform(click());
         onView(withId(R.id.order_hottest_button)).perform(click());
+        
     }
 
     @After
