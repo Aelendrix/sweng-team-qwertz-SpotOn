@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
+import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -45,7 +46,7 @@ public class mainActivityTest_notLoggedInButton {
     public void mainActivityNotLoggedInTest() throws InterruptedException {
         mActivityTestRule.launchActivity(new Intent());
         //in the MainActivity
-        Thread.sleep(4000);
+        Espresso.closeSoftKeyboard();
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
         onView(withId(R.id.dontLogInButton)).perform(click());
 
