@@ -109,9 +109,13 @@ public class TestInitUtils {
     }
 
     public static void initContextMockUser(User user){   // same with MockLocationTracker default location
-        UserManager.getInstance().destroyUser();
-        UserManager.initialize();
+        if(UserManager.instanceExists()) {
+            UserManager.getInstance().destroyUser();
+        }else {
+            UserManager.initialize();
+        }
         UserManager.getInstance().setMockUser(user);
+        UserManager.getInstance().setIsLoginThroughFacebook(true);
         // destroy LocationTrackerSingleton if need be
         if(ConcreteLocationTracker.instanceExists()){
             ConcreteLocationTracker.destroyInstance();

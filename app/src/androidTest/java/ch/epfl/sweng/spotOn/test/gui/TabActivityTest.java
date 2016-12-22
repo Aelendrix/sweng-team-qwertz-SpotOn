@@ -109,5 +109,6 @@ public class TabActivityTest {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TabActivityTest : concreteLocationTracker mock instance not deleted");
         }
+        UserManager.getInstance().destroyUser();
     }
 }

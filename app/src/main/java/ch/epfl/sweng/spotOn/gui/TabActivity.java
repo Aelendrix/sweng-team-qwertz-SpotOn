@@ -101,10 +101,6 @@ public class TabActivity extends AppCompatActivity{
         mCameraFragment.sendPictureToServer();
     }
 
-    /*
-     * Rotates the picture by 90°
-     */
-
     @SuppressWarnings("UnusedParameters")
     public void editPicture(View view){
         mCameraFragment.editPicture();
@@ -165,6 +161,7 @@ public class TabActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+
     private void unloadLocalDataSingleton(){
         //disable the service checker to remove the toast
         ServicesChecker.allowDisplayingToasts(false);

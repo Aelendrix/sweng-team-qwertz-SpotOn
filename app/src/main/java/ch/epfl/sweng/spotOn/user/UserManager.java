@@ -83,6 +83,10 @@ public class UserManager {
         return isLogInThroughFacebook;
     }
 
+    public void setIsLoginThroughFacebook(boolean b){
+        isLogInThroughFacebook = b;
+    }
+
     // SET USERS METHODS
     public void setUserFromFacebook(String firstName, String lastName, String userId) {
         if(mSingleInstance==null){
