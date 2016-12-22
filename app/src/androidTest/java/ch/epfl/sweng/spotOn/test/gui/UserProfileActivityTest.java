@@ -87,6 +87,7 @@ public class UserProfileActivityTest {
         Intents.init();
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
         //intended(hasComponent(ViewUserPhotoActivity.class.getName()));
+        //this need to be changed, because the pressback occured before going into the FullSizeImage view
         //Espresso.pressBack();
         Intents.release();
     }
