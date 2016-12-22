@@ -31,16 +31,33 @@ public class PhotoObjectStoredInDatabase {
     private List<String> mDownvotersList;
     private List<String> mReportersList;
 
+    // default constructor required to upload object to firebase
     public PhotoObjectStoredInDatabase(){
-        // default constructor required to upload object to firebase
     }
 
-    /** Constructor meant to be called by the conversion function in the PhotoObject class     */
+    /**
+     * Constructor meant to be called by the conversion function in the PhotoObject class
+     * @param fullSizePhotoLink web url of the full size picture
+     * @param thumbnailAsString string containing the information of the tumbnail
+     * @param pictureId the unique reference ID of the picture in the firebase DB
+     * @param authorID the author unique ID
+     * @param photoName the name of the picture
+     * @param createdDate the date of creation of the picture
+     * @param expireDate the date of expiration of the picture
+     * @param latitude the latitude coordinate on the map of when the picture was created
+     * @param longitude the longitude coordinate on the map of when the picture was created
+     * @param upVotes the amount of upVotes on this picture
+     * @param downVotes the amount of downVotes on this picture
+     * @param reports the amount users whom reported this picture
+     * @param upVotersList the list of users whom upVoted this picture
+     * @param downVotersList the list of users whom downVoted this picture
+     * @param reportersList the list of users whom reported this picture
+     */
     public PhotoObjectStoredInDatabase(String fullSizePhotoLink, String thumbnailAsString,
                                        String pictureId, String authorID, String photoName,
                                        Timestamp createdDate, Timestamp expireDate, double latitude,
-                                       double longitude, int upvotes, int downvotes, int reports,
-                                       List<String> upvotersList, List<String> downvotersList,
+                                       double longitude, int upVotes, int downVotes, int reports,
+                                       List<String> upVotersList, List<String> downVotersList,
                                        List<String> reportersList){
         mFullSizePhotoLink=fullSizePhotoLink;
         mThumbnailAsString=thumbnailAsString;
@@ -51,34 +68,35 @@ public class PhotoObjectStoredInDatabase {
         mExpireDate=expireDate.getTime();
         mLatitude=latitude;
         mLongitude=longitude;
-        mNbUpvotes = upvotes;
-        mNbDownvotes = downvotes;
+        mNbUpvotes = upVotes;
+        mNbDownvotes = downVotes;
         mNbReports = reports;
-        mUpvotersList = new ArrayList<>(upvotersList);
-        mDownvotersList = new ArrayList<>(downvotersList);
+        mUpvotersList = new ArrayList<>(upVotersList);
+        mDownvotersList = new ArrayList<>(downVotersList);
         mReportersList = new ArrayList<>(reportersList);
     }
 
 
 // PUBLIC METHODS OFFERED BY THIS CLASS
 
-    // converts the object into a PhotoObject, by converting the thumbnail into a Bitmap
+    /** converts the object into a PhotoObject, by converting the thumbnail into a Bitmap
+     */
     public PhotoObject convertToPhotoObject(){
         Bitmap thumbnail = convertStringToBitmapImage(mThumbnailAsString);
-        List<String> upvotersList;
-        List<String> downvotersList;
+        List<String> upVotersList;
+        List<String> downVotersList;
         List<String> reportersList;
 
         if(mUpvotersList == null){
-            upvotersList = Collections.emptyList();
+            upVotersList = Collections.emptyList();
         }else{
-            upvotersList = new ArrayList<>(mUpvotersList);
+            upVotersList = new ArrayList<>(mUpvotersList);
         }
 
         if(mDownvotersList == null){
-            downvotersList = Collections.emptyList();
+            downVotersList = Collections.emptyList();
         }else{
-            downvotersList = new ArrayList<>((mDownvotersList));
+            downVotersList = new ArrayList<>((mDownvotersList));
         }
 
         if(mReportersList == null){
@@ -89,12 +107,13 @@ public class PhotoObjectStoredInDatabase {
         }
 
         return new PhotoObject(mFullSizePhotoLink, thumbnail, mPictureId, mAuthorID, mPhotoName, mCreatedDate,
-                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mNbReports, upvotersList, downvotersList,
+                mLatitude, mLongitude, mNbUpvotes, mNbDownvotes, mNbReports, upVotersList, downVotersList,
                 reportersList);
     }
 
 
     // rather meant to be used for debug
+    @Override
     public String toString(){
         String result="PhotoObject";
         result+="   ---   pictureID="+mPictureId;
@@ -112,7 +131,11 @@ public class PhotoObjectStoredInDatabase {
 
 // PRIVATE METHODS FOR USE IN THE CLASS ONLY
 
-    // convert a bitmap to a String
+    /**
+     * convert a String to a BitMap
+     * @param s the string to be converted
+     * @return the bitmap decoded from the string
+     */
     private Bitmap convertStringToBitmapImage(String s){
         byte[] stringByteArray = Base64.decode(s, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(stringByteArray, 0, stringByteArray.length);

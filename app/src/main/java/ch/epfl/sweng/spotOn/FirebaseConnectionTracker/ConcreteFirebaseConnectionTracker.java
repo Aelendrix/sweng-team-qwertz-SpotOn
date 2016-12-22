@@ -13,6 +13,7 @@ import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 
 /**
  * Created by quentin on 07.12.16.
+ * This monitor whether or not we have a connection with firebase and provide listener interface for connection/disconnection event
  */
 
 public class ConcreteFirebaseConnectionTracker implements FirebaseConnectionTracker {
@@ -42,18 +43,26 @@ public class ConcreteFirebaseConnectionTracker implements FirebaseConnectionTrac
         });
     }
 
+    /**
+     * Get the reference of the only object, since we use the Singleton pattern
+     * @return mSingleInstance, the instance of the singleton
+     */
     public static ConcreteFirebaseConnectionTracker getInstance() {
         if (mSingleInstance == null){
             mSingleInstance = new ConcreteFirebaseConnectionTracker();
         }
         return mSingleInstance;
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addListener(FirebaseConnectionListener l){
         listeners.add(l);
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isConnected(){
         return currentStatus;
