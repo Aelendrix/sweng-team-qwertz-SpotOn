@@ -7,9 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
@@ -44,8 +42,8 @@ public class FacebookLogOutDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.strong_action_message)
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.log_out_question)
+        .setPositiveButton(R.string.log_out, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 disconnectFacebook();
@@ -55,7 +53,7 @@ public class FacebookLogOutDialog extends DialogFragment {
                 startActivity(intent);
             }
         })
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 FacebookLogOutDialog.this.dismiss();
@@ -69,8 +67,7 @@ public class FacebookLogOutDialog extends DialogFragment {
         positiveButton.setTextColor(Color.parseColor("#4B3832"));
         Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
         negativeButton.setTextColor(Color.parseColor("#4B3832"));
-        LinearLayout.LayoutParams negativeParameters = (LinearLayout.LayoutParams) negativeButton.getLayoutParams();
-        negativeParameters.gravity = Gravity.LEFT;
+
         return dialog;
     }
 

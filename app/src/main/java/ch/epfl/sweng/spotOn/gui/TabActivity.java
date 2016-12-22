@@ -130,9 +130,6 @@ public class TabActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-                //Intent strongActionIntent = new Intent(this, StrongActionActivity.class);
-                //strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Log out");
-                //startActivity(strongActionIntent);
                 showDialog();
                 return true;
             case R.id.action_about:
@@ -153,14 +150,6 @@ public class TabActivity extends AppCompatActivity{
         }
     }
 
-    private void disconnectFacebook() {
-        Profile profile = Profile.getCurrentProfile();
-        if (profile != null) {
-            LoginManager.getInstance().logOut();
-            //go to the mainActivity in the activity stack
-            finish();
-        }
-    }
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
@@ -239,19 +228,5 @@ public class TabActivity extends AppCompatActivity{
         DialogFragment dialog = new FacebookLogOutDialog();
         dialog.show(getFragmentManager(), "FacebookLogOut");
     }
-/*
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        disconnectFacebook();
-        UserManager user = UserManager.getInstance();
-        user.destroyUser();
-        Log.d("Dialog", "Used method");
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog){
-        dialog.dismiss();
-    }
-    */
 
 }

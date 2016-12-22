@@ -97,9 +97,6 @@
 
         <activity android:name=".gui.EditPictureActivity" />
         <activity android:name=".gui.ViewUserPhotoActivity" />
-        <activity
-            android:name=".gui.StrongActionActivity"
-            android:theme="@style/AppTheme.TextPopupWindow" />
     </application>
 
 </manifest>

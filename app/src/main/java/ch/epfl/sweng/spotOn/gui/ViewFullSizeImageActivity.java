@@ -184,15 +184,18 @@ public class ViewFullSizeImageActivity extends Activity {
             }
         }
     }
-
     public void reportOffensivePicture(View view) {
+        reportDialog();
+    }
+
+    public void reportPicture() {
         if( ! UserManager.getInstance().userIsLoggedIn() ){
             ToastProvider.printOverCurrent(ServicesChecker.getInstance().provideLoginErrorMessage(), Toast.LENGTH_LONG);
         }else {
             String picId = mFullScreenImageAdapter.getPicId();
             //If picture is in local database
             if(LocalDatabase.getInstance().hasKey(picId)) {
-                mFullScreenImageAdapter.reportOffensivePicture(view);
+                mFullScreenImageAdapter.reportOffensivePicture();
                 if (!mUserID.equals(mFullScreenImageAdapter.getAuthorOfDisplayedPicture())) {
                     finish();
                 }
@@ -240,5 +243,10 @@ public class ViewFullSizeImageActivity extends Activity {
         this.finish();
         String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
         ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
+    }
+
+    public void reportDialog() {
+        ReportPictureDialog dialog = new ReportPictureDialog();
+        dialog.show(getFragmentManager(), "ReportPicture");
     }
 }

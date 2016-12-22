@@ -204,13 +204,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
 
-    public void reportOffensivePicture(View view){
+    public void reportOffensivePicture(){
         if(mCurrentPicture == null) {
             Log.e("FullScreenImageAdapter","reportOffensivePicture mDisplayedMedia is null");
         }else{
-            //Intent strongActionIntent = new Intent(mActivity, StrongActionActivity.class);
-            //strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Report");
-            //mActivity.startActivity(strongActionIntent);
             String userId = UserManager.getInstance().getUser().getUserId();
             String toastMessage = mCurrentPicture.processReport(userId);
             ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_SHORT);
