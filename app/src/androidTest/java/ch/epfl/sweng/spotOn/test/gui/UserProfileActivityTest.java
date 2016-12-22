@@ -1,5 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
+import android.support.annotation.NonNull;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
@@ -11,11 +12,16 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.util.HashMap;
 
 import ch.epfl.sweng.spotOn.R;
@@ -51,15 +57,31 @@ public class UserProfileActivityTest {
             {
                 @Override
                 public void beforeActivityLaunched(){
+
+                    final Object lock1 = new Object();
                     po = PhotoObjectTestUtils.germaynDeryckePO();
-                    po.uploadWithoutFeedback();
-
+                    po.upload(true, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if(task.getException()!=null){
+                                lock1.notify();
+                                throw new IOError(new IOException("LocalDatabaseTestUtils : ERROR - uploading first testPhotoObject failed"));
+                            }else{
+                                synchronized (lock1){
+                                    lock1.notify();
+                                }
+                            }
+                        }
+                    });
                     try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        System.err.print(e);
+                        synchronized (lock1) {
+                            lock1.wait();
+                        }
                     }
-
+                    catch(InterruptedException e)
+                    {
+                        throw new AssertionError("Interrupted Exception");
+                    }
                     HashMap<String, Long> h = new HashMap<>();
                     h.put(po.getPictureId(), po.getCreatedDate().getTime());
 
