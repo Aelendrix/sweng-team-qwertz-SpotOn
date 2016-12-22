@@ -48,7 +48,7 @@ public class FullPictureActivityTest {
     @Test
     public void launchFullPictureActivityAndVote() throws Exception{
         mActivityTestRule.launchActivity(new Intent());
-        if(!UserManager.getInstance().isLogInThroughFacebook() | !UserManager.getInstance().userIsLoggedIn()){
+        if(!UserManager.getInstance().isLogInThroughFacebook() || !UserManager.getInstance().userIsLoggedIn()){
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         onView(withId(R.id.extend_list_button)).perform(click());
