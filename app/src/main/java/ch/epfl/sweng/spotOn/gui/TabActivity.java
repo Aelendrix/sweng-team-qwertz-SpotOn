@@ -66,6 +66,12 @@ public class TabActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unloadLocalDataSingleton();
+    }
+
     /*
     Disables the hardware back button of the phone
      */
@@ -128,10 +134,12 @@ public class TabActivity extends AppCompatActivity{
     /* Handles what action to take when the user clicks on a menu item in the options menu     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //no need to break in this switch, because we return a boolean
         switch (item.getItemId()) {
             case R.id.log_out:
                 showDialog();
                 return true;
+
             case R.id.action_about:
                 Intent intent = new Intent(this, AboutPage.class);
                 startActivity(intent);
@@ -149,19 +157,18 @@ public class TabActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+    private void unloadLocalDataSingleton(){
+        //disable the service checker to remove the toast
+        ServicesChecker.allowDisplayingToasts(false);
+        //TODO: firebase.reset
+        LocalDatabase.getInstance().clear();
+    }
 
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
-        //click on the rightmost tab everytime
-        //TODO maybe change this
-        Log.d("xD",mTabLayout.getTabCount()+" ");
-        if(UserManager.getInstance().isLogInThroughFacebook()) {
-            mTabLayout.getTabAt(2).select();
-        }
-        else{
-            mTabLayout.getTabAt(1).select();
-        }
+        //click on the rightmost tab every time
+            mTabLayout.getTabAt(mTabLayout.getTabCount()-1).select();
     }
 
     @SuppressWarnings("UnusedParameters")

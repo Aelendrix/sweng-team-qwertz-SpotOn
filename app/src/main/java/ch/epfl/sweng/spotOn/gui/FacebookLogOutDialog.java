@@ -46,9 +46,10 @@ public class FacebookLogOutDialog extends DialogFragment {
         .setPositiveButton(R.string.log_out, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                disconnectFacebook();
-                UserManager user = UserManager.getInstance();
-                user.destroyUser();
+                if(UserManager.getInstance().isLogInThroughFacebook()) {
+                    disconnectFacebook();
+                }
+                UserManager.getInstance().destroyUser();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
             }
