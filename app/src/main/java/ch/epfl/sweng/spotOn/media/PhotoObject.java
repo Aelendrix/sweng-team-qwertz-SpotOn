@@ -55,7 +55,7 @@ public class PhotoObject {
     private final int DOWNVOTE_KARMA_GIVEN = -5;
     private final int UPVOTE_KARMA_GIVEN = 10;
 
-    private final int MAX_NB_REPORTS = 2;
+    private final int MAX_NB_REPORTS = 3;
     private final int REPORT_DECREASE_KARMA = -20;
 
     private Bitmap mFullsizeImage;
@@ -274,17 +274,19 @@ public class PhotoObject {
             resultProcess = "You can't report your own picture! But you can delete it from your profile page";
         }
         else{
-            resultProcess = "Thank you for reporting this picture.";
-            mNbReports++;
-            mReportersList.add(reporterID);
+            if(mReportersList.contains(reporterID)){
+                resultProcess = "You have already reported this picture.";
+            }
+            else {
+                resultProcess = "Thank you for reporting this picture.";
+                mReportersList.add(reporterID);
+                mNbReports = mReportersList.size();
 
-            if (mFullsizeImageLink != null) {
                 DatabaseReference DBref = DatabaseRef.getMediaDirectory();
                 DBref.child(mPictureId).child("reports").setValue(mNbReports);
                 DBref.child(mPictureId).child("reportersList").setValue(mReportersList);
-            }
-            if (mNbReports >= MAX_NB_REPORTS) {
-                if (mFullsizeImageLink != null) {
+
+                if (mNbReports >= MAX_NB_REPORTS) {
                     DatabaseRef.deletePhotoObjectFromDB(mPictureId);
                     StorageRef.deletePictureFromStorage(mPictureId);
                     giveAuthorHisKarma(REPORT_DECREASE_KARMA);
@@ -293,7 +295,6 @@ public class PhotoObject {
 
             LocalDatabase.getInstance().removePhotoObject(mPictureId);
             LocalDatabase.getInstance().notifyListeners();
-
         }
         return resultProcess;
     }
