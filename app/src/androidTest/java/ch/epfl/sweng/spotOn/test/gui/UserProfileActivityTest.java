@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.support.annotation.NonNull;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -26,13 +25,10 @@ import java.util.HashMap;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.UserProfileActivity;
-import ch.epfl.sweng.spotOn.gui.ViewUserPhotoActivity;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
-import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
-import ch.epfl.sweng.spotOn.test.util.MockLocationTracker_forTest;
 import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
@@ -40,8 +36,6 @@ import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**

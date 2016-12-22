@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
