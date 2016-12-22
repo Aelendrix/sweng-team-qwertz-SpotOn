@@ -98,10 +98,8 @@ public class UserProfileActivityTest {
                 new CoordinatesProvider() {
                     @Override
                     public float[] calculateCoordinates(View view) {
-
                         final int[] screenPos = new int[2];
                         view.getLocationOnScreen(screenPos);
-
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
                         return new float[] {screenX, screenY};
