@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,7 +48,7 @@ public class ViewUserPhotoActivity extends Activity {
                             public void onComplete(@NonNull Task<byte[]> retrieveFullSizePicTask) {
                                 if (retrieveFullSizePicTask.getException() != null) {
                                     userPicture.setImageResource(RESOURCE_IMAGE_FAILURE);
-                                    throw new Error("ViewUserPhotoActivity : Retrieving fullSizePicture with pictureId : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
+                                    Log.d("ViewUserPhotoActivity","Retrieving fullSizePicture with pictureId : \n" + pictureId + "failed due to :\n " + retrieveFullSizePicTask.getException());
 
                                 } else {
                                     Bitmap obtainedImage = BitmapFactory.decodeByteArray(retrieveFullSizePicTask.getResult(), 0, retrieveFullSizePicTask.getResult().length);
