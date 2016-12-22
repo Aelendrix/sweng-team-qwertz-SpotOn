@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -104,7 +105,10 @@ public class TabActivity extends AppCompatActivity{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mPicturesFragment, getResources().getString(R.string.tab_aroundme));
-        adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        //this tab is useless if you are not logged-in
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            adapter.addFragment(mCameraFragment, getResources().getString(R.string.tab_camera));
+        }
         adapter.addFragment(mMapFragment, getResources().getString(R.string.tab_map));
         viewPager.setAdapter(adapter);
     }
@@ -113,7 +117,12 @@ public class TabActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options, menu);
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            inflater.inflate(R.menu.options, menu);
+        }
+        else{
+            inflater.inflate(R.menu.options_no_user, menu);
+        }
         return true;
     }
 
@@ -122,16 +131,6 @@ public class TabActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
-               /* if( ! UserManager.getInstance().userIsLoggedIn() ){
-                    // to provide a way to log back in - needs to be improved todo
-                    finish();
-                    return true;
-                } else {
-                    disconnectFacebook();
-                    UserManager user = UserManager.getInstance();
-                    user.destroyUser();
-                    return true;
-                }*/
                 Intent strongActionIntent = new Intent(this, StrongActionActivity.class);
                 strongActionIntent.putExtra(MainActivity.STRONG_ACTION_REQUEST, "Log out");
                 startActivity(strongActionIntent);
@@ -165,7 +164,15 @@ public class TabActivity extends AppCompatActivity{
 
     @SuppressWarnings("UnusedParameters")
     public void onEmptyGridButtonClick(View v){
-        mTabLayout.getTabAt(2).select();
+        //click on the rightmost tab everytime
+        //TODO maybe change this
+        Log.d("xD",mTabLayout.getTabCount()+" ");
+        if(UserManager.getInstance().isLogInThroughFacebook()) {
+            mTabLayout.getTabAt(2).select();
+        }
+        else{
+            mTabLayout.getTabAt(1).select();
+        }
     }
 
     @SuppressWarnings("UnusedParameters")

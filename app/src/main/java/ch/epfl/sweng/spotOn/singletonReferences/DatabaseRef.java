@@ -31,9 +31,10 @@ public class DatabaseRef{
         return FirebaseDatabase.getInstance().getReference();
     }
 
-
-    /* methods for deletion */
-
+    /**
+     * delete a photoObject depending of his pictureID
+     * @param pictureID a unique ID linked of a picture in the firebase DB
+     */
     public static void deletePhotoObjectFromDB(String pictureID){
 
         if(pictureID == null){
@@ -43,13 +44,16 @@ public class DatabaseRef{
         }
     }
 
+    /**
+     * delete a photoObject depending of his pictureID
+     * @param userID a unique ID linked of a user in the firebase DB; the ID is the real facebookID if the user.
+     */
     public static void deleteUserFromDB(String userID){
         mUsersDirectory.child(userID).removeValue();
     }
 
 // CONSTRUCTOR FOR SINGLETON
     private DatabaseRef(){
-        //empty
     }
 }
 

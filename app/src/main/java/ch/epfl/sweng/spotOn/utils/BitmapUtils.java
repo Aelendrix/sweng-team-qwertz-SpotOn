@@ -16,11 +16,11 @@ import ch.epfl.sweng.spotOn.BuildConfig;
 
 /**
  * Created by quentin on 17.11.16.
+ * Utility class used for bitmap operation
  */
-
 public class BitmapUtils {
-
-    /** encodes the passed bitmap into a string
+    /**
+     * encodes the passed bitmap into a string
      */
     public static String encodeBitmapAsString(Bitmap img){
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
@@ -28,7 +28,8 @@ public class BitmapUtils {
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
-    /** creates the thumbnail from this object by reducing the resolution of the fullSizeImage
+    /**
+     *  creates the thumbnail from this object by reducing the resolution of the fullSizeImage
      */
     public static Bitmap createThumbnail(Bitmap fullSizeImage, int thumbnailSize){
         return ThumbnailUtils.extractThumbnail(fullSizeImage, thumbnailSize, thumbnailSize);
@@ -53,5 +54,4 @@ public class BitmapUtils {
         }
         return uriToReturn;
     }
-
 }

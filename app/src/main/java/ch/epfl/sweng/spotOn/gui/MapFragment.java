@@ -108,17 +108,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     }
 
-    /*
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Fragment f = this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
-        if (f != null) {
-            getFragmentManager().beginTransaction().remove(f).commit();
-            public void onProviderDisabled(String provider) {}
-        };
-    */
-
     /** function used to refresh the local location variable
      *  and apply it to our special marker on the map   */
     public void refreshMapLocation() {

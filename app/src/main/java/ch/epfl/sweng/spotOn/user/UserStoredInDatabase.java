@@ -19,9 +19,8 @@ public class UserStoredInDatabase {
     private long mKarma;
     private Map<String, Long> mPhotosTaken;
 
-
+    @SuppressWarnings("unused")
     public UserStoredInDatabase(){} // needed for use of firebase database
-
 
     public UserStoredInDatabase(User user){
         mFirstName = user.getFirstName();
@@ -31,21 +30,21 @@ public class UserStoredInDatabase {
         mPhotosTaken = user.getPhotosTaken();
     }
 
-
-    /* Add a new user in the database with its karma instantiated to a arbitrary value*/
+    /**
+     * Add a new user in the database with its karma instantiated to a arbitrary value
+     */
     public void upload(){
         DatabaseReference DBRef = DatabaseRef.getUsersDirectory();
         DBRef.child(mUserId).setValue(this);
     }
 
-
+    //Those setter and getter are used by firebase
     //PUBLIC GETTERS
     public String getFirstName(){ return mFirstName; }
     public String getLastName(){ return mLastName; }
     public String getUserId(){ return mUserId; }
     public long getKarma() { return mKarma; }
     public Map<String, Long> getPhotosTaken(){ return mPhotosTaken; }
-
 
     //PUBLIC SETTERS
     public void setFirstName(String firstName){ mFirstName = firstName; }

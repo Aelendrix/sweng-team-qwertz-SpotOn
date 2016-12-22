@@ -4,7 +4,8 @@ package ch.epfl.sweng.spotOn.localisation;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-/** Wrapper for the class LocationManager, needed for testing the LocationTracker with mock locations
+/**
+ *  Wrapper for the class LocationManager, needed for testing the LocationTracker with mock locations
  */
 
 public class ConcreteLocationManagerWrapper implements LocationManagerWrapper {
