@@ -88,7 +88,7 @@ public class UserManager {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser == null || !mUser.isLoggedIn()){
+        if(mUser == null){
             isLogInThroughFacebook = true;
             RealUser newUser = new RealUser(firstName,lastName, userId, mSingleInstance);
             newUser.getUserAttributesFromDB();
@@ -103,7 +103,7 @@ public class UserManager {
         if(mSingleInstance==null){
             throw new IllegalStateException("UserManager should be initialized");
         }
-        if(mUser==null || !mUser.isLoggedIn()){
+        if(mUser==null){
             isLogInThroughFacebook = false;
             mUser = new EmptyUser();
         }else{
