@@ -43,7 +43,7 @@ public class FullPictureActivityTest {
 
     @Before
     public void initLocalDatabase() throws InterruptedException{
-        LocalDatabaseTestUtils.initLocalDatabase(true);
+        LocalDatabaseTestUtils.initLocalDatabaseMockUser(true);
     }
 
     @Test
