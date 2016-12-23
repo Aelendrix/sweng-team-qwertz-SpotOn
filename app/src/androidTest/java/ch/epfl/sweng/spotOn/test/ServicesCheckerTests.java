@@ -77,14 +77,14 @@ public class ServicesCheckerTests {
         UserManager.getInstance().setMockUser(mMockUser);
         expected = "";
         checkExpected(expected);
-        if( ServicesChecker.getInstance().allServicesOk()){
-            throw new AssertionError("should have no correct user");
+        if( ! ServicesChecker.getInstance().allServicesOk()){
+            throw new AssertionError("services should be ok");
         }
-        if( ServicesChecker.getInstance().canSendToServer()){
-            throw new AssertionError("should not be able to send to server");
+        if( ! ServicesChecker.getInstance().canSendToServer()){
+            throw new AssertionError("should be able to send to server");
         }
-        if( ServicesChecker.getInstance().canTakePicture()){
-            throw new AssertionError("should not be able to take a picture");
+        if( ! ServicesChecker.getInstance().canTakePicture()){
+            throw new AssertionError("should be able to take a picture");
         }
 
         // no correct Location

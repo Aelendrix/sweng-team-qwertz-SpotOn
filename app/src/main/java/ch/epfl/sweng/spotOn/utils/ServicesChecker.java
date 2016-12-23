@@ -149,7 +149,7 @@ public class ServicesChecker implements LocationTrackerListener, UserListener, F
             }
         }
         if(!mLocationTrackerRef.hasValidLocation()){
-            message += "Can't find your GPS location";
+            message += "Can't find your GPS location\n";
         }
         if(message.equals("")){
             return "takePictureErrorMessage : all good";
