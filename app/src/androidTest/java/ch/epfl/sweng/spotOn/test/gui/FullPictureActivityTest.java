@@ -52,7 +52,7 @@ public class FullPictureActivityTest {
             throw new AssertionError("User not logged in, need to be logged-in for this test");
         }
         //Click 2 times, on the first click the buttons may disappear
-        onView(withId(R.id.extend_list_button)).perform(click());
+        //onView(withId(R.id.extend_list_button)).perform(click());
         onView(withId(R.id.extend_list_button)).perform(click());
         onView(withId(R.id.order_newest_button)).check(matches(isDisplayed()));
         onView(withId(R.id.order_newest_button)).perform(click());

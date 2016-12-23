@@ -81,6 +81,7 @@ public class TestTakePictureFragment {
             public void run() {
                 pictureFragment.processResult(mImageToUploadUri);
                 mActualPhotoObject = pictureFragment.getActualPhotoObject();
+                Log.d("poID", mActualPhotoObject.getPictureId());
             }
         });
         //at this point we are in the tabActivity and the phone "took" a full black picture
@@ -105,7 +106,7 @@ public class TestTakePictureFragment {
         //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
-        Log.d("name:", mActualPhotoObject.getPictureId());
+        Thread.sleep(5000);
         onView(withId(R.id.captureButton)).perform(click());
 
         /*
@@ -127,9 +128,11 @@ public class TestTakePictureFragment {
         if( ConcreteLocationTracker.instanceExists()){
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
+        Log.d("after", "Entered1");
         if(mActualPhotoObject!=null) {
             DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
             StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
+            Log.d("after", "Entered2");
         }
         file.delete();
     }
