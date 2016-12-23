@@ -12,6 +12,7 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 
 /**
  * Utlity class, to initialise the post condition of your test and create all the needed singleton
+ *
  */
 
 public class TestInitUtils {

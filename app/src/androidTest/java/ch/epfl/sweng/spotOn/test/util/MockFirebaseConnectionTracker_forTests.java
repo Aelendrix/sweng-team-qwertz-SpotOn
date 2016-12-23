@@ -10,7 +10,6 @@ public class MockFirebaseConnectionTracker_forTests implements FirebaseConnectio
 
     @Override
     public void addListener(FirebaseConnectionListener l) {
-        // nothing
     }
 
     @Override

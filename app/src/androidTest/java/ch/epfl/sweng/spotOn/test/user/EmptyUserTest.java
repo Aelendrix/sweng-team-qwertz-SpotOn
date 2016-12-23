@@ -9,6 +9,7 @@ import ch.epfl.sweng.spotOn.user.EmptyUser;
 
 /**
  * Created by quentin on 26.11.16.
+ *
  */
 
 public class EmptyUserTest {

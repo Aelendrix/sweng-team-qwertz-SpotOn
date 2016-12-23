@@ -7,6 +7,7 @@ import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 
 /**
  * Created by quentin on 23.11.16.
+ *
  */
 
 public class LocationTrackerTest_failureCases {

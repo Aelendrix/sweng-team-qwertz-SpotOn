@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.anything;
 /**
  * Tests used to try the gui interaction in the pager of full size images
  * Created by Alexis Dewaele,  Nicolas Brunner  on 09/11/2016.
+ *
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
