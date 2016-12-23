@@ -4,6 +4,7 @@ import android.location.Location;
 
 /**
  * Created by quentin on 17.11.16.
+ *
  */
 
 public class LocalizationUtils {

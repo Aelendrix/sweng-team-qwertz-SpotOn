@@ -123,19 +123,6 @@ public final class MainActivity extends AppCompatActivity {
         ToastProvider.update(this);
     }
 
-
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        //check every time the MainActivity is started if we have the permission: ACCESS_FINE_LOCATION
-        // and throw the user input in onRequestPermissionsResult
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_DENIED ){
-            Log.d("MainActivity","No GPS Permission");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCALISATION);
-        }
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

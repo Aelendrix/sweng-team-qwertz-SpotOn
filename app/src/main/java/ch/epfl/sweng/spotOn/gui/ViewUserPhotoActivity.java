@@ -82,7 +82,6 @@ public class ViewUserPhotoActivity extends Activity {
                 }
             });
         }
-
     }
 
     @Override

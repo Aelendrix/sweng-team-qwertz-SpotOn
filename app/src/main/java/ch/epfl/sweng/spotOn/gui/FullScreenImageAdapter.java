@@ -74,10 +74,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         if(!LocalDatabase.getInstance().hasKey(wantedPicId)){
             Log.d("FullScreenImageAdapter","Image was deleted from database while viewing, displaying error tile");
             mViewToSet.setImageResource(RESOURCE_IMAGE_DELETED);
-/*            mActivity.finish();
-            String toastMessage = "This picture is not displayable anymore: the author may have deleted it or it is out of your range";
-            ToastProvider.printOverCurrent(toastMessage, Toast.LENGTH_LONG);
-            return null;*/
         } else {
             PhotoObject mDisplayedMedia = LocalDatabase.getInstance().get(wantedPicId);
 

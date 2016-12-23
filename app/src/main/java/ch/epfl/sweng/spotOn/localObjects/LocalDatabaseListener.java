@@ -5,6 +5,5 @@ package ch.epfl.sweng.spotOn.localObjects;
  */
 
 public interface LocalDatabaseListener {
-
     void databaseUpdated();
 }

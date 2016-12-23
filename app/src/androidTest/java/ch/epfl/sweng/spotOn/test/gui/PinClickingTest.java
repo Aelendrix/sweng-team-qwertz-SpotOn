@@ -37,6 +37,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by olivi on 18.12.2016.
+ *
  */
 
 public class PinClickingTest {
@@ -91,7 +92,6 @@ public class PinClickingTest {
         marker2.click();
         UiObject marker3 = device.findObject(new UiSelector().descriptionContains(markerTitle3));
         marker3.click();
-        //onView(withId(R.id.infoWindow)).check(matches(isDisplayed()));
     }
 
     @After

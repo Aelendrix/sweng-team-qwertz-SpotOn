@@ -51,12 +51,6 @@ public class TabActivityTest {
         }
     };
 
-//    @Before
-//    public void setUpContext(){
-//        User mockUser = new MockUser_forTests("julius","caius","caesar", 1000, new HashMap<String, Long>(), true, true);
-//        TestInitUtils.initContextMockUser(mockUser);
-//    }
-
     @Test
     public void swipe_between_fragments() {
         onView(withText(R.string.tab_aroundme)).check(matches(isDisplayed()));

@@ -25,6 +25,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by quentin on 29.11.16.
+ *
  */
 
 @RunWith(AndroidJUnit4.class)

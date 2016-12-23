@@ -12,6 +12,7 @@ import ch.epfl.sweng.spotOn.R;
 
 /**
  * Created by Alexis on 22/12/2016.
+ *
  */
 
 public class ReportPictureDialog extends DialogFragment {

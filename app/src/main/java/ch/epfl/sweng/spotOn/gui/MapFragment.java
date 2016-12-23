@@ -84,12 +84,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /*super.onCreateView(inflater, container, savedInstanceState);
-        // Inflate the layout for this fragment
-        View mView =  inflater.inflate(R.layout.activity_maps, container, false);
-        SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.map_fragment);
-        mapFragment.getMapAsync(this);
-        return mView;*/
 
         if(mView != null) {
             ViewGroup parent = (ViewGroup) mView.getParent();
