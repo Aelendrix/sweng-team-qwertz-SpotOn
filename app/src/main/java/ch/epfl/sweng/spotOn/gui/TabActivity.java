@@ -169,19 +169,21 @@ public class TabActivity extends AppCompatActivity{
 
     @SuppressWarnings("UnusedParameters")
     public void onExtendOrderList(View v){
-        RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
-        ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
-        orderListButton.setImageResource(android.R.color.transparent);
-        if(OrderListLayout.getVisibility()==View.VISIBLE) {
-            OrderListLayout.setVisibility(View.GONE);
-            orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
-        }
-        else{
-            OrderListLayout.setVisibility(View.VISIBLE);
-            orderListButton.setImageResource(R.drawable.ic_clear_black_32dp);
-
-
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
+                ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
+                orderListButton.setImageResource(android.R.color.transparent);
+                if (OrderListLayout.getVisibility() == View.VISIBLE) {
+                    OrderListLayout.setVisibility(View.GONE);
+                    orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
+                } else {
+                    OrderListLayout.setVisibility(View.VISIBLE);
+                    orderListButton.setImageResource(R.drawable.ic_clear_black_32dp);
+                }
+            }
+        });
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -213,12 +215,16 @@ public class TabActivity extends AppCompatActivity{
     }
 
     private void hideOrderMenu(){
-        RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
-        ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
-        OrderListLayout.setVisibility(View.GONE);
-        orderListButton.setImageResource(android.R.color.transparent);
-        orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RelativeLayout OrderListLayout = (RelativeLayout) findViewById(R.id.extended_list);
+                ImageButton orderListButton = (ImageButton) findViewById(R.id.extend_list_button);
+                OrderListLayout.setVisibility(View.GONE);
+                orderListButton.setImageResource(android.R.color.transparent);
+                orderListButton.setImageResource(R.drawable.ic_format_list_numbered_black_32dp);
+            }
+        });
     }
 
     private void refreshGrid(int ordering){

@@ -70,11 +70,9 @@ public class SeePicturesFragment extends Fragment implements LocalDatabaseListen
                         //create a new adapter and refresh the gridView
                         LinearLayout emptyLayout = (LinearLayout) mView.findViewById(R.id.empty_grid_info);
                         RelativeLayout gridLayout = (RelativeLayout) mView.findViewById(R.id.grid_layout);
-                        RelativeLayout listOrderLayout = (RelativeLayout) mView.findViewById(R.id.extended_list);
                         if (mImageAdapter.getCount() == 0) {
                             gridLayout.setVisibility(View.GONE);
                             emptyLayout.setVisibility(View.VISIBLE);
-                            listOrderLayout.setVisibility(View.GONE);
                         } else {
                             emptyLayout.setVisibility(View.GONE);
                             gridLayout.setVisibility(View.VISIBLE);
