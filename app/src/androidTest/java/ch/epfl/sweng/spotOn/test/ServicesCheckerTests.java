@@ -114,4 +114,19 @@ public class ServicesCheckerTests {
 
         Assert.assertThat(errorMessage.equals("sendToServerErrorMessage : all good"), is(true));
     }
+
+    @Test
+    public void testDatabaseIsNotConnected(){
+        boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
+
+        Assert.assertThat(dbIsNotConnected, is(false));
+    }
+
+    @Test
+    public void testFirebaseDatabaseDisconnected(){
+        ServicesChecker.getInstance().firebaseDatabaseDisconnected();
+        boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
+
+        Assert.assertThat(dbIsNotConnected, is(true));
+    }
 }
