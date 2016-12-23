@@ -34,12 +34,17 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.localObjects.LocalDatabase;
@@ -47,10 +52,10 @@ import ch.epfl.sweng.spotOn.localObjects.LocalDatabaseListener;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 import ch.epfl.sweng.spotOn.media.PhotoObject;
+import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
-        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin> {
+        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -60,9 +65,9 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
 
     //list of photoObject
     private List<PhotoObject> mListPhoto;
+
     private List<String> mThumbIDs;
     private ClusterManager<Pin> mClusterManager;
-    private Pin mClickedClusterPin;
     private GoogleMap mMap;
 
     private View mView;
@@ -172,17 +177,50 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      * Set up the cluster manager
      */
     private void setUpCluster(){
-            mClusterManager = new ClusterManager<>(getContext(), mMap);
-            //The cluster manager takes care when the user clicks on a marker and regroups the markers together
-            mMap.setOnCameraIdleListener(mClusterManager);
-            mMap.setOnMarkerClickListener(mClusterManager);
-            mMap.setOnInfoWindowClickListener(mClusterManager);
-            //Displays the right color to the markers (green or yellow)
-            mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
-            mClusterManager.setOnClusterItemClickListener(this);
-            mClusterManager.setOnClusterClickListener(this);
-            mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-            addDBMarkers();
+
+        mClusterManager = new ClusterManager<>(getContext(), mMap, new MarkerManager(mMap){
+
+            /**
+             * Method called when clicking a marker: resolves
+             * the bug that clicking on a marker from a non rendered cluster displayed nothing.
+             * @param marker the clicked marker
+             * @return the result of onClusterItemClick on the pin associated to the marker.
+             */
+            @Override
+            public boolean onMarkerClick(Marker marker){
+                //If it is a cluster or a marker with no title
+                if(marker.getTitle() == null) {
+                    //zoom on the cluster
+                    return onClusterClick(marker);
+                } else if (marker.getTitle().equals("position")) {
+                    return false;
+                } else {
+                    //Get the map matching each marker (title) to the corresponding pin
+                    Map<String, Pin> markerPinMap = ((ClusterRenderer) mClusterManager.getRenderer()).getMarkerPinMap();
+                    Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
+                    if (markerPinMap.containsKey(marker.getTitle())) {
+                        //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
+                        Pin associatedPin = markerPinMap.get(marker.getTitle());
+                        return onClusterItemClick(associatedPin);
+                    } else {
+                        throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
+                    }
+                }
+            }
+        });
+
+        //The cluster manager takes care when the user clicks on a marker and regroups the markers together
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mClusterManager.setRenderer(new ClusterRenderer(getContext(), mMap, mClusterManager));
+
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+
+        addDBMarkers();
     }
 
     /**
@@ -196,13 +234,15 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
             mThumbIDs = new ArrayList<>(LocalDatabase.getViewableThumbnails().keySet());
             // old if(mMap!=null && currLoc!=null) {
             if(mMap!=null) {
-                //empty the cluster manager
+                //empty the cluster manager and the map of markers to pins
                 mClusterManager.clearItems();
-                //add the new markers on the Cluster Manager
+                //mMarkersToPin = new HashMap<>();
+
+                //add the new pins on the Cluster Manager
                 for (PhotoObject photo : mListPhoto) {
                     boolean canActivateIt = photo.isInPictureCircle(currLoc);
                     Pin pinForPicture = new Pin(photo, canActivateIt);
-                    //add the marker to the cluster manager
+                    //add the pin to the cluster manager
                     mClusterManager.addItem(pinForPicture);
                     //Re-cluster the cluster at each addition of a pin
                     mClusterManager.cluster();
@@ -221,7 +261,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     @Override
     public boolean onClusterItemClick(Pin pin) {
-        mClickedClusterPin = pin;
         mMap.setInfoWindowAdapter(new PhotoOnMarker(this.getContext(), pin));
         //If the marker clicked is yellow
         if (!pin.getAccessibility()) {
@@ -254,6 +293,7 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
      */
     @Override
     public void onClusterItemInfoWindowClick(Pin pin){
+        Log.d("onClusterItemInfoWindow", "all good");
         String thumbID = pin.getPhotoObject().getPictureId();
         ImageAdapter imgAdapter = SeePicturesFragment.getImageAdapter();
         if(imgAdapter.containsThumbID(thumbID)) {
@@ -267,19 +307,18 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     /**
-     * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
-     * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
-     * cluster displayed the info window of the pin.
-     * @param cluster the cluster that is clicked on
-     * @return true -> clicking on a cluster does nothing
+     * This method is called when clicking a marker and if this marker clicked is a cluster (check in
+     * the method onMarkerClick in the clusterManager initialization of setUpCluster() method)
+     * It zooms on the clicked marker/cluster
+     * @param marker the marker that is clicked on
+     * @return true -> clicking on a cluster display no info window
      */
-    @Override
-    public boolean onClusterClick(Cluster<Pin> cluster){
+    private boolean onClusterClick(Marker marker){
         if(mMap!=null){
-            CameraUpdate center = CameraUpdateFactory.newLatLng(cluster.getPosition());
+            CameraUpdate center = CameraUpdateFactory.newLatLng(marker.getPosition());
             mMap.moveCamera(center);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    cluster.getPosition(), (float) Math.floor(mMap
+                    marker.getPosition(), (float) Math.floor(mMap
                             .getCameraPosition().zoom + 1)), 300,
                     null);
         }

@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
@@ -81,6 +82,17 @@ public class LocalDatabase implements LocationTrackerListener{
             throw new IllegalStateException("LocalDatabase not initialized yet");
         }
         return mSingleInstance;
+    }
+
+    /**
+     * Useful for google maps testing
+     */
+    public ArrayList<String> getTitlesOfPictures(){
+        if(mediaDataMap.isEmpty()){
+            throw new NoSuchElementException("The map of viewable data map is empty, can't get first element");
+        } else {
+            return new ArrayList<>(mediaDataMap.keySet());
+        }
     }
 
     public void refresh(){

@@ -112,6 +112,11 @@ public class PhotoObjectTestUtils {
 
     }
 
+    public static PhotoObject farAwayPicture(){
+        Bitmap image = getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/4/4e/Ice_Diving_2.jpg");
+        return new PhotoObject(image, "Test", "doge", new Timestamp(new Date().getTime()), 0.53, 0.60);
+    }
+
 // HELPERS
 
     /* Retrieves a bitmap file from the internet since it's the easiest way to get one consistently across multiple computers */

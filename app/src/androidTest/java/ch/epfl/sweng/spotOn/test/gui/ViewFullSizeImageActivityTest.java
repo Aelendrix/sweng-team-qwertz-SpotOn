@@ -60,6 +60,7 @@ public class ViewFullSizeImageActivityTest {
         onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0).perform(click());
         //make buttons disappear
         onView(withId(R.id.pager)).perform(click());
+        //Sleep needed here or actions are too fast and test fails
         Thread.sleep(500);
         onView(withId(R.id.upvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.downvoteButton)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));

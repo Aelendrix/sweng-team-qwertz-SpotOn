@@ -2,6 +2,7 @@ package ch.epfl.sweng.spotOn.gui;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterItem;
 
 import ch.epfl.sweng.spotOn.media.PhotoObject;

@@ -4,24 +4,30 @@ import android.content.Context;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Olivier on 31.10.2016.
- * Generate a cluster of Pin with custom condition of when it should render cluster and/or pins
+ * Generate a cluster of Pin with custom condition of when it should render cluster and/or pins, in which colors...
  */
 public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
 
-    private boolean isVeryZoomed = false;
-    //private boolean isVeryUnZoomed = false;
     private GoogleMap mMap;
+    //Map of marker titles -> pins
+    private Map<String, Pin> mMarkerPinMap;
+    private boolean isVeryZoomed = false;
 
     /**
      * Custom clusterRenderer
@@ -33,6 +39,14 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                              ClusterManager<Pin> clusterManager) {
         super(context, map, clusterManager);
         mMap = map;
+        mMarkerPinMap = new HashMap<>();
+    }
+
+    /**
+     * @return a copy of the marker->pin map
+     */
+    public Map<String, Pin> getMarkerPinMap(){
+        return new HashMap<>(mMarkerPinMap);
     }
 
     /**
@@ -42,10 +56,23 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
     @Override
     protected void onBeforeClusterItemRendered(Pin pin,
                                                MarkerOptions markerOptions) {
-
+        markerOptions.title(pin.getTitle());
         BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.defaultMarker(pin.getColor());
-        markerOptions.icon(markerDescriptor).zIndex(pin.getZDepth());
+        markerOptions.icon(markerDescriptor);
+        markerOptions.zIndex(pin.getZDepth());
     }
+
+    /**
+     * Method called at each addition of a marker in the clusterManager
+     */
+    @Override
+    protected void onClusterItemRendered(Pin pin, Marker marker){
+        //Add a marker (title) and its corresponding pin to the mMarkerPinMap
+        //Needs to be the title of the marker and not the marker itself because the title won't change
+        //but the marker reference can change overtime so we would add the same element multiple times in the map.
+        mMarkerPinMap.put(marker.getTitle(), pin);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -58,9 +85,8 @@ public class ClusterRenderer extends DefaultClusterRenderer<Pin> {
                 computeZoom();
             }
         });
-
         //return isVeryUnZoomed || cluster.getSize() >=4  && !isVeryZoomed;
-        return cluster.getSize() >=4  && !isVeryZoomed;
+        return cluster.getSize() >= 5  && !isVeryZoomed;
     }
 
     private void computeZoom(){

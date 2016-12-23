@@ -46,9 +46,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class TestTakePictureFragment {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
         @Override
-        public void beforeActivityLaunched(){
+        public void beforeActivityLaunched() {
             TestInitUtils.initContext();
         }
     };
@@ -57,14 +57,14 @@ public class TestTakePictureFragment {
     private String mActualPhotoObjectPictureId;
 
     @Test
-    public void StoreFunctionWorking() throws Exception{
+    public void StoreFunctionWorking() throws Exception {
         onView(withText("Camera")).perform(click());
         //create a bitmap that will fake a picture taken by the camera of the phone
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
-        file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        file = new File(path, "TestPicture" + counter + ".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
         Bitmap pictureBitmap = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888); //po.getThumbnail();
@@ -107,9 +107,9 @@ public class TestTakePictureFragment {
     }
 
     @After
-    public void after(){
+    public void after() {
         ConcreteLocationTracker.destroyInstance();
-        if( ConcreteLocationTracker.instanceExists()){
+        if (ConcreteLocationTracker.instanceExists()) {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
         file.delete();
@@ -117,7 +117,7 @@ public class TestTakePictureFragment {
         StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
-    private ViewAction clickXY(final float x, final float y){
+    private ViewAction clickXY(final float x, final float y) {
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {

@@ -82,39 +82,47 @@
             android:layout_marginBottom="80dp">
             <Button
                 android:text="@string/upVoteOrderButton"
+                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:background="@drawable/button_sorting_grid"
                 android:id="@+id/order_upvote_button"
                 android:onClick="onUpVoteOrderingClick"/>
 
             <Button
                 android:text="@string/oldestOrderButton"
+                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="40dp"
                 android:layout_alignBottom="@id/order_upvote_button"
+                android:background="@drawable/button_sorting_grid"
                 android:id="@+id/order_oldest_button"
                 android:onClick="onOldestOrderingClick"/>
 
             <Button
                 android:text="@string/newestOrderButton"
+                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="40dp"
                 android:layout_alignBottom="@id/order_oldest_button"
+                android:background="@drawable/button_sorting_grid"
                 android:id="@+id/order_newest_button"
                 android:onClick="onNewestOrderingClick"/>
             <Button
                 android:text="@string/hotOrderButton"
+                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="40dp"
                 android:layout_alignBottom="@id/order_newest_button"
+                android:background="@drawable/button_sorting_grid"
                 android:id="@+id/order_hottest_button"
                 android:onClick="onHottestOrderingClick"/>
 
