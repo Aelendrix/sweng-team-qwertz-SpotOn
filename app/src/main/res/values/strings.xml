@@ -51,6 +51,8 @@
     <string name="report_question">Do you want to report this picture ?\n You won\'t be able to see it again.</string>
     <string name="report">Report</string>
     <string name="delete_picture_question">Do you want to delete this picture ?</string>
+    <string name="delete_picture_button">Clicking this button will remove the picture from the server</string>
+    <string name="thumbnail_on_marker">The image displayed above a marker when clicking on it</string>
 
 </resources>
 

@@ -32,7 +32,8 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
-
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContext(double latitude, double longitude){
@@ -52,6 +53,9 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
 
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContext(){   // same with MockLocationTracker default location
@@ -70,6 +74,8 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
+        UserManager.getInstance().setUserFromFacebook("Sweng", "Sweng", "114110565725225");
     }
 
     public static void initContextServicesCheckSilent(){
@@ -90,6 +96,7 @@ public class TestInitUtils {
 
         ServicesChecker.allowDisplayingToasts(false);
         ServicesChecker.initialize(mlt, LocalDatabase.getInstance(), UserManager.getInstance(), new MockFirebaseConnectionTracker_forTests());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
 
     public static void initContextNoServicesChecks(double latitude, double longitude){
@@ -127,6 +134,8 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
 
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
+        UserManager.getInstance().setMockUser(user);
     }
 
     public static void initContextNoUser(Location location){
@@ -144,6 +153,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
 
     public static void initContextNoUser(){
@@ -161,6 +171,7 @@ public class TestInitUtils {
 
         LocalDatabase.initialize(mlt);
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
 
     public static void initContextMockUserAndLocation(User user, Location location){   // same with MockLocationTracker default location
@@ -182,6 +193,8 @@ public class TestInitUtils {
         LocalDatabase.initialize(mlt);
 
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
+        ServicesChecker.getInstance().allowDisplayingToasts(false);
     }
 
 }

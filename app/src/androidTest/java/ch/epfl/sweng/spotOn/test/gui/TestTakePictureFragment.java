@@ -9,6 +9,7 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
 import android.view.View;
 
 import org.junit.After;
@@ -45,25 +46,25 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class TestTakePictureFragment {
 
     @Rule
-    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class){
+    public ActivityTestRule<TabActivity> mActivityTestRule = new ActivityTestRule<TabActivity>(TabActivity.class) {
         @Override
-        public void beforeActivityLaunched(){
+        public void beforeActivityLaunched() {
             TestInitUtils.initContext();
         }
     };
     private Uri mImageToUploadUri;
     private File file;
-    private PhotoObject mActualPhotoObject;
+    private String mActualPhotoObjectPictureId;
 
     @Test
-    public void StoreFunctionWorking() throws Exception{
+    public void StoreFunctionWorking() throws Exception {
         onView(withText("Camera")).perform(click());
         //create a bitmap that will fake a picture taken by the camera of the phone
         final TakePictureFragment pictureFragment = (TakePictureFragment) mActivityTestRule.getActivity().getSupportFragmentManager().getFragments().get(1);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut;
         Integer counter = 0;
-        file = new File(path, "TestPicture"+counter+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        file = new File(path, "TestPicture" + counter + ".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
         fOut = new FileOutputStream(file);
 
         Bitmap pictureBitmap = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888); //po.getThumbnail();
@@ -101,35 +102,22 @@ public class TestTakePictureFragment {
         //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
-        mActualPhotoObject = pictureFragment.getActualPhotoObject();
-
+        mActualPhotoObjectPictureId = pictureFragment.getLastUploadedPictureId();
         onView(withId(R.id.captureButton)).perform(click());
-
-        /*
-
-        // Mock up an ActivityResult:
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(10,10,mImageToUploadUri);
-        Instrumentation.ActivityResult activityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, returnIntent);
-
-        // Create an ActivityMonitor that catch ChildActivity and return mock ActivityResult:
-        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(, activityResult , true);
-
-        */
     }
 
     @After
-    public void after(){
+    public void after() {
         ConcreteLocationTracker.destroyInstance();
-        if( ConcreteLocationTracker.instanceExists()){
+        if (ConcreteLocationTracker.instanceExists()) {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
         file.delete();
-        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
-        StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
+        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
-    private ViewAction clickXY(final float x, final float y){
+    private ViewAction clickXY(final float x, final float y) {
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {

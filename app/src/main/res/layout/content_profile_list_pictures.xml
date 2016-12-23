@@ -3,26 +3,39 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/profilePicturesList">
 
+    <RelativeLayout>
+        <TextView
+            android:id="@+id/profilePictureVotes"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:text="@string/profilePictureListText"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/profilePictureThumbnail"
+            android:layout_toStartOf="@+id/deletePictureButton"
+            android:layout_marginStart="19dp"
+            android:layout_marginEnd="19dp"/>
+
         <ImageView
             android:id="@+id/profilePictureThumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="17dp"
-            android:contentDescription="@string/contentDescriptionPictureThumbnailImage"/>
+            android:contentDescription="@string/contentDescriptionPictureThumbnailImage"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
-        <Button
-            android:text="@string/userProfileListPictureDeleteButton"
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="50dp"
-            android:id="@+id/deletePictureButton"/>
-
-        <TextView
-            android:id="@+id/profilePictureVotes"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginStart="0dp"
-            android:text="@string/profilePictureListText"/>
+            android:background="@drawable/button_deleting_picture"
+            android:src="@drawable/ic_clear_black_32dp"
+            android:id="@+id/deletePictureButton"
+            android:layout_marginEnd="12dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/delete_picture_button"/>
+    </RelativeLayout>
 
 </TableRow>

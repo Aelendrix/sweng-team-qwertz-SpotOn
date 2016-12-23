@@ -28,7 +28,7 @@
         android:contentDescription="@string/contentDescriptionLoginTextView"
         android:layout_alignBottom="@+id/mainLoginTextView"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="18dp" />
 
     <Button
@@ -49,17 +49,6 @@
         android:layout_alignStart="@+id/mainLoginTextView"
         android:layout_marginStart="14dp"
         android:layout_toStartOf="@+id/logo" />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/mainLoginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerVertical="true"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:layout_alignStart="@+id/dontLogInButton"
-        android:layout_alignEnd="@+id/dontLogInButton" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -83,9 +72,20 @@
         android:textStyle="normal"
         android:fontFamily="sans-serif"
         android:textColor="@color/colorPrimary"
-        android:layout_above="@+id/mainLoginButton"
-        android:layout_alignStart="@+id/mainLoginTextView"
-        android:layout_marginBottom="23dp"
-        android:layout_alignEnd="@+id/restrictions" />
+        android:layout_below="@+id/mainLoginTextView"
+        android:layout_alignStart="@+id/mainLoginButton"
+        android:layout_marginTop="44dp" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/mainLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/wayToConnectTextView"
+        android:layout_alignStart="@+id/dontLogInButton"
+        android:layout_alignEnd="@+id/dontLogInButton" />
 
 </RelativeLayout>
