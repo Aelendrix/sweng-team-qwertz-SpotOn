@@ -9,6 +9,7 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/infoWindow" />
+        android:id="@+id/infoWindow"
+        android:contentDescription="@string/thumbnail_on_marker"/>
 
 </RelativeLayout>

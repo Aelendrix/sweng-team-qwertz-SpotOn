@@ -32,7 +32,9 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
     public PhotoOnMarker(Context context, Pin pin){
         clickedPin = pin;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View view = inflater.inflate( R.layout.layout_googlemaps_info_window, null );
+        //This line is to avoid the warning in inflater.inflate -> it is null because the view has no root parent
+        final ViewGroup nullParent = null;
+        View view = inflater.inflate( R.layout.layout_googlemaps_info_window, nullParent);
         mPictureView = (ImageView) view.findViewById(R.id.infoWindow);
     }
 
@@ -55,7 +57,6 @@ public class PhotoOnMarker implements GoogleMap.InfoWindowAdapter {
         }
     }
 
-    //TODO: Create our own information window directly on google maps ?
     @Override
     public View getInfoContents(Marker marker){
         return null;

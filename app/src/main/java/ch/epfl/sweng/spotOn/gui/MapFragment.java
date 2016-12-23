@@ -55,8 +55,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class MapFragment extends Fragment implements LocationTrackerListener, LocalDatabaseListener, OnMapReadyCallback,
-        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin>,
-        ClusterManager.OnClusterClickListener<Pin> {
+        ClusterManager.OnClusterItemClickListener<Pin>, ClusterManager.OnClusterItemInfoWindowClickListener<Pin> {
 
     //Geneva Lake
     private static final LatLng DEFAULT_LOCATION = new LatLng(46.5,6.6);
@@ -189,24 +188,22 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
              */
             @Override
             public boolean onMarkerClick(Marker marker){
-                Set<Marker> setOfClusters = new HashSet<Marker>(mClusterManager.getClusterMarkerCollection().getMarkers());
-                if(setOfClusters.contains(marker)) {
-                    ToastProvider.printOverCurrent("onClusterClick working", Toast.LENGTH_LONG);
-                    return true;
+                //If it is a cluster or a marker with no title
+                if(marker.getTitle() == null) {
+                    //zoom on the cluster
+                    return onClusterClick(marker);
+                } else if (marker.getTitle().equals("position")) {
+                    return false;
                 } else {
-                    if (marker.getTitle().equals("position")) {
-                        return false;
+                    //Get the map matching each marker (title) to the corresponding pin
+                    Map<String, Pin> markerPinMap = ((ClusterRenderer) mClusterManager.getRenderer()).getMarkerPinMap();
+                    Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
+                    if (markerPinMap.containsKey(marker.getTitle())) {
+                        //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
+                        Pin associatedPin = markerPinMap.get(marker.getTitle());
+                        return onClusterItemClick(associatedPin);
                     } else {
-                        //Get the map matching each marker (title) to the corresponding pin
-                        Map<String, Pin> markerPinMap = ((ClusterRenderer) mClusterManager.getRenderer()).getMarkerPinMap();
-                        Log.d("MarkerManager", String.valueOf(markerPinMap.size()));
-                        if (markerPinMap.containsKey(marker.getTitle())) {
-                            //Get the corresponding pin from the clicked marker and retrun result of onClusterItemClick
-                            Pin associatedPin = markerPinMap.get(marker.getTitle());
-                            return onClusterItemClick(associatedPin);
-                        } else {
-                            throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
-                        }
+                        throw new NullPointerException("The clicked marker should be in the map of (marker, pin) but is not");
                     }
                 }
             }
@@ -221,7 +218,6 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
 
         mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
         addDBMarkers();
@@ -311,19 +307,18 @@ public class MapFragment extends Fragment implements LocationTrackerListener, Lo
     }
 
     /**
-     * This methods needs to be implemented so it makes sure that clicking a marker displays nothing
-     * Corrects the following bug: clicking on a green pin (with info window) and then clicking on a
-     * cluster displayed the info window of the pin.
-     * @param cluster the cluster that is clicked on
-     * @return true -> clicking on a cluster does nothing
+     * This method is called when clicking a marker and if this marker clicked is a cluster (check in
+     * the method onMarkerClick in the clusterManager initialization of setUpCluster() method)
+     * It zooms on the clicked marker/cluster
+     * @param marker the marker that is clicked on
+     * @return true -> clicking on a cluster display no info window
      */
-    @Override
-    public boolean onClusterClick(Cluster<Pin> cluster){
+    private boolean onClusterClick(Marker marker){
         if(mMap!=null){
-            CameraUpdate center = CameraUpdateFactory.newLatLng(cluster.getPosition());
+            CameraUpdate center = CameraUpdateFactory.newLatLng(marker.getPosition());
             mMap.moveCamera(center);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    cluster.getPosition(), (float) Math.floor(mMap
+                    marker.getPosition(), (float) Math.floor(mMap
                             .getCameraPosition().zoom + 1)), 300,
                     null);
         }

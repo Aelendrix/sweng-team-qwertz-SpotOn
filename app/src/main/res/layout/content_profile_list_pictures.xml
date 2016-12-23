@@ -4,18 +4,19 @@
     android:id="@+id/profilePicturesList">
 
     <RelativeLayout>
-
         <TextView
             android:id="@+id/profilePictureVotes"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:text="@string/profilePictureListText"
             android:textColor="@color/colorPrimary"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:textSize="20sp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/profilePictureThumbnail"
-            android:layout_marginStart="19dp" />
+            android:layout_toStartOf="@+id/deletePictureButton"
+            android:layout_marginStart="19dp"
+            android:layout_marginEnd="19dp"/>
 
         <ImageView
             android:id="@+id/profilePictureThumbnail"
@@ -33,6 +34,8 @@
             android:id="@+id/deletePictureButton"
             android:layout_marginEnd="12dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/delete_picture_button"/>
     </RelativeLayout>
+
 </TableRow>

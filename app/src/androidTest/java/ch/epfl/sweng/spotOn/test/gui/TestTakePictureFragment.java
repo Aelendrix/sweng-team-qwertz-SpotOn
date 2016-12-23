@@ -9,6 +9,7 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -79,7 +80,7 @@ public class TestTakePictureFragment {
             @Override
             public void run() {
                 pictureFragment.processResult(mImageToUploadUri);
-
+                mActualPhotoObject = pictureFragment.getActualPhotoObject();
             }
         });
         //at this point we are in the tabActivity and the phone "took" a full black picture
@@ -103,9 +104,8 @@ public class TestTakePictureFragment {
         onView(withId(R.id.editButton)).check(matches(isDisplayed()));
         //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
-        //onView(withId(R.id.sendButton)).perform(click());
-        mActualPhotoObject = pictureFragment.getActualPhotoObject();
-
+        onView(withId(R.id.sendButton)).perform(click());
+        Log.d("name:", mActualPhotoObject.getPictureId());
         onView(withId(R.id.captureButton)).perform(click());
 
         /*
