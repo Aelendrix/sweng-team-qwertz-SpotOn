@@ -142,6 +142,7 @@ public class ToastsProviderTest {
             throw new AssertionError(message);
         }
     }
+
     private void assertNoDisplayedToast(){
         assertNoDisplayedToast("Expected no toast displayed, found some");
     }
