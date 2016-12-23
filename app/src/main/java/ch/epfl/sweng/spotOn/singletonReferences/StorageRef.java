@@ -17,7 +17,6 @@ public class StorageRef {
     public static StorageReference getMediaDirectory(){
         return mMediaDirectory;
     }
-
     /**
      * delete a the picture file from the storage depending of his pictureID
      * @param pictureID a unique ID linked to a picture in the firebase DB
@@ -35,6 +34,4 @@ public class StorageRef {
     // CONSTRUCTOR FOR SINGLETON
     private StorageRef(){
     }
-
-
 }
