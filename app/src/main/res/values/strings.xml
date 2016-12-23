@@ -3,7 +3,7 @@
     <string name="wayToConnect">Choose a way to log in:</string>
     <string name="restrictions">You won\'t be able to send pictures by not logging in</string>
     <string name="facebook_app_id">348409365495965</string>
-    <string name="log_out">LOG OUT</string>
+    <string name="log_out">Log Out</string>
     <string name="about_menu">About</string>
     <string name="tab_aroundme">Around me</string>
     <string name="tab_camera">Camera</string>
@@ -11,7 +11,6 @@
     <string name="captureButton">Capture</string>
     <string name="pictureTaken">Picture Taken</string>
     <string name="gps_not_permitted">The app is unable to work without this permission</string>
-    <string name="reportButton">Report the picture</string>
     <string name="sendButton">Send the photo to the server</string>
     <string name="storeButton">Save the photo to your gallery</string>
     <string name="addTextButton">Add text to the picture</string>
@@ -27,7 +26,7 @@
     <string name="userProfileKarma">Your karma:</string>
     <string name="userFollowingPictures">Here are your pictures that are still online:</string>
     <string name="profilePictureListText">Votes:</string>
-    <string name="userProfileListPictureDeleteButton">DELETE</string>
+    <string name="userProfileListPictureDeleteButton">Delete</string>
 
     <string name="fullSizeImage">Thumbnail in full size</string>
 
@@ -47,11 +46,10 @@
     <string name="contentDescriptionUpVoteImageButton">UpVoteButton</string>
     <string name="contentDescriptionLoginTextView">LoginTextView</string>
     <string name="profile_menu">Profile</string>
-    <string name="title_activity_strong_action">StrongActionActivity</string>
     <string name="log_out_question">Do you want to log out ?</string>
-    <string name="cancel">CANCEL</string>
-    <string name="report_question">Do you want to report this picture ?</string>
-    <string name="report">REPORT</string>
+    <string name="cancel">Cancel</string>
+    <string name="report_question">Do you want to report this picture ?\n You won\'t be able to see it again.</string>
+    <string name="report">Report</string>
     <string name="delete_picture_question">Do you want to delete this picture ?</string>
 
 </resources>

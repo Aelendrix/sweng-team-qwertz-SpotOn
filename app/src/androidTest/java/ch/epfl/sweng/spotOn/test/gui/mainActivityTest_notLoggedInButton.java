@@ -1,6 +1,7 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
+import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -13,6 +14,7 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.MainActivity;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
 import ch.epfl.sweng.spotOn.user.UserManager;
+
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -50,13 +52,14 @@ public class mainActivityTest_notLoggedInButton {
         //in the TabActivity
         onView(withId(R.id.log_out)).check(matches(isDisplayed()));
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("CANCEL")).perform(click());
+        onView(withText("Cancel")).perform(click());
         onView(withId(R.id.log_out)).perform(click());
-        onView(withText("LOG OUT")).perform(click());
+        onView(withText("Log Out")).perform(click());
 
         //in the MainActivity
         onView(withId(R.id.dontLogInButton)).check(matches(isDisplayed()));
     }
+
 
 
 

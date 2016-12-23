@@ -54,7 +54,7 @@
         android:contentDescription="@string/contentDescriptionUpVoteImageButton"/>
 
     <Button
-        android:text="@string/reportButton"
+        android:text="@string/report"
         android:textColor="@color/colorWhite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
