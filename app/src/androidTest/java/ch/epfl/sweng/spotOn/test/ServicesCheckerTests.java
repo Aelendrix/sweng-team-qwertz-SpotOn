@@ -94,8 +94,9 @@ public class ServicesCheckerTests {
 
 
     @Test
-    public void testProvideLoginErrorMessage(){
+    public void testProvideLoginErrorMessage() throws InterruptedException{
         String errorMessage = ServicesChecker.getInstance().provideLoginErrorMessage();
+        Thread.sleep(1000);
 
         Assert.assertThat(errorMessage.equals(""), is(true));
     }
