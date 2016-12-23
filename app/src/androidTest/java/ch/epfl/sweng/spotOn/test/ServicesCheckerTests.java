@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,6 +19,8 @@ import ch.epfl.sweng.spotOn.test.util.MockUser_forTests;
 import ch.epfl.sweng.spotOn.user.User;
 import ch.epfl.sweng.spotOn.user.UserManager;
 import ch.epfl.sweng.spotOn.utils.ServicesChecker;
+
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by quentin on 29.11.16.
@@ -82,7 +85,6 @@ public class ServicesCheckerTests {
     }
 
 
-
     private void checkExpected(String expected){
         String errMsg = ServicesChecker.getInstance().provideErrorMessage();
         if( ! errMsg.equals(expected)){
@@ -90,4 +92,25 @@ public class ServicesCheckerTests {
         }
     }
 
+
+    @Test
+    public void testProvideLoginErrorMessage(){
+        String errorMessage = ServicesChecker.getInstance().provideLoginErrorMessage();
+
+        Assert.assertThat(errorMessage.equals(""), is(true));
+    }
+
+    @Test
+    public void testTakePictureErrorMessage(){
+        String errorMessage = ServicesChecker.getInstance().takePictureErrorMessage();
+
+        Assert.assertThat(errorMessage.equals("takePictureErrorMessage : all good"), is(true));
+    }
+
+    @Test
+    public void testSendToServerErrorMessage(){
+        String errorMessage = ServicesChecker.getInstance().sendToServerErrorMessage();
+
+        Assert.assertThat(errorMessage.equals("sendToServerErrorMessage : all good"), is(true));
+    }
 }
