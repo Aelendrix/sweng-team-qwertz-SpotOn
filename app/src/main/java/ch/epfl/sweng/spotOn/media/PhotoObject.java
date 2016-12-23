@@ -165,10 +165,11 @@ public class PhotoObject {
      * uploads the object to our online services
      * @param hasListener true if you want to use a listener in parameter
      * @param completionListener listener registered for the upload of the object
+     * @return String representing the pictureID
      */
-    public void upload(boolean hasListener, OnCompleteListener completionListener){
+    public String upload(boolean hasListener, OnCompleteListener completionListener){
         // sendToFileServer calls sendToDatabase on success
-        sendToFileServer(hasListener, completionListener);
+        return sendToFileServer(hasListener, completionListener);
     }
     public void uploadWithoutFeedback(){
         upload(false, null);
@@ -523,7 +524,7 @@ public class PhotoObject {
 
     /** Send the full size image to the file server to be stored
      */
-    private void sendToFileServer(final boolean hasListener, final OnCompleteListener completionListener) {
+    private String sendToFileServer(final boolean hasListener, final OnCompleteListener completionListener) {
         // Create a storage reference from our app
         StorageReference storageRef = StorageRef.getMediaDirectory();
 
@@ -555,6 +556,7 @@ public class PhotoObject {
                 sendToDatabase(hasListener, completionListener);
             }
         });
+        return mPictureId;
     }
 
     /** Stores the object into the database (with intermediary steps : storing fullSIzeImage in the fileServer, converting the object into a PhotoObjectStoredInDatabase)

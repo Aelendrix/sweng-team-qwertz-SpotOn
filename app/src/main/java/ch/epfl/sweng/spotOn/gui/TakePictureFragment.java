@@ -67,6 +67,7 @@ public class TakePictureFragment extends Fragment {
     private Uri mImageToUploadUri;
     private PhotoObject mActualPhotoObject;
     private Uri editUri;
+    private String lastUploadedPictureId;
 
     //Buttons to change their color
     private ImageButton mStoreButton;
@@ -137,7 +138,7 @@ public class TakePictureFragment extends Fragment {
         }  else {
             final long remainingPhotos = UserManager.getInstance().getUser().computeRemainingPhotos();
             if(remainingPhotos > 0 || UserManager.getInstance().getUser().getUserId().equals("114110565725225")){
-                mActualPhotoObject.upload(true, new OnCompleteListener() {
+                lastUploadedPictureId = mActualPhotoObject.upload(true, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {if(task.getException()!=null){
                         ToastProvider.printOverCurrent("Internal error while uploading your post", Toast.LENGTH_LONG);
@@ -342,8 +343,8 @@ public class TakePictureFragment extends Fragment {
         }
     }
 
-    public PhotoObject getActualPhotoObject(){
-        return mActualPhotoObject;
+    public String getLastUploadedPictureId(){
+        return lastUploadedPictureId;
     }
 
     private boolean capturePermissionGiven(){

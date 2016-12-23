@@ -35,6 +35,4 @@ public class StorageRef {
     // CONSTRUCTOR FOR SINGLETON
     private StorageRef(){
     }
-
-
 }

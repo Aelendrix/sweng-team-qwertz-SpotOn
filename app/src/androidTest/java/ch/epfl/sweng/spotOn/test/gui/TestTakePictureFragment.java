@@ -9,6 +9,7 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
 import android.view.View;
 
 import org.junit.After;
@@ -53,7 +54,7 @@ public class TestTakePictureFragment {
     };
     private Uri mImageToUploadUri;
     private File file;
-    private PhotoObject mActualPhotoObject;
+    private String mActualPhotoObjectPictureId;
 
     @Test
     public void StoreFunctionWorking() throws Exception{
@@ -101,21 +102,8 @@ public class TestTakePictureFragment {
         //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
-        mActualPhotoObject = pictureFragment.getActualPhotoObject();
-
+        mActualPhotoObjectPictureId = pictureFragment.getLastUploadedPictureId();
         onView(withId(R.id.captureButton)).perform(click());
-
-        /*
-
-        // Mock up an ActivityResult:
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(10,10,mImageToUploadUri);
-        Instrumentation.ActivityResult activityResult = new Instrumentation.ActivityResult(Activity.RESULT_OK, returnIntent);
-
-        // Create an ActivityMonitor that catch ChildActivity and return mock ActivityResult:
-        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(, activityResult , true);
-
-        */
     }
 
     @After
@@ -125,8 +113,8 @@ public class TestTakePictureFragment {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
         file.delete();
-        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObject.getPictureId());
-        StorageRef.deletePictureFromStorage(mActualPhotoObject.getPictureId());
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
+        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
     private ViewAction clickXY(final float x, final float y){
