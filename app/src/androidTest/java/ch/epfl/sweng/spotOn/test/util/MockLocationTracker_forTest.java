@@ -13,6 +13,7 @@ import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 
 /**
  * Created by quentin on 16.11.16.
+ *
  */
 
 public class MockLocationTracker_forTest implements LocationTracker {

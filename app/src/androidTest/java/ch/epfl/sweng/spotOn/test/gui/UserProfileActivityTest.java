@@ -42,6 +42,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 /**
  * created by Marie-Laure
  * In the userProfileActivity, test if you can view the full size image and the back button
+ *
  */
 @RunWith(AndroidJUnit4.class)
 public class UserProfileActivityTest {
@@ -134,9 +135,6 @@ public class UserProfileActivityTest {
     public void startViewUserPhotoActivity(){
         Intents.init();
         onView(withId(R.id.profilePicturesListView)).perform(clickXY(100,40));
-        //intended(hasComponent(ViewUserPhotoActivity.class.getName()));
-        //this need to be changed, because the pressBack occurred before going into the FullSizeImage view
-        //Espresso.pressBack();
         Intents.release();
     }
 

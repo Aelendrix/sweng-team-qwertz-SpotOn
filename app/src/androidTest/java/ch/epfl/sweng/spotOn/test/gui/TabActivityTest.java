@@ -36,6 +36,7 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 /**
  * Created by Alexis Dewaele on 26/10/2016.
  * This class tests the TabActivity
+ *
  */
 
 @RunWith(AndroidJUnit4.class)

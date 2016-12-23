@@ -41,6 +41,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by Nico
  * Test fakes the phone to take a picture, and then modifies the picture using the user UI.
+ *
  */
 public class TestTakePictureFragment {
 
@@ -104,8 +105,8 @@ public class TestTakePictureFragment {
         mActualPhotoObjectPictureId = pictureFragment.getLastUploadedPictureId();
         Log.d("TestTest",mActualPhotoObjectPictureId);
         onView(withId(R.id.captureButton)).perform(click());
-        Thread.sleep(5000);
-        //cannot be put in the After method cause it's not working there
+
+        Thread.sleep(3000);
         DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
         StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
