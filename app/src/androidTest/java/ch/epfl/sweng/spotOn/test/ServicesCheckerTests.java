@@ -110,21 +110,18 @@ public class ServicesCheckerTests {
     @Test
     public void testTakePictureErrorMessage(){
         String errorMessage = ServicesChecker.getInstance().takePictureErrorMessage();
-
         Assert.assertThat(errorMessage.equals("takePictureErrorMessage : all good"), is(true));
     }
 
     @Test
     public void testSendToServerErrorMessage(){
         String errorMessage = ServicesChecker.getInstance().sendToServerErrorMessage();
-
         Assert.assertThat(errorMessage.equals("sendToServerErrorMessage : all good"), is(true));
     }
 
     @Test
     public void testDatabaseIsNotConnected(){
         boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
-
         Assert.assertThat(dbIsNotConnected, is(false));
     }
 
@@ -132,7 +129,6 @@ public class ServicesCheckerTests {
     public void testFirebaseDatabaseDisconnected(){
         ServicesChecker.getInstance().firebaseDatabaseDisconnected();
         boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
-
         Assert.assertThat(dbIsNotConnected, is(true));
     }
 
