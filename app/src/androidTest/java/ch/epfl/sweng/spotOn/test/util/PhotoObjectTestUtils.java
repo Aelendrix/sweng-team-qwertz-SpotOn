@@ -20,6 +20,7 @@ import ch.epfl.sweng.spotOn.media.PhotoObjectStoredInDatabase;
 
 /** Provides several static methods constructing premade PhotoObjects
  *  Created by quentin on 26.10.16.
+ *
  */
 
 public class PhotoObjectTestUtils {
@@ -89,7 +90,6 @@ public class PhotoObjectTestUtils {
 
 
 // PHOTOOBJECTS INDIVIDUAL CONSTRUCTORS
-    // feel free to add some, but don't modify the existing ones
 
     public static PhotoObject paulVanDykPO(){
         Bitmap image =  getBitmapFromURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Paul_van_Dyk_DJing.jpg");

@@ -39,7 +39,6 @@ public class MockUser_forTests implements User {
 
     @Override
     public void removeManager() {
-        // nothing
     }
 
     @Override

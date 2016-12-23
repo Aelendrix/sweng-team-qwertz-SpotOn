@@ -155,28 +155,6 @@ public class PhotoObjectTests {
         }
     }
 
-    /* Test not working :(
-    @Test
-    public void retrieveImageException() throws Exception{
-        PhotoObjectStoredInDatabase po1 = new PhotoObjectStoredInDatabase(null, null, null, "1", "xD",
-                new Timestamp(0), new Timestamp(1), 0, 0, 1, 4, new ArrayList<String>(), new ArrayList<String>());
-        PhotoObject pObject1 = po1.convertToPhotoObject();
-        PhotoObjectStoredInDatabase po2 = new PhotoObjectStoredInDatabase("xD", null, null, "1", "xD",
-                new Timestamp(0), new Timestamp(1), 0, 0, 1, 4, new ArrayList<String>(), new ArrayList<String>());
-        PhotoObject pObject2 = po1.convertToPhotoObject();
-        try{
-            pObject1.retrieveFullsizeImage(true,null);
-        }
-        catch(AssertionError e) {
-        }
-
-        try{
-            pObject2.retrieveFullsizeImage(true,null);
-        }
-        catch(NullPointerException e) {
-        }
-    }
-    */
 
     @Test
     public void testProcessReport(){

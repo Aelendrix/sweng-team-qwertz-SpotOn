@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ch.epfl.sweng.spotOn">
 
-    <!--
-         TODO: Depending on your app's features, enable some Android features here
-               such as backups or search indexing
-    -->
     <uses-sdk tools:overrideLibrary="android.support.test.uiautomator.v18" />
     <uses-permission android:name="android.permission.CAMERA" />
 

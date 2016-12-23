@@ -123,19 +123,6 @@ public final class MainActivity extends AppCompatActivity {
         ToastProvider.update(this);
     }
 
-
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        //check every time the MainActivity is started if we have the permission: ACCESS_FINE_LOCATION
-        // and throw the user input in onRequestPermissionsResult
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_DENIED ){
-            Log.d("MainActivity","No GPS Permission");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCALISATION);
-        }
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -212,7 +199,6 @@ public final class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             Toast.makeText(this, getString(R.string.gps_not_permitted), Toast.LENGTH_LONG).show();
-            //TODO: find a way to trigger the permission before the user logs in
             if(UserManager.getInstance().userIsLoggedIn()){
                 //Unlog user from facebook -> not annoying if you have facebook on your phone, you'll
                 // log again instantly by pressing the login button

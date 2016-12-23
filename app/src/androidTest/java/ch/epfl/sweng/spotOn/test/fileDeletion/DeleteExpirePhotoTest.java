@@ -9,13 +9,13 @@ import ch.epfl.sweng.spotOn.test.util.PhotoObjectTestUtils;
 
 /**
  * Created by nico on 23.11.16.
+ *
  */
 @SuppressWarnings("unused")
 @RunWith(AndroidJUnit4.class)
 public class DeleteExpirePhotoTest {
     String pictureID;
     //add a very old picture, the background service will trigger during the testing (very bad test)
-    //TODO: change this test by finding a way to trigger the broadcast class ServerDeleteExpiredPhoto
     @Test  (timeout=10000)
     public void addVeryOldPictureToDB(){
         PhotoObject po = PhotoObjectTestUtils.veryOldTimestampPicture();

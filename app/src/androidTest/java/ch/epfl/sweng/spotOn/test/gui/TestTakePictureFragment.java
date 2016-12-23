@@ -24,7 +24,6 @@ import ch.epfl.sweng.spotOn.R;
 import ch.epfl.sweng.spotOn.gui.TabActivity;
 import ch.epfl.sweng.spotOn.gui.TakePictureFragment;
 import ch.epfl.sweng.spotOn.localisation.ConcreteLocationTracker;
-import ch.epfl.sweng.spotOn.media.PhotoObject;
 import ch.epfl.sweng.spotOn.singletonReferences.DatabaseRef;
 import ch.epfl.sweng.spotOn.singletonReferences.StorageRef;
 import ch.epfl.sweng.spotOn.test.util.TestInitUtils;
@@ -42,6 +41,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by Nico
  * Test fakes the phone to take a picture, and then modifies the picture using the user UI.
+ *
  */
 public class TestTakePictureFragment {
 
@@ -103,18 +103,20 @@ public class TestTakePictureFragment {
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
         mActualPhotoObjectPictureId = pictureFragment.getLastUploadedPictureId();
+        Log.d("TestTest",mActualPhotoObjectPictureId);
         onView(withId(R.id.captureButton)).perform(click());
+
+        Thread.sleep(3000);
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
+        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
     @After
-    public void after() {
+    public void after() throws InterruptedException{
         ConcreteLocationTracker.destroyInstance();
         if (ConcreteLocationTracker.instanceExists()) {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
-        file.delete();
-        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
-        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
     private ViewAction clickXY(final float x, final float y) {

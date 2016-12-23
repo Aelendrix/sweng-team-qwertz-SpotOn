@@ -96,7 +96,6 @@ public class LocationTrackerTest{
         ConcreteLocationTracker.getInstance().addListener(new LocationTrackerListener() {
             @Override
             public void updateLocation(Location newLocation) {
-                // nothing
             }
             @Override
             public void locationTimedOut(Location old) {

@@ -4,6 +4,7 @@ import android.location.LocationListener;
 
 /**
  * Created by quentin on 23.11.16.
+ *
  */
 
 public interface LocationManagerWrapper{

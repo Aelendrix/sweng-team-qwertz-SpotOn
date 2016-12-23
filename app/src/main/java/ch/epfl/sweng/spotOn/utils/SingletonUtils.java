@@ -11,6 +11,7 @@ import ch.epfl.sweng.spotOn.user.UserManager;
 
 /**
  * Created by quentin on 22.12.16.
+ *
  */
 
 public class SingletonUtils {
@@ -19,7 +20,6 @@ public class SingletonUtils {
         ConcreteLocationTracker.initialize(new ConcreteLocationManagerWrapper((LocationManager) c.getSystemService(Context.LOCATION_SERVICE)));
         LocalDatabase.initialize(ConcreteLocationTracker.getInstance());
         UserManager.initialize();
-        //UserManager.getInstance().setEmptyUser();
         ServicesChecker.initialize(ConcreteLocationTracker.getInstance(), LocalDatabase.getInstance(), UserManager.getInstance(), ConcreteFirebaseConnectionTracker.getInstance());
     }
 }

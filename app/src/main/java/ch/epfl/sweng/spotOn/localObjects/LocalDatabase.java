@@ -256,7 +256,6 @@ public class LocalDatabase implements LocationTrackerListener{
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
-                // todo - handle exceptional behavior
             }
         });
     }
@@ -306,7 +305,6 @@ public class LocalDatabase implements LocationTrackerListener{
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
-                // todo - handle exceptional behavior
             }
         });
     }

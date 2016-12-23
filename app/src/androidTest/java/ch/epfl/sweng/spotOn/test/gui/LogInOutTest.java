@@ -6,11 +6,9 @@ import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -68,7 +66,6 @@ public class LogInOutTest {
     public void logInAndOut() throws Exception {
         mActivityTestRule.launchActivity(new Intent());
         onView(withId(R.id.mainLoginButton)).perform(click());
-        //Thread.sleep(4000); // sorry... my phone is slow
 
         UiObject input = mDevice.findObject(new UiSelector().instance(0).className(EditText.class));
         input.setText("swengqwertz@gmail.com");
@@ -77,13 +74,12 @@ public class LogInOutTest {
         UiObject buttonInput = mDevice.findObject(new UiSelector().instance(0).className(Button.class));
         buttonInput.click();
         mDevice.waitForWindowUpdate(null,6000);
-        //mDevice.wait(Until.hasObject(By.textContains("OK")),6000);
         buttonInput = mDevice.findObject(new UiSelector().instance(1).className(Button.class));
         buttonInput.click();
         //wait to come back to mainActivity
-        mDevice.waitForWindowUpdate(null,10000);
+        mDevice.waitForWindowUpdate(null,7000);
         //wait the mainActivity to start TabActivity
-        mDevice.waitForWindowUpdate(null,10000);
+        mDevice.waitForWindowUpdate(null,7000);
         Thread.sleep(2000);
         onView(withId(R.id.log_out)).perform(click());
         onView(withText("Cancel")).perform(click());

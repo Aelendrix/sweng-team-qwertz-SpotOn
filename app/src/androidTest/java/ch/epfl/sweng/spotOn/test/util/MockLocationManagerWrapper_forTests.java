@@ -15,6 +15,7 @@ import ch.epfl.sweng.spotOn.localisation.LocationManagerWrapper;
 
 /**
  * Created by quentin on 23.11.16.
+ *
  */
 
 public class MockLocationManagerWrapper_forTests implements LocationManagerWrapper {

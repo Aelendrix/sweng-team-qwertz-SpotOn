@@ -5,6 +5,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 /** singleton that provides database directories that will be used for storing test objects
  * Created by quentin on 04.11.16.
+ *
  */
 
 public class DatabaseRef_Test {
@@ -29,7 +30,6 @@ public class DatabaseRef_Test {
 
     // CONSTRUCTOR FOR SINGLETON
     private DatabaseRef_Test(){
-        //empty
     }
 
 

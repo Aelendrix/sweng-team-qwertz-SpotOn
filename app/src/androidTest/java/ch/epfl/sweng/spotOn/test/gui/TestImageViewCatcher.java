@@ -8,6 +8,7 @@ import org.hamcrest.Description;
 
 /**
  * Created by Alexis Dewaele on 28/10/2016.
+ *
  */
 
 public class TestImageViewCatcher {

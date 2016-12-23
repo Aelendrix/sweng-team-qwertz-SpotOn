@@ -21,9 +21,6 @@ import ch.epfl.sweng.spotOn.utils.ServicesChecker;
 import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 public class ViewFullSizeImageActivity extends Activity {
-
-    //public final static String WANTED_IMAGE_PICTUREID = "ch.epfl.sweng.teamqwertz.spoton.ViewFullSizeImageActivity.WANTED_IMAGE_PICTUREID";
-
     private FullScreenImageAdapter mFullScreenImageAdapter;
 
     private String mUserID;

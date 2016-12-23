@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -26,6 +25,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by quentin on 29.11.16.
+ *
  */
 
 @RunWith(AndroidJUnit4.class)

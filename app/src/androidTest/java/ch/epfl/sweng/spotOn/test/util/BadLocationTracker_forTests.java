@@ -8,6 +8,7 @@ import ch.epfl.sweng.spotOn.localisation.LocationTracker;
 import ch.epfl.sweng.spotOn.localisation.LocationTrackerListener;
 
 /** A mock location tracker that never has a valid location
+ *
   */
 public class BadLocationTracker_forTests implements LocationTracker {
     @Override
@@ -27,6 +28,5 @@ public class BadLocationTracker_forTests implements LocationTracker {
 
     @Override
     public void addListener(LocationTrackerListener l) {
-        // nothing
     }
 }

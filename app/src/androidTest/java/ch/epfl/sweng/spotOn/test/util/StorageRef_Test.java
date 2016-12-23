@@ -5,6 +5,7 @@ import com.google.firebase.storage.StorageReference;
 
 /** Singleton the provides file server references for test purpose
  * Created by quentin on 04.11.16.
+ *
  */
 
 public class StorageRef_Test {
@@ -21,7 +22,6 @@ public class StorageRef_Test {
 
     // CONSTRUCTOR FOR SINGLETON
     private StorageRef_Test(){
-        // empty
     }
 
 
