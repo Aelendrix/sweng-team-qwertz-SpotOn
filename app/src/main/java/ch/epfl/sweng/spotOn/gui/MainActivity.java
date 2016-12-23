@@ -212,7 +212,6 @@ public final class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             Toast.makeText(this, getString(R.string.gps_not_permitted), Toast.LENGTH_LONG).show();
-            //TODO: find a way to trigger the permission before the user logs in
             if(UserManager.getInstance().userIsLoggedIn()){
                 //Unlog user from facebook -> not annoying if you have facebook on your phone, you'll
                 // log again instantly by pressing the login button

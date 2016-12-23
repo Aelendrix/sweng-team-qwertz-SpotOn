@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.support.test.runner.AndroidJUnit4;
 
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

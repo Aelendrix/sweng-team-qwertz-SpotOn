@@ -156,7 +156,6 @@ public class TabActivity extends AppCompatActivity{
     private void unloadLocalDataSingleton(){
         //disable the service checker to remove the toast
         ServicesChecker.allowDisplayingToasts(false);
-        //TODO: firebase.reset
         LocalDatabase.getInstance().clear();
     }
 

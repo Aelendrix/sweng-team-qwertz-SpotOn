@@ -7,18 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.clustering.Cluster;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import ch.epfl.sweng.spotOn.R;
-import ch.epfl.sweng.spotOn.utils.ToastProvider;
 
 /**
  * Created by olivi on 20.10.2016.

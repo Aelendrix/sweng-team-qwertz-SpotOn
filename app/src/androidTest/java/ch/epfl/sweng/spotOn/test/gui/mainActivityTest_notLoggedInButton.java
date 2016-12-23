@@ -1,7 +1,6 @@
 package ch.epfl.sweng.spotOn.test.gui;
 
 import android.content.Intent;
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
