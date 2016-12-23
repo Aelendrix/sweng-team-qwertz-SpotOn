@@ -67,31 +67,37 @@ public class ServicesCheckerTests {
         UserManager.getInstance().setEmptyUser();
         expected = "You're not logged in\n"+"--  Some features may be disabled  --";
         checkExpected(expected);
+        expected = User.LOGIN_NOT_LOGGED_in_MESSAGE+"\n"+" --  Feature unavailable  -- ";
+        checkExpected_takePictureErrorMessage(expected);
+        expected = "You're not logged in";
+        checkExpected_LoginErrorMessage(expected);
 
         // correct state
         UserManager.getInstance().destroyUser();
         UserManager.getInstance().setMockUser(mMockUser);
         expected = "";
         checkExpected(expected);
+        if( ! ServicesChecker.getInstance().allServicesOk()){
+            throw new AssertionError("services should be ok");
+        }
+        if( ! ServicesChecker.getInstance().canSendToServer()){
+            throw new AssertionError("should be able to send to server");
+        }
+        if( ! ServicesChecker.getInstance().canTakePicture()){
+            throw new AssertionError("should be able to take a picture");
+        }
 
         // no correct Location
         Location tempStoreLocation = mlt.getLocation();
         mlt.forceLocationTimeout();
         expected = "Can't localize your device\n"+"--  Some features may be disabled  --";
         checkExpected(expected);
+        expected = "Can't find your GPS location\n"+" --  Feature unavailable  -- ";
+        checkExpected_takePictureErrorMessage(expected);
 
         // restore location
         mlt.setMockLocation(tempStoreLocation);
     }
-
-
-    private void checkExpected(String expected){
-        String errMsg = ServicesChecker.getInstance().provideErrorMessage();
-        if( ! errMsg.equals(expected)){
-            throw new AssertionError("Error messages was :\n"+errMsg+"\n\nWhile expecting :\n"+expected+"\n\n");
-        }
-    }
-
 
     @Test
     public void testProvideLoginErrorMessage() throws InterruptedException{
@@ -104,21 +110,18 @@ public class ServicesCheckerTests {
     @Test
     public void testTakePictureErrorMessage(){
         String errorMessage = ServicesChecker.getInstance().takePictureErrorMessage();
-
         Assert.assertThat(errorMessage.equals("takePictureErrorMessage : all good"), is(true));
     }
 
     @Test
     public void testSendToServerErrorMessage(){
         String errorMessage = ServicesChecker.getInstance().sendToServerErrorMessage();
-
         Assert.assertThat(errorMessage.equals("sendToServerErrorMessage : all good"), is(true));
     }
 
     @Test
     public void testDatabaseIsNotConnected(){
         boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
-
         Assert.assertThat(dbIsNotConnected, is(false));
     }
 
@@ -126,7 +129,29 @@ public class ServicesCheckerTests {
     public void testFirebaseDatabaseDisconnected(){
         ServicesChecker.getInstance().firebaseDatabaseDisconnected();
         boolean dbIsNotConnected = ServicesChecker.getInstance().databaseNotConnected();
-
         Assert.assertThat(dbIsNotConnected, is(true));
+    }
+
+
+// HELPERS
+    private void checkExpected(String expected){
+        String errMsg = ServicesChecker.getInstance().provideErrorMessage();
+        if( ! errMsg.equals(expected)){
+            throw new AssertionError("Error messages was :\n"+errMsg+"\n\nWhile expecting :\n"+expected+"\n\n");
+        }
+    }
+
+    private void checkExpected_takePictureErrorMessage(String expected){
+        String errMsg = ServicesChecker.getInstance().takePictureErrorMessage();
+        if( ! errMsg.equals(expected)){
+            throw new AssertionError("Error messages was :\n"+errMsg+"\n\nWhile expecting :\n"+expected+"\n\n");
+        }
+    }
+
+    private void checkExpected_LoginErrorMessage(String expected){
+        String errMsg = ServicesChecker.getInstance().provideLoginErrorMessage();
+        if( ! errMsg.equals(expected)){
+            throw new AssertionError("Error messages was :\n"+errMsg+"\n\nWhile expecting :\n"+expected+"\n\n");
+        }
     }
 }
