@@ -106,7 +106,6 @@ public class TestTakePictureFragment {
         //in the tabActivity and save and store the image
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
-        Thread.sleep(5000);
         onView(withId(R.id.captureButton)).perform(click());
 
         /*
