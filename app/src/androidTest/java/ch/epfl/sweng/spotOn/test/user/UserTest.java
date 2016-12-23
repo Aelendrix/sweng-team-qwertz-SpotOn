@@ -24,13 +24,6 @@ public class UserTest {
 
     private User testUser = null;
 
-
-    @After
-    public void removeTestUser() {
-        DatabaseRef.deleteUserFromDB(testUser.getUserId());
-    }
-
-
     @Test
     public void testSetAndGetUser() throws InterruptedException{
         testUser = new RealUser("firstName","lastName","mlb",null);
@@ -43,6 +36,8 @@ public class UserTest {
         Assert.assertEquals(testUser.computeRemainingPhotos(), RealUser.computeMaxPhotoInDay(500));
         Assert.assertEquals(testUser.isLoggedIn(), false);
         Assert.assertEquals(testUser.getIsRetrievedFromDB(), false);
+
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
     }
 
 
@@ -62,6 +57,8 @@ public class UserTest {
 
         Assert.assertEquals(testUser.getPhotosTaken().isEmpty(), true);
         Assert.assertEquals(testUser.retrieveUpdatedPhotosTaken().isEmpty(), true);
+
+        DatabaseRef.deleteUserFromDB(testUser.getUserId());
     }
 }
 

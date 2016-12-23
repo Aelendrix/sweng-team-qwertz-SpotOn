@@ -103,18 +103,20 @@ public class TestTakePictureFragment {
         onView(withId(R.id.storeButton)).perform(click());
         onView(withId(R.id.sendButton)).perform(click());
         mActualPhotoObjectPictureId = pictureFragment.getLastUploadedPictureId();
+        Log.d("TestTest",mActualPhotoObjectPictureId);
         onView(withId(R.id.captureButton)).perform(click());
+        Thread.sleep(5000);
+        //cannot be put in the After method cause it's not working there
+        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
+        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
     @After
-    public void after() {
+    public void after() throws InterruptedException{
         ConcreteLocationTracker.destroyInstance();
         if (ConcreteLocationTracker.instanceExists()) {
             throw new AssertionError("TakePictureFragmentTest : concreteLocationTracker mock instance not deleted");
         }
-        file.delete();
-        DatabaseRef.deletePhotoObjectFromDB(mActualPhotoObjectPictureId);
-        StorageRef.deletePictureFromStorage(mActualPhotoObjectPictureId);
     }
 
     private ViewAction clickXY(final float x, final float y) {
